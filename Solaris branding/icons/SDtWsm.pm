@@ -1,1 +1,0 @@
-./SDtWsm.l.pm

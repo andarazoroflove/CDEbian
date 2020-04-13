@@ -7,7 +7,9 @@
 
 *CDEbian Lives On!* This repository is a consolodated 
 master of all CDE/CDEbian code and projects. LiveCD ISOs
-are available from the Releases tab. Directory key:
+are available from the Releases tab. 
+
+**Directory key:**
 
 cdeinst/	-Antiquated CDE 'all in one' installer
 		script.
@@ -19,9 +21,9 @@ simpbuild/	-Script for downloading, configuring, and
 		compiling CDE from SourceForge or Github.
 		Could still be useful with a dash of tweak.
 
-Solaris/	-Custom Sun Solaris CDE backdrops, colour
+solaris/	-Custom Sun Solaris CDE backdrops, colour
 		schemes, icons, and DT assets. 
 
-The other files are the items from the Google Drive (which
-will be shut down sooner or later) provided in Rich Text
-for the utmost in compatibility but with colour. 
+docs/		-CDEbian Changelog, Compile Checklist, etc.
+
+media/		-Installation how-tos, etc.

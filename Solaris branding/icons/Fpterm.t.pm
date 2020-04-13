@@ -1,1 +1,0 @@
-./Dtterm.t.pm
