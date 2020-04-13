@@ -1,6 +1,6 @@
-##CDEbian##
+##CDEbian
 
-###Debian Live CD with the Common Desktop Environment###
+###Debian Live CD with the Common Desktop Environment
 
 **Current Release:	1.0-alpha (bare bones install)
 			1.0-beta (thick client + apps)**
