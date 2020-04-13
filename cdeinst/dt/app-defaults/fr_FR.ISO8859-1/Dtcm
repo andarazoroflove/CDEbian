@@ -1,0 +1,230 @@
+! $TOG: Dtcm.ad /main/8 1998/08/10 15:44:34 mgreess $
+!
+!   COMPONENT_NAME: desktop
+!
+!   FUNCTIONS: none
+!
+!   ORIGINS: 27,118,119,120,121
+!
+!   This module contains IBM CONFIDENTIAL code. -- (IBM
+!   Confidential Restricted when combined with the aggregated
+!   modules for this product)
+!   OBJECT CODE ONLY SOURCE MATERIALS
+!
+!   (C) COPYRIGHT International Business Machines Corp. 1995
+!   All Rights Reserved
+!   US Government Users Restricted Rights - Use, duplication or
+!   disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+!
+!######################################################################
+!# (c) Copyright 1993, 1994 Hewlett-Packard Company
+!# (c) Copyright 1993, 1994 International Business Machines Corp.
+!# (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!# (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary of
+!#     Novell, Inc.
+!######################################################################
+#include "Dt"
+!
+! Dtcm - Application defaults file for CDE Calendar
+! Last updated: 9 Dec 1994
+!
+!------------------------------------
+! Mnemonics for Menu Items
+!------------------------------------
+! Menu Bar
+Dtcm*menuBar.file.mnemonic:		F
+Dtcm*menuBar.edit.mnemonic:		E
+Dtcm*menuBar.view.mnemonic:		V
+Dtcm*menuBar.browse.mnemonic:		P
+Dtcm*menuBar.help.mnemonic:		A
+! File menu
+Dtcm*fileMenu.printCurrent.mnemonic:	v
+Dtcm*fileMenu.print.mnemonic:		I
+Dtcm*fileMenu.options.mnemonic:		O
+Dtcm*fileMenu.exit.mnemonic:		Q
+! Edit menu
+Dtcm*editMenu.appt.mnemonic:		R
+Dtcm*editMenu.toDo.mnemonic:		A
+! View menu
+Dtcm*viewMenu.day.mnemonic:		J
+Dtcm*viewMenu.week.mnemonic:		S
+Dtcm*viewMenu.month.mnemonic:		M
+Dtcm*viewMenu.year.mnemonic:		A
+Dtcm*viewMenu.apptList.mnemonic:		r
+Dtcm*viewMenu.toDoList.mnemonic:		a
+Dtcm*viewMenu.find.mnemonic:		R
+Dtcm*viewMenu.goTo.mnemonic:		e
+Dtcm*viewMenu.timeZone.mnemonic:		F
+! Browse menu
+Dtcm*browseMenu.showOther.mnemonic:	A
+Dtcm*browseMenu.compare.mnemonic:		C
+Dtcm*browseMenu.editMenu.mnemonic:	E
+! Help menu
+Dtcm*helpMenu.overview.mnemonic:		G
+Dtcm*helpMenu.tasks.mnemonic:		T
+Dtcm*helpMenu.reference.mnemonic:		R
+Dtcm*helpMenu.onItem.mnemonic:		S
+Dtcm*helpMenu.using.mnemonic:		A
+Dtcm*helpMenu.about.mnemonic:		p
+
+!------------------------------------
+! Accelerator text 
+!------------------------------------
+Dtcm*day.acceleratorText:     Ctrl+D
+Dtcm*week.acceleratorText:    Ctrl+W
+Dtcm*month.acceleratorText:   Ctrl+M
+Dtcm*year.acceleratorText:    Ctrl+Y
+Dtcm*options.acceleratorText: Ctrl+I
+Dtcm*appt.acceleratorText:    Ctrl+A
+Dtcm*toDo.acceleratorText:    Ctrl+T
+Dtcm*find.acceleratorText:    Ctrl+F
+Dtcm*print.acceleratorText:   Ctrl+P
+Dtcm*exit.acceleratorText:    Alt+F4
+Dtcm*onItem.accelerator:	    F1
+
+!----------------------------------------------------
+! Accelerators for selected commands with text above
+!----------------------------------------------------
+Dtcm*day.accelerator:     Ctrl<Key>D
+Dtcm*week.accelerator:    Ctrl<Key>W
+Dtcm*month.accelerator:   Ctrl<Key>M
+Dtcm*year.accelerator:    Ctrl<Key>Y
+Dtcm*options.accelerator: Ctrl<Key>I
+Dtcm*appt.accelerator:    Ctrl<Key>A
+Dtcm*toDo.accelerator:    Ctrl<Key>T
+Dtcm*find.accelerator:    Ctrl<Key>F
+Dtcm*print.accelerator:   Ctrl<Key>P
+Dtcm*exit.accelerator:	<Meta>F4
+Dtcm*onItem.accelerator:	<Key>F1
+
+Dtcm*fileMenu.tearOffModel: tear_off_disabled
+Dtcm*editMenu.tearOffModel: tear_off_disabled
+Dtcm*viewMenu.tearOffModel: tear_off_disabled
+Dtcm*browseMenu.tearOffModel: tear_off_disabled
+Dtcm*helpMenu.tearOffModel: tear_off_disabled
+
+!------------------------------------
+! Programmable date formats
+!------------------------------------
+Dtcm*XmMonthPanel.titleFormat: %B %Y
+Dtcm*yearForm.XmMonthPanel.titleFormat: %B
+
+!------------------------------------
+! Miscellaneous
+!------------------------------------
+Dtcm*labelForm*fontList: -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+Dtcm*XmMonthPanel*fontList: -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+Dtcm*canvas*XmPushButton.fontList: -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+Dtcm*XmMonthPanel.activeHeader: True
+Dtcm*XmMonthPanel*recomputeSize: False
+Dtcm*lastMonth.activeDays: True
+Dtcm*thisMonth.activeDays: True
+Dtcm*nextMonth.activeDays: True
+Dtcm.iconFont:  -dt-application-bold-r-normal-sans-*-180-*-*-p-*-*-*:
+
+! Font family to use for Dtcm's views: ``application'' for C locale
+! ``mincho'' for ja locale, etc.
+Dtcm.applicationFontFamily:  application
+
+!------------------------------------
+! Images for toolbar buttons
+!------------------------------------
+! Removed for time being until problem with HP and IBM not reading these
+! is fixed
+! Dtcm*XmForm.appt.labelType: pixmap
+! Dtcm*XmForm.todo.labelType: pixmap
+! Dtcm*XmForm.day.labelType: pixmap
+! Dtcm*XmForm.month.labelType: pixmap
+! Dtcm*XmForm.week.labelType: pixmap
+! Dtcm*XmForm.year.labelType: pixmap
+! Dtcm*XmForm.appt.labelPixmap: /usr/dt/appconfig/icons/C/DtCMapt.m.pm
+! Dtcm*XmForm.todo.labelPixmap: /usr/dt/appconfig/icons/C/DtCMtdo.m.pm
+! Dtcm*XmForm.day.labelPixmap: /usr/dt/appconfig/icons/C/DtCMday.m.pm
+! Dtcm*XmForm.week.labelPixmap: /usr/dt/appconfig/icons/C/DtCMwk.m.pm
+! Dtcm*XmForm.month.labelPixmap: /usr/dt/appconfig/icons/C/DtCMmth.m.pm
+! Dtcm*XmForm.year.labelPixmap: /usr/dt/appconfig/icons/C/DtCMyr.m.pm
+!
+! The followings are added by IBM
+Dtcm.frame.outerPane.innerPane.upperForm.text_field_form.dataText.columns: 10
+Dtcm*dssw_form_mgr.start_text.columns: 6
+Dtcm*dssw_form_mgr.stop_text.columns: 6
+Dtcm*dssw_form_mgr.what_text.columns: 20
+Dtcm*repeat_popup_frame.form_mgr_text_field.columns: 5
+Dtcm.frame.form.appt.columns: 60
+Dtcm.frame.form.search_from.columns: 15
+Dtcm.frame.form.search_to.columns: 15
+Dtcm*dp_form_mgr.dp_loc_text.columns: 15
+Dtcm*dp_form_mgr.dp_init_view_text.columns: 25
+Dtcm*gap_form_mgr.gap_user_text.columns: 23
+Dtcm*pop_form_mgr.pop_printer_text.columns: 20
+Dtcm*pop_form_mgr.pop_directory_text.columns: 20
+Dtcm*pop_form_mgr.pop_options_text.columns: 20
+Dtcm*pop_form_mgr.pop_file_text.columns: 20
+Dtcm*pop_form_mgr.pop_width_text.columns: 10
+Dtcm*pop_form_mgr.pop_height_text.columns: 10
+Dtcm*pop_form_mgr.pop_pos_left_text.columns: 10
+Dtcm*pop_form_mgr.pop_pos_bottom_text.columns: 10
+Dtcm*pop_form_mgr.unitsSpin.columns: 2
+Dtcm*pop_form_mgr.copiesSpin.columns: 2
+Dtcm*bfpm_form_mgr.beep_text.columns: 5
+Dtcm*bfpm_form_mgr.flash_text.columns: 5
+Dtcm*bfpm_form_mgr.popup_text.columns: 5
+Dtcm*bfpm_form_mgr.mail_text.columns: 5
+Dtcm*control.printerText.columns: 30
+Dtcm*control.copiesSpin.columns: 2
+Dtcm*control.fromText.columns: 30
+Dtcm*control.toText.columns: 30
+Dtcm*control.argsText.columns: 30
+Dtcm*control.fileText.columns: 30
+Dtcm*gap2_form_mgr.gap2_text_user_name.columns: 36
+
+!------------------------------------
+! Fonts for printing
+!------------------------------------
+! Day View
+Dtcm*dvpTitleFont: -dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*dvpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*dvpApptFont:  -dt-application-medium-r-normal-sans-0-100-0-0-p-0-*-*:
+Dtcm*dvpTimeFont:  -dt-application-bold-r-normal-serif-0-100-0-0-p-0-*-*:
+
+! Week View
+Dtcm*wvpTitleFont: -dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*wvpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*wvpApptFont:  -dt-application-medium-r-normal-sans-0-90-0-0-p-0-*-*:
+Dtcm*wvpDayFont:   -dt-application-bold-r-normal-serif-0-120-0-0-p-0-*-*:
+Dtcm*wvpBoxFont:   -dt-application-bold-r-normal-serif-0-120-0-0-p-0-*-*:
+
+! Month View
+Dtcm*mvpTitleFont: -dt-application-bold-r-normal-serif-0-300-0-0-p-0-*-*:
+Dtcm*mvpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*mvpApptFont:  -dt-application-medium-r-normal-sans-0-80-0-0-p-0-*-*:
+Dtcm*mvpDayFont:   -dt-application-bold-r-normal-serif-0-140-0-0-p-0-*-*:
+Dtcm*mvpDateFont:  -dt-application-bold-r-normal-serif-0-200-0-0-p-0-*-*:
+Dtcm*mvpTinyTitleFont:-dt-application-bold-r-normal-serif-0-100-0-0-p-0-*-*:
+Dtcm*mvpTinyDayFont:-dt-application-medium-r-normal-serif-0-70-0-0-m-0-*-*:
+Dtcm*mvpTinyDateFont:-dt-application-bold-r-normal-serif-0-70-0-0-p-0-*-*:
+
+! Year View
+Dtcm*yvpTitleFont: -dt-application-bold-r-normal-serif-0-[80 0 0 40]-0-0-p-0-*-*:
+Dtcm*yvpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*yvpTinyTitleFont:-dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*yvpTinyDayFont:-dt-application-medium-r-normal-serif-0-120-0-0-m-0-*-*:
+Dtcm*yvpTinyDateFont:-dt-application-bold-r-normal-serif-0-120-0-0-p-0-*-*:
+
+! Appt List View
+Dtcm*avpTitleFont: -dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*avpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*avpApptFont:  -dt-application-medium-r-normal-sans-0-100-0-0-p-0-*-*:
+Dtcm*avpItemFont:  -dt-application-bold-r-normal-serif-0-100-0-0-p-0-*-*:
+Dtcm*avpTinyTitleFont:-dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*avpTinyDayFont:-dt-application-medium-r-normal-serif-0-120-0-0-m-0-*-*:
+Dtcm*avpTinyDateFont:-dt-application-bold-r-normal-serif-0-120-0-0-p-0-*-*:
+
+! To Do List View
+Dtcm*tvpTitleFont: -dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*tvpHeaderFont:-dt-application-bold-r-normal-serif-0-90-0-0-p-0-*-*:
+Dtcm*tvpApptFont:  -dt-application-medium-r-normal-sans-0-100-0-0-p-0-*-*:
+Dtcm*tvpItemFont:  -dt-application-bold-r-normal-serif-0-100-0-0-p-0-*-*:
+Dtcm*tvpTinyTitleFont:-dt-application-bold-r-normal-serif-0-160-0-0-p-0-*-*:
+Dtcm*tvpTinyDayFont:-dt-application-medium-r-normal-serif-0-120-0-0-m-0-*-*:
+Dtcm*tvpTinyDateFont:-dt-application-bold-r-normal-serif-0-120-0-0-p-0-*-*:

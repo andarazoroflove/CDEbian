@@ -1,0 +1,329 @@
+'\" t
+...\" dticonfi.sgm /main/9 1996/09/08 20:18:23 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dticonfile" "special file"
+.SH "NAME"
+\fBdticonfile\fP \(em icon conventions for XCDE icons
+.SH "SYNOPSIS"
+.PP
+.nf
+The conventions used within the XCDE for icon
+sizes, naming, location, and usage are specified\&.
+.fi
+.SH "DESCRIPTION"
+.PP
+Both X Pixmap and X Bitmap icon file formats are used within the XCDE\&.
+X Pixmap (XPM) icons are multi-color images based on the XPM format developed
+by Arnaud Le Hors\&. A pixmap file is an ASCII file that can be read and modified
+by hand, in addition to using color pixmap editors (like the XCDE Icon
+Editor)\&. X Bitmap (XBM) icons are monochrome (two-color) images based on the
+official X11 Bitmap File Format\&. Bitmap files are ASCII files; however, the
+data is simply a binary representation of the bitmap, and as such is not easily
+read or modified by hand\&. The XCDE icon editor can create and modify XBM
+icons\&. The icon editor has the ability to write out any icon in either the
+XPM or XBM file format\&. For a more detailed description of these file formats
+and the icon editor, see the \fBdtbmfile\fP(4), \fBdtpmfile\fP(4) and \fBdticon\fP(1) man pages\&.
+.SS "File Naming"
+.PP
+XCDE icon file names are typically in one of the following forms:
+.PP
+.nf
+\f(CW\fIbasename\fP\&.\fIformat\fP
+\fIbasename\fP\&.\fIsize\fP\&.\fIformat\fP\fR
+.fi
+.PP
+.PP
+The \fIbasename\fP is the logical name of the icon\&. The
+basenames for icons that are installed with XCDE begin with either \fBDt\fP or \fBFp\fP\&. \fBDt\fP is the default
+prefix for all XCDE icons\&. The \fBFp\fP prefix is used for
+icons that appear in the front panel when an icon other than the default \fBDt\fP icon is desired\&. In this case, the basename is the same\&.
+.PP
+If an additional icon is needed for the client \fBiconImage\fP
+(iconified client window icon), a third prefix, \fBIc\fP, is
+used\&.
+.PP
+The \fIformat\fP is \fBpm\fP
+for a pixmap file and \fBbm\fP for a bitmap file\&. Size is a single
+letter: \fBl\fP for large, \fBm\fP for medium, \fBs\fP for small and \fBt\fP for tiny\&. Many of the logical
+icons are provided in multiple sizes for both color and monochrome\&. This allows XCDE
+to use the optimal color and size combination for the specific task and configuration
+the user is running\&. Many bitmap icons have a mask associated with the icon\&.
+These are named \fIbasename\&.size\fP\fB_m\&.\fP\fIformat\fP\&.
+All icons are named so that the longest filename
+associated with that icon is 14 bytes or less; this allows it to be used on
+a short filename system\&. The longest filename can be described as \fBDt\fP\fIxxxxx\fP\fB_m\&.l\&.pm\fP, where \fIxxxxx\fP is the logical icon name\&.
+.SS "Example"
+.PP
+This is an example of icon files that might be associated with the icon \fBfoo\fP\&. The single logical icon \fBfoo\fP contains tiny,
+small, medium and large bitmap icons (with mask) and pixmap icons\&.
+.PP
+.nf
+\f(CWDtfoo\&.t\&.pm
+Dtfoo\&.t\&.bm
+Dtfoo\&.t_m\&.bm
+Dtfoo\&.s\&.pm
+Dtfoo\&.s\&.bm
+Dtfoo\&.s_m\&.bm
+Dtfoo\&.m\&.pm
+Dtfoo\&.m\&.bm
+Dtfoo\&.m_m\&.bm
+Dtfoo\&.l\&.pm
+Dtfoo\&.l\&.bm
+Dtfoo\&.l_m\&.bm\fR
+.fi
+.PP
+.SS "Icon Sizes"
+.PP
+Icons of the following sizes and with the following suffixes are supported:
+.IP "Large" 10
+48\!\(ti\!48 icon with \fB\&.l\fP suffix
+.IP "Medium" 10
+32\!\(ti\!32 icon with \fB\&.m\fP suffix
+.IP "Small" 10
+24\!\(ti\!24 icon with \fB\&.s\fP suffix
+.IP "Tiny" 10
+16\!\(ti\!16 icon with \fB\&.t\fP suffix
+.PP
+The icon sizes used varies for different components, and is dependent
+on the display hardware\&.
+.SS "Table Of Icon Sizes Used"
+.TS
+tab();
+lw(2.002000i) lw(2.090000i) lw(1.408000i).
+\fBXCDE Component\fP\fBHiRes,MedRes\fP\fBLoRes(vga)\fP
+\fBFront Panel\fPT{
+\fB48\!\(ti\!48\fP
+T}T{
+\fB32\!\(ti\!32\fP
+T}
+\fBFP Subpanels\fPT{
+\fB32\!\(ti\!32\fP
+T}T{
+\fB24\!\(ti\!24\fP
+T}
+\fBFP Inset FP\fPT{
+\fB24\!\(ti\!24\fP
+T}T{
+\fB16\!\(ti\!16\fP
+T}
+\fBWMgr ClientIcon\fPT{
+\fB48\!\(ti\!48\fP
+T}T{
+\fB32\!\(ti\!32\fP
+T}
+\fBFile Mgr (Large)\fPT{
+\fB32\!\(ti\!32\fP
+T}T{
+\fB32\!\(ti\!32\fP
+T}
+\fBFile Mgr (Small)\fPT{
+\fB16\!\(ti\!16\fP
+T}T{
+\fB16\!\(ti\!16\fP
+T}
+.TE
+.SS "Icon Colors"
+.PP
+These colors are used in XCDE icons\&. The dynamic colors use color
+cells from one of the color sets in the user\&'s color palette (except none,
+which requires no color cell)\&.
+.PP
+The eight icon color names are already included in the \fBrgb\&.txt\fP file\&. The eight icon gray color names should be added to each XCDE
+vendor\&'s \fBrgb\&.txt\fP\&.
+.TS
+tab();
+lw(2.629738i) lw(2.870262i).
+\fBColor Name (rgb\&.txt)\fPT{
+\fBSymbolic Name (<icon>\&.pm)\fP
+T}
+\fB< dynamic >\fP\fBnone\fP
+\fB< dynamic >\fP\fBbackground\fP
+\fB< dynamic >\fP\fBselectColor\fP
+\fB< dynamic >\fP\fBtopShadowColor\fP
+\fB< dynamic >\fP\fBbottomShadowColor\fP
+\fBblack\fP\fBiconColor1\fP
+\fBwhite\fP\fBiconColor2\fP
+\fBred\fP\fBiconColor3\fP
+\fBgreen\fP\fBiconColor4\fP
+\fBblue\fP\fBiconColor5\fP
+\fByellow\fP\fBiconColor6\fP
+\fBcyan\fP\fBiconColor7\fP
+\fBmagenta\fP\fBiconColor8\fP
+\fBiconGray1\fP\fBiconGray1\fP
+\fBiconGray2\fP\fBiconGray2\fP
+\fBiconGray3\fP\fBiconGray3\fP
+\fBiconGray4\fP\fBiconGray4\fP
+\fBiconGray5\fP\fBiconGray5\fP
+\fBiconGray6\fP\fBiconGray6\fP
+\fBiconGray7\fP\fBiconGray7\fP
+\fBiconGray8\fP\fBiconGray8\fP
+.TE
+.SS "Icon File Locations"
+.PP
+XCDE has default locations where it looks to find system and user
+icon files\&. See the \fBdtappintegrate\fP(1) manual page for detailed
+information on where to install icons\&. See the \fBdtsearchpath\fP(1)
+manual page for information on the icon lookup path\&.
+.SS "Icon Usage In XCDE"
+.PP
+Icons are used in a variety of ways within XCDE\&. Following are examples
+of some of the general areas in which users can use icons to customize XCDE
+configurations\&. A system administrator can also do this on a system- or network-wide
+basis\&. For more detailed information on any of these topics, see the documentation
+for that component or configuration file\&.
+.SS "Actions And Data Types"
+.PP
+An icon is associated with an action or data type using the \fBICON\fP keyword in the action or data type definition
+(located in \fB\&.dt\fP files)\&. If XCDE naming conventions
+are followed, there is no need to specify the path or icon suffix\&. The size
+and format used is determined at runtime based on the system configuration\&.
+.SS "Example"
+.PP
+.nf
+\f(CWACTION    IslandPaintOpenDoc
+{
+    ICON           Ipaint
+    WINDOW_TYPE    NO_STDIO
+    EXEC_HOST      MyMachine
+    EXEC_STRING    /usr/bin/IslandPaint %(File)Arg_1"File to open:"
+}\fR
+.fi
+.PP
+.SS "Client Icons"
+.PP
+An icon is associated with a client\&'s iconified window through the iconImage
+window manager resource as follows:
+.PP
+.nf
+\f(CW\fBDtwm*\fP\fIclientName\fP\fB*iconImage: IconFilename\fP\fR
+.fi
+.PP
+.PP
+The icon may be a pixmap or bitmap format icon\&. Some clients do not
+allow their default icon to be overridden\&.
+.SS "Example"
+.PP
+.nf
+\f(CWDtwm*IslandPaint*clientIcon: IslandPaint\&.bm\fR
+.fi
+.PP
+.SS "Front Panel"
+.PP
+Icons can be displayed as controls in the front panel using the \fBICON\fP keyword in control definitions\&. Either
+pixmap- or bitmap-format icons can be used\&. For controls that are of type \fBicon\fP with \fBMONITOR_TYPE\fP
+set to \fBfile\fP or \fBmail\fP, an alternate image
+can be specified using the keyword \fBALTERNATE_ICON\fP\&. The alternate icon is used when the file size has grown\&. Controls
+of type \fBbusy\fP can also have an alternate icon, which is
+cycled with the \fBICON\fP to give a blinking
+effect\&. For controls that allow a \fBPUSH_ACTION\fP or a \fBDROP_ACTION\fP,
+push or drop animation can be defined using multiple icons that create animation
+visual effects\&.
+.SS "Example"
+.PP
+.nf
+\f(CWCONTROL DirectoryTerm
+{
+    TYPE             icon
+    IMAGE            directoryTerm
+    DROP_ACTION      f\&.action StartDirectoryTerm
+    PUSH_ACTION      f\&.action StartDirectoryTerm
+    PUSH_ANIMATION   DirAnimation
+}
+ANIMATION DirAnimation
+{
+    ANIMATION   frame1  300
+    ANIMATION   frame2
+    \&.\&.\&.
+}\fR
+.fi
+.PP
+.SS "Backdrops"
+.PP
+The backdrop icons show up in a list in the Backdrop Dialog of the Style
+Manager\&. The user can select a single backdrop per workspace to be used as
+the background for that workspace\&. This is a visual clue to help the user
+distinguish one workspace from another\&. Backdrops are available in both monochrome
+(bitmap) and color (pixmap) format (all backdrops are unique; there are not
+bitmap and pixmap versions of the same backdrop)\&. Although backdrops use the
+same file format as other icons, they are not used like what is typically
+referred to as an icon\&. They would be more accurately described as an image\&.
+The image is repeated (tiled) to fill the entire background of a workspace\&.
+This is not typically done with an icon\&. The XCDE comes with a set of
+standard backdrops\&. Some are monochrome and some are in color\&. Custom backdrops
+can be added to system-installed backdrops using the Style Manager and Window
+Manager \fBbackdropDirectories\fP resource\&. Backdrops can be
+either bitmap or pixmap format\&. A system administrator can add system-wide
+backdrops to the system-wide default backdrop directory, \fB/usr/dt/backdrops/C\fP\&.
+.SS "Example"
+.PP
+.nf
+\f(CW*backdropDirectories: /users/julie/\&.dt/icons/myBackdrops\fR
+.fi
+.PP
+.SS "File Manager As Icon Browser"
+.PP
+The File Manager can be used as an icon browser\&. In this mode, when
+you change to a directory that contains icons ( \fB\&.bm\fP or \fB\&.pm\fP files), each icon is displayed next to the icon file name\&. To
+enable icon browsing, copy the file \fB/usr/dt/contrib/types/IconBrowse\&.dt\fP into your \fB$HOME/\&.dt/types\fP directory\&. Then reload
+the action database by executing the \fBReloadActions\fP action\&.
+For large icons, or on systems with little memory, this could cause delays
+on some directories\&. To disable icon browsing, remove personal copies of the \fBIconBrowse\&.dt\fP file and reload the action database again\&.
+.SS "Design Recommendations"
+.PP
+In order to allow colorful icons while minimizing the number of colors
+used by the XCDE, it is recommended that the colors used be limited to
+those available in the Icon Editor\&. These include the dynamic Motif widget
+colors, as well as a set of static colors and static gray colors\&. The dynamic
+colors include foreground, background, top shadow, bottom shadow, select and
+a transparent color\&. The static colors include black, white, red, blue, green,
+yellow, magenta and cyan\&. The static gray colors are eight varying shades
+of gray, from nearly black to nearly white\&.
+.SH "SEE ALSO"
+.PP
+\fBdtpmfile\fP(4), \fBdtbmfile\fP(4), \fBdticon\fP(1), \fBdtfpfile\fP(4), \fBdtdtfile\fP(4), \fBdtactionfile\fP(4), \fBdtdtsfile\fP(4), \fBdtstyle\fP(1), \fBdtenvvar\fP(5), \fBxmgeticonfilename\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

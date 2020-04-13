@@ -1,0 +1,23 @@
+!######################################################################
+!#
+!#     Dthello
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Application Defaults for the CDE DT Login Transition Program
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Novell, Inc.
+!#
+!# $XConsortium: Dthello.src /main/4 1996/04/23 20:10:07 drk $
+!#
+!######################################################################
+
+# include "Dt"
+
+
+
+
+

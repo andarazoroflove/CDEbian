@@ -1,0 +1,186 @@
+'\" t
+...\" register.sgm /main/4 1996/08/30 15:39:06 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "csa_register_callback" "library call"
+.SH "NAME"
+\fBcsa_register_callback\fP \(em register the callback functions to be invoked when the specified type of update occurs in the calendar
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <xcsa\&.h>
+\fBCSA_return_code \fBcsa_register_callback\fP\fR(
+\fBCSA_session_handle \fBsession\fR\fR,
+\fBCSA_flags \fBreason\fR\fR,
+\fBCSA_callback \fBcallback\fR\fR,
+\fBCSA_buffer \fBclient_data\fR\fR,
+\fBCSA_extension *\fBregister_callback_extensions\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBcsa_register_callback\fP function adds the callback procedure to the specified
+callback list for the session\&.
+The service maintains a set
+of callback lists, logically one list per callback activity
+type per session\&.
+The service reports changes to the state
+of the service or its calendars by invoking the appropriate
+callbacks in sequence when the client calls the
+csa_call_callbacks function or when the specified callback
+activity occurs\&.
+The callback is only active for the
+duration of the calendar session\&.
+.SS "Session (Session Handle)"
+.PP
+Opaque session handle that represents a session with the
+calendaring service\&.
+.PP
+Session handles are created by a logon function call and
+invalidated with a logoff function call\&.
+If the session
+handle is invalid, then the error
+\fBCSA_E_INVALID_SESSION_HANDLE\fP is returned\&.
+.SS "Reason (Flags)"
+.PP
+A bitmask of flags\&.
+Unspecified flags should always be
+passed as 0\&.
+Undocumented flags are reserved\&.
+Each flag
+corresponds to a callback activity and the specified
+procedure is added to the callback list for that activity
+type\&.
+Flag settings include:
+.IP "CSA_CB_CALENDAR_LOGON" 10
+If set, the new callback will be invoked when a the
+calendar is accessed by a user\&.
+.IP "CSA_CB_CALENDAR_DELETED" 10
+If set, the new callback will be invoked when a user
+requests that the calendar be deleted\&.
+.IP "CSA_CB_CALENDAR_ATTRIBUTE_UPDATED" 10
+If set, the new callback will be invoked whenever a
+calendar attribute is updated\&.
+.IP "CSA_CB_ENTRY_ADDED" 10
+If set, the new callback will be invoked whenever an entry
+is added to the calendar\&.
+.IP "CSA_CB_ENTRY_DELETED" 10
+If set, the new callback will be invoked whenever an entry
+is deleted from the calendar\&.
+.IP "CSA_CB_ENTRY_UPDATED" 10
+If set, the new callback will be invoked whenever an entry
+is updated on the calendar\&.
+It is implementation specific
+if the callback function is invoked before or after the
+specified update type occurs\&.
+.SS "Callback (Callback)"
+.PP
+Specifies the client procedure that should be called by the
+service to handle the callback activity\&.
+.SS "Client Data (Opaque Data)"
+.PP
+A pointer to a data structure that will be passed to the
+callback function in its client_data argument\&.
+This can be
+used to pass client-specific data structure that will be
+needed by the callback function to perform the task\&.
+.SS "Register Callback Extensions (Extension)"
+.PP
+A pointer to an array of
+\fBCSA_extension\fR structures for this function\&.
+The array may contain both
+input extensions for providing additional information to
+the function and output extensions for receiving
+information from the function\&.
+A value of
+\fBNULL\fP indicates that the caller is not using any extensions\&.
+See the extensions structure for more information\&.
+.SH "RETURN VALUE"
+.SS "Register Callback Extensions (Extension)"
+.PP
+If output extensions were passed to the function in the
+extensions list, the results from the service will be
+available in the extension\&.
+See the extensions structure for more information\&.
+Whether the function succeeded or
+not, and, if not, why\&.
+It may be success or one of the
+values listed under ERRORS below\&.
+.SH "ERRORS"
+.PP
+The
+\fBcsa_register_callback\fP function returns the following error values:
+.IP "CSA_E_FAILURE" 10
+There was a general failure that does not
+fit the description of any other error code\&.
+.IP "CSA_E_INSUFFICIENT_MEMORY" 10
+Insufficient memory was available to complete the requested operation\&.
+.IP "CSA_E_INVALID_FLAG" 10
+A flag value in the
+\fIflags\fP argument was invalid\&.
+.IP "CSA_E_INVALID_FUNCTION_EXT" 10
+The function extension requested is invalid\&.
+.IP "CSA_E_INVALID_PARAMETER" 10
+A function parameter was invalid\&.
+.IP "CSA_E_INVALID_SESSION_HANDLE" 10
+The specified Session Handle is invalid or no longer valid
+(e\&.g\&., after logging off)\&.
+.IP "CSA_E_NO_AUTHORITY" 10
+The user has insufficient authority for this function\&.
+.IP "CSA_E_NOT_SUPPORTED" 10
+The operation requested is not supported by this implementation\&.
+.IP "CSA_E_SERVICE_UNAVAILABLE" 10
+The requested calendar service is unavailable\&.
+.IP "CSA_E_UNSUPPORTED_FLAG" 10
+The flag requested is not supported\&.
+.IP "CSA_E_UNSUPPORTED_FUNCTION_EXT" 10
+The specified function extension is not supported or
+\fBCSA_EXT_REQUIRED\fP is set\&.
+.SH "SEE ALSO"
+.PP
+\fBcsa/csa\&.h - csacsa\fP(5), \fBcsa_add_calendar\fP(3), \fBcsa_add_entry\fP(3), \fBcsa_call_callbacks\fP(3), \fBcsa_delete_calendar\fP(3), \fBcsa_delete_entry\fP(3), \fBcsa_free\fP(3), \fBcsa_free_time_search\fP(3), \fBcsa_list_calendar_attributes\fP(3), \fBcsa_list_calendars\fP(3), \fBcsa_list_entries\fP(3), \fBcsa_list_entry_attributes\fP(3), \fBcsa_list_entry_sequence\fP(3), \fBcsa_logoff\fP(3), \fBcsa_logon\fP(3), \fBcsa_look_up\fP(3), \fBcsa_query_configuration\fP(3), \fBcsa_read_calendar_attributes\fP(3), \fBcsa_read_entry_attributes\fP(3), \fBcsa_read_next_reminder\fP(3), \fBcsa_unregister_callback\fP(3), \fBcsa_update_calendar_attributes\fP(3), \fBcsa_update_entry_attributes\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

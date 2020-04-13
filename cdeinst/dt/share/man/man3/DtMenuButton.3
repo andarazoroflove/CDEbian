@@ -1,0 +1,220 @@
+'\" t
+...\" MenuButt.sgm /main/10 1996/09/08 20:04:50 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtMenuButton" "library call"
+.SH "NAME"
+\fBDtMenuButton\fP \(em the MenuButton widget class
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/MenuButton\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The DtMenuButton widget is a command widget that complements the menu
+cascading functionality of an XmCascadeButton widget\&. As a complement to the
+XmCascadeButton widget, DtMenuButton can only be instantiated outside a MenuPane;
+the application must use XmCascadeButton widget inside a MenuPane\&.
+.PP
+The DtMenuButton widget belongs to a subclass of the XmLabel class\&.
+Visually, the DtMenuButton widget consists of a label string and a menu glyph\&.
+The menu glyph always appears on the right end of the widget and, by default,
+is a downward pointing arrow\&.
+.PP
+The DtMenuButton widget has an implicitly created submenu attached to
+it\&. The submenu is a popup MenuPane and has this DtMenuButton
+widget as its parent\&. The name of the implicitly created submenu is obtained
+by adding \fBsubmenu_\fP as a prefix to the name of this DtMenuButton
+widget\&. The widget ID of the submenu can be obtained by doing an \fBXtGetValues\fP on the \fBDtNsubMenuId\fP
+resource of this DtMenuButton widget\&. The implicitly created submenu must
+not be destroyed by the user of this widget\&.
+.PP
+The submenu can be popped up by pressing the menu post Button (see the \fBXmNmenuPost\fP resource of the \fBXmRowColumn\fP(3) widget)
+anywhere on the DtMenuButton widget\&.
+.PP
+Widget subclassing is not supported for the DtMenuButton widget class\&.
+.SS "Classes"
+.PP
+The DtMenuButton widget inherits behavior and resources from the \fBCore\fP, \fBComposite\fP, \fBXmPrimitive\fP and \fBXmLabel\fP classes\&.
+.PP
+The class pointer is \fBdtMenuButtonWidgetClass\fP\&.
+.PP
+The class name is \fBDtMenuButtonWidget\fR\&.
+.SS "New Resources"
+.PP
+The following table defines a set of widget resources used by the application
+to specify data\&. The application can also set the resource values for the
+inherited classes to set attributes for this widget\&. To reference a resource
+by name or by class in a \fB\&.Xdefaults\fP file, the application
+must remove the \fBDtN\fP or \fBDtC\fP prefix and
+use the remaining letters\&. To specify one of the defined values for a resource
+in a \fB\&.Xdefaults\fP file, the application must remove the \fBDt\fP prefix and use the remaining letters (in either lower case or
+upper case, but including any underscores between words)\&. The codes in the
+access column indicate if the given resource can be set at creation time (C),
+set by using \fBXtSetValues\fP (S), retrieved by using \fBXtGetValues\fP (G), or is not applicable (N/A)\&.
+.TS
+tab();
+lw(1.687695i) lw(1.199377i) lw(0.796729i) lw(1.156542i) lw(0.659657i).
+\fBDtMenuButton Resource
+Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBDtNcascadingCallback\fP\fBDtCCallback\fP\fBXtCallbackList\fRNULLC
+\fBDtNcascadePixmap\fP\fBDtCPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBDtNsubMenuId\fP\fBDtCMenuWidget\fP\fBWidget\fRNULLSG
+.TE
+.IP "\fBDtNcascadingCallback\fP" 10
+Specifies the list of callbacks that is called before the popping up
+of the attached submenu\&. The reason for the callback is \fBDtCR_CASCADING\fP\&.
+.IP "\fBDtNcascadePixmap\fP" 10
+Specifies the pixmap displayed as the menu glyph\&. If no pixmap is specified,
+a downward pointing arrow is displayed\&.
+.IP "\fBDtNsubMenuId\fP" 10
+Specifies the widget ID of the popup MenuPane to be associated with
+this DtMenuButton widget\&. The popup MenuPane must be created with this DtMenuButton
+as its parent\&. This resource cannot be specified at the time of widget creation\&.
+The implicit submenu is automatically destroyed by DtMenuButton when this
+resource is set\&.
+.SS "Inherited Resources"
+.PP
+The DtMenuButton widget inherits behavior and resources from the following
+named superclasses\&. For a complete description of each resource, see the man page
+for that superclass\&.
+.TS
+tab();
+lw(1.615147i) lw(1.606646i) lw(0.850077i) lw(0.748068i) lw(0.680062i).
+\fBXmLabel Resource
+Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBXmNaccelerator\fP\fBXmCAccelerator\fP\fBString\fRNULLCSG
+\fBXmNacceleratorText\fP\fBXmCAcceleratorText\fP\fBXmString\fRNULLCSG
+\fBXmNalignment\fP\fBXmCAlignment\fP\fBunsigned char\fRdynamicCSG
+\fBXmNfontList\fP\fBXmCFontList\fP\fBXmFontList\fRdynamicCSG
+\fBXmNlabelInsensitivePixmap\fP\fBXmCLabelInsensitivePixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNlabelPixmap\fP\fBXmCLabelPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNlabelString\fP\fBXmCXmString\fP\fBXmString\fRdynamicCSG
+\fBXmNlabelType\fP\fBXmCLabelType\fP\fBunsigned char\fRXmSTRINGCSG
+\fBXmNmarginBottom\fP\fBXmCMarginBottom\fP\fBDimension\fR0CSG
+\fBXmNmarginHeight\fP\fBXmCMarginHeight\fP\fBDimension\fR2CSG
+\fBXmNmarginLeft\fP\fBXmCMarginLeft\fP\fBDimension\fR0CSG
+\fBXmNmarginRight\fP\fBXmCMarginRight\fP\fBDimension\fR0CSG
+\fBXmNmarginTop\fP\fBXmCMarginTop\fP\fBDimension\fR0CSG
+\fBXmNmarginWidth\fP\fBXmCMarginWidth\fP\fBDimension\fR2CSG
+\fBXmNmnemonic\fP\fBXmCMnemonic\fP\fBKeySym\fRNULLCSG
+\fBXmNmnemonicCharSet\fP\fBXmCMnemonicCharSet\fP\fBString\fRXmFONTLIST-_DEFAULT_TAGCSG
+\fBXmNrecomputeSize\fP\fBXmCRecomputeSize\fP\fBBoolean\fRTrueCSG
+\fBXmNstringDirection\fP\fBXmCStringDirection\fP\fBXmStringDirection\fRdynamicCSG
+.TE
+.TS
+tab();
+lw(1.729771i) lw(1.679389i) lw(0.713740i) lw(0.713740i) lw(0.663359i).
+\fBXmPrimitive Resource
+Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBXmNbottomShadowColor\fP\fBXmCBottomShadowColor\fP\fBPixel\fRdynamicCSG
+\fBXmNbottomShadowPixmap\fP\fBXmCBottomShadowPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNforeground\fP\fBXmCForeground\fP\fBPixel\fRdynamicCSG
+\fBXmNhelpCallback\fP\fBXmCCallback\fP\fBXtCallbackList\fRNULLC
+\fBXmNhighlightColor\fP\fBXmCHighlightColor\fP\fBPixel\fRdynamicCSG
+\fBXmNhighlightOnEnter\fP\fBXmCHighlightOnEnter\fP\fBBoolean\fRFalseCSG
+\fBXmNhighlightPixmap\fP\fBXmCHighlightPixmap\fP\fBPixmap\fRdynamicCSG
+\fBXmNhighlightThickness\fP\fBXmCHighlightThickness\fP\fBDimension\fR0CSG
+\fBXmNnavigationType\fP\fBXmCNavigationType\fP\fBXmNavigationType\fRXmNONECSG
+\fBXmNshadowThickness\fP\fBXmCShadowThickness\fP\fBDimension\fR0CSG
+\fBXmNtopShadowColor\fP\fBXmCTopShadowColor\fP\fBPixel\fRdynamicCSG
+\fBXmNtopShadowPixmap\fP\fBXmCTopShadowPixmap\fP\fBPixmap\fRdynamicCSG
+\fBXmNtraversalOn\fP\fBXmCTraversalOn\fP\fBBoolean\fRFalseCSG
+\fBXmNunitType\fP\fBXmCUnitType\fP\fBunsigned char\fRdynamicCSG
+\fBXmNuserData\fP\fBXmCUserData\fP\fBXtPointer\fRNULLCSG
+.TE
+.TS
+tab();
+lw(1.672068i) lw(1.621142i) lw(0.772377i) lw(0.763889i) lw(0.670525i).
+\fBCore Resource Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBXmNaccelerators\fP\fBXmCAccelerators\fP\fBXtAccelerators\fRdynamicCSG
+\fBXmNancestorSensitive\fP\fBXmCSensitive\fP\fBBoolean\fRdynamicG
+\fBXmNbackground\fP\fBXmCBackground\fP\fBPixel\fRdynamicCSG
+\fBXmNbackgroundPixmap\fP\fBXmCPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNborderColor\fP\fBXmCBorderColor\fP\fBPixel\fRXtDefaultForegroundCSG
+\fBXmNborderPixmap\fP\fBXmCPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNborderWidth\fP\fBXmCBorderWidth\fP\fBDimension\fR0CSG
+\fBXmNcolormap\fP\fBXmCColormap\fP\fBColormap\fRdynamicCG
+\fBXmNdepth\fP\fBXmCDepth\fP\fBint\fRdynamicCG
+\fBXmNdestroyCallback\fP\fBXmCCallback\fP\fBXtCallbackList\fRNULLC
+\fBXmNheight\fP\fBXmCHeight\fP\fBDimension\fRdynamicCSG
+\fBXmNinitialResourcesPersistent\fP\fBXmCInitialResourcesPersistent\fP\fBBoolean\fRTrueC
+\fBXmNmappedWhenManaged\fP\fBXmCMappedWhenManaged\fP\fBBoolean\fRTrueCSG
+\fBXmNscreen\fP\fBXmCScreen\fP\fBScreen *\fRdynamicCG
+\fBXmNsensitive\fP\fBXmCSensitive\fP\fBBoolean\fRTrueCSG
+\fBXmNtranslations\fP\fBXmCTranslations\fP\fBXtTranslations\fRdynamicCSG
+\fBXmNwidth\fP\fBXmCWidth\fP\fBDimension\fRdynamicCSG
+\fBXmNx\fP\fBXmCPosition\fP\fBPosition\fR0CSG
+\fBXmNy\fP\fBXmCPosition\fP\fBPosition\fR0CSG
+.TE
+.SS "Callback Information"
+.PP
+A pointer to the following structure is passed to each DtMenuButton
+callback:
+.PP
+.nf
+\f(CWtypedef struct {
+        int     \fIreason\fP;
+        XEvent  *\fIevent\fP;
+} XmAnyCallbackStruct;\fR
+.fi
+.PP
+.PP
+The \fIreason\fP argument indicates why the
+callback was invoked; it is always \fBDtCR_CASCADING\fP when the \fBDtNcascadingCallback\fP
+is issued\&.
+.PP
+The \fIevent\fP argument points to the \fBXEvent\fR that triggered the callback or \fBNULL\fP if the callback was not triggered by an \fBXEvent\fR\&.
+.SH "SEE ALSO"
+.PP
+\fBDtCreateMenuButton\fP(3), \fBCore\fP(3), \fBXmLabel\fP(3), \fBXmPrimitive\fP(3), \fBXmRowColumn\fP(3), \fBXtGetValues\fP(3), \fBXtSetValues\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

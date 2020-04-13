@@ -1,0 +1,135 @@
+'\" t
+...\" AddWsMCb.sgm /main/6 1996/09/08 20:23:22 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtWsmAddWorkspaceModifiedCallback" "library call"
+.SH "NAME"
+\fBDtWsmAddWorkspaceModifiedCallback\fP \(em add a callback to be called when any workspace is changed
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Wsm\&.h>
+\fBDtWsmCBContext \fBDtWsmAddWorkspaceModifiedCallback\fP\fR(
+\fBWidget \fBwidget\fR\fR,
+\fBDtWsmWsModifiedProc \fBws_change\fR\fR,
+\fBPointer \fBclient_data\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtWsmAddWorkspaceModifiedCallback\fP function works with the
+XCDE
+workspace manager,
+\fBdtwm\fP(1), and registers a function to be called when a workspace is added,
+deleted or modified\&.
+.PP
+The
+\fIwidget\fP argument is a realized widget\&.
+.PP
+The
+\fIws_change\fP argument is the procedure to be called when a workspace is
+modified\&.
+.PP
+The
+\fIclient_data\fP argument points to arbitrary client data to be
+passed back to
+\fIws_change\fP\&.
+.PP
+The
+header defines the
+\fBDtWsmWsModifiedProc\fR callback prototype as follows:
+.PP
+.nf
+\f(CWtypedef void (*DtWsmWsModifiedProc)(Widget \fIwidget\fP,
+        Atom \fIaWorkspace\fP,
+        DtWsmWsReason \fIreason\fP,
+        Pointer \fIclient_data\fP);\fR
+.fi
+.PP
+.PP
+The
+\fIwidget\fP argument is the ID of the widget to be registered with the callback\&.
+.PP
+The
+\fIaWorkspace\fP argument is the name of the new current workspace
+(converted to an X atom)\&.
+.PP
+The
+\fIreason\fP argument is a type of modification:
+.IP "DtWSM_REASON_ADD" 10
+A new workspace was added\&.
+.IP "DtWSM_REASON_BACKDROP" 10
+The backdrop for the workspace changed\&.
+.IP "DtWSM_REASON_CURRENT" 10
+A different workspace was made the current workspace\&.
+.IP "DtWSM_REASON_DELETE" 10
+A workspace was deleted\&.
+.IP "DtWSM_REASON_TITLE" 10
+The workspace title changed\&.
+.PP
+The
+\fIclient_data\fP argument points to the client data to be
+registered with the callback\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBDtWsmAddWorkspaceModifiedCallback\fP function returns a workspace callback registration context\&.
+.SH "APPLICATION USAGE"
+.PP
+The
+\fBDtWsmAddWorkspaceModifiedCallback\fP function returns a registration context that the application
+must save in order to remove this callback later\&.
+.PP
+\fBDtWsmAddWorkspaceModifiedCallback\fP requires a window; thus, a gadget is not acceptable for the
+\fIwidget\fP argument\&.
+.PP
+The
+\fBDtWsmRemoveWorkspaceCallback\fP(3) function needs a registration context to remove the callback\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Wsm\&.h - DtWsm\fP(5), \fBdtwm\fP(1), \fBDtWsmGetWorkspaceInfo\fP(3), \fBDtWsmGetWorkspaceList\fP(3), \fBDtWsmRemoveWorkspaceCallback\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

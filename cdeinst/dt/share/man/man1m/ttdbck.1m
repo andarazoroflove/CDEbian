@@ -1,0 +1,158 @@
+'\" t
+...\" ttdbck.sgm /main/5 1996/09/08 20:22:38 rws $
+...\" ttdbck.sgm /main/5 1996/09/08 20:22:38 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdbck" "user cmd"
+.SH "NAME"
+\fBttdbck\fP \(em display, check, or repair ToolTalk databases
+.SH "SYNOPSIS"
+.PP
+\fBttdbck\fP [\fIselection opts\fP]  [\fIdiagnosis opts\fP]  [\fIdisplay opts\fP]  [\fIrepair opts\fP]  [\fIdata-base-directory\fP]  [\&.\&.\&.] 
+.SH "DESCRIPTION"
+.PP
+\fBttdbck\fP is the ToolTalk database maintenance tool\&.
+It allows direct inspection of ToolTalk spec data, detection of
+inconsistencies, and repair of problems\&.
+.SH "OPTIONS"
+.IP "data-base-directory" 10
+Names the directory or directories containing the ToolTalk database to be
+inspected or repaired\&. If no directories are named, the current directory is
+assumed\&. If a directory path does not end in ``TT_DB\&'\&', ``TT_DB\&'\&'
+is appended\&.
+.IP "" 10
+The user running the command must have read access to the files in the
+directory to inspect the data and write access to repair the data\&.
+Since ToolTalk databases are typically accessible only to root, this
+command is normally run as root\&.
+.SS "Selection options"
+.PP
+The selection options determine which specs in the database are displayed
+or modified\&. If no selection options are given, all specs in the database
+are displayed\&. To prevent massive accidental changes to ToolTalk
+databases, no repair options except
+\fB-I\fP are allowed unless a selection or
+diagnosis option is given\&.
+.IP "-f\  filename" 10
+Restricts the set of specs to be inspected or modified to those which
+describe objects in the named file\&. The file name can contain shell-style
+wildcards which must be escaped to prevent the shell from expanding them\&.
+.IP "-k\  objidkey" 10
+An object id key, specifying a particular spec to be displayed or modified\&.
+The object id key can be obtained from a previous invocation of
+\fBttdbck\fP; one might display a set of specs, determine the one that needs repair, and
+specify its key here\&.
+.IP "-t\  type" 10
+Restricts the set of specs to be inspected or modified to those with
+otype
+\fItype\&.\fP The type name can contain shell-style wildcards which must be escaped
+to prevent the shell from expanding them\&.
+.SS "Diagnosis options"
+.PP
+These options check for and report on inconsistencies in the selected specs\&.
+Only specs selected by the selection options are checked\&. If a diagnosis
+option is given, any display or repair option is applied only to specs which
+fail the diagnostic check\&.
+.IP "-b" 10
+Check for badly formed specs: those which have no file or type or those
+which have types not defined in the type database\&.
+.IP "-x" 10
+Check for specs which refer to files that no longer exist\&.
+.SS "Display options"
+.PP
+These options determine which data is printed for each selected spec\&.
+.IP "-i" 10
+Display the object id (including the object id key\&.)
+.IP "-m" 10
+Display the mandatory data that must appear in every spec: the otype
+of the object described by the spec and the file in which the spec is
+stored\&.
+.IP "-p" 10
+Display all the properties and values for each selected spec\&.
+.IP "-a" 10
+Display all data (equivalent to specifying
+\fB-imp\fP)
+.SS "Repair options"
+.IP "-I" 10
+Invoke the NetISAM isrepair() function for all files accessed\&.
+This action is applied before any other inspection or repair
+action\&.
+This option should be used when normal operations
+return EBADFILE (error code 105)\&.
+.IP "-F \ filename" 10
+Change the file name for the selected specs to the supplied file name\&.
+.IP "-T \ otypeid" 10
+Change the type of the selected specs to the given otype\&.
+.IP "-Z" 10
+Remove the selected specs entirely\&.
+.SH "EXAMPLES"
+.IP "" 10
+\fBttdbck\fP \fB-bxi\fP \fB/home\fP
+.IP "" 10
+In the /home/TT_DB directory, finds all badly formed specs and specs that
+refer to non-existent files and prints their ids\&.
+.IP "" 10
+\fBttdbck\fP \fB-f\fP \fB/home/sample/data\fP \fB-F\fP \fB/home/sample/data1\fP \fB/home\fP
+.IP "" 10
+In the /home/TT_DB directory, finds all specs that refer to objects in
+file /home/sample/data and changes them to refer to /home/sample/data1\&.
+.IP "" 10
+\fBttdbck\fP \fB-t\fP \fBSample_Otype_Name\fP \fB-Z\fP \fB/export/TT_DB\fP
+.IP "" 10
+In the /export/TT_DB directory, finds all specs that refer to objects
+of type
+\fISample_Otype_Name\fP and deletes the specs\&.
+.SH "FILES"
+.IP "/path/TT_DB" 10
+ToolTalk database
+.SH "NOTES"
+.PP
+The
+\fBttdbck\fP command should be run on the same machine where the TT_DB files
+being inspected and repaired physically exist\&. That is, don\&'t try to access
+the TT_DB files via NFS\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

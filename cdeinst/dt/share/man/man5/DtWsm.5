@@ -1,0 +1,178 @@
+'\" t
+...\" DtWsm.sgm /main/10 1996/09/08 20:00:25 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Dt/Wsm\&.h" "file formats"
+.SH "NAME"
+\fBDt/Wsm\&.h\fP \(em workspace manager definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Wsm\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDt/Wsm\&.h\fP header defines structures
+and function prototypes for workspace management services\&.
+.PP
+The \fBDtWsmWorkspaceInfo\fR structure
+contains at least the following members:
+.TS
+tab();
+lw(1.563618i) lw(1.640159i) lw(2.296223i).
+\f(CWAtom\fP\f(CWworkspace\fPX atom name for the workspace
+\f(CWunsigned long\fP\f(CWbg\fPBackdrop background pixel
+\f(CWunsigned long\fP\f(CWfg\fPBackdrop foreground pixel
+\f(CWAtom\fP\f(CWbackdropName\fPX atom name for backdrop
+\f(CWint\fP\f(CWcolorSetId\fPNumber of color set used
+\f(CWchar\fP\f(CW*pchTitle\fPTitle of workspace
+\f(CWWindow\fP\f(CWbackdropWindow\fPT{
+The backdrop window for the current workspace
+T}
+.TE
+.PP
+The \fBDtWsmCBContext\fR structure
+is opaque\&. Workspace management functions that add callbacks to uniquely identify
+callback functions for later removal, return the \fBDtWsmCBContext\fR structure\&.
+.PP
+The header defines the following \fBDtWsmWsReason\fR constants:
+.PP
+.nf
+\f(CWDtWSM_REASON_ADD
+DtWSM_REASON_DELETE
+DtWSM_REASON_BACKDROP
+DtWSM_REASON_TITLE
+DtWSM_REASON_CURRENT\fR
+.fi
+.PP
+.PP
+The header defines the following functions:
+.PP
+.nf
+DtWsmCBContext
+DtWsmAddCurrentWorkspaceCallback(Widget \fIwidget\fP,
+        DtWsmWsChangeProc \fIws_change\fP,
+        Pointer \fIclient_data\fP);
+.fi
+.PP
+.nf
+void DtWsmAddWorkspaceFunctions(Display *\fIdisplay\fP,
+        Window \fIwindow\fP);
+.fi
+.PP
+.nf
+void DtWsmRemoveWorkspaceFunctions(Display *\fIdisplay\fP,
+        Window \fIwindow\fP);
+.fi
+.PP
+.nf
+DtWsmCBContext
+DtWsmAddWorkspaceModifiedCallback(Widget \fIwidget\fP,
+        DtWsmWsModifiedProc \fIws_change\fP,
+        Pointer \fIclient_data\fP);
+.fi
+.PP
+.nf
+void DtWsmRemoveWorkspaceCallback(DtWsmCBContext \fIcontext\fP);
+.fi
+.PP
+.nf
+void DtWsmFreeWorkspaceInfo(DtWsmWorkspaceInfo *\fIpWsInfo\fP);
+.fi
+.PP
+.nf
+Status DtWsmGetCurrentBackdropWindows(Display *\fIdisplay\fP,
+        Window \fIroot\fP);
+.fi
+.PP
+.nf
+Status DtWsmGetCurrentWorkspace(Display *\fIdisplay\fP,
+        Window \fIroot\fP,
+        Atom *\fIpaWorkspace\fP);
+.fi
+.PP
+.nf
+Status DtWsmSetCurrentWorkspace(Widget \fIwidget\fP,
+        Atom \fIaWorkspace\fP);
+.fi
+.PP
+.nf
+Status DtWsmGetWorkspaceInfo(Display *\fIdisplay\fP,
+        Window \fIroot\fP,
+        Atom \fIaWorkspace\fP,
+        DtWsmWorkspaceInfo **\fIppWsInfo\fP);
+.fi
+.PP
+.nf
+Status DtWsmGetWorkspaceList(Display *\fIdisplay\fP,
+        Window \fIroot\fP,
+        Atom **\fIppaWorkspaces\fP,
+        int *\fIpNumWs\fP);
+.fi
+.PP
+.nf
+Status DtWsmGetWorkspacesOccupied(Display *\fIdisplay\fP,
+        Window \fIwindow\fP,
+        Atom **\fIppaWorkspace\fP,
+        int *\fIpNumWs\fP);
+.fi
+.PP
+.nf
+void DtWsmSetWorkspacesOccupied(Display *\fIdisplay\fP,
+        Window \fIwindow\fP,
+        Atom *\fIpaWorkspaces\fP,
+        int \fInumWs\fP);
+.fi
+.PP
+.nf
+void DtWsmOccupyAllWorkspaces(Display *\fIdisplay\fP,
+        Window \fIwindow\fP);
+.fi
+.SH "SEE ALSO"
+.PP
+\fBDtWsmAddCurrentWorkspaceCallback\fP(3), \fBDtWsmAddWorkspaceFunctions\fP(3), \fBDtWsmAddWorkspaceModifiedCallback\fP(3), \fBDtWsmFreeWorkspaceInfo\fP(3), \fBDtWsmGetCurrentBackdropWindow\fP(3), \fBDtWsmGetCurrentWorkspace\fP(3), \fBDtWsmGetWorkspaceInfo\fP(3), \fBDtWsmGetWorkspaceList\fP(3), \fBDtWsmGetWorkspacesOccupied\fP(3), \fBDtWsmOccupyAllWorkspaces\fP(3), \fBDtWsmRemoveWorkspaceCallback\fP(3), \fBDtWsmRemoveWorkspaceFunctions\fP(3), \fBDtWsmSetCurrentWorkspace\fP(3), \fBDtWsmSetWorkspacesOccupied\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

@@ -1,0 +1,482 @@
+'\" t
+...\" DndDropR.sgm /main/10 1996/11/15 15:20:54 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtDndDropRegister" "library call"
+.SH "NAME"
+\fBDtDndDropRegister\fP,
+\fBDtDndVaDropRegister\fP \(em specify a drop site
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Dnd\&.h>
+\fBvoid \fBDtDndDropRegister\fP\fR(
+\fBWidget \fBdropSite\fR\fR,
+\fBDtDndProtocol \fBprotocols\fR\fR,
+\fBunsigned char \fBoperations\fR\fR,
+\fBXtCallbackList \fBtransferCallback\fR\fR,
+\fBArgList \fBargList\fR\fR,
+\fBCardinal \fBargCount\fR\fR);
+.fi
+.PP
+.nf
+\fBvoid \fBDtDndVaDropRegister\fP\fR(
+\fBWidget \fBdropSite\fR\fR,
+\fBDtDndProtocol \fBprotocols\fR\fR,
+\fBunsigned char \fBoperations\fR\fR,
+\fBXtCallbackList \fBtransferCallback\fR\fR,
+\fB\&.\&.\&.\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP functions register a Motif drop site with import targets based on the
+specified data transfer protocols\&.
+\fBDtDndDropRegister\fP may be called to register a widget as a drop site at any time, typically
+soon after the widget is created\&.
+.PP
+The only difference between
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP is how the argument list is passed\&.
+The argument list is passed as an
+\fBArgList\fR to
+\fBDtDndDropRegister\fP and using
+\fBVarArgs\fP for
+\fBDtDndVaDropRegister\fP\&.
+.PP
+The
+\fBdropSite\fP argument specifies the widget to register as the drop site\&.
+.PP
+The
+\fIprotocol\fP argument specifies the set of data transfer protocols
+in which the drop site is able to participate\&.
+Valid values are:
+.IP "DtDND_TEXT_TRANSFER" 10
+The drop site can transfer a list of text\&.
+.IP "DtDND_FILENAME_TRANSFER" 10
+The drop site can transfer a list of file names\&.
+.IP "DtDND_BUFFER_TRANSFER" 10
+The drop site can transfer a list of memory buffers\&.
+.PP
+A drop site can support any combination of these protocols\&.
+A combination of protocols is specified by the
+bitwise inclusive OR of several protocol values\&.
+.PP
+The
+\fIoperations\fP argument
+specifies the set of valid operations associated with a drop site\&.
+The operations are:
+.IP "XmDROP_COPY" 10
+Copy operations are valid\&.
+The data will be copied from the drag source\&.
+.IP "XmDROP_LINK" 10
+Link operations are valid\&.
+The data will be linked using an alternative method\&.
+.IP "XmDROP_MOVE" 10
+Move operations are valid\&.
+The data will be copied, and optionally deleted, from the drag source\&.
+.PP
+A drop site can support any combination of these operations\&.
+A combination of operations is specified by the
+bitwise inclusive OR of several operation values\&.
+.PP
+The
+\fBtransferCallback\fP argument
+specifies the callback to be called when the dropped data object has been
+received by the drop site\&.
+The
+\fBtransferCallback\fP is responsible for transferring the data from the
+\fBdropData\fP to the appropriate internal data structures at the drop site\&.
+The arguments for the
+\fBconvertCallback\fP are the Motif Drag Context, an
+\fBXtPointer\fR to application-supplied client data,
+and an
+\fBXtPointer\fR to a
+\fBDtDndConvertCallbackStruct\fR structure\&.
+.PP
+The
+\fBargList\fP argument specifies the optional argument list\&.
+.PP
+The
+\fBargCount\fP argument specifies the number of arguments in
+\fBargList\fP\&.
+.SS "Argument Value Pairs"
+.PP
+The
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP functions support the following optional argument-value pairs\&.
+Motif resources can be set via the argument list as well,
+provided they are not resources that are used by the drag and drop subsystem;
+see
+\fBMotif Resources\fP\&.
+.IP "\fBDtNregisterChildren\fP (\fBBoolean\fR)" 10
+Specifies whether children of a composite drop site
+widget should be registered\&.
+If \fBTrue\fP, then the composite
+\fBdropSite\fP widget and its children are registered as a single drop site\&.
+If \fBFalse\fP, then only the
+\fBdropSite\fP widget itself is registered as the drop site\&.
+The default is \fBFalse\fP\&.
+.IP "\fBDtNtextIsBuffer\fP (\fBBoolean\fR)" 10
+Specifies whether the drops of text selections
+should be treated as buffer drops\&.
+This attribute is only valid if
+\fIprotocols\fP includes
+\fBDtDND_BUFFER_TRANSFER\fP\&. If
+\fBDtNtextIsBuffer\fP is \fBTrue\fP, text drops are accepted as unnamed buffers;
+if it is \fBFalse\fP, only drops of the specified
+\fIprotocols\fP are accepted\&.
+The default is \fBFalse\fP\&.
+.IP "\fBDtNpreserveRegistration\fP (\fBBoolean\fR)" 10
+Specifies whether to preserve any existing drop site
+registration for the
+\fBdropSite\fP widget\&.
+The application can disable preserving the
+drop site registration if the
+\fBdropSite\fP widget is known not to be registered as a drop site
+or that registration is not desired\&.
+This may improve drop site registration performance\&.
+If
+\fBDtNpreserveRegistration\fP is \fBTrue\fP, existing drop site registration is preserved;
+if it is \fBFalse\fP, the existing drop site registration is replaced\&.
+The default is \fBTrue\fP\&.
+.IP "\fBDtNdropAnimateCallback\fP (\fBXtCallbackList\fR)" 10
+Specifies the callback to be called when the drop is complete\&.
+This enables graphical animation upon successful completion of a drop\&.
+This callback is called after the
+\fBtransferCallback\fP is called and after Motif performs the "melt" effect\&.
+The arguments for the
+\fBDtNDropAnimateCallback\fP are the Motif Drag Context, an
+\fBXtPointer\fR to application-supplied client data,
+and an
+\fBXtPointer\fR to a
+\fBDtDndDropAnimateCallbackStruct\fR structure\&.
+The Motif Drag Context is in the process of being destroyed at this
+point so the application must not use it or any of its values in the
+\fBdropAnimateCallback\fP\&. The default is
+\fBNULL\fP\&.
+.SS "Callbacks"
+.PP
+Once the rendezvous with the drag source has been accomplished,
+the application-provided callback functions are called
+to perform the data transfer\&.
+.PP
+First, the
+\fBtransferCallback\fP is called with a
+\fIreason\fP of
+\fBDtCR_DND_TRANSFER_DATA\fP\&. The application should access the
+\fBDtDndContext\fR fields appropriate for the transfer protocol\&.
+The application should parse or type the dropped data
+to determine whether it is acceptable\&.
+If the dropped data is not acceptable,
+the status field of the
+\fBDtDndTransferCallbackStruct\fR should be set to
+\fBDtDND_FAILURE\fP\&.
+.PP
+If the
+\fBDtNdropAnimateCallback\fP attribute has been specified, the
+\fBdropAnimateCallback\fP is then called with a
+\fIreason\fP of
+\fBDtCR_DND_DROP_ANIMATE\fP\&. The application should perform any
+application-provided animations for the drop\&.
+.PP
+When the
+\fBtransferCallback\fP (or the
+\fBdropAnimateCallback\fP, if specified)
+returns, all memory associated with the
+drop transfer is freed\&.
+Any data in the callback structures that will be
+used after the drop transfer is complete must be copied
+by the application\&.
+.SS "Callback Information"
+.PP
+Each of the callbacks for
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP has an associated callback structure\&.
+These callbacks cannot be used with the
+\fBXtAddCallback\fP(3) interface\&.
+.PP
+A pointer to the following structure is passed to the
+\fBtransferCallback\fP:
+.PP
+.nf
+\f(CWtypedef struct {
+			int 		\fIreason\fP;
+			XEvent 		*\fIevent\fP;
+			Position	     \fIx\fP, \fIy\fP;
+			unsigned char 	\fIoperation\fP;
+			DtDndContext 	*\fIdropData\fP;
+			Widget		\fIdragContext\fP;
+			Boolean 	\fIcompleteMove\fP;
+			DtDndStatus 	\fIstatus\fP;
+} DtDndTransferCallbackStruct, *DtDndTransferCallback;\fR
+.fi
+.PP
+.PP
+The
+\fIreason\fP argument
+indicates why the callback was invoked:
+\fBDtCR_DND_TRANSFER_DATA\fP\&.
+.PP
+The
+\fIevent\fP argument is always set to
+\fBNULL\fP by Motif drag and drop\&.
+.PP
+The
+\fIx\fP and
+\fIy\fP arguments
+indicate the coordinates of the dropped item in relation to the origin of
+the drop site widget\&.
+.PP
+The
+\fIoperation\fP argument indicates the type of drop:
+\fBXmDROP_COPY\fP, \fBXmDROP_MOVE\fP or
+\fBXmDROP_LINK\fP\&.
+.PP
+The
+\fBdropData\fP argument
+contains the data that has been dropped\&.
+.PP
+The
+\fIdragContext\fP argument
+specifies the ID of the Motif Drag Context widget associated with this
+drag and drop transaction\&.
+.PP
+The
+\fBcompleteMove\fP argument
+indicates whether a move operation needs to be completed\&.
+If the
+\fIoperation\fP is
+\fBXmDROP_MOVE\fP and
+\fBcompleteMove\fP is set to \fBFalse\fP in the
+\fBtransferCallback\fP, a delete does not occur\&.
+By default,
+\fBcompleteMove\fP is \fBTrue\fP and a delete occurs to complete the move operation\&.
+The
+\fBcompleteMove\fP field should be set to \fBFalse\fP if an
+alternative method will be used to complete the move\&.
+.PP
+The
+\fIstatus\fP argument
+indicates the success or failure of the data transfer\&.
+If the data could not
+be appropriately moved, copied or linked, the
+\fIstatus\fP field must be set to
+\fBDtDND_FAILURE\fP\&. By default, the
+\fIstatus\fP field is set to
+\fBDtDND_SUCCESS\fP\&.
+.PP
+A pointer to the following structure is passed to the
+\fBdropAnimateCallback\fP:
+.PP
+.nf
+\f(CWtypedef struct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        Position \fIx\fP, \fIy\fP;
+        unsigned char \fIoperation\fP;
+        DtDndContext *\fBdropData\fP;
+} DtDndDropAnimateCallbackStruct, *DtDndDropAnimateCallback;\fR
+.fi
+.PP
+.PP
+The
+\fIreason\fP argument
+indicates why the callback was invoked\&.
+The valid reason is
+\fBDtCR_DND_DROP_ANIMATE\fP\&.
+.PP
+The
+\fIevent\fP argument
+is always set to
+\fBNULL\fP by Motif drag and drop\&.
+.PP
+The
+\fIx\fP and
+\fIy\fP arguments
+indicate the coordinates of the dropped item in relation to the origin of
+the drop site widget\&.
+.PP
+The
+\fIoperation\fP argument indicates the type of drop:
+\fBXmDROP_COPY\fP, \fBXmDROP_MOVE\fP or
+\fBXmDROP_LINK\fP\&.
+.PP
+The
+\fBdropData\fP argument
+contains the data that has been dropped\&.
+.SS "Structures"
+.PP
+The following structures are used by the drop site in the
+\fBtransferCallback\fP to get the transferred data from the drag and drop subsystem\&.
+The
+\fBDtDndContext\fR structure is passed as
+\fBdropData\fP in the
+\fBDtDndTransferCallbackStruct\fR structure\&.
+.PP
+.nf
+\f(CWtypedef struct {
+        DtDndProtocol \fIprotocol\fP;
+        int \fBnumItems\fP;
+        union {
+                XmString *\fIstrings\fP;
+                String *\fBfiles\fP;
+                DtDndBuffer *\fBbuffers\fP;
+        } \fIdata\fP;
+} DtDndContext;\fR
+.fi
+.PP
+.PP
+The
+\fIprotocol\fP argument
+indicates the data transfer protocol under which the data in the
+\fBDtDndContext\fR is being transferred\&.
+Valid values are:
+.IP "DtDND_TEXT_TRANSFER" 10
+A list of text is being transferred\&.
+.IP "DtDND_FILENAME_TRANSFER" 10
+A list of file names is being transferred\&.
+.IP "DtDND_BUFFER_TRANSFER" 10
+A list of memory buffers is being transferred\&.
+.PP
+The
+\fBnumItems\fP argument indicates the number of items being transferred\&.
+.PP
+The
+\fIdata\fP argument
+is a union containing data that the drop site should access in the format
+corresponding to the specified
+\fIprotocol\fP\&. The data structures corresponding to the transfer protocols are as follows\&.
+.PP
+The
+\fIstrings\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_TEXT_TRANSFER\fP\&. The
+\fIstrings\fP argument is an array of pointers to Motif strings
+containing the text being transferred\&.
+.PP
+The
+\fBfiles\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_FILENAME_TRANSFER\fP\&. It is an array of pointers to the names of the files being transferred\&.
+The file names have been converted to local host file names
+where possible\&.
+.PP
+The
+\fBbuffers\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_BUFFER_TRANSFER\fP\&. It is an array of pointers to
+\fBDtDndBuffer\fR structures containing the meory buffers being transferred\&.
+.PP
+The following structure is used with
+\fBDtDND_FILENAME_TRANSFER\fP:
+.PP
+.nf
+\f(CWtypedef struct _DtDndBuffer {
+        void *\fBbp\fP;
+        int \fIsize\fP;
+        string \fIname\fP;
+} DtDndBuffer;\fR
+.fi
+.PP
+.PP
+The
+\fBbp\fP argument points to the buffer data being transferred\&.
+.PP
+The
+\fIsize\fP argument indicates the number of bytes in the buffer\&.
+.PP
+The
+\fIname\fP argument points to the name of the buffer\&.
+.SS "Motif Resources"
+.PP
+When it calls
+\fBXmDropSiteRegister\fP(3), the
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP functions set Motif resources;
+the application must not modify the values of any of these resources\&.
+Resources other than those listed here
+can be used and are passed through to the underlying
+\fBXmDropRegister\fP\&. call\&.
+.PP
+The following resources are modified by
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP in the Motif Drag Context\&.
+.IP "   \(bu" 6
+\fBXmNdestroyCallback\fP
+.IP "   \(bu" 6
+\fBXmNdropTransfers\fP
+.IP "   \(bu" 6
+\fBXmNnumDropTransfers\fP
+.IP "   \(bu" 6
+\fBXmNtransferProc\fP
+.IP "   \(bu" 6
+\fBXmNtransferStatus\fP
+.PP
+The following resources are modified by
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP in the Motif Drop Site\&.
+.IP "   \(bu" 6
+\fBXmNdropProc\fP
+.IP "   \(bu" 6
+\fBXmNdropSiteOperations\fP
+.IP "   \(bu" 6
+\fBXmNdropSiteType\fP
+.IP "   \(bu" 6
+\fBXmNimportTargets\fP
+.IP "   \(bu" 6
+\fBXmNnumImportTargets\fP
+.SH "RETURN VALUE"
+.PP
+The
+\fBDtDndDropRegister\fP and
+\fBDtDndVaDropRegister\fP functions return no value\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Dnd\&.h - DtDnd\fP(5), \fBDtDtsDataTypeToAttributeValue\fP(3), \fBDtDndDragStart\fP(3), \fBDtDndDragStart\fP(3), \fBDtDndDropUnregister\fP(3), \fBXmDragContext\fP(3), \fBXmDropSite\fP(3), \fBXmDropSiteRegister\fP(3), \fBXmDropSiteUpdate\fP(3), \fBXmDropTransfer\fP(3), \fBXmDropTransferStart\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

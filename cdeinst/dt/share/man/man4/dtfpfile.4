@@ -1,0 +1,543 @@
+'\" t
+...\" dtfpfile.sgm /main/8 1996/08/31 14:55:31 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtfpfile" "special file"
+.SH "NAME"
+\fBdtfpfile\fP \(em format
+and locations of front panel configuration files
+.SH "SYNOPSIS"
+.PP
+.nf
+set DtDbVersion=\fIversion_number\fP
+set \fIVariableName\fP=\fIvariable_value\fP
+\fIRecordType\fP \fIrecord_name\fP
+{
+        # \fIComment\fP
+        \fIKeyword\fP \fIValue\fP
+        \fIKeyword\fP \fIValue\fP
+        \&.\&.\&.
+}
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBdtfpfile\fP front panel database provides definitions
+for the components that define the content and functionality of the front
+panel\&. Files containing front panel definitions must end with the \fB\&.fp\fP suffix\&. Like the action and data type database, the front panel
+database is constructed by reading all files ending in the \fB\&.fp\fP
+suffix found in the search path specified by the \fBDTDATABASESEARCHPATH\fP environment variable\&.
+.PP
+See \fBdtdtfile\fP(4) for a complete description of the
+directory locations where these database files are found and for a description
+of the specific syntax for the database files\&.
+.SS "File Format"
+.PP
+The general syntax of the front panel configuration files is as described
+above in the SYNOPSIS section of this man page\&.
+.PP
+The \fIComments\fP, \fIVersions\fP and \fIVariables\fP fields are described in \fBdtdtfile\fP(4)\&.
+.PP
+The front panel record types each have a set of Keyword and Value pairs\&.
+There are six record types defined: \fBPANEL\fP, \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP, \fBCONTROL\fP and \fBANIMATION\fP\&. Each
+record type has a set of keywords defined for it\&. Many of the keywords are
+used for multiple record types\&.
+.SS "Record Types"
+.IP "\fBPANEL\fP \fIfront panel name\fP" 10
+The \fBPANEL\fP record type defines
+the outermost container of the front panel\&. It can contain one or more \fBBOX\fPes and optionally repositioning handles,
+a menu and a minimize button\&. The keywords defined for \fBPANEL\fP are described in the following table\&.
+.TS
+tab();
+lw(2.575665i) lw(1.788344i) lw(1.135992i).
+T{
+\fBPANEL Record Type
+Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+CONTROL_BEHAVIOR(\fBdouble_click\fP/ \fBsingle_click\fP)single_click
+DISPLAY_CONTROL_LABELS(\fBTrue\fP/\fBFalse\fP)False
+DISPLAY_HANDLES(\fBTrue\fP/\fBFalse\fP)True
+DISPLAY_MENU(\fBTrue\fP/\fBFalse\fP)True
+DISPLAY_MINIMIZE(\fBTrue\fP/\fBFalse\fP)True
+HELP_STRING\fIstring\fPNULL
+HELP_TOPIC\fItopic name\fPNULL
+HELP_VOLUME\fIvolume name\fPFPanel
+LOCKED(\fBTrue\fP/\fBFalse\fP)False
+PANEL_GEOMETRYT{
+{+-}\fIxoffset\fP[{+-}\fIyoffset\fP]
+T}NULL
+RESOLUTION(\fBhigh\fP/\fBmedium\fP /\fBlow\fP/\fBmatch_display\fP)match_display
+SUBPANEL_UNPOST(\fBTrue\fP/\fBFalse\fP)True
+.TE
+.IP "\fBBOX\fP \fIbox name\fP" 10
+The \fBBOX\fP record type defines
+a container within a \fBPANEL\fP that
+can hold a row of \fBCONTROLS\fP and at
+most one \fBSWITCH\fP container\&. Multiple \fBBOX\fPes within a \fBPANEL\fP are stacked vertically\&. The keywords defined for \fBBOX\fP are described in the following table\&.
+.TS
+tab();
+lw(1.929825i) lw(2.219298i) lw(1.350877i).
+T{
+\fBBOX Record Type
+Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+CONTAINER_NAMEfront panel nameNULL (required)
+DELETE(\fBTrue\fP/\fBFalse\fP)False
+HELP_STRING\fIstring\fPNULL
+HELP_TOPIC\fItopic name\fPNULL
+HELP_VOLUME\fIvolume name\fPFPanel
+LOCKED(\fBTrue\fP/\fBFalse\fP)False
+POSITION_HINTS(\fBfirst\fP/\fBlast\fP/\fIinteger\fP \(>= 1)first
+.TE
+.IP "\fBSUBPANEL\fP \fIsubpanel name\fP" 10
+The \fBSUBPANEL\fP record type defines
+a secondary container for \fBCONTROL\fPs
+that slide up from the front panel\&. \fBSUBPANEL\fP s can also contain a drop zone where new controls can be dynamically
+added\&. The keywords defined for \fBSUBPANEL\fP
+are described in the following table\&.
+.TS
+tab();
+lw(2.002193i) lw(1.459430i) lw(2.038377i).
+T{
+\fBSUBPANEL Record
+Type Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+CONTAINER_NAME\fIcontrol name\fPNULL (required)
+CONTROL_INSTALL(\fBTrue\fP/\fBFalse\fP)True
+DELETE(\fBTrue\fP/\fBFalse\fP)False
+HELP_STRING\fIstring\fPNULL
+HELP_TOPIC\fItopic name\fPNULL
+HELP_VOLUME\fIvolume name\fPFPanel
+LOCKED(\fBTrue\fP/\fBFalse\fP)False
+TITLE\fIstring\fPNULL
+.TE
+.IP "\fBSWITCH\fP \fIswitch name\fP" 10
+The \fBSWITCH\fP record type defines
+a container within a \fBBOX\fP that contains
+a set of push buttons, each of which give access to a corresponding workspace\&.
+See \fBdtwm\fP(1) for a description of the multiple workspace capabilities\&.
+Also contained within the \fBSWITCH\fP
+container is an optional set of \fBCONTROL\fPs\&.
+These are presented in a column on each side of the push buttons\&. The keywords
+defined for \fBSWITCH\fP are described
+in the following table\&.
+.TS
+tab();
+lw(1.945808i) lw(1.990798i) lw(1.563395i).
+T{
+\fBSWITCH Record Type
+Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+CONTAINER_NAME\fIbox name\fPNULL (required)
+DELETE(\fBTrue\fP/\fBFalse\fP)False
+HELP_STRING\fIstring\fPNULL
+HELP_TOPIC\fItopic name\fPNULL
+HELP_VOLUME\fIvolume name\fPFPanel
+LOCKED(\fBTrue\fP/\fBFalse\fP)False
+NUMBER_OF_ROWS\fIinteger\fP2
+POSITION_HINTS(\fBfirst\fP/\fBlast\fP/\fIinteger\fP \(>= 1)first
+.TE
+.IP "\fBCONTROL\fP \fIcontrol name\fP" 10
+The \fBCONTROL\fP record type defines
+the main functional component of the front panel\&. \fBCONTROL\fPs typically have actions defined for them that are invoked
+on selection or drag and drop or both\&. \fBCONTROL\fP s are displayed with icons or labels or both and can have iconic
+animations associated with them\&. The keywords defined for \fBCONTROL\fP are described in the following table\&.
+.TS
+tab();
+lw(2.267544i) lw(2.146930i) lw(1.085526i).
+T{
+\fBCONTROL Record Type
+Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+ALTERNATE_ICON\fIimage name\fPNULL
+CLIENT_GEOMETRY\fIwidth\fP \fBx\fP \fIheight\fPNULL
+CLIENT_NAME\fIclient name\fPNULL
+CONTAINER_NAMET{
+(\fIbox name\fP/ \fIswitch name\fP/\fIsubpanel name\fP)
+T}NULL (required)
+CONTAINER_TYPE(\fBBOX\fP/\fBSWITCH\fP/ \fBSUBPANEL\fP)NULL (required)
+DATE_FORMAT\fIformat string\fP%b%n%e
+DELETE(\fBTrue\fP/\fBFalse\fP)False
+DROP_ACTION\fIaction_name\fPNULL
+DROP_ANIMATION\fIanimation name\fPNULL
+FILE_NAME\fIpathname\fPNULL
+HELP_STRING\fIstring\fPNULL
+HELP_TOPIC\fItopic name\fPNULL
+HELP_VOLUME\fIvolume name\fPFPanel
+ICON\fIimage name\fPNULL
+LABEL\fIstring\fPNULL
+LOCKED(\fBTrue\fP/\fBFalse\fP)False
+MONITOR_TYPE(\fBnone\fP/\fBmail\fP/ \fBfile\fP)none
+POSITION_HINTS(\fBfirst\fP/\fBlast\fP/\fIinteger\fP \(>= 1)first
+PUSH_ACTION\fIaction_name\fPNULL
+PUSH_ANIMATION\fIanimation name\fPNULL
+PUSH_RECALL(\fBTrue\fP/\fBFalse\fP)False
+TYPET{
+(\fBblank\fP/\fBbusy\fP/ \fBclient\fP/\fBclock\fP/\fBdate\fP/ \fBfile\fP/\fBicon\fP)
+T}icon
+.TE
+.IP "\fBANIMATION\fP \fIanimation name\fP" 10
+The \fBANIMATION\fP record types
+are a sequence of image name and time delay pairs that are displayed by a \fBCONTROL\fP on a \fBPUSH_ACTION\fP or \fBDROP_ACTION\fP\&.
+.TS
+tab();
+lw(1.483553i) lw(2.677632i) lw(1.338816i).
+T{
+\fBANIMATION Record
+Type Keywords and Values\fP
+T}
+\fBKeyword\fP\fBValue\fP\fBDefault\fP
+ANIMATION\fIimage name\fP [ \fImillisecond delay\fP]None [200]
+.TE
+.SS "Keyword and Value Descriptions"
+.PP
+The following list contains a description of each of the keywords defined
+by the front panel\&.
+.IP "ALTERNATE_ICON" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBbusy\fP and \fBicon\fP\&.
+.IP "" 10
+\fBALTERNATE_ICON\fP defines an
+image to be used to replace the normal image within a control with a mail
+or file value for the \fBMONITOR_TYPE\fP\&.
+The image is displayed when the file being monitored changes\&. For the \fBbusy\fP control, \fBALTERNATE_ICON\fP
+is cycled with \fBICON\fP to give the
+blinking effect\&.
+.IP "ANIMATION" 10
+Used with record types of: \fBANIMATION\fP\&.
+.IP "" 10
+Used with control keywords of: \fBPUSH_ANIMATION\fP and \fBDROP_ANIMATION\fP\&.
+.IP "" 10
+\fBANIMATION\fP defines a sequence
+of images to be displayed for either a \fBPUSH_ACTION\fP or \fBDROP_ACTION\fP\&. Each
+animation within the list is displayed in order with a default time separation
+of 200 milliseconds\&. For a slower or faster sequence, the image name value
+can be followed by the amount of time to display the image\&. If no time value
+is specified, the previously specified value is used\&.
+.IP "CLIENT_GEOMETRY" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control type of: \fBclient\fP\&.
+.IP "" 10
+Used with control keywords of: \fBCLIENT_NAME\fP\&.
+.IP "" 10
+\fBCLIENT_GEOMETRY\fP specifies
+the size (in pixels) needed for the window of a client displayed within the
+front panel\&.
+.IP "CLIENT_NAME" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBclient\fP or \fBicon\fP\&.
+.IP "" 10
+Used with control keywords of: \fBPUSH_RECALL\fP\&.
+.IP "" 10
+\fBCLIENT_NAME\fP specifies a name
+used to associate a control with an executable\&. It is necessary for control
+types of \fBclient\fP (an X client running within the front panel)
+and for \fBicon\fP when the keyword \fBPUSH_RECALL\fP is True\&. The value \fIclient name\fP
+is the name of the executable or can be set via a command-line argument for
+some clients (such as \fBxterm\fP \fB-name\fP \fIpanelterm\fP)\&. The \fIclient name\fP for a running
+client can be found by executing xprop\&. The first string of the \fBWM_CLASS\fP property is the value used\&.
+.IP "CONTAINER_NAME" 10
+Used with record types of: \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBCONTAINER_NAME\fP associates
+a component with its parent\&. For example, the \fBCONTAINER_NAME\fP value for a \fBSWITCH\fP tells the front panel into which \fBBOX\fP it should be placed\&. Since controls can reside in several
+different component types, \fBCONTAINER_NAME\fP
+is used in conjunction with \fBCONTAINER_TYPE\fP
+to define a control\&'s parent\&.
+.IP "CONTAINER_TYPE" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+\fBCONTAINER_TYPE\fP defines a control\&'s
+parent type\&. This is used to identify a control uniquely so that it can be
+created within the proper parent\&.
+.IP "CONTROL_BEHAVIOR" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+\fBCONTROL_BEHAVIOR\fP provides
+the mechanism for setting the user model for front panel controls\&. Controls
+can be set to invoke their \fBPUSH_ACTION\fP
+by either a single or double click\&.
+.IP "CONTROL_INSTALL" 10
+Used with record types of: \fBSUBPANEL\fP\&.
+.IP "" 10
+\fBCONTROL_INSTALL\fP enables or
+disables dynamic control installation into subpanels\&. A value of True causes
+the control installation area to be displayed within the subpanel\&.
+.IP "DATE_FORMAT" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBdate\fP\&.
+.IP "" 10
+\fBDATE_FORMAT\fP specifies the
+layout of the date string for a control of type \fBdate\fP\&. The
+format is the same used by the UNIX \fBstrftime\fP(3) function\&.
+.IP "DELETE" 10
+Used with record types of: \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBDELETE\fP is used to override
+and remove a non-locked component from the front panel\&. This is necessary
+to eliminate system default front panel components without replacing the default
+files\&. To use \fBDELETE\fP, a copy of
+the component definition with the additional \fBDELETE\fP keyword is stored in a file with an \fB\&.fp\fP
+suffix in the user\&'s or application type\&'s directory\&.
+.IP "DISPLAY_CONTROL_LABELS" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+\fBDISPLAY_CONTROL_LABELS\fP specifies
+whether the controls contained within the front panel\&'s boxes have their labels
+displayed\&.
+.IP "DISPLAY_HANDLES" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+If \fBDISPLAY_HANDLES\fP is set
+to True, the move handles are displayed along the left and right edges of
+the front panel\&.
+.IP "DISPLAY_MENU" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+If \fBDISPLAY_MENU\fP is set to
+True, and \fBDISPLAY_HANDLES\fP is also
+set to True, the system menu button is displayed in the upper left hand corner
+of the front panel\&.
+.IP "DISPLAY_MINIMIZE" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+If \fBDISPLAY_MINIMIZE\fP is set
+to True, and \fBDISPLAY_HANDLES\fP is
+also set to True, the minimize button is displayed in the upper right hand
+corner of the front panel\&.
+.IP "DROP_ACTION" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+\fBDROP_ACTION\fP specifies the
+function that is invoked when a drop occurs on the control\&.
+.IP "DROP_ANIMATION" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with all control types except: \fBclient\fP\&.
+.IP "" 10
+\fBDROP_ANIMATION\fP specifies the
+name of an animation record to be displayed when a drop occurs on the control\&.
+The control must have a \fBDROP_ACTION\fP
+defined for the animation to be used\&.
+.IP "FILE_NAME" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBicon\fP and \fBfile\fP\&.
+.IP "" 10
+For the control type of \fBfile\fP, \fBFILE_NAME\fP is the pathname of the file to be used for the control\&.
+The file\&'s file type, actions and images are extracted from the action database
+for the control\&.
+.IP "" 10
+For \fBMONITOR_TYPE\fP \fBmail\fP and \fBfile\fP, \fBFILE_NAME\fP specifies the pathname of the file the front panel
+monitors for either mail arrival or some other user-defined data\&.
+.IP "" 10
+For \fBMONITOR_TYPE\fP \fBfile\fP, the \fBALTERNATE_ICON\fP
+image is displayed when the monitored file is non-empty\&. The \fBICON\fP image is displayed if the file is empty or non-existent\&.
+.IP "" 10
+For \fBMONITOR_TYPE\fP \fBmail\fP, the \fBALTERNATE_ICON\fP
+image is displayed when the file increases in size\&.
+.IP "HELP_STRING" 10
+Used with record types of: \fBPANEL\fP, \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBHELP_STRING\fP specifies an on-line
+help string to display when help is requested over a front panel component\&.
+Since each component type can have a help string associated with it, there
+is a precedence used in deciding which help string to display\&. Control help
+takes precedence over box help, switch help and subpanel help\&. Box help takes
+precedence over subpanel help\&. The \fBHELP_STRING\fP value is used only if no \fBHELP_TOPIC\fP value is defined\&.
+.IP "HELP_TOPIC" 10
+Used with record types of: \fBPANEL\fP, \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBHELP_TOPIC\fP specifies an on-line
+help topic that is used with either the default help volume or a help volume
+specified by the \fBHELP_VOLUME\fP keyword
+to display help information when requested over a front panel component\&. Like
+the \fBHELP_STRING\fP keyword, each component
+type can have a help topic associated with it and the same precedence rules
+are used\&.
+.IP "HELP_VOLUME" 10
+Used with record types of: \fBPANEL\fP, \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+When \fBHELP_VOLUME\fP is used in
+conjunction with \fBHELP_TOPIC\fP, it
+defines the help information to be displayed for a front panel component\&.
+.IP "ICON" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBicon\fP, \fBfile\fP
+and \fBbusy\fP\&.
+.IP "" 10
+\fBICON\fP specifies the image to
+be displayed within a control\&.
+.IP "LABEL" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBicon\fP, \fBfile\fP, \fBclock\fP and \fBbusy\fP\&.
+.IP "" 10
+\fBLABEL\fP specifies the string
+to be displayed when a control is in a subpanel\&.
+.IP "LOCKED" 10
+Used with record types of: \fBPANEL\fP, \fBBOX\fP, \fBSUBPANEL\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBLOCKED\fP provides the mechanism
+to prevent a component definition of identical type, name and parent from
+overriding (replacing) this definition\&. Since the front panel can be defined
+within multiple configuration files, it provides the flexibility to override
+components found earlier in the search path\&. Like actions and file types,
+this allows the front panel to be customized at several levels\&.
+.IP "MONITOR_TYPE" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control types of: \fBicon\fP and \fBfile\fP
+.IP "" 10
+\fBMONITOR_TYPE\fP specifies the
+method of checking the file being monitored, specified by the keyword \fBFILE_NAME\fP\&.
+.IP "NUMBER_OF_ROWS" 10
+Used with record types of: \fBSWITCH\fP\&.
+.IP "" 10
+\fBNUMBER_OF_ROWS\fP provides control
+over the layout of the workspace switch buttons\&. The switch buttons are arranged
+in a row and column layout with the \fBNUMBER_OF_ROWS\fP keyword defining the number of rows in the layout\&. The number
+of columns is derived from this value and the total number of switch buttons\&.
+.IP "PANEL_GEOMETRY" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+\fBPANEL_GEOMETRY\fP specifies a
+non-default location to position the front panel when it is created\&. By default,
+the front panel is centered along the bottom of the display\&.
+.IP "POSITION_HINTS" 10
+Used with record types of: \fBBOX\fP, \fBSWITCH\fP and \fBCONTROL\fP\&.
+.IP "" 10
+\fBPOSITION_HINTS\fP specifies the
+ordering of boxes in the front panel, the switch and controls in boxes, and
+controls in subpanels\&. When two components have the same value for \fBPOSITION_HINTS\fP, the first one read from the
+configuration file is placed first\&.
+.IP "PUSH_ACTION" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+\fBPUSH_ACTION\fP specifies the
+function that is invoked when a selection occurs on the control\&.
+.IP "PUSH_ANIMATION" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with all control types except: \fBclient\fP\&.
+.IP "" 10
+\fBPUSH_ANIMATION\fP specifies the
+name of an animation record to be displayed when a selection occurs on the
+control\&. The control must have a \fBPUSH_ACTION\fP defined for the animation to be used\&.
+.IP "PUSH_RECALL" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+Used with control keywords of: \fBCLIENT_NAME\fP\&.
+.IP "" 10
+When \fBPUSH_RECALL\fP is set to
+True, it specifies that only one process can be started by the control\&. If
+the process is already running, it is displayed within the current workspace
+and shuffled to the top of the window stack\&. The value for the \fBCLIENT_NAME\fP keyword is used to identify the
+process for push recall behavior\&.
+.IP "RESOLUTION" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+\fBRESOLUTION\fP allows the icon
+set for the front panel to be forced to a particular set\&. By default, the
+front panel determines the display resolution at runtime and chooses the high
+resolution icon set if the display width is 1024 pixels or wider\&.
+.IP "SUBPANEL_UNPOST" 10
+Used with record types of: \fBPANEL\fP\&.
+.IP "" 10
+When \fBSUBPANEL_UNPOST\fP is set
+to True, it causes a subpanel to hide itself whenever a \fBPUSH_ACTION\fP occurs on one of the subpanel controls\&. If the subpanel
+has been torn off of the front panel, the behavior of the subpanel is forced
+to remain posted on \fBPUSH_ACTION\fP\&.
+.IP "TITLE" 10
+Used with record types of: \fBSUBPANEL\fP\&.
+.IP "" 10
+\fBTITLE\fP specifies the string
+to be displayed in the title area of the subpanel\&.
+.IP "TYPE" 10
+Used with record types of: \fBCONTROL\fP\&.
+.IP "" 10
+A number of different control types are defined by the front panel:
+.RS
+.IP "\fBblank\fP" 10
+Space-holder control
+.IP "\fBbusy\fP" 10
+Busy light
+.IP "\fBclient\fP" 10
+A client window
+.IP "\fBclock\fP" 10
+Front panel clock
+.IP "\fBdate\fP" 10
+Front panel date
+.IP "\fBfile\fP" 10
+References a file on the file system and uses that file\&'s actions and
+image
+.IP "\fBicon\fP" 10
+Front panel general control
+.RE
+.SH "FILES"
+.PP
+The default front panel configuration file is \fB/usr/dt/appconfig/types/C/dtwm\&.fp\fP\&.
+.PP
+Files containing the attributes of dynamically created front panel components
+are in the directory \fB$HOME/\&.dt/types/fp_dynamic\fP\&.
+.SH "APPLICATION USAGE"
+.PP
+Errors encountered when loading front panel database files are written
+to the user\&'s \fB$HOME/\&.dt/errorlog\fP file\&.
+.SH "SEE ALSO"
+.PP
+\fBdtwm\fP(1), \fBstrftime\fP(3), \fBdtdtfile\fP(4)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

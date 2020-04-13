@@ -1,0 +1,10 @@
+# Diese Datei ist eine Aktion des Common Desktop Environment (CDE). Der Inhalt
+# der Datei ist beliebig. Die Aktion ist auch bei leerer Datei funktionsfähig.
+# Wenn die Datei ausführbar ist und der Name der Datei mit einem Eintrag in
+# der Aktionsdatenbank (Dateien mit der Erweiterung *.dt) übereinstimmt,
+# wird die Datei als Aktion behandelt.
+#
+# Weitere Hinweise zu Aktionen enthält die CDE-Dokumentation.
+#
+#
+echo "Aktion des Common Desktop Environment (CDE). Mit Dateimanager aufrufen"

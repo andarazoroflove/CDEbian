@@ -1,0 +1,106 @@
+'\" t
+...\" state.sgm /main/5 1996/08/30 13:45:20 rws $
+...\" state.sgm /main/5 1996/08/30 13:45:20 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tt_message_state" "library call"
+.SH "NAME"
+\fBtt_message_state\fP \(em retrieve the state attribute from a message
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+\fBTt_state \fBtt_message_state\fP\fR(
+\fBTt_message \fBm\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtt_message_state\fP function
+retrieves the state attribute from the specified message\&.
+.PP
+The
+\fIm\fP argument is the opaque handle for the message involved in this operation\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtt_message_state\fP function returns a value that indicates the current delivery
+state of the message\&.
+The
+\fBtt_message_state\fP function returns one of the following
+\fBTt_status\fR values:
+.IP "TT_CREATED" 10
+The message has been created, but not yet sent\&.
+.IP "TT_SENT" 10
+The message has been sent, but not yet handled\&.
+.IP "TT_HANDLED" 10
+The message has been handled; return values are valid\&.
+.IP "TT_FAILED" 10
+The message could not be delivered to a handler\&.
+.IP "TT_QUEUED" 10
+The message has been queued for delivery\&.
+.IP "TT_STARTED" 10
+The ToolTalk service is attempting to start a process to handle the message\&.
+.IP "TT_REJECTED" 10
+The message has been rejected by a possible handler\&.
+.PP
+The application can use
+\fBtt_int_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the
+\fBTt_state\fR integer return value:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_POINTER" 10
+The pointer passed does not point to an object of
+the correct type for this operation\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h - Tttt_c\fP(5), \fBtt_int_error\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

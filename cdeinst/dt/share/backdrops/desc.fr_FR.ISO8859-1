@@ -1,0 +1,51 @@
+! $XConsortium: Backdrops.src /main/3 1995/12/05 10:11:06 rswiston $
+!######################################################################
+!#
+!#     Backdrops
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Backdrop file used for localization of backdrop names
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary 
+!#	   of Novell, Inc.
+!#
+!#
+!######################################################################
+
+!###
+!#
+!#   C backdrop names followed by message tags for the translated names 
+!#   
+!###
+
+Backdrops*Ankh.desc: Ankh
+Backdrops*Background.desc: Fond
+Backdrops*BrickWall.desc: Briques
+Backdrops*Concave.desc: Concave
+Backdrops*Convex.desc: Convexe
+Backdrops*Corduroy.desc: Velours
+Backdrops*Crochet.desc: Crochet
+Backdrops*Foreground.desc: Avant-plan
+Backdrops*InlayColor.desc: Incrustation couleurs
+Backdrops*InlayPlain.desc: Incrustation
+Backdrops*KnitLight.desc: Tissage
+Backdrops*Lattice.desc: Treillis
+Backdrops*LatticeBig.desc: Treillis grand
+Backdrops*Leaves.desc: Automne
+Backdrops*NoBackdrop.desc: Sans fond
+Backdrops*OldChars.desc: Caractères
+Backdrops*Paver.desc: Gris
+Backdrops*Pebbles.desc: Galets
+Backdrops*PinStripe.desc: Rayures
+Backdrops*RakedSand.desc: Sable ratissé
+Backdrops*RicePaper.desc: Papier de riz
+Backdrops*SkyDark.desc: Bleu ciel foncé
+Backdrops*SkyLight.desc: Bleu ciel clair
+Backdrops*Sprinkles.desc: Bulles
+Backdrops*Toronto.desc: Toronto
+Backdrops*WaterDrops.desc: Gouttes
+Backdrops*Wooly.desc: Laine

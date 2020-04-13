@@ -1,0 +1,121 @@
+# ##########################################################################
+# 
+#      dtscreen.dt
+# 
+#      Actions for defining screen savers to the Common Desktop Environment.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dtscreen.dt.src /main/4 1996/04/23 17:35:39 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Azioni
+# 
+# ##################################################################
+ACTION StartDtscreenHop
+{
+        LABEL           Risparmio schermo Iterati
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode hop
+        DESCRIPTION     Frattali iterati
+}
+
+ACTION StartDtscreenQix
+{
+        LABEL           Risparmio schermo Fantasia
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode qix
+        DESCRIPTION     Fantasia di linee
+}
+
+ACTION StartDtscreenImage
+{
+        LABEL           Risparmio schermo Comparse
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode image
+        DESCRIPTION     Comparse casuali
+}
+
+ACTION StartDtscreenLife
+{
+        LABEL           Risparmio schermo Gioco
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode life
+        DESCRIPTION     Gioco di Conway
+}
+
+ACTION StartDtscreenSwarm
+{
+        LABEL           Risparmio schermo Sciame
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode swarm
+        DESCRIPTION     Sciame d'api
+}
+
+ACTION StartDtscreenRotor
+{
+        LABEL           Risparmio schermo Centrifuga
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode rotor
+        DESCRIPTION     Centrifuga
+}
+
+ACTION StartDtscreenPyro
+{
+        LABEL           Risparmio schermo Fuochi
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode pyro
+        DESCRIPTION     Fuochi d'artificio
+}
+
+ACTION StartDtscreenFlame
+{
+        LABEL           Risparmio schermo Cosmici
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode flame
+        DESCRIPTION     Frattali cosmici
+}
+
+ACTION StartDtscreenWorm
+{
+        LABEL           Risparmio schermo Rigagnoli
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode worm
+        DESCRIPTION     Rigagnoli arcobaleno
+}
+
+ACTION StartDtscreenBlank
+{
+        LABEL           Risparmio schermo vuoto
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode blank
+        DESCRIPTION     Schermo vuoto
+}
+# ######################## EOF ############################################

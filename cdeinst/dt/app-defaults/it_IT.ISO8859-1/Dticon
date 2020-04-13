@@ -1,0 +1,51 @@
+!######################################################################
+!#
+!#     Dticon
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Application Defaults for the CDE DT Icon Editor
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary
+!#         of Novell, Inc.
+!#
+!#     $XConsortium: Dticon /main/4 1996/08/09 14:46:18 mustafa $
+!#
+!######################################################################
+!#
+!# These resources set the accelerators used in the Icon Editor
+!# along with the accelerator Text.
+!#
+
+#include "Dt"
+
+Dticon*fileMenu.exit.acceleratorText:          Alt+F4
+Dticon*fileMenu.exit.accelerator:              Alt<key>F4
+Dticon*editMenu.undo.acceleratorText:          Alt+Backspace
+Dticon*editMenu.undo.accelerator:              Alt<Key>BackSpace:
+Dticon*editMenu.cut.acceleratorText:           Shift+Del
+Dticon*editMenu.cut.accelerator:               Shift<Key>DeleteChar:
+Dticon*editMenu.copy.acceleratorText:          Ctrl+Insert
+Dticon*editMenu.copy.accelerator:              Ctrl<Key>InsertChar:
+Dticon*editMenu.paste.acceleratorText:         Shift+Insert
+Dticon*editMenu.paste.accelerator:             Shift<Key>InsertChar:
+
+Dticon*fileMenu.new.acceleratorText:           Ctrl+N
+Dticon*fileMenu.new.accelerator:               Ctrl<Key>N
+Dticon*fileMenu.open.acceleratorText:          Ctrl+O
+Dticon*fileMenu.open.accelerator:              Ctrl<Key>O
+Dticon*fileMenu.save.acceleratorText:          Ctrl+S
+Dticon*fileMenu.save.accelerator:              Ctrl<Key>S
+Dticon*fileMenu.saveas.acceleratorText:        Ctrl+A
+Dticon*fileMenu.saveas.accelerator:            Ctrl<Key>A
+
+Dticon*instructionText.alignment:              alignment_beginning
+
+Dticon*useMessaging:                           True
+Dticon*useFileFilter:                          False
+!#Dticon*secondaryColorSetId:                    1
+
+!###########################   eof   ###########################

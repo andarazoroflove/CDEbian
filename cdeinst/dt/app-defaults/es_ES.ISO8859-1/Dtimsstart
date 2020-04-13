@@ -1,0 +1,58 @@
+!# @(#)$XConsortium: Dtimsstart /main/3 1996/09/20 18:08:17 cde-hp $
+!	dtimsstart
+
+*fontList:	-dt-interface user-medium-r-normal-m*-*-*-*-*-m-*:
+
+! title on title bar
+Dtimsstart*title:			dtimsstart
+
+! title
+Dtimsstart*Selection*title.labelString:	Selección del método de introducción de datos
+Dtimsstart*Host*title.labelString:	Cambiar anfitrión
+Dtimsstart*Mode*title.labelString:	Modo de selección del método de introducción de datos
+
+! button label
+Dtimsstart*OK.labelString:		OK
+Dtimsstart*Clear.labelString:		Borrar
+Dtimsstart*Cancel.labelString:		Cancelar
+Dtimsstart*ChangeHost.labelString:	Cambiar anfitrión
+Dtimsstart*Help.labelString:		Ayuda
+
+! border width (selection dialog appears without window manager)
+Dtimsstart*Selection.borderWidth:	3
+Dtimsstart*Host.borderWidth:		3
+Dtimsstart*XmDialogShell.borderWidth:	0
+
+! default spacing
+Dtimsstart*cmd_rc.marginWidth:		10
+Dtimsstart*cmd_rc.spacing:		10
+
+! ims selection dialog
+Dtimsstart*Selection*cmd_rc.spacing:	4
+Dtimsstart*Selection*cmd_rc.OK.marginWidth:	16
+Dtimsstart*Selection*select_rc.marginWidth:	40
+
+! change host dialog
+Dtimsstart*host_label.labelString:	Nombre de anfitrión:
+Dtimsstart*Host*host_desc.alignment:	XmALIGNMENT_BEGINNING
+Dtimsstart*Host*host_desc.marginLeft:	20
+Dtimsstart*Host*host_desc.marginRight:	20
+Dtimsstart*Host*host_desc.labelString:	 Introduzca el nombre de anfitrión en donde\n deberán aparecer los servidores de método registrados.\n Si el nombre de anfitrión aparece en blanco, significa que se trata del anfitrión local.
+Dtimsstart*Host*host_text.maxLength:	63
+Dtimsstart*Host*host_text.columns:	14
+Dtimsstart*Host*host_rc.marginWidth:	60
+Dtimsstart*Host*cmd_rc.marginWidth:	20
+Dtimsstart*Host*cmd_rc.spacing:		90
+
+! selection mode dialog
+Dtimsstart*Mode*button_0.labelString:	Solicitar al conectar
+Dtimsstart*Mode*button_1.labelString:	Reanudar el método de introducción de datos actual
+Dtimsstart*Mode*cmd_rc.spacing:		50
+Dtimsstart*Mode*cmd_rc.marginWidth:	20
+
+! help message
+Dtimsstart.selectionHelpMsg:	\n         Selección de método de introducción de datos\n \n     Seleccione un método de introducción de datos de los listados y haga clic en el botón [OK].\n     Se configurará el método de introducción de datos seleccionado.\n \n       [OK]:        pone en efecto lo seleccionado y cierra la ventana.\n \n       [Cambiar anfitrión]: especifica un nombre de anfitrión.  Aparecerá el método de introducción de datos\n                    registrado en el anfitrión.\n \n       [Cancelar]:    descarta la selección y cierra la ventana.\n \n       [Ayuda]:      muestra este mensaje.\n \n \n        NOTA:  los métodos de introducción de datos no instalados en el sistema se listarán\n               con red y no se pueden seleccionar.\n \n     Cómo cambiar el modo de método de selección de introducción de datos:\n \n         La ventana de selección generalmente aparece cada vez que se efectúa una conexión.\n         Podrá seleccionar el mismo método de introducción de datos que el seleccionado anteriormente \n         sin efectuar ninguna operación mediante la ventana, para lo cual deberá efectuar la operación \n         'DtImsMode' que se encuentra en Desktop_Tools en Gestor de aplicaciones,\n         y seleccione 'Reanudar método de introducción de datos actual' en la ventana del cuadro de diálogo.\n
+
+Dtimsstart.modeHelpMsg:	\n         Modo de selección de método de introducción de datos\n \n     Seleccione alguna de las siguientes opciones y haga clic en el botón [OK].\n \n         Solicitar al conectar:\n             Aparecerá la ventana de selección para solicitar que se seleccione el \n             método cada vez que se efectúa una conexión.\n \n         Reanudar método de introducción de datos actual:\n             Una vez que se ha seleccionado el método de introducción de datos, se seleccionará \n             el mismo automáticamente sin efectuar operaciones mediante la ventana \n             en los procesos de conexión subsiguientes.\n \n       [OK]:        pone en efecto las modificaciones y cierra la ventana.\n \n       [Cancelar]:    descarta los cambios y cierra la ventana.\n \n       [Ayuda]:      muestra este mensaje.\n
+
+!#

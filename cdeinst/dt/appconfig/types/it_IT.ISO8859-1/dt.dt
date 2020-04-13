@@ -1,0 +1,677 @@
+# ##########################################################################
+# 
+#      dt.dt
+# 
+#      Action and DataType definitions for the Common Desktop Environment
+#      (CDE) DT components.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#     $TOG: dt.dt.src /main/13 1998/12/18 18:16:14 mgreess $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Attributi dei dati
+# 
+# ##################################################################
+DATA_ATTRIBUTES DT
+{
+        ACTIONS         Open,ReloadActions,Print
+        ICON		Dtdt
+        IS_TEXT		true
+        NAME_TEMPLATE	%s.dt
+        MIME_TYPE	text/plain
+        DESCRIPTION     Questo è un file del database del desktop che contiene le \
+                        definizioni delle azioni e dei tipi di dati. Il suo tipo di dati \
+                        è denominato DT. I nomi dei file DT terminano con l'estensione '.dt'.
+        TYPE_LABEL      DT
+}
+DATA_CRITERIA DT1
+{
+	DATA_ATTRIBUTES_NAME DT
+        MODE            f
+        NAME_PATTERN    *.dt
+}
+ACTION ReloadActionsNotice
+{
+        LABEL           Reload Notification
+        TYPE            TT_MSG
+        TT_CLASS	TT_NOTICE
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	DtTypes_Reloaded
+        DESCRIPTION     The ReloadActionsNotice action notifies 			applications of a rebuilt cache file database.
+
+}
+
+ACTION BuildDataBaseRequest
+{
+        LABEL           Rebuild Request
+        TYPE            TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	DtDtsCache
+        DESCRIPTION     The BuildDataBaseRequest action rebuilds the 			cache file database                         of action, data type and front panel definitions.
+
+
+}
+ACTION ReloadActions
+{
+        LABEL           Ricaricare azioni
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	sh -c 'dtaction BuildDataBaseRequest ;			dtaction ReloadActionsNotice'
+
+        DESCRIPTION     L'azione Ricaricare azioni ricarica il database con le \
+                        definizioni delle azioni, dei tipi di dati e del Pannello principale.
+}
+
+# ######################################################
+
+DATA_ATTRIBUTES FP
+{
+        ACTIONS         Open,Print
+        ICON		Dtfpcfg
+        IS_TEXT		true
+        NAME_TEMPLATE	%s.fp
+        MIME_TYPE	text/plain
+        DESCRIPTION     Questo è un file del database del desktop che contiene le definizioni \
+                        per la configurazione del Pannello principale. Il suo tipo di dati \
+                        è denominato FP. I file FP terminano con l'estensione '.fp'.
+        TYPE_LABEL      FP
+}
+DATA_CRITERIA FP1
+{
+	DATA_ATTRIBUTES_NAME FP
+        MODE            f
+        NAME_PATTERN    *.fp
+}
+
+# ######################################################
+
+DATA_ATTRIBUTES DTFILE_FILE
+{
+        PROPERTIES      invisible
+        ACTIONS         Open,Print
+        IS_TEXT         true
+        MIME_TYPE	text/plain
+        DESCRIPTION     Questo è un file nascosto utilizzato dalla Gestione di file per conservare \
+                        determinate informazioni di configurazione. Il suo tipo di dati \
+                        è denominato DTFILE_FILE.
+        TYPE_LABEL      DTFILE_FILE
+}
+DATA_CRITERIA DTFILE_FILE1
+{
+        DATA_ATTRIBUTES_NAME DTFILE_FILE
+        MODE            f
+        NAME_PATTERN    .\!*
+}
+
+# ######################################################
+
+DATA_ATTRIBUTES DTKSH_SCRIPT
+{
+        ACTIONS         Run,Open,Print
+        ICON            Dtdtksh
+        IS_EXECUTABLE	true
+        COPY_TO_ACTION  Execute
+        NAME_TEMPLATE	%s.ds
+        MIME_TYPE	text/plain
+        DESCRIPTION     Questo è un file eseguibile che contiene uno script 'dtksh'. \
+                        Il suo tipo di dati è denominato DTKSH_SCRIPT.
+        TYPE_LABEL      DTKSH_SCRIPT
+}
+DATA_CRITERIA DTKSH_SCRIPT1
+{
+        DATA_ATTRIBUTES_NAME DTKSH_SCRIPT
+	MODE		f&x
+        NAME_PATTERN    *.ds
+}
+DATA_CRITERIA DTKSH_SCRIPT2
+{
+        DATA_ATTRIBUTES_NAME DTKSH_SCRIPT
+	MODE		f&x
+        CONTENT		0 string #!/usr/dt/bin/dtksh
+}
+DATA_CRITERIA DTKSH_SCRIPT3
+{
+        DATA_ATTRIBUTES_NAME DTKSH_SCRIPT
+	MODE		f&x
+        CONTENT		0 string #! /usr/dt/bin/dtksh
+}
+ACTION Run
+{
+        LABEL           Eseguire
+        ARG_TYPE        DTKSH_SCRIPT
+        TYPE            MAP
+        MAP_ACTION      Execute
+}
+
+# ######################################################
+
+DATA_ATTRIBUTES DTKSH_CONV
+{
+        ACTIONS         Open,Print
+        ICON            Dtdtksh
+        NAME_TEMPLATE	%s.dtsh
+        MIME_TYPE	text/plain
+        DESCRIPTION     Questo file contiene funzioni di utilità che \
+                        possono essere usate dagli script 'dtksh'. Il suo \
+                        tipo di dati è denominato  DTKSH_CONV.
+        TYPE_LABEL      DTKSH_CONV
+}
+DATA_CRITERIA DTKSH_CONV1
+{
+        DATA_ATTRIBUTES_NAME DTKSH_CONV
+        MODE            f
+        NAME_PATTERN    *.dtsh
+}
+
+# ##################################################################
+# ##################################################################
+# 
+# Azioni
+# 
+# ##################################################################
+ACTION Dtstyle
+{
+	LABEL		Gestione degli stili
+        ARG_COUNT       0
+        ICON		Fpstyle
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtstyle
+        DESCRIPTION     L'azione Gestione degli stili (Dtstyle) avvia \
+                        la Gestione degli stili del desktop.
+}
+
+# ######
+
+ACTION OpenDtIntro
+{
+	LABEL		Introduzione al desktop
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dthelpview -helpVolume Intromgr
+        DESCRIPTION     L'azione Introduzione al desktop visualizza il volume di aiuto \
+                        che contiene informazioni introduttive sul desktop \
+                        e alcune descrizioni delle funzioni di base.
+}
+
+# ######
+
+ACTION FPHelp
+{
+	LABEL		Aiuto del pannello principale
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dthelpview -helpVolume FPanel
+        DESCRIPTION     L'azione Aiuto del pannello principale visualizza il volume di aiuto del \
+                        Pannello principale.
+}
+
+# ######
+
+ACTION LockDisplay
+{
+	LABEL		Blocco schermo
+        TYPE            TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	Display_Lock
+        DESCRIPTION     L'azione Blocco schermo blocca l'accesso alla workstation. \
+                        Per sbloccare il sistema occorre inserire \
+                        la password di superutente o quella dell'utente che ha attivato il blocco.
+}
+
+# ######
+
+ACTION ExitSession
+{
+	LABEL		Uscire
+        ARG_COUNT      	0
+        TYPE            TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	XSession_Exit
+        DESCRIPTION     L'azione Uscire termina la sessione del desktop \
+                        dell'utente e visualizza lo schermo di Login. \
+                        Effettuando il login si potrà iniziare una nuova sessione.
+}
+
+# ######
+
+# ######
+
+ACTION SaveSession
+{
+	LABEL			Salvare Sessione
+	TYPE			TT_MSG
+	TT_CLASS		TT_REQUEST
+	TT_SCOPE		TT_SESSION
+	TT_OPERATION		Save_Session
+
+	#
+	# The legal values for save_type are: Local, Global and Both
+	#
+	TT_ARG0_MODE		TT_IN
+	TT_ARG0_VTYPE		save_type
+	TT_ARG0_REP_TYPE	TT_REP_STRING	
+	TT_ARG0_VALUE		Local
+
+	#
+	# The legal values for shutdown are: True and False
+	#
+	TT_ARG1_MODE		TT_IN
+	TT_ARG1_VTYPE		shutdown
+	TT_ARG1_REP_TYPE	TT_REP_STRING	
+	TT_ARG1_VALUE		False
+
+	#
+	# The legal values for interact_style are: None, Errors and Any
+	#
+	TT_ARG2_MODE		TT_IN
+	TT_ARG2_VTYPE		interact_style
+	TT_ARG2_REP_TYPE	TT_REP_STRING	
+	TT_ARG2_VALUE		None
+
+	#
+	# The legal values for fast are: True and False
+	#
+	TT_ARG3_MODE		TT_IN
+	TT_ARG3_VTYPE		fast
+	TT_ARG3_REP_TYPE	TT_REP_STRING	
+	TT_ARG3_VALUE		True
+
+	#
+	# The legal values for global are: True and False
+	#
+	TT_ARG4_MODE		TT_IN
+	TT_ARG4_VTYPE		global
+	TT_ARG4_REP_TYPE	TT_REP_STRING	
+	TT_ARG4_VALUE		True
+
+	#
+	# The num_sessions_backedup field can be any positive
+	#   number.  If it is 0, the default number of sessions
+	#   will be backedup.
+	#
+	TT_ARG5_MODE		TT_IN
+	TT_ARG5_VTYPE		num_sessions_backedup
+	TT_ARG5_REP_TYPE	TT_REP_STRING	
+	TT_ARG5_VALUE		0
+
+	DESCRIPTION		L'azione Salvare Sessione viene utilizzato per salvare le impostazioni \
+                                della sessione corrente.
+} 
+
+# ######
+
+ACTION ReloadResources
+{
+        LABEL           Ricaricare risorse
+        ARG_COUNT       0
+        TYPE            TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	Resources_Reload
+        DESCRIPTION     L'azione Ricaricare risorse ricarica il database \
+                        delle risorse X con i file di risorse del desktop, \
+                        includendo tutte le modifiche apportate dal \
+                        momento del login.
+}
+
+# ######
+
+ACTION ReloadApps
+{
+	LABEL		Ricaricare applicazioni
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dtaction ReloadActions;                            /usr/dt/bin/dtappgather -r; 			   /usr/dt/bin/dthelpgen -dir $HOME/.dt/help '
+
+
+        DESCRIPTION     L'azione Ricaricare applicazioni ricarica il database con \
+                        le definizioni delle azioni, dei tipi di dati e del Pannello \
+                        principale.
+}
+
+# ######
+
+ACTION Dtcreate
+{
+	LABEL		Creare azione
+        ICON		Dtrunpn
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtcreate "%Arg_1%"
+        DESCRIPTION     L'azione Creare azione (Dtcreate) esegue l'applicazione \
+                        Creare azione, usata per creare le definizioni \
+                        delle azioni e dei tipi di dati per le applicazioni.
+}
+
+# ######
+
+ACTION DtwmrcEdit
+{
+	LABEL		Editare Dtwmrc
+        ICON            Fppenpd
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     sh -c 'if [ ! -f $HOME/.dt/dtwmrc ] ; then                                   if [ ! -f /etc/dt/config/sys.dtwmrc ] ; then                                     cp /usr/dt/config/$LANG/sys.dtwmrc                                                             $HOME/.dt/dtwmrc;                                   else                                     cp /etc/dt/config/sys.dtwmrc                                                             $HOME/.dt/dtwmrc;                                   fi;                                   chmod u+w $HOME/.dt/dtwmrc;                                fi;                                /usr/dt/bin/dtaction Open $HOME/.dt/dtwmrc'
+        DESCRIPTION     L'azione Editare Dtwmrc (DtwmrcEdit) apre una copia di \
+                        $HOME/.dt/dtwmrc nell'editor di sistema (l'editor \
+                        specificato dalla variabile d'ambiente EDITOR). \
+                        Se il file $HOME/.dt/dtwmrc non esiste, l'azione lo crea \
+                        copiando il file /usr/dt/config/<lingua>/sys.dtwmrc. \
+                        Dopo aver salvato il file ed essere usciti dall'editor, \
+                        è necessario riavviare la Gestione dello spazio di lavoro \
+                        scegliendo Riavviare gestione dello spazio di lavoro dal \
+                        Menu dello spazio di lavoro.
+}
+
+# ######
+
+ACTION RestorePanel
+{
+	LABEL		Ripristinare Pannello principale
+        TYPE            TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	DtPanel_Restore
+        DESCRIPTION     L'azione Ripristinare Pannello principale riporta il \
+                        Pannello principale alle impostazioni predefinite.
+}
+
+# ######
+
+ACTION Dtmail
+{
+	LABEL		Gestione posta
+        ICON		DtMail
+	TYPE		TT_MSG
+	TT_CLASS	TT_REQUEST
+	TT_SCOPE	TT_SESSION
+	TT_OPERATION	Display
+	TT_ARG0_MODE	TT_IN
+	TT_ARG0_VTYPE	RFC_822_MESSAGE
+	TT_ARG0_VALUE	DTMAIL_INBOX
+        DESCRIPTION     L'azione Gestione posta (Dtmail) avvia l'applicazione \
+                        Gestione posta del desktop.
+}
+
+# ######
+
+ACTION Dtcalc
+{
+	LABEL		Calcolatrice
+        ICON            Dtcalc
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtcalc
+        DESCRIPTION     L'azione Calcolatrice (Dtcalc) avvia l'applicazione \
+                        Calcolatrice del desktop.
+}
+
+# ######
+
+ACTION Dtterm
+{
+	LABEL		Terminale
+        ARG_COUNT       0
+        ICON            Dtterm
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtterm
+        DESCRIPTION     L'azione Terminale (Dtterm) avvia l'emulatore \
+                        di terminale del desktop.
+}
+
+# 
+#  The following action is used to start a terminal emulator
+#  via the desktop's messaging system.  If a terminal emumaltor
+#  server is not running when this action is invoked, a server
+#  will be started.  Once the server is started, subsequent
+#  invocations of this action will not start a new process but
+#  instead, a message will be sent to the server and a new
+#  terminal emulator window will be mapped.
+# 
+#  Note that all shells started via the server will run on the
+#  server's host, regardless of the host where the action is
+#  invoked.
+ACTION DttermServer
+{
+	LABEL			Terminale
+	ARG_COUNT		0
+	ICON			Dtterm
+	TYPE			TT_MSG
+	TT_CLASS		TT_REQUEST
+	TT_SCOPE		TT_SESSION
+	TT_OPERATION		DtTerminal_New
+	TT_ARG0_MODE		TT_IN
+	TT_ARG0_VTYPE		-display
+	TT_ARG0_REP_TYPE	TT_REP_STRING
+	TT_ARG0_VALUE		$DISPLAY
+	TT_ARG1_MODE		TT_IN
+	TT_ARG1_VTYPE		-display
+	TT_ARG1_REP_TYPE	TT_REP_STRING
+	TT_ARG1_VALUE		$DISPLAY
+	DESCRIPTION		L'azione Terminale (Dtterm) avvia l'emulatore \
+                        di terminale del desktop.
+}
+
+# ######
+
+ACTION Dticon
+{
+	LABEL		Editor delle icone
+        ICON		Dtpaint
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dticon
+        DESCRIPTION     L'azione Editor delle icone (Dticon) avvia l'Editor delle \
+                        icone del desktop, usato per creare ed editare \
+                        i file grafici a mappa di bit e a mappa di pixel.
+}
+ACTION Dticon
+{
+	LABEL		Editor delle icone
+        ICON		Dtpaint
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dticon -file                           "%(File)Arg_1"File dell'icona da modificare:"%"
+
+        DESCRIPTION     L'azione Editor delle icone (Dticon) avvia l'Editor delle \
+                        icone del desktop, usato per creare ed editare \
+                        i file grafici a mappa di bit e a mappa di pixel.
+}
+
+# ######
+
+ACTION (None)
+{
+	LABEL		(Nessuna)
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                        "Nessuna azione disponibile \\n per questo tipo di file."                        "Nessuna azione"                        "OK"
+
+
+
+        DESCRIPTION     Questa azione (Nessuna) viene usata per indicare \
+                        che non è definita alcuna azione per un \
+                        determinato tipo di dati.
+}
+
+# ######
+
+ACTION DttermErrorlog
+{
+	LABEL		Controllo errori
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /bin/sh -c 'if [ ! -f $HOME/.dt/errorlog ] ; then                                       /bin/touch $HOME/.dt/errorlog;                                      fi;                         /usr/dt/bin/dtterm -map -title 			     "Controllo errori"                              -e tail -f $HOME/.dt/errorlog'
+
+
+
+
+
+        DESCRIPTION     L'azione Controllo errori apre una finestra di terminale che \
+                        visualizza continuamente il contenuto del file di log \
+                        degli errori $HOME/.dt/errorlog. Se la finestra è \
+                        ridotta a icona, essa si riapre automaticamente \
+                        ogni volta che il sistema rileva un errore.
+}
+
+# ######
+
+ACTION Dttypes
+{
+        LABEL           Tipi e azioni
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                         /usr/dt/bin/dttypes | \${PAGER:-more};             echo "\\n*** Selezionare Chiudere o Uscita dal menu di controllo della finestra \\n    per chiudere questa finestra ***"'
+
+
+        DESCRIPTION     L'azione Tipi e azioni (Dttypes) avvia lo strumento \
+                        'dttypes', che consente di individuare i problemi \
+                        relativi al database dei tipi e delle azioni.
+}
+ACTION Dttypes
+{
+        LABEL           Tipi e azioni
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '/usr/dt/bin/dttypes -type "%(File)Arg_1%";                  echo "\\n*** Selezionare Chiudere o Uscita dal menu di controllo della finestra \\n    per chiudere questa finestra ***"'
+
+        DESCRIPTION     L'azione Tipi e azioni (Dttypes) avvia lo strumento \
+                        'dttypes', che consente di individuare i problemi \
+                        relativi al database dei tipi e delle azioni.
+}
+
+# #########################################################################
+# 
+#  Questa è l'azione predefinita 'Nessuna stampa'.
+# 
+# #########################################################################
+ACTION NoPrint
+{
+	LABEL		Nessuna stampa
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                        "Non è possibile stampare questo tipo di dati."                        "Stampa impossibile"                        "OK"
+
+
+
+        DESCRIPTION    L'azione Nessuna stampa visualizza un riquadro di errore \
+                       indicante che il file che si cerca di stampare \
+                       ha un tipo di dati a cui non è associata \
+                       un'azione 'Stampare'.     
+}
+
+# #########################################################################
+# 
+#  Questa è l'azione predefinita 'Aprire'.
+# 
+# #########################################################################
+ACTION Open
+{
+        LABEL           Aprire
+        TYPE            MAP
+        MAP_ACTION      TextEditor
+}
+
+# #########################################################################
+# 
+# 
+# #########################################################################
+ACTION DtTTMediaOpen
+{
+	ARG_COUNT	0
+
+	ICON		Fppenpd
+	TYPE		TT_MSG
+	TT_CLASS	TT_REQUEST
+	TT_SCOPE	TT_SESSION
+	TT_OPERATION	Instantiate
+
+	TT_ARG0_MODE	TT_IN
+	TT_ARG0_VTYPE	C_STRING
+	TT_ARG0_REP_TYPE TT_REP_STRING
+}
+
+ACTION DtTTMediaOpen
+{
+	ARG_CLASS	BUFFER
+	ARG_MODE	w
+	ARG_COUNT	>0
+
+	ICON		Fppenpd
+	TYPE		TT_MSG
+	TT_CLASS	TT_REQUEST
+	TT_SCOPE	TT_SESSION
+	TT_OPERATION	Edit
+
+	TT_ARG0_MODE	TT_INOUT
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_ARG0_VALUE	%Arg_1%
+	TT_ARG0_REP_TYPE TT_REP_BUFFER
+}
+
+ACTION DtTTMediaOpen
+{
+	ARG_CLASS	BUFFER
+	ARG_MODE	!w
+	ARG_COUNT	>0
+
+	ICON		Fppenpd
+	TYPE		TT_MSG
+	TT_CLASS	TT_REQUEST
+	TT_SCOPE	TT_SESSION
+	TT_OPERATION	Display
+
+	TT_ARG0_MODE	TT_IN
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_ARG0_VALUE	%Arg_1%
+	TT_ARG0_REP_TYPE TT_REP_BUFFER
+}
+
+ACTION DtTTMediaOpen
+{
+	ARG_CLASS	FILE
+	ARG_COUNT	>0
+
+	ICON		Fppenpd
+	TYPE		TT_MSG
+	TT_CLASS	TT_REQUEST
+	TT_SCOPE	TT_SESSION
+	TT_OPERATION	Edit
+	TT_FILE		%Arg_1%
+
+	TT_ARG0_MODE	TT_INOUT
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_ARG0_REP_TYPE TT_REP_STRING
+}
+
+# ######################## EOF ############################################

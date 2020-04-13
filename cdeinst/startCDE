@@ -1,0 +1,4 @@
+export PATH="/usr/dt/bin:$PATH"
+export LANG="C"
+startx /usr/dt/bin/Xsession
+

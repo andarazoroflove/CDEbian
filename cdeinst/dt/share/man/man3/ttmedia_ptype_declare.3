@@ -1,0 +1,389 @@
+'\" t
+...\" pty_decl.sgm /main/6 1996/09/08 20:23:05 rws $
+...\" pty_decl.sgm /main/6 1996/09/08 20:23:05 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttmedia_ptype_declare" "library call"
+.SH "NAME"
+\fBttmedia_ptype_declare\fP \(em declare the ptype of a Media Exchange media editor
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_status \fBttmedia_ptype_declare\fP\fR(
+\fBconst char *\fBptype\fR\fR,
+\fBint \fBbase_opnum\fR\fR,
+\fBTtmedia_load_pat_cb \fBcb\fR\fR,
+\fBvoid *\fBclientdata\fR\fR,
+\fBint \fBdeclare\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttmedia_ptype_declare\fP function
+is used to initialize an editor that implements the Media Exchange
+message interface for a particular media type\&.
+The
+\fBttmedia_ptype_declare\fP function
+notifies
+the ToolTalk service
+that the
+\fIcb\fP callback is to be called when the editor is asked to edit a document
+of the kind supported by
+ptype\&.
+The
+\fBttmedia_ptype_declare\fP function
+installs an implementation-specific
+\fIopnum\fP callback on a series of signatures that
+ptype
+is assumed to contain\&.
+These signatures are listed below, with
+their corresponding opnum offsets\&.
+Opnums in
+ptype
+for these signatures start at
+\fIbase_opnum\fP, which must be zero or a multiple of 1000\&.
+The implementation-specific
+opnum callback will pass
+\fIclientdata\fP to
+\fIcb\fP when a request is received that matches one of these signatures\&.
+.PP
+If
+\fIdeclare\fP is True,
+\fBttmedia_ptype_declare\fP calls
+\fBtt_ptype_declare\fP with the
+ptype
+argument\&.
+If
+ptype
+implements Media Exchange for several different media types,
+then
+\fBttmedia_ptype_declare\fP can be called multiple times, with a different
+\fIbase_opnum\fP each time, and with
+\fIdeclare\fP being True only once\&.
+.PP
+The
+\fBTtmedia_load_pat_cb\fR argument is a callback defined as:
+.PP
+.nf
+\f(CWTt_message (*Ttmedia_load_pat_cb)(Tt_message \fImsg\fP,
+        void *\fIclientdata\fP,
+        Tttk_op \fIop\fP,
+        Tt_status \fIdiagnosis\fP,
+        unsigned char *\fIcontents\fP,
+        int \fIlen\fP,
+        char *\fIfile\fP,
+        char *\fIdocname\fP);\fR
+.fi
+.PP
+.PP
+The
+\fImsg\fP argument is a
+\fBTT_REQUEST\fP in
+\fBTt_state\fR \fBTT_SENT\fP\&. The client
+program becomes responsible for either failing, rejecting or replying
+to it\&.
+This can either be done inside the callback, or the message
+can be saved and dismissed later (that is, after the callback returns)\&.
+Usually, the callback will either immediately reject/fail the request,
+or it will start processing the request, perhaps by associating it
+with a new window\&.
+When the request is finally dismissed, it should
+be destroyed, for example, using
+\fBtt_message_destroy\fP\&.
+.PP
+If the callback knows it will handle the request (either fail or reply
+to it, but not reject it), then it should call
+\fBttdt_message_accept\fP(3)\&. But if the return value of
+\fBtt_message_status\fP(3) of
+\fImsg\fP is
+\fBTT_WRN_START_MESSAGE\fP, then the callback should probably do
+\fBttdt_session_join\fP, and perhaps a
+\fBttdt_file_join\fP, before accepting the message\&.
+The
+\fIop\fP argument is the
+op of the incoming request,
+one of
+\fBTTME_COMPOSE\fP, \fBTTME_EDIT\fP or
+\fBTTME_DISPLAY\fP\&. The
+\fIdiagnosis\fP argument is the
+recommended error code;
+if the ToolTalk service
+detects a problem with the request (for example,
+\fBTT_DESKTOP_ENODATA\fP), then it passes in the error code
+that it recommends the request should be failed with\&.
+If
+\fIdiagnosis\fP was not
+\fBTT_OK\fP and the
+\fBTtmedia_load_pat_cb\fR returns
+\fImsg\fP, then the ToolTalk service
+will fail and destroy
+\fImsg\fP\&.
+.PP
+The ToolTalk service
+does not simply fail the request transparently, because
+the request may be the reason that the client process was started
+by ToolTalk in the first place\&.
+So if
+\fIdiagnosis\fP is not
+\fBTT_OK\fP and the
+\fBtt_message_status\fP of
+\fImsg\fP is
+\fBTT_WRN_START_MESSAGE\fP, then many applications will
+decide that they have no reason to continue running\&.
+If such an application chooses to exit in the callback, then
+it should first dismiss the request\&.
+Otherwise, it can set
+some global flag, return
+\fImsg\fP (thus allowing the ToolTalk service
+to dismiss the message), and then
+have
+\fBmain\fP check the flag and exit before even entering the
+event loop\&.
+(Exiting without dismissing the request would fail
+it with status
+\fBTT_ERR_PROCID\fP, instead of with
+\fIdiagnostic\fP\&.)
+.PP
+The
+\fIcontents\fP, \fIlen\fP, and
+\fIfile\fP arguments represent the
+contents of the arriving document\&.
+If
+\fIlen\fP is zero, then the document is contained in
+\fIfile\fP\&. If
+\fIcontents\fP or
+\fIfile\fP are non-
+\fBNULL\fP, they can be freed using
+\fBtt_free\fP\&.
+.PP
+The
+\fIdocname\fP argument is the
+name of the document, if any\&.
+The
+\fIclientdata\fP argument is the
+\fIclientdata\fP passed to
+\fBttmedia_ptype_declare\fP\&.
+.PP
+A
+\fBTtmedia_load_pat_cb\fR should return zero if it processes
+\fImsg\fP successfully, or a
+\fBtt_error_pointer\fP cast to
+\fBTt_message\fR if processing results in an error\&.
+It should return the
+\fImsg\fP if it does not consume it\&.
+If
+\fIdiagnosis\fP is not
+\fBTT_OK\fP and
+\fImsg\fP is returned, then the ToolTalk service
+will consume (namely, fail and destroy) it\&.
+If
+\fIdiagnosis\fP is
+\fBTT_OK\fP and
+\fImsg\fP is returned, then the ToolTalk service will pass
+\fBTT_CALLBACK_CONTINUE\fP down the call stack, so that
+\fImsg\fP will be offered to other callbacks or (more likely) be returned from
+\fBtt_message_receive\fP(3)\&. Applications will rarely want
+\fImsg\fP to get processed by other callbacks or in the main event loop\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttmedia_ptype_declare\fP function returns the status of the operation\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned handle:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_POINTER" 10
+The pointer passed does not point to an object
+of the correct type for this operation\&.
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.IP "TT_ERR_PTYPE" 10
+The specified process type is not the name of an installed process type\&.
+.SH "EXAMPLES"
+.PP
+This is the typical algorithm of a
+\fBTtmedia_load_pat_cb\fR:
+.PP
+.nf
+\f(CWTt_message
+myAcmeSheetLoadCB(
+        Tt_message      msg,
+        void           *client_data,
+        Tttk_op         op,
+        Tt_status       diagnosis,
+        unsigned char  *contents,
+        int             len,
+        char           *file,
+        char           *docname
+)
+{
+        Tt_status status = TT_OK;
+        if (diagnosis != TT_OK) {
+                /* toolkit detected an error */
+                if (tt_message_status(msg) == TT_WRN_START_MESSAGE) {
+                        /*
+                         * Error is in start message!  We now have no
+                         * reason to live, so tell main() to exit()\&.
+                         */
+                        myAbortCode = 2;
+                }
+                /* let toolkit handle the error */
+                return msg;
+        }
+        if ((op == TTME_COMPOSE)&&(file == 0)) {
+                /* open empty new buffer */
+        } else if (len > 0) {
+                /* load contents into new buffer */
+        } else if (file != 0) {
+                if (ttdt_Get_Modified(msg, file, TT_BOTH, myCntxt, 5000)) {
+                        switch(myUserChoice("Save, Revert, Ignore?")) {
+                            case 0:
+                                ttdt_Save(msg, file, TT_BOTH, myCntxt, 5000);
+                                break;
+                            case 1:
+                                ttdt_Revert(msg, file, TT_BOTH, myCntxt, 5000);
+                                break;
+                        }
+                }
+                /* load file into new buffer */
+        } else {
+                tttk_message_fail(msg, TT_DESKTOP_ENODATA, 0, 1);
+                tt_free(contents); tt_free(file); tt_free(docname);
+                return 0;
+        }
+        int w, h, x, y = INT_MAX;
+        ttdt_sender_imprint_on(0, msg, 0, &w, &h, &x, &y, myCntxt, 5000);
+        positionMyWindowRelativeTo(w, h, x, y);
+        if (maxBuffersAreNowOpen) {
+                /* Un-volunteer to handle future requests until less busy */
+                tt_ptype_undeclare("Acme_Calc");
+        }
+        if (tt_message_status(msg) == TT_WRN_START_MESSAGE) {
+                /*
+                 * Join session before accepting start message,
+                 * to prevent unnecessary starts of our ptype
+                 */
+                ttdt_session_join(0, myContractCB, myShell, 0, 1);
+        }
+        ttdt_message_accept(msg, myContractCB, myShell, 0, 1, 1);
+        tt_free(contents); tt_free(file); tt_free(docname);
+        return 0;
+}\fR
+.fi
+.PP
+.PP
+This is the signature layout to which
+ptype should conform:
+.PP
+.nf
+\f(CWptype Acme_Calc {
+    start "acalc";
+    handle:
+        /*
+         * Instantiate Acme_Sheet
+         * Include in tool\&'s ptype if tool can be a document factory\&.
+         */
+        session Instantiate(in Acme_Sheet  template) => start opnum = 401;
+        /*
+         * Display Acme_Sheet
+         * Include in tool\&'s ptype if tool can display a document\&.
+         */
+        session Display( in    Acme_Sheet  contents) => start opnum = 1;
+        session Display( in    Acme_Sheet  contents,
+                         in    messageID   counterfoil) => start opnum = 2;
+        session Display( in    Acme_Sheet  contents,
+                         in    title       docName) => start opnum = 3;
+        session Display( in    Acme_Sheet  contents,
+                         in    messageID   counterfoil,
+                         in    title       docName) => start opnum = 4;
+        /*
+         * Edit Acme_Sheet
+         * Include in tool\&'s ptype if tool can edit a document\&.
+         */
+        session Edit(    inout Acme_Sheet  contents) => start opnum = 101;
+        session Edit(    inout Acme_Sheet  contents,
+                         in    messageID   counterfoil) => start opnum = 102;
+        session Edit(    inout Acme_Sheet  contents,
+                         in    title       docName) => start opnum = 103;
+        session Edit(    inout Acme_Sheet  contents,
+                         in    messageID   counterfoil,
+                         in    title       docName) => start opnum = 104;
+        /*
+         * Compose Acme_Sheet
+         * Include in tool\&'s ptype if tool can compose a document from scratch\&.
+         */
+        session Edit(    out   Acme_Sheet  contents) => start opnum = 201;
+        session Edit(    out   Acme_Sheet  contents,
+                         in    messageID   counterfoil) => start opnum = 202;
+        session Edit(    out   Acme_Sheet  contents,
+                         in    title       docName) => start opnum = 203;
+        session Edit(    out   Acme_Sheet  contents,
+                         in    messageID   counterfoil,
+                         in    title       docName) => start opnum = 204;
+        /*
+         * Mail Acme_Sheet
+         * Include in tool\&'s ptype if tool can mail a document\&.
+         */
+        session Mail(    in    Acme_Sheet  contents) => start opnum = 301;
+        session Mail(    inout Acme_Sheet  contents) => start opnum = 311;
+        session Mail(    inout Acme_Sheet  contents,
+                         in    title       docName) => start opnum = 313;
+        session Mail(    out   Acme_Sheet  contents) => start opnum = 321;
+        session Mail(    out   Acme_Sheet  contents,
+                         in    messageID   counterfoil) => start opnum = 323;
+};\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBtt_ptype_declare\fP(3), \fBtt_ptype_undeclare\fP(3), \fBttdt_message_accept\fP(3), \fBttdt_session_join\fP(3), \fBttdt_file_join\fP(3), \fBtt_free\fP(3), \fBtt_message_receive\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

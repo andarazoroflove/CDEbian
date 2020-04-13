@@ -1,0 +1,849 @@
+# ##########################################################################
+# 
+#      datatypes.dt
+# 
+#      Action and DataType definitions for the Common Desktop Environment
+#      (CDE) DT components.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#     $TOG: datatypes.dt.src /main/6 1997/05/28 11:43:48 mgreess $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Atributos de datos
+# 
+# ##################################################################
+DATA_ATTRIBUTES BM
+{
+        ACTIONS         Open,Print
+        ICON		Dtbitmp
+        NAME_TEMPLATE	%s.bm
+        MIME_TYPE	text/plain
+        SUNV3_TYPE	xbm-file
+        DESCRIPTION     Es un archivo que contiene datos en formato de \
+                        mapa de bits X11. Su tipo de datos se denomina BM. \
+                        Los nombres de los archivos BM finalizan en \
+                        '.bm' o '.xbm'.
+        TYPE_LABEL      BM
+}
+DATA_CRITERIA BM1
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            f
+        NAME_PATTERN    *.bm
+}
+DATA_CRITERIA BM2
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            f
+        NAME_PATTERN    *.xbm
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION	Dticon
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES PM
+{
+        ACTIONS         Open,Print
+        ICON		Dtpixmp
+        NAME_TEMPLATE	%s.pm
+        MIME_TYPE	text/plain
+        SUNV3_TYPE	xpm-file
+        DESCRIPTION     Es un archivo de mapas de pixels que contiene una imagen \
+                        multicolor. Su tipo de datos se denomina PM. Los \
+                        nombres de los archivos PM finalizan en \
+                        '.pm' o '.xpm' o contienen los caracteres \
+                        "! XPM2".
+        TYPE_LABEL      PM
+}
+DATA_CRITERIA PM1
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            f
+        NAME_PATTERN    *.pm
+}
+DATA_CRITERIA PM2
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            f
+        NAME_PATTERN    *.xpm
+}
+DATA_CRITERIA PM3
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            f
+        CONTENT 	0 string ! XPM2
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION	Dticon
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES PCL
+{
+        ACTIONS         Open,Print
+        ICON            Dtpcl
+        NAME_TEMPLATE	%s.pcl
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Es un archivo que contiene datos en formato del \
+                        Lenguaje de Control de Impresora (PCL). Su tipo de datos \
+                        se denomina PCL. Los nombres de los archivos PCL \
+                        finalizan en '.pcl'.
+        TYPE_LABEL      PCL
+}
+DATA_CRITERIA PCL1
+{
+        DATA_ATTRIBUTES_NAME    PCL
+        CONTENT		0 byte 033 0105
+        MODE            f
+}
+DATA_CRITERIA PCL2
+{
+        DATA_ATTRIBUTES_NAME    PCL
+        NAME_PATTERN    *.pcl
+        MODE            f
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        PCL
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                           "No se puede abrir - No hay ningún visor de PCL disponible."                           "Información"                           "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona un visor para archivos PCL. \
+                        Cuando se intenta abrir este archivo aparece un \
+                        cuadro de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        PCL
+        TYPE            MAP
+        MAP_ACTION	PrintRaw
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES POSTSCRIPT
+{
+        ACTIONS         Open,Print
+        ICON		Dtps
+        NAME_TEMPLATE	%s.ps
+        MIME_TYPE	application/postscript
+        SUNV3_TYPE	postscript-file
+        DESCRIPTION     Este archivo contiene los datos postscript. Su tipo de \
+                        datos se denomina PS.  Los nombres de archivo PS \
+                        finalizan en '.ps' o '.PS' o contienen los caracteres "%!".
+        TYPE_LABEL      POSTSCRIPT
+}
+DATA_CRITERIA POSTSCRIPT1
+{
+        DATA_ATTRIBUTES_NAME POSTSCRIPT
+        MODE            f
+        NAME_PATTERN    *.ps
+}
+DATA_CRITERIA POSTSCRIPT2
+{
+        DATA_ATTRIBUTES_NAME POSTSCRIPT
+        MODE            f
+        NAME_PATTERN    *.PS
+}
+DATA_CRITERIA POSTSCRIPT3
+{
+        DATA_ATTRIBUTES_NAME    POSTSCRIPT
+        CONTENT 	0 string %!
+        MODE            f
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        POSTSCRIPT
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "No se puede abrir - No hay ningún visor de Postscript disponible."                            "Información"                            "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona ningún visor postscript. \
+                        Si se intenta abrir este archivo se mostrará un \
+                        cuadro de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        POSTSCRIPT
+        TYPE            MAP
+        MAP_ACTION	PrintRaw
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES AUDIO_AU
+{
+        ACTIONS         Open,Play
+        ICON            Dtaudio
+        NAME_TEMPLATE	%s.au
+        MIME_TYPE	audio/basic
+        SUNV3_TYPE	audio-file
+        DESCRIPTION     Este archivo contiene datos audio (sonido). Su tipo de datos \
+                        se denomina AUDIO. Los nombres de archivo AUDIO finalizan \
+                        en '.snd', '.wav' o '.au' o contienen los \
+                        caracteres ".snd".
+        TYPE_LABEL      AUDIO
+}
+DATA_CRITERIA AUDIO_AU1
+{
+        DATA_ATTRIBUTES_NAME AUDIO_AU
+        MODE            f
+        NAME_PATTERN    *.au
+}
+DATA_CRITERIA AUDIO_AU2
+{
+        DATA_ATTRIBUTES_NAME AUDIO_AU
+        CONTENT         0 string \.snd
+        MODE            f
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        AUDIO_AU
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                        "No se puede 'abrir' ni 'reproducir'  - No hay ningún reproductor de sonido disponible."                        "Información"                        "OK"
+
+
+
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+ACTION Play
+{
+        LABEL           Reproducir
+        ARG_TYPE        AUDIO_AU
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                         "No se puede 'abrir' ni 'reproducir'  - No hay ningún reproductor de sonido disponible."                         "Información"                         "OK"
+
+
+
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+
+
+DATA_ATTRIBUTES AUDIO_SND
+{
+        ACTIONS         Open,Play
+        ICON            Dtaudio
+        NAME_TEMPLATE	%s.snd
+        MIME_TYPE	audio/basic
+        SUNV3_TYPE	audio-file
+        DESCRIPTION     No  puede 'editar'  - No hay un editor de sonido disponible. 
+        TYPE_LABEL      AUDIO
+}
+DATA_CRITERIA AUDIO_SND1
+{
+        DATA_ATTRIBUTES_NAME AUDIO_SND
+        MODE            f
+        NAME_PATTERN    *.snd
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        AUDIO_SND
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                        "No se puede 'abrir' ni 'reproducir'  - No hay ningún reproductor de sonido disponible."                        "Información"                        "OK"
+
+
+
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+ACTION Play
+{
+        LABEL           Reproducir
+        ARG_TYPE        AUDIO_SND
+        TYPE            MAP
+	MAP_ACTION	Open
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+
+DATA_ATTRIBUTES AUDIO_WAV
+{
+        ACTIONS         Open,Play
+        ICON            Dtaudio
+        NAME_TEMPLATE	%s.wav
+        MIME_TYPE	audio/basic
+        SUNV3_TYPE	audio-file
+        DESCRIPTION     Esta acción inicia el panel de control de sonido.
+        TYPE_LABEL      AUDIO
+}
+DATA_CRITERIA AUDIO_WAV1
+{
+        DATA_ATTRIBUTES_NAME AUDIO_WAV
+        MODE            f
+        NAME_PATTERN    *.wav
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        AUDIO_WAV
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                        "No se puede 'abrir' ni 'reproducir'  - No hay ningún reproductor de sonido disponible."                        "Información"                        "OK"
+
+
+
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+ACTION Play
+{
+        LABEL           Reproducir
+        ARG_TYPE        AUDIO_WAV
+        TYPE            MAP
+	MAP_ACTION	Open
+        DESCRIPTION      Esta acción reproduce un archivo de sonido.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        AUDIO_AU,AUDIO_SND,AUDIO_WAV
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES TIFF
+{
+        ACTIONS         Open
+        ICON            Dttif
+        NAME_TEMPLATE	%s.tif
+        MIME_TYPE	image/tiff
+        SUNV3_TYPE	tiff-file
+        DESCRIPTION     Este archivo contiene una imagen gráfica en formato TIFF. \
+                        Su tipo de datos se denomina TIFF. Los nombres \
+                        de los archivos TIFF finalizan en '.TIFF', '.TIF', \
+                        '.tiff' o '.tif'.
+        TYPE_LABEL      TIFF
+}
+DATA_CRITERIA TIFF1
+{
+        DATA_ATTRIBUTES_NAME TIFF
+        MODE            f
+        NAME_PATTERN    *.TIFF
+}
+DATA_CRITERIA TIFF2
+{
+        DATA_ATTRIBUTES_NAME TIFF
+        MODE            f
+        NAME_PATTERN    *.TIF
+}
+DATA_CRITERIA TIFF3
+{
+        DATA_ATTRIBUTES_NAME TIFF
+        MODE            f
+        NAME_PATTERN    *.tiff
+}
+DATA_CRITERIA TIFF4
+{
+        DATA_ATTRIBUTES_NAME TIFF
+        MODE            f
+        NAME_PATTERN    *.tif
+}
+DATA_CRITERIA TIFF5
+{
+	DATA_ATTRIBUTES_NAME TIFF
+	CONTENT    0 byte 0115 0115
+	MODE            f
+}
+DATA_CRITERIA TIFF6
+{
+	DATA_ATTRIBUTES_NAME TIFF
+	CONTENT    0 byte 0111 0111
+	MODE            f
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        TIFF
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "No se puede abrir - No hay ningún visor de archivos TIFF disponible."                            "Información"                            "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona ningún visor TIFF.  \
+                        Si se intenta abrir este archivo se muestra un \
+                        cuadro de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        TIFF
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES JPEG
+{
+        ACTIONS         Open
+        ICON            Dtjpeg
+        NAME_TEMPLATE	%s.jpg
+        MIME_TYPE	image/jpeg
+        SUNV3_TYPE	jpeg-file
+        DESCRIPTION     Este archivo contiene una imagen gráfica en formato \
+                        de archivo de intercambio JPEG. Su tipo de datos se \
+                        denomina JPEG. Los nombres de archivos JPEG finalizan \
+                        en '.JPEG', '.jpg', '.jpeg' o '.JPG'.
+        TYPE_LABEL      JPEG
+}
+DATA_CRITERIA JPEG1
+{
+        DATA_ATTRIBUTES_NAME JPEG
+        MODE            f
+        NAME_PATTERN    *.JPEG
+}
+DATA_CRITERIA JPEG2
+{
+        DATA_ATTRIBUTES_NAME JPEG
+        MODE            f
+        NAME_PATTERN    *.jpg
+}
+DATA_CRITERIA JPEG3
+{
+        DATA_ATTRIBUTES_NAME JPEG
+        MODE            f
+        NAME_PATTERN    *.jpeg
+}
+DATA_CRITERIA JPEG4
+{
+        DATA_ATTRIBUTES_NAME JPEG
+        MODE            f
+        NAME_PATTERN    *.JPG
+}
+DATA_CRITERIA JPEG5
+{
+	DATA_ATTRIBUTES_NAME JPEG
+	CONTENT    0 byte 0377 0330 0377
+	MODE            f
+}
+DATA_CRITERIA JPEG6
+{
+        DATA_ATTRIBUTES_NAME JPEG
+        MODE            f
+        CONTENT         0 short 0xffd8
+}
+ACTION Open
+{
+	LABEL		Abrir
+        ARG_TYPE        JPEG
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "No se puede abrir - No hay ningún visor de archivo JPEG disponible."                            "Información"                            "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona ningún visor de JPEG.  \
+                        Si se intenta abrir este archivo se muestra un \
+                        cuadro de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        JPEG
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES MPEG
+{
+        ACTIONS         Open
+        ICON            Dtmpeg
+        NAME_TEMPLATE	%s.mpg
+        MIME_TYPE	video/mpeg
+        DESCRIPTION     Este archivo contiene una secuencia de imágenes gráficas en \
+                        formato de archivo de intercambio MPEG. Su tipo de \
+                        datos se denomina MPEG. Los nombres de los archivos \
+                        MPEG finalizan en '.MPEG', '.mpg', '.mpeg' o '.MPG'.
+        TYPE_LABEL      MPEG
+}
+DATA_CRITERIA MPEG1
+{
+        DATA_ATTRIBUTES_NAME MPEG
+        MODE            f
+        NAME_PATTERN    *.MPEG
+}
+DATA_CRITERIA MPEG2
+{
+        DATA_ATTRIBUTES_NAME MPEG
+        MODE            f
+        NAME_PATTERN    *.mpg
+}
+DATA_CRITERIA MPEG3
+{
+        DATA_ATTRIBUTES_NAME MPEG
+        MODE            f
+        NAME_PATTERN    *.mpeg
+}
+DATA_CRITERIA MPEG4
+{
+        DATA_ATTRIBUTES_NAME MPEG
+        MODE            f
+        NAME_PATTERN    *.MPG
+}
+DATA_CRITERIA MPEG5
+{
+        DATA_ATTRIBUTES_NAME MPEG
+        MODE            f
+        CONTENT         0 long 0x000001b3
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        MPEG
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                           "No se puede abrir - No hay ningún reproductor de MPEG disponible."                           "Información"                           "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona ningún visor de MPEG.  \
+                        Si se intenta abrir este archivo se muestra un \
+                        cuadro de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        MPEG
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES GIF
+{
+        ACTIONS         Open
+        ICON		Dtgif
+        NAME_TEMPLATE	%s.gif
+        MIME_TYPE	image/gif
+        SUNV3_TYPE	gif-file
+	DESCRIPTION	Este archivo contiene una imagen gráfica en formato GIF. \
+                        Su tipo de datos se denomina GIF. Los nombres de \
+                        los archivos GIF finalizan en .gif o .GIF o contienen \
+                        los caracteres "GIF87a" o "GIF89a".
+        TYPE_LABEL      GIF
+}
+DATA_CRITERIA GIF1
+{
+	DATA_ATTRIBUTES_NAME GIF
+        MODE            f
+	NAME_PATTERN	*.gif
+}
+DATA_CRITERIA GIF2
+{
+	DATA_ATTRIBUTES_NAME GIF
+        MODE            f
+	NAME_PATTERN	*.GIF
+}
+DATA_CRITERIA GIF3
+{
+	DATA_ATTRIBUTES_NAME GIF
+        CONTENT		0 string GIF87a
+        MODE            f
+}
+DATA_CRITERIA GIF4
+{
+	DATA_ATTRIBUTES_NAME GIF
+        CONTENT		0 string GIF89a
+        MODE            f
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        GIF
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "No se puede abrir - No hay ningún visor de archivos GIF disponible."                            "Información"                            "OK"
+
+
+
+        DESCRIPTION     El sistema no proporciona ningún visor de GIF. \
+                        Si se intenta abrir este archivo se muestra un \
+                        cuadrado de diálogo de error.
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        GIF
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES README
+{
+        ACTIONS         Open,Print
+        ICON            DtRdMe
+        IS_TEXT		true
+        NAME_TEMPLATE	README
+        MIME_TYPE	text/plain
+        DESCRIPTION     Este archivo es un archivo de texto que contiene información \
+                        acerca de los archivos de la carpeta actual. \
+                        Su tipo de datos se denomina README. Los nombres \
+                        de los archivos README empiezan por READ y finalizan \
+                        en ME, sin ningún o con algunos caracteres entre ellos. \
+                        Las letras pueden estar en mayúsculas o en minúsculas.
+        TYPE_LABEL      README
+}
+DATA_CRITERIA README1
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    README
+}
+DATA_CRITERIA README2
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    README.*
+}
+DATA_CRITERIA README3
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    Read.*.Me
+}
+DATA_CRITERIA README4
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    read.*.me
+}
+DATA_CRITERIA README5
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    READ.*.ME
+}
+DATA_CRITERIA README6
+{
+        DATA_ATTRIBUTES_NAME README
+        MODE            f
+        NAME_PATTERN    readme
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES HTML
+{
+        ACTIONS         Open,Print
+        ICON            Dtdata
+        IS_TEXT         true
+        NAME_TEMPLATE   %s.html
+        MIME_TYPE       text/html
+        DESCRIPTION     Este archivo es un archivo de texto que contiene \
+                        un lenguaje de codificación de hipertexto de World \
+                        Wide Web. Su tipo de datos se denomina HTML. Los \
+                        nombres de los archivos HTML finalizan en '.html' o \
+                        contienen los caracteres "<HTML>" o "<html>".  
+}
+DATA_CRITERIA HTML1
+{
+        DATA_ATTRIBUTES_NAME    HTML
+        MODE                    f
+        NAME_PATTERN            *.html
+}
+DATA_CRITERIA HTML2
+{
+        DATA_ATTRIBUTES_NAME    HTML
+        MODE                    f
+        CONTENT                 0 string <HTML>
+}
+DATA_CRITERIA HTML3
+{
+        DATA_ATTRIBUTES_NAME    HTML
+        MODE                    f
+        CONTENT                 0 string <html>
+}
+
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        HTML
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtlp "%Arg_1%"
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES ENRICHED_TEXT
+{
+        ACTIONS         Open,Print
+        ICON            Dtdata
+        IS_TEXT         true
+        NAME_TEMPLATE   %s.rt
+        MIME_TYPE       text/enriched
+        DESCRIPTION     Sonido
+        TYPE_LABEL      ENRICHED_TEXT
+}
+DATA_CRITERIA ENRICHED_TEXT1
+{
+        DATA_ATTRIBUTES_NAME    ENRICHED_TEXT
+        MODE                    f
+        NAME_PATTERN            *.ert
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        ENRICHED_TEXT
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtlp "%Arg_1%"
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES RICHTEXT
+{
+        ACTIONS         Open,Print
+        ICON            Dtdata
+        IS_TEXT         true
+        NAME_TEMPLATE   %s.rt
+        MIME_TYPE       text/richtext
+        DESCRIPTION     Este archivo es un archivo de texto que contiene \
+                        definiciones de varios fonts así como texto. Su \
+                        tipo de datos se denomina RICHTEXT. Los nombres \
+                        de los archivos RICHTEXT finalizan en '.rt'.
+        TYPE_LABEL      RICHTEXT
+}
+DATA_CRITERIA RICHTEXT1
+{
+        DATA_ATTRIBUTES_NAME    RICHTEXT
+        MODE                    f
+        NAME_PATTERN            *.rt
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        RICHTEXT
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtlp "%Arg_1%"
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES UIL
+{
+        ACTIONS         Open,Print
+        ICON            Dtuil
+        NAME_TEMPLATE	%s.uil
+        MIME_TYPE	text/plain
+        DESCRIPTION     Es un archivo de texto que contiene un código fuente \
+                        que un intérprete de UIL puede utilizar para crear \
+                        una interfaz de usuario Motif. Los nombres de los \
+                        archivos UIL finalizan en '.uil' o '.UIL'.
+        TYPE_LABEL      UIL
+}
+DATA_CRITERIA UIL1
+{
+        DATA_ATTRIBUTES_NAME 	UIL
+        MODE            	!d
+        NAME_PATTERN    	*.uil
+}
+DATA_CRITERIA UIL2
+{
+        DATA_ATTRIBUTES_NAME	UIL
+        MODE            	!d
+        NAME_PATTERN    	*.UIL
+}
+
+
+# #######################################################
+
+DATA_ATTRIBUTES MSDOS_EXE
+{
+        ACTIONS         (None)
+        ICON            Dtexec
+        IS_EXECUTABLE   true
+        NAME_TEMPLATE	%s.exe
+        MIME_TYPE	application/octet-stream
+        SUNV3_TYPE	msdos-file
+        DESCRIPTION     Es un archivo ejecutable que se ejecuta en \
+                        sistemas personables compatibles MSDOS. Su tipo de \
+                        datos se denomina MSDOS_EXE. Los nombres de los \
+                        archivos MSDOS_EXE finalizan en '.exe' o '.EXE'.
+        TYPE_LABEL      MSDOS_EXE
+}
+DATA_CRITERIA MSDOS_EXE1
+{
+        DATA_ATTRIBUTES_NAME MSDOS_EXE
+        MODE            f&x
+        NAME_PATTERN    *.exe
+}
+DATA_CRITERIA MSDOS_EXE2
+{
+        DATA_ATTRIBUTES_NAME MSDOS_EXE
+        MODE            f&x
+        NAME_PATTERN    *.EXE
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        MSDOS_EXE
+        TYPE            MAP
+        MAP_ACTION	NoPrint
+}
+
+# ######################## EOF ############################################

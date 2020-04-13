@@ -1,0 +1,103 @@
+'\" t
+...\" Stopped.sgm /main/6 1996/09/08 20:16:36 rws $
+...\" Stopped.sgm /main/6 1996/09/08 20:16:36 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Stopped" "special file"
+.SH "NAME"
+\fBStopped\fP \(em a tool has terminated
+.SH "SYNOPSIS"
+.PP
+.nf
+Stopped(in string \fIvendor\fP,
+        in string \fItoolName\fP,
+        in string \fItoolVersion\fP);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBStopped\fP notice announces that
+a tool has exited\&.
+.PP
+The
+\fIvendor\fP argument
+is the vendor of the terminated tool\&.
+.PP
+The
+\fItoolName\fP argument
+is the name of the terminated tool\&.
+.PP
+The
+\fItoolVersion\fP argument
+is the version of the terminated tool\&.
+.SH "EXAMPLES"
+.PP
+A pattern observing the
+\fBStopped\fP request can be registered as
+in the following example:
+.PP
+.nf
+\f(CWTt_pattern pat = tt_pattern_create();
+tt_pattern_category_set(pat, TT_OBSERVE);
+tt_pattern_scope_add(pat, TT_SESSION);
+char *ses = tt_default_session();
+tt_pattern_session_add(pat, ses);
+tt_free(ses);
+tt_pattern_op_add(pat, Tttk_Started);
+tt_pattern_op_add(pat, Tttk_Stopped);
+tt_pattern_callback_add(pat, my_callback);
+tt_pattern_register(pat);\fR
+.fi
+.PP
+.PP
+The
+\fBStopped\fP request can be sent with
+\fBttdt_close\fP(3)\&.
+.SH "SEE ALSO"
+.PP
+\fBtt_free\fP(3), \fBtt_pattern_callback_add\fP(3), \fBtt_pattern_category_set\fP(3), \fBtt_pattern_op_add\fP(3), \fBtt_pattern_register\fP(3), \fBtt_pattern_scope_add\fP(3), \fBtt_pattern_session_add\fP(3), \fBttdt_close\fP(3); \fBStarted\fP notice\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

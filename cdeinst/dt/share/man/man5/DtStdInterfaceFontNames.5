@@ -1,0 +1,452 @@
+'\" t
+...\" DtStdInt.sgm /main/12 1996/09/30 11:28:57 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtStdInterfaceFontNames" "file formats"
+.SH "NAME"
+\fBDtStdInterfaceFontNames\fP \(em XCDE Standard Interface Font Names
+.SH "DESCRIPTION"
+.PP
+The XCDE Standard
+Interface Font Names are a set of generic X Window
+System font names, needed by the XCDE GUI itself, that are used for user
+interface elements such as button labels, window titles and text fields\&.
+These names, for seven sizes of two typefaces, must exist on all XCDE
+systems, and they should be provided in any
+X\ server product on which XCDE applications are expected to run\&.
+Seven sizes of a third typeface are recommended\&.
+They are typically mapped to existing fonts on the system
+using the font alias mechanism, although this method is not
+required\&.
+.PP
+XCDE 1\&.0 does not come with a common set of fonts on all systems,
+and it must be able to run on X\ servers and X terminals from non-XCDE
+vendors if those vendors so desire\&. Therefore, there are a standard set of
+``generic\&'\&' font names and sizes that each XCDE vendor makes available
+on their XCDE systems and that X\ server vendors may make available
+on their X\ servers and terminals\&. The names map to existing fonts on
+each vendor\&'s system and may vary from vendor to vendor\&.
+.PP
+The XCDE Standard Interface Font Names described here allow clients
+making up the XCDE desktop, such as \fBdtterm\fP(1) and a single
+set of default fonts in their \fIapp-defaults\fP files, without
+concern for the system or X\ server on which XCDE is running\&. (The XCDE
+Standard Application Font Names, described in \fBDtStdAppFontNames\fP(5),
+provide a similar mechanism for applications running on the XCDE desktop\&.)
+.SS "Background"
+.PP
+Interface fonts are designed by user interface experts for the narrow
+purpose of making the menus, labels and fields of a graphical user interface
+highly readable\&. They are usually finely hand-tuned bitmapped fonts, intended
+for use on visual displays only and not on printers, and many of the glyphs
+have been specially modified for this purpose\&. Interface fonts can be contrasted
+with application fonts, which are the fonts used within an application running
+on the XCDE desktop\&. Interface fonts come in a restricted set of styles
+and are used for short strings of text, whereas application fonts usually
+come in a variety of designs, styles and weights and are used for emphasis,
+cross-references, section headers, and so forth\&.
+.SS "Rationale"
+.PP
+Common font names are required to prevent XCDE clients such as \fBdtterm\fP(1) from needing different \fIapp-defaults\fP
+files on each system\&. In addition, any X\ server or X terminal vendor
+may ensure that the XCDE desktop can run on their X\ server by mapping
+these standard names to fonts of the corresponding style on their individual
+X systems\&.
+.PP
+Interface fonts are needed because of user interface and cognitive research
+that has examined the readability of various fonts on the display screens
+in use today and found that many fine adjustments (for example, for centering,
+baseline, height and alignment) must be made to characters in a font to make
+them clear, distinguishable and consistent when used for the interface objects
+of a GUI\&. And by using hand-tuned interface fonts for the GUI objects, the
+desktop can achieve a very clean, crisp visual appearance\&.
+.PP
+Interface fonts are broken into 2 categories: system and user\&. Cognitive
+research has shown that this distinction is important for the usability and
+readability of GUIs\&. System fonts are those used when the system is presenting
+information to the user (for example, in buttons)\&. User fonts are those used
+for text that a user enters into the system (for example, for a text field
+or terminal emulator)\&.
+.SS "XLFD Field Values for the Standard Interface Font Names"
+.PP
+These standard names are available using the X Window System XLFD font
+naming scheme\&. There are three aspects to the standard names:
+.IP "   \(bu" 6
+The \fIunderlying font\fP on each system, or
+X\ server platform, to which a standard name is mapped, typically will
+be different on each system\&.
+.IP "   \(bu" 6
+The \fIstandard name\fP itself,
+a full XLFD name mapped to the underlying font, may be different on each system
+in some of the XLFD fields\&. However, most of the fields are the same from
+system to system, allowing the \fIpatterns\fP (described next)
+to be the same\&.
+.IP "   \(bu" 6
+The font resource \fIpattern\fP
+containing the * wildcards, used in \fIapp-defaults\fP
+files, which will match the full XLFD name of the standard name, is the same
+across all systems, for a given use in an \fIapp-defaults\fP
+file\&.
+.PP
+Each XCDE or X\ server vendor implementing this specification
+must provide full XLFD names for the standard names, mapped to system-dependent
+underlying fonts, so that the XLFD patterns used in XCDE application \fIapp-defaults\fP files will always match one of the full XLFD names
+provided\&.
+.PP
+The Standard Interface Font Names are identified by the presence of
+the following XLFD field name values:
+.IP "   \(bu" 6
+\fBFOUNDRY\fP is \fBdt\fP
+.IP "   \(bu" 6
+\fBFAMILY_NAME\fP
+is either \fBinterface system\fP or \fBinterface user\fP
+(there is a single space between the two words in each family name)
+.PP
+In addition, the other fields of the XLFD names defining the standard
+names are constrained as follows:
+.IP "   \(bu" 6
+\fBWEIGHT_NAME\fP is either \fBmedium\fP or \fBbold\fP
+.IP "   \(bu" 6
+\fBSLANT\fP
+is always \fBr\fP
+.IP "   \(bu" 6
+\fBSETWIDTH_NAME\fP
+is always \fBnormal\fP
+.IP "   \(bu" 6
+\fBSPACING\fP
+is \fBp\fP or \fBm\fP (it must be \fBm\fP
+for \fBinterface user\fP fonts, and should be \fBp\fP
+for \fBinterface system\fP fonts, although \fBm\fP
+is acceptable)
+.IP "   \(bu" 6
+\fBADD_STYLE_NAME\fP
+contains both a nominal size value in the range \fBxxs\fP to \fBxxl\fP (see below), as well as either \fBsans\fP for sans
+serif fonts or \fBserif\fP for serif, if appropriate for the
+underlying font
+.IP "   \(bu" 6
+The numeric fields ( \fBPIXEL_SIZE\fP, \fBPOINT_SIZE\fP, \fBRESOLUTION_X\fP, \fBRESOLUTION_Y\fP, and \fBAVERAGE_WIDTH\fP) must contain the same values as the underlying font\&.
+.IP "   \(bu" 6
+\fBCHARSET_REGISTRY\fP
+and \fBCHARSET_ENCODING\fP are not specified;
+the standard names may be implemented for any XCDE locale\&.
+.PP
+Although the \fBsans\fP and \fBserif\fP values
+in the \fBADD_STYLE_NAME\fP field are
+not required by the XLFD font convention, they are always part of the XCDE
+Standard Font Names when the underlying fonts are characterized as serif or
+sans serif\&. However, this document imposes no restriction on whether the interface
+fonts are serif or sans serif\&. The relevant attribute must be coded in the \fBADD_STYLE_NAME\fP field\&. Thus, for example, the
+standard names for Japanese fonts, which are not characterized as being serif
+or sans serif, would not include this designation in the \fBADD_STYLE_NAME\fP field\&.
+.SS "Restricted Set of Styles Available"
+.PP
+Unlike the Standard Application Font Names, only a limited set of styles
+is available in the Standard Interface Font Names\&. The styles available represent
+the minimum set currently considered necessary for the desktop GUI needs:
+.IP "   \(bu" 6
+a medium weight of an interface system font, preferably proportionally
+spaced (but mono-spaced is acceptable if appropriate for the locale)
+.IP "   \(bu" 6
+a medium weight of an interface user font, always
+mono-spaced
+.IP "   \(bu" 6
+a bold weight of an interface user font, always
+mono-spaced (the standard font names for this generic typeface are recommended
+if available for the targeted fonts and locale, but are not required)
+.SS "Named Set of Point Sizes Available"
+.PP
+In addition, the set of seven point sizes for each of the three styles
+that are part of this document are ``named\&'\&' point sizes, using string values
+in the \fBADD_STYLE_NAME\fP field\&. Thus,
+XLFD patterns matching these names match a size based on the named size, not
+on a numeric size, even though the latter does exist in the XLFD name\&. These
+named sizes are used because the exact size of an interface font is less important
+than its nominal size, and implementation differences for the hand-tuned interface
+fonts do not allow common numeric point sizes to be assured across systems\&.
+The seven nominal sizes are as follows:
+.IP "\fBxxs\fP" 10
+extra extra small
+.IP "\fBxs\fP" 10
+extra small
+.IP "\fBs\fP" 10
+small
+.IP "\fBm\fP" 10
+medium
+.IP "\fBl\fP" 10
+large
+.IP "\fBxl\fP" 10
+extra large
+.IP "\fBxxl\fP" 10
+extra extra large
+.PP
+The goal of these named sizes is to provide enough fonts so that both
+the variety of display monitor sizes and resolutions that XCDE will run
+on, and the range of user preferences for comfortably reading button labels,
+window titles and so forth, can be accommodated in the GUI\&. Thus, both the
+smallest size, \fBxxs\fP, and the largest size, \fBxxl\fP, are meant to be reasonable sizes for displaying and viewing the XCDE
+desktop on common displays and X terminals; they are not meant to imply either
+hard-to-read fine print or headline-sized display type\&.
+.PP
+These named size values must occur first in the \fBADD_STYLE_NAME\fP field, before any use of the values \fBserif\fP or \fBsans\fP (one of which is always required
+when the underlying font can be so characterized) and before any other additional
+stylistic attribute that might be appropriate\&. This is important when specifying
+wild-carded patterns in a resource specification for these fonts, since whether
+the underlying font these names are mapped to is serif or sans serif is not
+specified by XCDE, and the match must work for all XLFD names provided
+by XCDE system vendors or other X\ server vendors\&.
+.SS "Example XLFD Patterns for the Standard Names"
+.PP
+Using these values, the XLFD pattern
+.PP
+.nf
+\f(CW-dt-interface*-*\fR
+.fi
+.PP
+.PP
+logically matches the full set of XCDE Standard Interface Font Names\&.
+(Note that no specific X server behavior is implied)\&.
+.PP
+The full set of 21 XCDE Standard Interface Font Names can also be
+represented, in a more meaningful way, as follows:
+.PP
+.nf
+\f(CW-dt-interface system-medium-r-normal-*-*-*-*-*-*-*-iso8859-1
+-dt-interface user-medium-r-normal-*-*-*-*-*-m-*-iso8859-1
+-dt-interface user-bold-r-normal-*-*-*-*-*-m-*-iso8859-1\fR
+.fi
+.PP
+.PP
+The full set of patterns, usable in \fIapp-defaults\fP
+files, for all seven sizes for the system font, for example, is:
+.PP
+.nf
+\f(CW-dt-interface system-medium-r-normal-xxs*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-l*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-xl*-*-*-*-*-*-*-iso8859-1
+-dt-interface system-medium-r-normal-xxl*-*-*-*-*-*-*-iso8859-1\fR
+.fi
+.PP
+.PP
+These patterns could be used in a resource file and will match the full XCDE
+Standard Interface Names for Latin-1 locales on all XCDE, or complying
+X server, systems\&.
+.PP
+Note in these wild-carded XLFD names that the \fBADD_STYLE_NAME\fP field has a pattern, such as \fBxxs*\fP,
+and that the pattern is partly a string ( \fBxxs\fP) and partly
+the pattern-matching character \fB*\fP\&. The full XLFD name this
+pattern matches\(emthe XLFD name implementing the Standard Interface name\(emwill
+often contain \fBsans\fP or \fBserif\fP in the field,
+after the \fBxxs\fP and a space, and so the \fB*\fP
+is essential to match that \fBsans\fP or \fBserif\fP
+string (and any additional style attribute string that might be in the underlying
+name)\&. Note also that the \fBSPACING\fP
+field is wild-carded in the pattern for the system font, since either \fBp\fP or \fBm\fP may appear in the standard name being
+matched\&.
+.SS "Implementation of Font Names"
+.PP
+Each XCDE system vendor and X\ server vendor provides mappings
+of its own fonts to XLFD names as described by this document\&. The actual XLFD
+names will vary from system to system, just as the fonts they are mapped to,
+since they contain some of the same values as the XLFD name of the underlying
+font\&. What does not vary is the behavior: the common patterns in which only
+specified fields are used will match each system\&'s standard names\&. This is
+guaranteed by the field specifications given earlier\&.
+.PP
+There is no precise specification of how the named sizes \fBxxs\fP to \fBxxl\fP are mapped to sizes of underlying fonts
+in each system or X\ server product, although each size must be equal
+to or larger than the previous size\&. Nonetheless, some guidelines are appropriate\&.
+.PP
+Interface fonts have been developed because of human factors research
+on visual clarity of text on displays, and this has been done in the context
+of the display technology typically available today, mostly in the 100 dots
+per inch (DPI) range\&. That, and the use of standard point sizes (10, 12, 14,
+18) in the graphics arts, have resulted in the development in the industry
+of hand-tuned bitmapped fonts for a set of ``pixel heights\&'\&' that are likely
+to be used for these standard names\&. However, making the XCDE desktop
+usable with a range of point sizes effectively means, in addition to legibility
+for the user, that the various XCDE applications fit ``appropriately\&'\&'
+on the screen using those point sizes\&. This means, for example, that two application
+windows can appear side by side on a typical display or that a certain number
+of buttons can appear across the screen\&.
+.PP
+Thus, these guidelines are expressed not only in pixel sizes, to reflect
+current usage, but also in percentage of monitor height\&. This allows them
+to remain appropriate as technological evolution improves display resolution
+and monitor size (for example, wall-mounted monitors)\&. The ideal set of sizes
+would form a linear progression from the smallest ( \fBxxs\fP)
+to the largest ( \fBxxl\fP), although this is not achievable\&.
+The basic guideline is that the \fBxxs\fP font should be, in
+pixels, no less than 0\&.9% of the height of the display resolution, in pixels;
+the \fBxxl\fP font should be no more than 2\&.6% of the height\&.
+.PP
+As an approximate example that does not represent any existing mapping
+of fonts to a display, this table shows how the named sizes might map to real
+bitmapped fonts of a given pixel size, and how large those sizes are in percentage
+and point size terms:
+.TS
+tab();
+lw(1.089623i) lw(1.102594i) lw(1.764151i) lw(1.543632i).
+T{
+\fBSample Range of
+Named Sizes on a 1280\(ti1024 Display\fP
+T}
+\fInamed size\fP\fInumber\fP \fIof
+pixels\fP\fIsize as %\fP \fIof 1024 height\fP\fIpoint size on 100 DPI screen\fP
+\fBxxs\fP100\&.98%7\&.2
+\fBxs\fP121\&.12%8\&.7
+\fBs\fP141\&.37%10\&.1
+\fBm\fP171\&.66%12\&.3
+\fBl\fP201\&.95%14\&.6
+\fBxl\fP232\&.25%16\&.6
+\fBxxl\fP262\&.54%18\&.8
+.TE
+.PP
+Thus, the following requirements are placed on each implementation of
+the Standard Interface Font Names:
+.IP "   \(bu" 6
+The names must be fully specified XLFD names, without wild
+cards\&.
+.IP "   \(bu" 6
+The \fBWEIGHT_NAME\fP, \fBSLANT\fP, \fBSETWIDTH_NAME\fP, \fBSPACING\fP, \fBCHARSET_REGISTRY\fP and \fBCHARSET_ENCODING\fP fields must contain valid values as defined
+previously and must match those in the underlying font\&.
+.IP "   \(bu" 6
+The \fBADD_STYLE_NAME\fP field must contain both a named size (for example, \fBxxs\fP) and, if appropriate, either the \fBserif\fP or \fBsans\fP designation, whichever matches the underlying font; any additional
+words about the style of the underlying font, if defined for the underlying
+font, must also be used\&. The named size must be first in the field, and must
+be separated from any following word in the field with a blank\&.
+.IP "   \(bu" 6
+The named sizes \fBxxs\fP through \fBxxl\fP must be mapped to fonts that are progressively larger than or
+equal to the previous one in the list\&. Thus, several standard names with adjacent
+sizes (for example, \fBxxs\fP and \fBxs\fP) may
+be mapped to the same font (for example, if there is not enough variety in
+sizes in the underlying fonts)\&.
+.IP "   \(bu" 6
+The implemented names should attempt to meet the
+guidelines discussed in the previous paragraph and table\&.
+.PP
+For example, system A is assumed to be using the following sans serif
+font for the extra small system font:
+.PP
+.nf
+\f(CW-bitstream-swiss-medium-r-normal--11-90-85-85-p-81-iso8859-1\fR
+.fi
+.PP
+.PP
+System B is using the following serif font for the extra small system
+font:
+.PP
+.nf
+\f(CW-vendorb-ersatz-medium-r-normal-Expert-8-80-75-75-m-72-iso8859-1\fR
+.fi
+.PP
+.PP
+Their respective standard names would be implemented on their systems
+as:
+.PP
+.nf
+\f(CW-dt-interface\ system-medium-r-normal-xs\!sans-11-90-85-85-p-81-iso8859-1
+-dt-interface\ system-medium-r-normal-xs\!serif\ Expert-8-80-75-75-m-72-iso8859-1\fR
+.fi
+.PP
+.PP
+Defined this way, both names will match the single XLFD pattern used
+in a common \fIapp-defaults\fP file:
+.PP
+.nf
+\f(CW-dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-iso8859-1\fR
+.fi
+.PP
+.SS "Default XCDE Mapping of the Standard Interface Font Names"
+.PP
+There is no default mapping of these interface names to X11R5 fonts;
+the mapping is implementation-specific\&.
+.SH "USAGE"
+.PP
+A XCDE desktop client developer will code a single \fIapp-defaults\fP file to specify font resources for their client and use it across
+all XCDE systems\&. Since the \fBFOUNDRY\fP, \fBFAMILY_NAME\fP, \fBWEIGHT_NAME\fP, \fBSLANT\fP and \fBSETWIDTH_NAME\fP fields of the standard names are
+the same across different systems, these values can be used in the resource
+specification in the \fIapp-defaults\fP file\&. However, other
+fields ( \fBADD_STYLE_NAME\fP, \fBPIXEL_SIZE\fP, \fBPOINT_SIZE\fP, \fBRESOLUTION_X\fP, \fBRESOLUTION_Y\fP, \fBSPACING\fP and \fBAVERAGE_WIDTH\fP)
+will vary across systems, and so must be wild-carded in the resource specification
+( \fBADD_STYLE_NAME\fP is partially wild-carded)\&.
+As was shown in the previous example:
+.PP
+.nf
+\f(CW-dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-iso8859-1\fR
+.fi
+.PP
+.PP
+is an XLFD pattern, used in a single resource specification, that matches
+a single standard name on different XCDE or X\ server platforms\&. (And
+if the last 2 fields, \fBCHARSET_REGISTRY\fP
+and \fBCHARSET_ENCODING\fP, were wild-carded,
+then the pattern could work across locales as well\&.) Note that the named size
+( \fBxs\fP in this example) is part of the pattern, but the \fBserif\fP/ \fBsans serif\fP designation is not; this is
+required to obtain the desired nominal size (whatever it may be in the mapped
+font), while still matching either \fBserif\fP or \fBsans serif\fP in the standard name\&.
+.PP
+Note that if a XCDE desktop application tries to open a font using
+one of these standard names, and the X\ server does not know about these
+names, the application will usually fall back on using the \fBfixed\fP and \fBvariable\fP font aliases that are typically
+provided in all X\ servers\&. When this happens, the XCDE desktop will
+be more difficult to use, visually, than if its expected font names were available\&.
+.SH "NOTES"
+.PP
+There is no requirement on a XCDE system or X\ server vendor
+to implement these standard names in a particular way\&. Several mechanisms
+are possible: duplicate font files with altered naming attributes, X11R5 font
+aliases, or vendor-specific mechanisms\&. The only requirement is that an XLFD
+pattern, written with attributes taken from the set that define the standard
+names, can be successfully used to open a font with the Xlib function \fBXLoadFont\fP; and, specifically, the Xlib function \fBXListFonts\fP need NOT return the same XLFD name for the pattern on different XCDE
+or X\ server systems\&.
+.SH "SEE ALSO"
+.PP
+\fBdtstyle\fP(1), \fBdtterm\fP(1), \fBDtStdAppFontNames\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

@@ -1,0 +1,239 @@
+'\" t
+...\" DtDndPro.sgm /main/10 1996/08/31 14:54:19 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtDndProtocol" "special file"
+.SH "NAME"
+\fBDtDndProtocol\fR \(em drag and drop matching and transfer protocols
+.SH "DESCRIPTION"
+.PP
+The drag and drop protocols provide policy for matching and data transfer
+between the drag initiator and the drop receiver of file names, selected text
+spans and application-defined structured data formats\&.
+.PP
+The drag and drop protocols use the standard X11 selection targets,
+where available, with the addition of several new selection targets where
+required\&.
+.PP
+These protocols provide for the transfer of the following types of data:
+.IP "   \(bu" 6
+Selected Text
+.IP "   \(bu" 6
+File Names
+.IP "   \(bu" 6
+Buffers
+.SH "PROTOCOL OVERVIEW"
+.PP
+Each protocol consists of the following:
+.SS "Drag and Drop API Protocol"
+.PP
+Each protocol described corresponds to a specific \fBDtDndProtocol\fR enumeration value\&.
+.SS "Export/Import Targets"
+.PP
+The Motif drag and drop API provides support for matching of the data
+transfer protocol between the drag initiator and the various drop receivers\&.
+This allows the user to determine readily which drop sites will accept the
+dragged data\&.
+.PP
+The drag initiator sets the \fBXmNexportTargets\fP resource of the \fBXmDragContext\fP to the
+list of target atoms that describe the data being dragged\&. The drop receiver
+sets the \fBXmNimportTargets\fP resource
+of the \fBXmDropSite\fP to the list of target atoms that describe
+the data that it will accept\&. The Motif drag and drop subsystem allows drops
+when the \fBXmNexportTargets\fP and \fBXmNimportTargets\fP have at least one target in
+common\&.
+.SS "Data Transfer Protocol"
+.PP
+Once the drag initiator has dropped on the drop receiver, the transfer
+of data is begun\&. The transfer is accomplished using X selections and is controlled
+by the drop receiver\&.
+.PP
+The drop receiver starts all transfers by converting the selection into
+the ICCCM \fBTARGETS\fP target to get
+the set of available selection targets\&. (See the  CAE Specification,  Window Management: X Window System File Formats and Application Conventions for a description
+of converting targets\&.) It then chooses the appropriate selections from that
+set and requests that the drag initiator convert each requested selection\&.
+Each protocol has a set of selection targets that are used to transfer all
+the necessary data\&. These target conversions are usually initiated by calling \fBXmDropTransferStart\fP\&.
+.SS "Move Completion"
+.PP
+When the operation of the drop is \fBXmDROP_MOVE\fP, the drop receiver must complete the move using an appropriate
+method\&. For most data transfers, this is accomplished by converting the selection
+into the ICCCM \fBDELETE\fP target to
+tell the drag initiator that it may delete the data\&. For most file name transfers,
+this is accomplished via the file system\&.
+.SH "TEXT TRANSFER PROTOCOL"
+.PP
+The text transfer protocol is used to exchange text selections\&.
+.SS "Drag and Drop API"
+.PP
+This is the protocol used when a \fBDtDndProtocol\fR of \fBDtDND_TEXT_TRANSFER\fP
+is specified\&.
+.SS "Export/Import Targets"
+.PP
+The export or import targets are any of the following; the target describing
+the character encoding of the text selection, \fBCOMPOUND_TEXT\fP, \fBSTRING\fP
+or \fBTEXT\fP\&.
+.SS "Data Transfer Protocol"
+.PP
+The transfer of text selections follows the protocols described in the
+ICCCM manual\&. If the character encoding of the drag initiator and drop receiver
+are the same, that target should be converted to get the text selection\&. If
+the character encoding are different, the drop receiver should attempt to
+convert the standard text targets in the following order: \fBCOMPOUND_TEXT\fP, \fBSTRING\fP
+or \fBTEXT\fP\&.
+.SS "Move Completion"
+.PP
+The move is completed by converting the selection into the ICCCM \fBDELETE\fP target\&.
+.SH "FILE NAME TRANSFER PROTOCOL"
+.PP
+The transfer protocol is used to exchange file names\&.
+.SS "Drag and Drop API"
+.PP
+This is the protocol used when a \fBDtDndProtocol\fR of \fBDtDND_FILENAME_TRANSFER\fP
+is specified\&.
+.SS "Export/Import Targets"
+.PP
+The export or import targets are \fBFILE_NAME\fP and, optionally, \fB_DT_NETFILE\fP
+if capable of providing the file name in network canonical form using \fBtt_file_netfile\fP(3) and \fBtt_netfile_file\fP(3)\&.
+.SS "Data Transfer Protocol"
+.PP
+If the ICCCM \fBHOST_NAME\fP target
+is in the list of target atoms, it is converted\&. If the returned host name
+is different than the host name for the drop receiver and the \fB_DT_NETFILE\fP target is in the list of target
+atoms, it is converted\&. The drag initiator uses \fBtt_file_netfile\fP(3) to encode the file names and the drop receiver uses \fBtt_netfile_file\fP(3) to decode the file names\&.
+.PP
+If the hosts are the same for both the drag initiator and the drop receiver
+or either the \fBHOST_NAME\fP or the \fB_DT_NETFILE\fP targets are not in the list of target
+atoms from the drag initiator, the drop receiver converts the ICCCM \fBFILE_NAME\fP target\&. No encoding of the file names
+occurs in this case\&.
+.SS "Move Completion"
+.PP
+Moves of file names can be accomplished atomically using standard file
+system operations\&. Drop receivers are encouraged to use the file system\&. The
+drop receiver may alternatively choose to use the ICCCM \fBDELETE\fP target to complete the \fBXmDROP_MOVE\fP and the drag initiator must be ready to comply\&.
+.SH "BUFFER TRANSFER PROTOCOL"
+.PP
+The transfer protocol is used to exchange memory buffers\&.
+.SS "Drag and Drop API"
+.PP
+This is the protocol used when a \fBDtDndProtocol\fR of \fBDtDND_BUFFER_TRANSFER\fP
+is specified\&.
+.SS "Export/Import Targets"
+.PP
+The export and import targets are \fB_DT_BUFFER_DATA\fP, \fB_DT_BUFFER_LENGTHS\fP
+and, optionally, \fB_DT_BUFFER_NAMES\fP\&.
+.SS "Data Transfer Protocol"
+.PP
+The \fB_DT_BUFFER_DATA\fP and \fB_DT_BUFFER_LENGTHS\fP targets are converted to
+transfer the buffer data\&.
+.PP
+The data of the buffers is encoded into the \fB_DT_BUFFER_DATA\fP target as an array of bytes\&. The lengths in bytes
+of each buffer are encoded into \fB_DT_BUFFER_LENGTHS\fP\&. Each length is used to index into the \fB_DT_BUFFER_DATA\fP array\&.
+.PP
+If the \fB_DT_BUFFER_NAMES\fP target
+is available, it is converted to transfer the names of the buffers\&.
+.SS "Move Completion"
+.PP
+The move is completed by converting the selection into the ICCCM \fBDELETE\fP target\&.
+.SH "SELECTION TARGETS"
+.PP
+The following table describes the selection targets used in the drag
+and drop data matching and transfer protocols\&.
+.TS
+tab();
+lw(2.27in) lw(2.02in) lw(2.87in).
+\fBAtom\fR\fBType\fP\fBDescription\fP
+TARGETSATOMT{
+A list of valid target atoms\&. See ICCCM section
+2\&.6\&.2\&.
+T}
+DELETENULLT{
+Used to delete the dropped data\&. If the drop
+receiver wishes to perform a move operation on the data, after copying the
+data it should request conversion of the \fBDELETE\fP target\&. See ICCCM section 2\&.6\&.3\&.1\&.
+T}
+COMPOUND_TEXTCOMPOUND_TEXTT{
+The text selection in compound text format\&.
+See ICCCM section 2\&.7\&.1\&.
+T}
+STRINGSTRINGT{
+The text selection in ISO Latin-1 format\&.
+See ICCCM section 2\&.7\&.1\&.
+T}
+TEXTTEXTT{
+The text selection in the format preferred
+by the selection holder\&. See ICCCM section 2\&.7\&.1\&.
+T}
+HOST_NAMETEXTT{
+The name of the machine running the client
+as seen from the machine running the server\&. See ICCCM section 2\&.6\&.2\&.
+T}
+FILE_NAMETEXTT{
+The full path name of the files\&. See ICCCM
+section 2\&.6\&.2\&.
+T}
+_DT_NETFILETEXTT{
+The full pathname of the files, each encoded
+using \fBtt_file_netfile\fP(3) and decoded using \fBtt_netfile_file\fP(3)\&.
+T}
+_DT_BUFFER_DATA_DT_BUFFER_DATAT{
+The buffer data in an array of bytes\&.
+T}
+_DT_BUFFER_LENGTHSINTEGERT{
+The lengths in bytes of each buffer in the \fB_DT_BUFFER_NAMES\fP array\&.
+T}
+_DT_BUFFER_NAMESSTRINGT{
+The names of each buffer, suitable for use
+as a file name\&.
+T}
+.TE
+.SH "SEE ALSO"
+.PP
+\fBDt/Dnd\&.h - DtDnd\fP(5), \fBDtDndDragStart\fP(3), \fBDtDndDragStart\fP(3), \fBDtDndDropRegister\fP(3), \fBDtDndDropUnregister\fP(3), \fBXmDropTransferStart\fP(3), \fBXmDragContext\fP(3), \fBXmDragStart\fP(3), \fBXmDropSiteRegister\fP(3), \fBXmDropSite\fP(3), \fBtt_file_netfile\fP(3), \fBtt_netfile_file\fP(3), \fBX11/R5 Inter-Client
+Communications Conventions Manual (ICCCM)\fP
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

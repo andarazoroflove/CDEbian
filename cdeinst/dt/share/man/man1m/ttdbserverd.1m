@@ -1,0 +1,153 @@
+'\" t
+...\" ttdbserv.sgm /main/7 1996/12/06 18:09:14 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdbserverd" "user cmd"
+.SH "NAME"
+\fBttdbserverd\fP \(em RPC-based ToolTalk database server
+.SH "SYNOPSIS"
+.PP
+\fBrpc\&.ttdbserverd\fP [-G]  [-m \fIDTMOUNTPOINT_value\fP]  [-n]  [-v]  [-?] 
+.SH "DESCRIPTION"
+.PP
+\fBrpc\&.ttdbserverd\fP
+manages ToolTalk objects created by
+\fBtt_spec_create\fP(3),
+and handles certain queries related to the netfiles returned by
+\fBtt_file_netfile\fP(3)\&.
+One instance of
+\fBrpc\&.ttdbserverd\fP
+(normally started by 
+\fBinetd\fP)
+runs on each host that has a local filesystem\&.
+\fBrpc\&.ttdbserverd\fP
+serves four purposes:
+.IP "   1." 6
+Mapping a spec to its associated file and a file to its associated specs\&.
+.IP "   2." 6
+Mapping a spec to its properties\&.
+.IP "   3." 6
+Mapping a file to a list of sessions with clients having patterns
+registered in the scope of that file\&.
+.IP "   4." 6
+Answering netfile queries; see
+\fBtt_file_netfile\fP(3)
+and
+\fBtt_host_file_netfile\fP(3)\&.
+.PP
+For each filesystem that
+\fBrpc\&.ttdbserverd\fP
+needs to store information about, it creates a directory called
+\fBTT_DB\fP at the mountpoint of that file system\&.
+In that directory
+it creates the databases it needs to store its tables and indices\&.
+If the partition is not writable, then
+\fBrpc\&.ttdbserverd\fP
+can be told, via
+\fBpartition_map\fP(4),
+to create the databases in another local partition\&.
+If
+\fBrpc\&.ttdbserverd\fP
+is not installed on a particular file server, ToolTalk can be
+told, via
+\fBhostname_map\fP(4),
+to manage that file server\&'s partitions using the
+\fBrpc\&.ttdbserverd\fP
+on a different host\&.
+.SH "OPTIONS"
+.IP "-G" 10
+Perform garbage collection\&.
+This cleans up the \fBTT_DB\fP directories and the
+associated internal database files\&.
+.IP "-m \fIDTMOUNTPOINT_value\fP" 10
+Sets the \fBDTMOUNTPOINT\fP
+environment variable for
+\fBrpc\&.ttdbserverd\fP\&.
+If there is already an environment variable called
+\fBDTMOUNTPOINT\fP, -m
+will override it\&.
+.IP "-n" 10
+Turn off permission checking\&.  Normally the protection of the file
+passed to
+\fBtt_spec_create\fP(3)
+determines who may read and write that spec\&.  This
+option disables this checking and allows anyone to read and write any
+spec\&.  This option should be used with caution\&.
+.IP "-v" 10
+Print out the version number\&.
+.IP "-?" 10
+Prints out the command usage information\&.
+.SH "ENVIRONMENT"
+.IP "DTMOUNTPOINT" 10
+If set, the value of this environment variable will be used in place
+of \fB/net\fP in pathnames constructed to answer
+\fBtt_host_netfile_file\fP(3)
+queries\&. This environment variable can also be set by using the -m
+flag for \fBrpc\&.ttdbserverd\fP\&.
+.IP "TT_PARTITION_MAP" 10
+If set, the value of this environment variable will be used
+in place of \fB/etc/tt/partition_map\fP\&.  See
+\fBpartition_map\fP(4)\&.
+.SH "FILES"
+.IP "TT_DB/*" 10
+spec and session database files are kept in the TT_DB directory
+under each disk partition mount point\&.
+.IP "tt/hostname_map" 10
+Host redirection map\&.  See
+\fBhostname_map\fP(4)\&.
+.IP "/etc/tt/partition_map" 10
+Partition redirection map\&.  See
+\fBpartition_map\fP(4)\&.
+.SH "SEE ALSO"
+.PP
+\fBttsession\fP(1),
+\fBtt_file_netfile\fP(3),
+\fBtt_host_file_netfile\fP(3),
+\fBtt_spec_create\fP(3),
+\fBhostname_map\fP(4),
+\fBpartition_map\fP(4)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,1106 @@
+# ##########################################################################
+# 
+#     miscImages.dt
+# 
+#     Examples of miscellaneous datatypes for Images.
+# 
+#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994 International Business Machines Corp.
+#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994 Novell, Inc.
+# 
+#      $XConsortium: miscImages.dt.src /main/5 1996/04/23 17:36:09 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES pict-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pict
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pict-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Macintosh-Format \
+                        PICT. Der Datentyp dieser Datei ist pict-file. \
+                        Die Namen von Dateien des Typs pict-file haben die \
+                        Erweiterung '.PICT' oder '.pict'.
+        TYPE_LABEL      pict-file
+}
+DATA_CRITERIA pict-file1
+{
+        DATA_ATTRIBUTES_NAME pict-file
+        NAME_PATTERN    *.PICT
+        MODE         	fr
+}
+DATA_CRITERIA pict-file2
+{
+        DATA_ATTRIBUTES_NAME pict-file
+        NAME_PATTERN    *.pict
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        pict-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pict-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES ppm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.ppm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      ppm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format 'Poskanser \
+                        Portable Pixmap'. Der Datentyp dieser Datei ist ppm-file. \
+                        Dateien des Typs ppm-file enthalten die Zeichen "P6" \
+                        oder "P3".
+        TYPE_LABEL      ppm-file
+}
+DATA_CRITERIA ppm-file1
+{
+        DATA_ATTRIBUTES_NAME ppm-file
+        CONTENT         0 string P6
+        MODE         	fr
+}
+DATA_CRITERIA ppm-file2
+{
+        DATA_ATTRIBUTES_NAME ppm-file
+        CONTENT         0 string P3
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        ppm-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs ppm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pj-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pj
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pj-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format 'HP PaintJet'. \
+                        Der Datentyp dieser Datei ist pj-file. Die Namen von \
+                        Dateien des Typs pj-file haben die Erweiterung \
+                        '.pj'.
+        TYPE_LABEL      pj-file
+}
+DATA_CRITERIA pj-file1
+{
+        DATA_ATTRIBUTES_NAME pj-file
+        NAME_PATTERN    *.pj
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        pj-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pj-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pgm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pgm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pgm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format 'Portable \
+                        Graymap'. Der Datentyp dieser Datei ist pgm-file. \
+                        Dateien des Typs pgm-file enthalten die Zeichen "P5" \
+                        oder "P2".
+        TYPE_LABEL      pgm-file
+}
+DATA_CRITERIA pgm-file1
+{
+        DATA_ATTRIBUTES_NAME pgm-file
+        CONTENT         0 string P5
+        MODE         	fr
+}
+DATA_CRITERIA pgm-file2
+{
+        DATA_ATTRIBUTES_NAME pgm-file
+        CONTENT         0 string P2
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        pgm-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pgm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pbm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pbm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pbm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format Poskanser \
+                        Portable Bitmap. Der Datentyp dieser Datei ist \
+                        pbm-file. Dateien des Typs  pbm-file enthalten die \
+                        Zeichen "P4" oder "P1".
+        TYPE_LABEL      pbm-file
+}
+DATA_CRITERIA pbm-file1
+{
+        DATA_ATTRIBUTES_NAME pbm-file
+        CONTENT         0 string P4
+        MODE         	fr
+}
+DATA_CRITERIA pbm-file2
+{
+        DATA_ATTRIBUTES_NAME pbm-file
+        CONTENT         0 string P1
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL           Öffnen
+   	ARG_TYPE        pbm-file
+   	TYPE            COMMAND
+   	WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pbm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES ilbm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.ilbm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      ilbm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Amiga-Format IFF \
+                        ILBM. Der Datentyp dieser Datei ist ilbm-file. \
+                        Die Namen von Dateien des Typs ilbm-file haben die \
+                        Erweiterung '.ilbm' oder enthalten die Zeichen "ILBM".
+        TYPE_LABEL      ilbm-file
+}
+DATA_CRITERIA ilbm-file1
+{
+        DATA_ATTRIBUTES_NAME ilbm-file
+        CONTENT         0 string ILBM
+        MODE         	fr
+}
+DATA_CRITERIA ilbm-file2
+{
+        DATA_ATTRIBUTES_NAME ilbm-file
+        NAME_PATTERN    *.ilbm
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        ilbm-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs ilbm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pi1-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pi1
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pi1-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Atari-Degas-Format \
+                        pi1. Der Datentyp dieser Datei ist pi1-file. \
+                        Die Namen von Dateien des Typs pi1-file haben \
+                        die Erweiterung '.pi1'.
+        TYPE_LABEL      pi1-file
+}
+DATA_CRITERIA pi1-file1
+{
+        DATA_ATTRIBUTES_NAME pi1-file
+        NAME_PATTERN    *.pi1
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        pi1-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pi1-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pcx-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pcx
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pcx-file
+        DESCRIPTION     Diese Datei enthält ein Bild im PCX-Format für PC Paintbrush. \
+                        Der Datentyp dieser Datei ist pcx-file. \
+                        Die Namen von Dateien des Typs pcx-file \
+                        haben die Erweiterung '.pcx'.
+        TYPE_LABEL      pcx-file
+}
+DATA_CRITERIA pcx-file1
+{
+        DATA_ATTRIBUTES_NAME pcx-file
+        NAME_PATTERN    *.pcx
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        pcx-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pcx-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES tga-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.tga
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      tga-file
+        DESCRIPTION     Diese Datei enthält ein Bild im TrueVision-Format \
+                        Targa. Der Datentyp dieser Datei ist tga-file. \
+                        Die Namen von Dateien des Typs tga-file haben \
+                        die Erweiterung '.tga'.
+        TYPE_LABEL      tga-file
+}
+DATA_CRITERIA tga-file1
+{
+        DATA_ATTRIBUTES_NAME tga-file
+        NAME_PATTERN    *.tga
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        tga-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs tga-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES xim-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.xim
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      xim-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format xim. Der Datentyp \
+                        dieser Datei ist xim-file. Die Namen von Dateien \
+                        des Typs xim-file haben die Erweiterung '.xim'.
+        TYPE_LABEL      xim-file
+}
+DATA_CRITERIA xim-file1
+{
+        DATA_ATTRIBUTES_NAME xim-file
+        NAME_PATTERN    *.xim
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        xim-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs xim-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES mtv-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.mtv
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      mtv-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Ray-Tracer-Ausgabeformat \
+                        MTV/PRT. Der Datentyp dieser Datei ist mtv-file. \
+                        Die Namen von Dateien des Typs mtv-file haben die \
+                        Erweiterung '.mtv'.
+        TYPE_LABEL      mtv-file
+}
+DATA_CRITERIA mtv-file1
+{
+        DATA_ATTRIBUTES_NAME mtv-file
+        NAME_PATTERN    *.mtv
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        mtv-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs mtv-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES qrt-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.qrt
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      qrt-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Ray-Tracer-Ausgabeformat \
+                        QRT. Der Datentyp dieser Datei ist qrt-file. Die Namen \
+                        von Dateien des Typs qrt-file haben die Erweiterung '.qrt'.
+        TYPE_LABEL      qrt-file
+}
+DATA_CRITERIA qrt-file1
+{
+        DATA_ATTRIBUTES_NAME qrt-file
+        NAME_PATTERN    *.qrt
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        qrt-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs qrt-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES imgw-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.imgw
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      imgw-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format Img-whatnot. \
+                        Der Datentyp dieser Datei ist imgw-file. Die Namen \
+                        von Dateien des Typs imgw-file haben die Erweiterung '.imgw'.
+        TYPE_LABEL      imgw-file
+}
+DATA_CRITERIA imgw-file1
+{
+        DATA_ATTRIBUTES_NAME imgw-file
+        NAME_PATTERN    *.imgw
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        imgw-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs imgw-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES sld-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.sld
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      sld-file
+        DESCRIPTION     Diese Datei enthält ein Bild im AutoCAD-Format slide. \
+                        Der Datentyp dieser Datei ist sld-file. Die Namen \
+                        von Dateien des Typs sld-file haben die Erweiterung '.sld'.
+        TYPE_LABEL      sld-file
+}
+DATA_CRITERIA sld-file1
+{
+        DATA_ATTRIBUTES_NAME sld-file
+        NAME_PATTERN    *.sld
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        sld-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs sld-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES spc-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.spc
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      spc-file
+        DESCRIPTION     Diese Datei enthält ein Bild im komprimierten Atari-Format \
+                        Spectrum. Der Datentyp dieser Datei ist spc-file. \
+                        Die Namen von Dateien des Typs spc-file haben die \
+                        Erweiterung '.spc'.
+        TYPE_LABEL      spc-file
+}
+DATA_CRITERIA spc-file1
+{
+        DATA_ATTRIBUTES_NAME spc-file
+        NAME_PATTERN    *.spc
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        spc-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs spc-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES spu-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.spu
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      spu-file
+        DESCRIPTION     Diese Datei enthält ein Bild im entkomprimierten Atari-Format \
+                        'Spectrum'. Der Datentyp dieser Datei ist spu-file. \
+                        Die Namen von Dateien des Typs spu-file haben die \
+                        Erweiterung '.spu'.
+        TYPE_LABEL      spu-file
+}
+DATA_CRITERIA spu-file1
+{
+        DATA_ATTRIBUTES_NAME spu-file
+        NAME_PATTERN    *.spu
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        spu-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs spu-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES gould-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.gould
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      gould-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Scanner-Format \
+                        Gould. Der Datentyp dieser Datei ist gould-file. Die \
+                        Namen von Dateien des Typs gould-file haben die Erweiterung \
+                        '.gould'.
+        TYPE_LABEL      gould-file
+}
+DATA_CRITERIA gould-file1
+{
+        DATA_ATTRIBUTES_NAME gould-file
+        NAME_PATTERN    *.gould
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        gould-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs gould-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES fs-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.fs
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      fs-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Usenix-Format \
+                        FaceSaver. Der Datentyp dieser Datei ist fs-file. Die \
+                        Namen von Dateien des Typs fs-file haben die Erweiterung '.fs'.
+        TYPE_LABEL      fs-file
+}
+DATA_CRITERIA fs-file1
+{
+        DATA_ATTRIBUTES_NAME fs-file
+        NAME_PATTERN    *.fs
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        fs-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs fs-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES fits-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.fits
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      fits-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format FITS. Der Datentyp \
+                        dieser Datei ist fits-file. Die Namen von Dateien \
+                        des Typs fits-file haben die Erweiterung '.fits'.
+        TYPE_LABEL      fits-file
+}
+DATA_CRITERIA fits-file1
+{
+        DATA_ATTRIBUTES_NAME fits-file
+        NAME_PATTERN    *.fits
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        fits-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs fits-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES lispm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.lispm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      lispm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Bit-Array-Format \
+                        'Lisp Machine'. Der Datentyp dieser Datei ist lispm-file. \
+                        Die Namen von Dateien des Typs lispm-file haben die \
+                        Erweiterung '.lispm' oder enthalten die Zeichen \
+                        "Dies ist eine BitMap-Datei".
+        TYPE_LABEL      lispm-file
+}
+DATA_CRITERIA lispm-file1
+{
+        DATA_ATTRIBUTES_NAME lispm-file
+        NAME_PATTERN    *.lispm
+        MODE         	fr
+}
+DATA_CRITERIA lispm-file2
+{
+        DATA_ATTRIBUTES_NAME lispm-file
+        CONTENT         0 string This is a BitMap file
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        lispm-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs lispm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES hips-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.hips
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      hips-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format HIPS. Der Datentyp \
+                        dieser Datei ist hips-file. Die Namen von Dateien \
+                        des Typs hips-file haben die Erweiterung '.hips'.
+        TYPE_LABEL      hips-file
+}
+DATA_CRITERIA hips-file1
+{
+        DATA_ATTRIBUTES_NAME hips-file
+        NAME_PATTERN    *.hips
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        hips-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs hips-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES mac-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.mac
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      mac-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format MacPaint. \
+                        Der Datentyp dieser Datei ist mac-file. Die Namen \
+                        von Dateien des Typs mac-file haben die Erweiterung \
+                        '.mac'.
+        TYPE_LABEL      mac-file
+}
+DATA_CRITERIA mac-file1
+{
+        DATA_ATTRIBUTES_NAME mac-file
+        NAME_PATTERN    *.mac
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        mac-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs mac-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES atk-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.atk
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      atk-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Rasterformat \
+                        'Andrew Toolkit'. Der Datentyp dieser Datei ist atk-file. \
+                        Die Namen von Dateien des Typs atk-file haben die \
+                        Erweiterung '.atk'.
+        TYPE_LABEL      atk-file
+}
+DATA_CRITERIA atk-file1
+{
+        DATA_ATTRIBUTES_NAME atk-file
+        NAME_PATTERN    *.atk
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        atk-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs atk-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES brush-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.brush
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      brush-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Format doodle brush. \
+                        Der Datentyp dieser Datei ist brush-file. Die Namen \
+                        von Dateien des Typs brush-file haben die Erweiterung \
+                        '.brush'.
+        TYPE_LABEL      brush-file
+}
+DATA_CRITERIA brush-file1
+{
+        DATA_ATTRIBUTES_NAME brush-file
+        NAME_PATTERN    *.brush
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        brush-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs brush-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES cmu-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.cmu
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      cmu-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Bitmap-Format des Fenstermanagers \
+                        CMU. Der Datentyp dieser Datei ist cmu-file. Die Namen \
+                        von Dateien des Typs cmu-file haben die Erweiterung \
+                        '.cmu' oder enthalten die Zeichen "\361\0\100\273".
+        TYPE_LABEL      cmu-file
+}
+DATA_CRITERIA cmu-file1
+{
+        DATA_ATTRIBUTES_NAME cmu-file
+        NAME_PATTERN    *.cmu
+        MODE         	fr
+}
+DATA_CRITERIA cmu-file2
+{
+        DATA_ATTRIBUTES_NAME cmu-file
+        CONTENT         0 string \361\0\100\273
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        cmu-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs cmu-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES mgr-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.mgr
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      mgr-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Bitmap-Format MGR. \
+                        Der Datentyp dieser Datei ist mgr-file. Die Namen \
+                        von Dateien des Typs mgr-file haben die Erweiterung \
+                        '.mgr' oder enthalten die Zeichen "yz".
+        TYPE_LABEL      mgr-file
+}
+DATA_CRITERIA mgr-file1
+{
+        DATA_ATTRIBUTES_NAME mgr-file
+        NAME_PATTERN    *.mgr
+        MODE         	fr
+}
+DATA_CRITERIA mgr-file2
+{
+        DATA_ATTRIBUTES_NAME mgr-file
+        CONTENT         0 string yz
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        mgr-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs mgr-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES g3-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.g3
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      g3-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Faxformat Gruppe 3. \
+                        Der Datentyp dieser Datei ist g3-file. Die Namen von \
+                        Dateien des Typs g3-file haben die Erweiterung '.g3'.
+        TYPE_LABEL      g3-file
+}
+DATA_CRITERIA g3-file1
+{
+        DATA_ATTRIBUTES_NAME g3-file
+        NAME_PATTERN    *.g3
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        g3-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs g3-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES img-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.img
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      img-file
+        DESCRIPTION     Diese Datei enthält ein Bild im GEM-Format IMG. Der Datentyp \
+                        dieser Datei ist img-file. Die Namen von Dateien \
+                        des Typs img-file haben die Erweiterung '.img'.
+        TYPE_LABEL      img-file
+}
+DATA_CRITERIA img-file1
+{
+        DATA_ATTRIBUTES_NAME img-file
+        NAME_PATTERN    *.img
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        img-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs img-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES pi3-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.pi3
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      pi3-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Atari-Degas-Format \
+                        pi3. Der Datentyp dieser Datei ist pi3-file. Die Namen \
+                        von Dateien des Typs pi3-file haben die Erweiterung '.pi3'.
+}
+DATA_CRITERIA pi3-file1
+{
+        DATA_ATTRIBUTES_NAME pi3-file
+        NAME_PATTERN    *.pi3
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        pi3-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs pi3-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+
+DATA_ATTRIBUTES ybm-file
+{
+        ACTIONS         Open,Print
+        ICON            Dtimage
+        NAME_TEMPLATE   image%s.ybm
+	MIME_TYPE       application/octet-stream
+	SUNV3_TYPE      ybm-file
+        DESCRIPTION     Diese Datei enthält ein Bild im Face-Format von Benet Yee. \
+                         Der Datentyp dieser Datei ist ybm-file. Die Namen \
+                         von Dateien des Typs ybm-file haben die Erweiterung \
+                         '.ybm' oder enthalten die Zeichen "!!".
+        TYPE_LABEL      ybm-file
+}
+DATA_CRITERIA ybm-file1
+{
+        DATA_ATTRIBUTES_NAME ybm-file
+        NAME_PATTERN    *.ybm
+        MODE         	fr
+}
+DATA_CRITERIA ybm-file2
+{
+        DATA_ATTRIBUTES_NAME ybm-file
+        CONTENT         0 string !!
+        MODE         	fr
+}
+ACTION Open
+{
+        LABEL 		Öffnen
+        ARG_TYPE        ybm-file
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                            "Öffnen nicht möglich - Kein Anzeigeprogramm für Dateien des Typs ybm-file verfügbar."                            "Informationen"                            "OK"
+
+
+
+}
+
+# #######################################################
+DATA_ATTRIBUTES photocd-file
+{
+        ACTIONS         Open,Print
+	ICON            Dtimage
+	NAME_TEMPLATE   image%s.pcd
+		MIME_TYPE       application/octet-stream
+		SUNV3_TYPE      photocd-file
+	DESCRIPTION     Diese Datei enthält ein Grafikbild im Format photocd. \
+			Ihr Datentyp heißt photocd-file.  \
+		 	Dateien des Typs photocd-file haben Namen, die auf \
+			'.pcd' oder '.PCD' enden.
+}
+DATA_CRITERIA photocd-file1
+{
+        DATA_ATTRIBUTES_NAME photocd-file
+	MODE		fr
+	NAME_PATTERN    *.PCD
+}
+DATA_CRITERIA photocd-file2
+{
+        DATA_ATTRIBUTES_NAME photocd-file
+	MODE		fr
+	NAME_PATTERN    *.pcd
+}
+ACTION Open
+{
+	LABEL           Öffnen
+	ARG_TYPE        photocd-file
+	TYPE            COMMAND
+	WINDOW_TYPE     NO_STDIO
+	EXEC_STRING     /usr/dt/bin/dterror.ds 			"Kann nicht öffnen - Keine Dateianzeige für photocd-file verfügbar." 			"Informationen" 			"OK"
+
+
+
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        photocd-file,pict-file,ppm-file,pj-file,pgm-file,pbm-file,ilbm-file,pi1-file,pcx-file,tga-file,xim-file,mtv-file,qrt-file,imgw-file,sld-file,spc-file,spu-file,gould-file,fs-file,fits-file,lispm-file,hips-file,mac-file,atk-file,brush-file,cmu-file,mgr-file,g3-file,img-file,pi3-file,ybm-file
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}

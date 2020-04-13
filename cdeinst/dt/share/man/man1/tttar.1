@@ -1,0 +1,349 @@
+'\" t
+...\" tttar.sgm /main/11 1996/10/30 16:32:45 rws $
+objects in an archive</refpurpose></refnamediv>...\" tttar.sgm
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tttar" "user cmd"
+.SH "NAME"
+\fBtttar\fP \(em process files and ToolTalk
+objects in an archive
+.SH "SYNOPSIS"
+.PP
+\fBtttar c\fP [t]  [x]  [EfhpSv]  [\fItarfile\fP]  [\fIpathname\fP]  [\&.\!\&.\!\&.] 
+.PP
+\fBtttar c\fP [t]  [xfL]  [EhpRSv]  [\fItttarfile\fP]  [ [-rename \fIoldname\fP  | \fInewname\fP ]  | \&.\!\&.\!\&. ]  [\fIpathname\fP]  [\&.\!\&.\!\&.] 
+.PP
+\fBtttar\fP [-h]  [-help] 
+.PP
+\fBtttar\fP [-v] 
+.SH "DESCRIPTION"
+.PP
+The \fBtttar\fP utility has two fundamentally different
+modes\&.
+.IP "   \(bu" 6
+Without the \fBL\fP function modifier, \fBtttar\fP
+acts as a ToolTalk-aware wrapper for \fBtar\fP(1), archiving (or
+extracting) multiple files and their ToolTalk objects onto (or from) a single
+archive, called a \fItarfile\fP\&.
+.IP "   \(bu" 6
+With the \fBL\fP function modifier, \fBtttar\fP
+does not invoke \fBtar\fP to archive actual files, but instead
+archives (or extracts) only ToolTalk objects onto (or from) a single archive,
+called a \fItttarfile\fP\&. Since without the \fBL\fP
+function modifier \fBtttar\fP acts like an ToolTalk-aware \fBtar\fP(1), the description below is phrased as if the \fBL\fP
+function modifier is in effect\&. That is, the text refers to \fItttarfiles\fP instead of \fItarfiles\fP, and it describes archiving
+and de-archiving only ``the ToolTalk objects of the named files\&'\&' rather than
+archiving and de-archiving both ``the named files and their ToolTalk objects\&.\&'\&'
+.PP
+The actions of \fBtttar\fP are controlled by the first
+argument, the \fIkey\fP, a string of characters
+containing exactly one function letter from the set \fBctx\fP,
+and one or more of the optional function modifiers listed under \fBOPERANDS\fP\&. Other arguments to \fBtttar\fP are file or
+directory names that specify which files to archive or extract ToolTalk objects
+for\&. By default, the appearance of a directory name refers recursively to
+the files and subdirectories of that directory\&.
+.PP
+A file does not have to exist for a ToolTalk object to be associated
+with its pathname\&. When \fBtttar\fP descends into a directory,
+it does not attempt to archive the objects associated with any files that
+do not exist in the directory\&.
+.PP
+When extracting from a \fBtar\fP archive that is given
+to \fBtttar\fP either on magnetic tape or on the standard input,
+the current working directory must be writable, so that the \fItttarfile\fP can be placed there temporarily\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-h\fP" 10
+.IP "\fB-help\fP" 10
+Write a help message for invoking \fBtttar\fP and then
+exit\&.
+.IP "\fB-rename\fP\fI\0oldname\0newname\fP" 10
+Interpret the next two arguments as an \fIoldname\fP
+and a \fInewname\fP, respectively, and rename any entry archived
+as \fIoldname\fP to \fInewname\fP\&. If \fIoldname\fP is a directory, then \fBtttar\fP recursively
+renames the entries as well\&. If more than one \fB-rename\fP
+option applies to an entry (because of one or more parent directories being
+renamed), the most specific \fB-rename\fP option applies\&.
+.IP "\fB-v\fP" 10
+Write the version number of \fBtttar\fP and then exit\&.
+.SH "OPERANDS"
+.PP
+The following operands are supported:
+.IP "\fIkey\fP" 10
+The \fIkey\fP operand consists of a function
+letter followed immediately by zero or more modifying letters\&.
+.IP "" 10
+The function letter is one of the following:
+.RS
+.IP "\fBc\fP" 10
+Create a new archive and write the ToolTalk objects of the named files
+onto it\&.
+.IP "\fBt\fP" 10
+Write to standard output the names of all the files in the archive\&.
+.IP "\fBx\fP" 10
+Extract the ToolTalk objects of the named files from the archive\&. If
+a named file matches a directory with contents in the archive, this directory
+is (recursively) extracted\&. The owner and modification time of the ToolTalk
+objects are restored (if possible)\&. If no
+\fIfilename\fP arguments are given, the ToolTalk objects of all files named in
+the archive are extracted\&.
+.RE
+.IP "" 10
+The following characters can be appended to the function letter\&. Appending
+the same character more than once produces undefined results\&.
+.RS
+.IP "\fBf\fP" 10
+Use the next argument as the name of the \fItttarfile\fP\&.
+If \fItttarfile\fP is given as `\fB-\fP\&', \fBtttar\fP writes to the standard output or reads from the standard input,
+whichever is appropriate\&.
+.IP "\fBh\fP" 10
+Follow symbolic links as if they were normal files or directories\&. Normally, \fBtttar\fP does not follow symbolic links\&.
+.IP "\fBp\fP" 10
+Preserve\&. Restore the named files to their original modes, ignoring
+the present \fIumask\fP value (see \fBumask\fP(2))\&. The \fBtttar\fP utility also extracts setUID and sticky information for the
+super-user\&. This option is only useful with the \fBx\fP function
+letter, and has no meaning if the \fBL\fP function letter is
+given\&. 
+.IP "\fBL\fP" 10
+Do not invoke \fBtar\fP(1)\&. This modifier
+must be used with the \fBf\fP function modifier, since reading
+and writing an \fBtttar\fP archive directly to or from magnetic
+tape is unimplemented\&. 
+.IP "\fBR\fP" 10
+Do not recurse into directories\&. This modifier is valid
+only with the \fBL\fP function modifier\&. 
+.IP "\fBv\fP" 10
+Verbose\&. Write to standard error the name of each file processed, preceded
+by a string indicating the operation being performed, as follows:
+.TS
+tab();
+lw(1.688596i) lw(3.811404i).
+\fBKey Letter\fP\fBString\fR
+c"a "
+x"x "
+.TE
+.IP "" 10
+The file name may be followed by additional information, such as the
+size of the file in the archive or file system, in an unspecified format\&.
+When used with the \fBt\fP function letter, \fBv\fP
+writes to standard output more information about the archive entries than
+just the name\&.
+.RE
+.IP "" 10
+The following functions and modifiers are not supported: 
+.RS
+.IP "   \(bu" 6
+The \fBr\fP and \fBu\fP function letters of \fBtar\fP(1), for incrementally updating an archive\&.
+.IP "   \(bu" 6
+The \fBX\fP and \fBF\fP function modifiers
+and the \fB-I\fP option of \fBtar\fP(1), for
+including or excluding files from being archived based on SCCS status or being
+listed in a special file\&.
+.IP "   \(bu" 6
+The \fBw\fP function modifier and the \fB-C\fP option of \fBtar\fP(1), for pausing or changing directories
+between the files listed on the command line\&.
+.IP "   \(bu" 6
+Writing and reading \fItttarfiles\fP (that is, archives
+produced with the \fBL\fP function modifier) directly to and
+from magnetic tape\&.
+.RE
+.IP "\fIpathname\fP" 10
+A pathname of a regular file or directory to be archived (when the \fBc\fP function letter is used), extracted ( \fBx\fP) or
+listed ( \fBt\fP)\&. When \fIpathname\fP
+is the pathname of a directory, the action applies to all of the files and
+(recursively) subdirectories of that directory\&. When the \fBf\fP
+letter is used in the \fIkey\fP operand, the initial
+\fIpathname\fP operand is interpreted as an archive name,
+as described previously\&.
+.IP "\fItarfile\fP" 10
+A pathname of a regular file to be read or written as an archive of
+files\&.
+.IP "\fIttarfile\fP" 10
+A pathname of a regular file to be read or written as an archive of
+ToolTalk objects\&.
+.SH "STDIN"
+.PP
+When the \fBf\fP modifier is used with the \fBt\fP
+or \fBx\fP function letter and the pathname is -, the standard
+input is an archive file formatted as described in \fBEXTENDED DESCRIPTION\fP\&. Otherwise, the standard input is not used\&.
+.SH "INPUT FILES"
+.PP
+The files identified by the \fIpathname\fP
+operands are regular files or directories\&. The file identified by the \fItarfile\fP operand is a regular file formatted as described in  \fBtar\fP(1)\&. The file identified by the \fItttarfile\fP operand is a
+regular file formatted as described in \fBEXTENDED DESCRIPTION\fP\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of \fBtttar\fP:
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables that
+are unset or null\&. If \fBLANG\fP is
+unset or null, the corresponding value from the implementation-specific default
+locale will be used\&. If any of the internationalization variables contains
+an invalid setting, the utility behaves as if none of the variables had been
+defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value, override the values of all the other
+internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect the format and contents
+of diagnostic messages written to standard error and informative messages
+written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues for the processing of \fILC_MESSAGES\fP\&.
+.IP "\fBTZ\fP" 10
+Determine the timezone used with date and time strings\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The \fBtttar\fP utility takes the standard
+action for all signals\&.
+.SH "STDOUT"
+.PP
+When the \fB-h\fP option is used, \fBtttar\fP writes to standard output a help message in an unspecified format\&.
+.PP
+When the \fB-v\fP option is used, \fBtttar\fP writes to standard output a version number in an unspecified format\&.
+.PP
+When the \fBf\fP modifier is used with the \fBc\fP
+function letter and the pathname is -, the standard output is an archive
+file formatted as described in \fBEXTENDED DESCRIPTION\fP\&.
+.PP
+Otherwise, the standard output is not used\&.
+.SH "STDERR"
+.PP
+The standard error is used for diagnostic messages and the file name
+output described under the \fBv\fP modifier (when the \fBt\fP function letter is not used)\&.
+.SH "OUTPUT FILES"
+.PP
+Output files are created, as specified by the archive, when the \fBx\fP function letter is used\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+The archive file produced and read by \fBtttar\fP is formatted
+as described in \fBtar\fP(1), with the addition of one extra file
+named \fBtttarfile\fP\&. (If one of the user files being archived
+is also named \fBtttarfile\fP, the results are unspecified\&.)
+The \fBtttarfile\fP contains all the ToolTalk \fIspec\fP information for the ToolTalk objects in the other files in the
+archive\&. The contents of \fBtttarfile\fP are written according
+to the referenced XDR specification (RFC 1014)\&. The only XDR data types used
+are:
+.IP "\fBint\fR" 10
+A four-octet signed integer, most significant octet first
+.IP "\fBstring\fP" 10
+A four-octet unsigned integer length, most significant octet first,
+followed by the characters of the string, followed by sufficient (0 to 3)
+residual zero octets to make the total number of octets a multiple of four\&.
+.PP
+The \fBtttarfile\fP starts with two integers\&. The first
+is always 1, to mark this as the header record\&. The second is always 1, indicating
+this is version 1 of the \fItttarfile\fP format\&. Any
+future revisions of the \fItttarfile\fP format should increment
+the version number so older programs processing the \fItttarfile\fP
+can diagnose the incompatibility\&. 
+.PP
+The end of the \fBtttarfile\fP is a integer 3, marking
+the end-of-file record\&.
+.PP
+In between, there is one logical record for each spec\&. Each logical
+record starts with an integer 2, marking it as a spec record\&. Other integer
+values are reserved for assignment to future data types\&.
+.PP
+After the record identifier, the spec record contains, in sequence:
+.IP "   1." 6
+A string giving the Tooltalk object identifier (\fIobjid\fP)
+of the object represented by the spec
+.IP "   2." 6
+A string giving the name of the file (as found in the archive table
+of contents) that contains the contents of the ToolTalk object represented
+by the spec
+.IP "   3." 6
+A string giving the ToolTalk object type identifier (\fIotid\fP) of the ToolTalk object represented by the spec
+.IP "   4." 6
+An integer giving the number of properties for this object
+.PP
+The properties of the object immediately follow the number of properties\&.
+Each property consists of:
+.IP "   1." 6
+A string giving the name of the property
+.IP "   2." 6
+An integer, which is always zero (for historical compatibility)
+.IP "   3." 6
+An integer giving the number of values for this property
+.IP "   4." 6
+A string for each value
+.PP
+After the values, the next property is found, until all properties for
+the object have been accounted for; then the next spec is found, until all
+specs for objects associated with files in the archive are accounted for\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+All files and ToolTalk objects were moved successfully\&.
+.IP ">0" 10
+An error occurred or the invoked \fBtar\fP(1) command exited
+with a non-zero value\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "FILES"
+.IP "/mountpoint/TT_DB" 10
+The directory used as a database for the ToolTalk objects of files in
+the file system mounted at \fI/mountpoint\fP\&.
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBtar\fP(1), 
+.PP
+\fBttcp\fP(1), \fBttsession\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

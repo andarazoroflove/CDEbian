@@ -1,0 +1,189 @@
+'\" t
+...\" ttmv.sgm /main/6 1996/08/30 15:42:23 rws $
+...\" ttmv.sgm /main/6 1996/08/30 15:42:23 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttmv" "user cmd"
+.SH "NAME"
+\fBttmv\fP \(em move or rename files and inform the ToolTalk service
+.SH "SYNOPSIS"
+.PP
+\fBttmv\fP [-fL]  [\fIpathname1\fP]  [\fIpathname2\fP] 
+.PP
+\fBttmv\fP [-fL]  [\fIpathname\fP]  [\&.\!\&.\!\&.]  [\fIdirectory\fP] 
+.PP
+\fBttmv\fP [-h]  [-v] 
+.SH "DESCRIPTION"
+.PP
+The
+\fBttmv\fP utility
+invokes
+\fBmv\fP(1) to move files and directories around in the file system and informs
+ToolTalk about its actions so that the ToolTalk objects
+associated with those files and directories can also be moved\&.
+.PP
+The
+\fBttmv\fP utility
+moves the ToolTalk objects before it moves the files and does not
+check whether the file-moving operation will succeed before performing
+the object-moving operation\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-f\fP" 10
+Force\&.
+Do not report any errors, and pass the
+\fB-f\fP option to
+\fBmv\fP(1)\&.
+.IP "\fB-h\fP" 10
+Write a help message for invoking
+\fBttmv\fP and then exit\&.
+.IP "\fB-L\fP" 10
+Move the ToolTalk objects of the files, but do not invoke
+\fBmv\fP(1) to move the actual files\&.
+.IP "\fB-v\fP" 10
+Write the version number of
+\fBttmv\fP and then exit\&.
+.PP
+The
+\fB-i\fP option to
+\fBcp\fP(1) is not supported\&.
+.SH "OPERANDS"
+.PP
+The following operands are supported:
+.IP "\fIpathname1\fP" 10
+A pathname of a file to be moved\&.
+.IP "\fIpathname2\fP" 10
+A pathname of an existing or nonexisting file,
+used for the output when a single file is moved\&.
+.IP "\fIdirectory\fP" 10
+A pathname of a directory to contain the moved files\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+The input files specified as operands can be of any file type\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of
+\fBttmv\fP:
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables
+that are unset or null\&.
+If
+\fBLANG\fP is unset or null, the corresponding value from the
+implementation-specific default locale will be used\&.
+If any of the internationalization variables contains an invalid setting, the
+utility behaves as if none of the variables had been defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value,
+override the values of all the other internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect
+the format and contents of diagnostic
+messages written to standard error
+and informative messages written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues
+for the processing of
+\fILC_MESSAGES\fP\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The
+\fBttmv\fP utility takes the standard action for all signals\&.
+.SH "STDOUT"
+.PP
+When the
+\fB-h\fP option is used,
+\fBttmv\fP writes to standard output a help message
+in an unspecified format\&.
+.PP
+When the
+\fB-v\fP option is used,
+\fBttmv\fP writes to standard output a version number
+in an unspecified format\&.
+.SH "STDERR"
+.PP
+Used only for diagnostic messages\&.
+.SH "OUTPUT FILES"
+.PP
+The output files can be of any type\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+All files and ToolTalk objects were moved successfully\&.
+.IP ">0" 10
+An error occurred or the invoked
+\fBmv\fP(1) command exited with a non-zero value\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "FILES"
+.IP "/mountpoint/TT_DB" 10
+The directory used as a database
+for the ToolTalk objects of files in the
+file system mounted at
+\fI/mountpoint\fP\&.
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBmv\fP(1),
+\fBttsession\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

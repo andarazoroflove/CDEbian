@@ -1,0 +1,105 @@
+'\" t
+...\" Started.sgm /main/9 1996/09/08 20:16:26 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Started" "special file"
+.SH "NAME"
+\fBStarted\fP \(em a tool has started
+.SH "SYNOPSIS"
+.PP
+.nf
+Started(in string \fIvendor\fP,
+        in string \fItoolName\fP,
+        in string \fItoolVersion\fP);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBStarted\fP notice announces that
+a tool has started\&.
+.PP
+The
+\fIvendor\fP argument
+is the vendor of the started tool\&.
+.PP
+The
+\fItoolName\fP argument
+is the name of the started tool\&.
+.PP
+The
+\fItoolVersion\fP argument
+is the version of the started tool\&.
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+A pattern observing the
+\fBStarted\fP request can be registered as
+in the following example:
+.PP
+.nf
+\f(CWTt_pattern pat = tt_pattern_create();
+tt_pattern_category_set(pat, TT_OBSERVE);
+tt_pattern_scope_add(pat, TT_SESSION);
+char *ses = tt_default_session();
+tt_pattern_session_add(pat, ses);
+tt_free(ses);
+tt_pattern_op_add(pat, Tttk_Started);
+tt_pattern_op_add(pat, Tttk_Stopped);
+tt_pattern_callback_add(pat, my_callback);
+tt_pattern_register(pat);\fR
+.fi
+.PP
+.PP
+The
+\fBStarted\fP request can be sent with
+\fBttdt_open\fP(3)\&.
+.SH "SEE ALSO"
+.PP
+\fBtt_free\fP(3), \fBtt_pattern_callback_add\fP(3), \fBtt_pattern_category_set\fP(3), \fBtt_pattern_op_add\fP(3), \fBtt_pattern_register\fP(3), \fBtt_pattern_scope_add\fP(3), \fBtt_pattern_session_add\fP(3), \fBttdt_open\fP(3); \fBStopped\fP notice\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

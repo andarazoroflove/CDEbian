@@ -1,0 +1,72 @@
+# ##########################################################################
+# 
+#      dtims.dt
+# 
+#      Action definitions for the Common Desktop Environment
+#      dtimsstart application.
+# 
+#  (c) Copyright 1996 Digital Equipment Corporation.
+#  (c) Copyright 1996 Hewlett-Packard Company.
+#  (c) Copyright 1996 International Business Machines Corp.
+#  (c) Copyright 1996 Sun Microsystems, Inc.
+#  (c) Copyright 1996 Novell, Inc. 
+#  (c) Copyright 1996 FUJITSU LIMITED.
+#  (c) Copyright 1996 Hitachi.
+# 
+#     $XConsortium: dtims.dt.src /main/2 1996/04/23 17:35:29 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+# ##################################################################
+# 
+# Aktionen
+# 
+# ##################################################################
+
+ACTION DtImsMode
+{
+        LABEL           DtImsMode
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        ARG_COUNT       *
+        ARG_CLASS       *
+        ARG_MODE        *
+        EXEC_STRING     dtimsstart -mode -window  %Args%
+        DESCRIPTION     Die Aktion DtImsMode setzt den Auswahlmodus für die Eingabemethode.
+}
+
+
+ACTION DtImsGetRemoteConf
+{
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        ARG_COUNT       *
+        ARG_CLASS       *
+        ARG_MODE        *
+        EXEC_STRING     dtimsstart -remoteconf %(String)Args%
+        DESCRIPTION     Mit dieser Aktion erhalten Sie Konfigurationsdaten für die Eingabemethode \
+von einem entfernten System.
+}
+
+
+ACTION DtImsRunRemoteIms
+{
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        ARG_COUNT       *
+        ARG_CLASS       *
+        ARG_MODE        *
+        EXEC_STRING     dtimsstart -remoterun %(String)Args%
+        DESCRIPTION     Diese Aktion startet einen InputMethod-Server auf einem entfernten System.
+}
+

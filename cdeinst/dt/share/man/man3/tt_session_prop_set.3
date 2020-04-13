@@ -1,0 +1,99 @@
+'\" t
+...\" prop_set.sgm /main/5 1996/08/30 13:48:23 rws $
+...\" prop_set.sgm /main/5 1996/08/30 13:48:23 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tt_session_prop_set" "library call"
+.SH "NAME"
+\fBtt_session_prop_set\fP \(em replace current values for a property of a session with a character-string value
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+\fBTt_status \fBtt_session_prop_set\fP\fR(
+\fBconst char *\fBsessid\fR\fR,
+\fBconst char *\fBpropname\fR\fR,
+\fBconst char *\fBvalue\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtt_session_prop_set\fP function
+replaces all current values stored under the named property of the specified
+session with the given character-string value\&.
+.PP
+The
+\fIsessid\fP argument is the name of the session joined\&.
+The application can use the
+\fIsessid\fP value returned when
+\fBtt_default_session\fP is called\&.
+The
+\fIpropname\fP argument is the name of the property to be examined\&.
+The
+\fIvalue\fP argument is the new value to be inserted\&.
+\fBNULL\fP removes a value from the property list\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtt_session_prop_set\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_PROPLEN" 10
+The specified property value is too long\&.
+(The maximum size is implementation specific, but is at least 64\&.)
+.IP "TT_ERR_PROPNAME" 10
+The specified property name is syntactically invalid\&.
+.IP "TT_ERR_SESSION" 10
+The specified ToolTalk session is out of date or invalid\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h - Tttt_c\fP(5)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

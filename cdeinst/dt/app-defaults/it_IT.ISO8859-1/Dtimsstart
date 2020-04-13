@@ -1,0 +1,59 @@
+!# @(#)$XConsortium: Dtimsstart /main/3 1996/09/20 18:08:17 cde-hp $
+!	dtimsstart
+
+*fontList:	-dt-interface user-medium-r-normal-m*-*-*-*-*-m-*:
+
+! title on title bar
+Dtimsstart*title:			dtimsstart
+
+! title
+Dtimsstart*Selection*title.labelString:	Selezione del metodo di input
+Dtimsstart*Host*title.labelString:	Cambiare host
+Dtimsstart*Mode*title.labelString:	Modalità di selezione
+
+! button label
+Dtimsstart*OK.labelString:		OK
+Dtimsstart*Clear.labelString:		Ripristinare
+Dtimsstart*Cancel.labelString:		Annullare
+Dtimsstart*ChangeHost.labelString:	Cambiare host
+Dtimsstart*Help.labelString:		Aiuto
+
+! border width (selection dialog appears without window manager)
+Dtimsstart*Selection.borderWidth:	3
+Dtimsstart*Host.borderWidth:		3
+Dtimsstart*XmDialogShell.borderWidth:	0
+
+! default spacing
+Dtimsstart*cmd_rc.marginWidth:		10
+Dtimsstart*cmd_rc.spacing:		10
+
+! ims selection dialog
+Dtimsstart*Selection*cmd_rc.spacing:	4
+Dtimsstart*Selection*cmd_rc.OK.marginWidth:	16
+Dtimsstart*Selection*select_rc.marginWidth:	40
+
+! change host dialog
+Dtimsstart*host_label.labelString:	Nome host:
+Dtimsstart*Host*host_desc.alignment:	XmALIGNMENT_BEGINNING
+Dtimsstart*Host*host_desc.marginLeft:	20
+Dtimsstart*Host*host_desc.marginRight:	20
+Dtimsstart*Host*host_desc.labelString:	 Immettere il nome dell'host dove si desidera visualizzare\n i nomi dei server registrati per il metodo di input.\n Il campo vuoto indica l'host locale.
+Dtimsstart*Host*host_text.maxLength:	63
+Dtimsstart*Host*host_text.columns:	14
+Dtimsstart*Host*host_rc.marginWidth:	60
+Dtimsstart*Host*cmd_rc.marginWidth:	20
+Dtimsstart*Host*cmd_rc.spacing:		90
+
+! selection mode dialog
+Dtimsstart*Mode*button_0.labelString:	Scelta all'eseguire login
+Dtimsstart*Mode*button_1.labelString:	Riprendere metodo corrente
+Dtimsstart*Mode*cmd_rc.spacing:		50
+Dtimsstart*Mode*cmd_rc.marginWidth:	20
+
+! help message
+Dtimsstart.selectionHelpMsg:	\n         Selezione del metodo di input\n \n     Selezionare uno dei metodi dall'elenco e fare clic sul pulsante [OK]\n     Il metodo di input selezionato verrà configurato.
+ \n       [OK]:            effettua la selezione e chiude la finestra.\n \n       [Cambiare host]: specifica un nome di host. Il metodo di input\n                        registrato sull'host verrà visualizzato.\n \n       [Annullare]:     ignora la selezione e chiude la finestra.\n \n       [Aiuto]:         mostra questo messaggio.\n \n \n        NOTA:  I metodi di input che non sono installati nel sistema\n               verranno elencati con netted e non possono essere selezionati.\n \n     Come cambiare la modalità di selezione:\n \n         La finestra di selezione appare durante il login.\n         Potete selezionare il metodo in input piu' recente senza\n         alcuna operazione di finestra.  Eseguire l'azione\n         'DtImsMode', che si trova in Desktop_Tools nella Gestione applicazioni,\n         e selezionare 'Resume current input method' nella finestra di dialogo.\n
+
+Dtimsstart.modeHelpMsg:	\n         Modalità di selezione\n \n     Selezionare un'opzione dall'elenco e fare clic su [OK].\n \n         Scelta all'eseguire login:\n             Ad ogni sessione, una finestra di selezione apparirà per\n             consentire la scelta del metodo desiderato.\n \n         Riprendere metodo corrente:\n             Il metodo corrente verrà selezionato automaticamente\n             per ogni futuro processo di login.\n             succeeding login.\n \n       [OK]:           effettua la selezione e chiude la finestra.\n \n       [Annullare]:    ignora le modifiche e chiude la finestra.\n \n       [Aiuto]:        mostra questo messaggio.\n
+
+!#

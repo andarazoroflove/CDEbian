@@ -1,0 +1,196 @@
+# #################################################################
+#
+#    Original copy: /usr/dt/config/C/sys.dtwmrc
+#
+#    The Resource Description File for the CDE Window Manager dtwm
+#
+#    (c) Copyright 1993, 1994 Hewlett-Packard Company.
+#    (c) Copyright 1993, 1994 International Business Machines Corp. 
+#    (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+#    (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary
+#        of Novell, Inc.
+#
+# $XConsortium: sys.dtwmrc.src /main/4 1996/04/21 19:51:58 drk $
+#
+# #################################################################
+
+# ###
+#
+#  Please make a COPY of this file before editing it.
+#
+#  Personalized copies typically exist as:
+#
+#       $HOME/.dt/dtwmrc
+#
+# ###
+
+# ###
+#
+# Root Menu Description
+#
+# ###
+
+Menu DtRootMenu
+{
+    "Menú Espacio de trabajo"			f.title    
+    "Mostrar anterior"			f.circle_up 
+    "Mostrar siguiente"			f.circle_down
+    "Refrescar"				f.refresh
+    "Minimizar/Restaurar Panel Frontal"	f.toggle_frontpanel
+     no-label				f.separator
+    "Reiniciar Gestor espacios de trabajo..."	f.restart
+     no-label				f.separator
+    "Finalizar sesión..."			f.action ExitSession
+}
+
+
+# ###
+#
+# Front panel Manu Description
+#
+# ###
+
+Menu DtPanelMenu
+{
+    Restaurar			_R	f.normalize
+    Mover			_M	f.move
+    Minimizar			_n	f.minimize
+    Bajar			_B	f.lower
+    Refrescar			_f	f.refresh
+     no-label				f.separator
+    "Finalizar sesión..."		_F	f.action ExitSession
+}
+
+
+# ###
+#
+# Sample Window Menu Description
+# This menu description exists as a sample only.
+# The normal window manager menu is built in.
+#
+# ###
+
+Menu SampleWindowMenu
+{
+    "Restaurar"			_R			f.normalize
+    "Mover"			_M			f.move
+    "Tamaño"			_D			f.resize
+    "Minimizar"			_n			f.minimize
+    "Maximizar"			_x			f.maximize
+    "Bajar"			_P			f.lower
+     no-label						f.separator
+    "Ocupar Espacio de trabajo..."	_O			f.workspace_presence
+    "Ocupar todos los Espacios de Trabajo"	_T			f.occupy_all
+    "Desocupar Espacio de trabajo"	_u			f.remove
+      no-label						f.separator
+    "Cerrar"			_C	Alt<Key>F4	f.kill
+}
+
+# ###
+#
+# Alternate Window Menu Description without accelerators
+#
+# ###
+
+Menu NoAcceleratorWindowMenu
+{
+    "Restaurar"			_R	f.normalize
+    "Mover"			_M	f.move
+    "Tamaño"			_T	f.resize
+    "Minimizar"			_n	f.minimize
+    "Maximizar"			_x	f.maximize
+    "Bajar"			_P	f.lower
+     no-label				f.separator
+    "Ocupar Espacio de trabajo..."	_O	f.workspace_presence
+    "Ocupar todos los Espacios de trabajo"	_T	f.occupy_all
+    "Desocupar Espacio de trabajo"	_u	f.remove
+     no-label				f.separator
+    "Cerrar"			_C	f.kill
+}
+
+# ###
+#
+# Key Bindings Description
+#
+# ###
+
+Keys DtKeyBindings
+{
+
+
+
+
+#   Alt<Key>Menu		root|icon|window	f.toggle_frontpanel 
+
+    Despl<Key>Escape		icon|window		f.post_wmenu
+    Alt<Key>space		icon|window		f.post_wmenu
+    Alt<Key>Tab			root|icon|window	f.next_key
+    Alt Shift<Key>Tab		root|icon|window	f.prev_key
+    Alt<Key>Escape		root|icon|window	f.next_key
+    Alt Despl<Key>Escape	root|icon|window	f.prev_key
+    Alt<Key>Down		root|icon|window	f.circle_down
+    Alt<Key>Up			root|icon|window	f.circle_up
+    Alt Control Despl<Key>exclam	root|icon|window	f.set_behavior
+    Alt<Key>F6			window			f.next_key transient
+    Alt<Key>F10			root|icon|window	f.menu DtRootMenu
+
+}
+
+# ###
+#
+# Mouse Button Bindings Description
+#
+# ###
+
+Buttons DtButtonBindings
+{
+    <Btn1Down>		root			f.marquee_selection
+    <Btn3Down>		root			f.menu  DtRootMenu
+    <Btn1Down>		frame|icon		f.raise
+    <Btn3Down>		frame|icon		f.post_wmenu
+    Alt<Btn1Down>	icon|window		f.move
+    Alt<Btn3Down>	window			f.minimize
+}
+
+
+# ###
+#
+# Defaults:   Window menus, key bindings, and mouse button bindings
+#
+# ###
+
+Menu DefaultWindowMenu
+{
+    "Restaurar"	_R	Alt<Key>F5	f.normalize
+    "Mover"	_M	Alt<Key>F7	f.move
+    "Tamaño"	_D	Alt<Key>F8	f.resize
+    "Minimizar"	_n	Alt<Key>F9	f.minimize
+    "Maximizar"	_x	Alt<Key>F10	f.maximize
+    "Bajar"	_P	Alt<Key>F3	f.lower
+     no-label						f.separator
+    "Ocupar Espacio de trabajo..."	_O			f.workspace_presence
+    "Ocupar todos los Espacios de Trabajo"	_T			f.occupy_all
+    "Desocupar Espacio de trabajo"	_u			f.remove
+    no-label				f.separator
+    "Cerrar"	_C	Alt<Key>F4	f.kill
+}
+
+Keys DefaultKeyBindings
+{
+    Despl<Key>Escape		icon|window		f.post_wmenu
+    Alt<Key>space		icon|window		f.post_wmenu
+    Alt<Key>Tab		root|icon|window	f.next_key
+    Alt Despl<Key>Tab		root|icon|window	f.prev_key
+    Alt<Key>Escape		root|icon|window	f.next_key
+    Alt Despl<Key>Escape	root|icon|window	f.prev_key
+    Alt Control Despl<Key>exclam	root|icon|window	f.set_behavior
+    Alt<Key>F6			window			f.next_key transient
+}
+
+Buttons DefaultButtonBindings
+{
+    <Btn1Down>		frame|icon	f.raise
+    <Btn3Down>		icon		f.post_wmenu
+}
+
+# ################  End of the dtwmrc file   ################

@@ -1,0 +1,100 @@
+'\" t
+...\" fil_join.sgm /main/5 1996/08/30 12:46:29 rws $
+...\" fil_join.sgm /main/5 1996/08/30 12:46:29 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tt_file_join" "library call"
+.SH "NAME"
+\fBtt_file_join\fP \(em register interest in messages involving a file
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+\fBTt_status \fBtt_file_join\fP\fR(
+\fBconst char *\fBfilepath\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtt_file_join\fP function
+informs the ToolTalk service that the process is interested in messages
+that involve the specified file\&.
+.PP
+The ToolTalk service adds this file value to any currently registered patterns\&.
+The named file becomes the default file\&.
+.PP
+When the process joins a file, the ToolTalk service updates the file field
+of its registered patterns\&.
+The
+\fBtt_file_join\fP call causes the pattern\&'s ToolTalk
+session to be stored in the database\&.
+.PP
+The
+\fIfilepath\fP argument is a pointer to the pathname of the file in which the
+process is interested\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtt_file_join\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_DBAVAIL" 10
+The ToolTalk service could not access the
+ToolTalk database needed for this operation\&.
+.IP "TT_ERR_DBEXIST" 10
+The ToolTalk service could not access the
+specified ToolTalk database in the expected place\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_PATH" 10
+The specified pathname included an unsearchable directory\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h - Tttt_c\fP(5)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

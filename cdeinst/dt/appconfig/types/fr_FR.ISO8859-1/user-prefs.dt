@@ -1,0 +1,83 @@
+# ##########################################################################
+# 
+#      user-prefs.dt
+# 
+#      Actions which define user preferences.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: user-prefs.dt.src /main/4 1996/04/23 17:36:30 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVERTISSEMENT: Il est possible que ce fichier soit écrasé lors des 
+#     installations suivantes du Bureau CDE. Il est donc conseillé d'effectuer
+#     les modifications devant s'appliquer sur tout le système dans un
+#     fichier de base de données équivalent du répertoire /etc/dt/types.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# Définition d'actions pour le Bureau CDE
+#
+# Les actions définies dans ce fichier peuvent être générales (Editeur de texte,
+# par exemple) ou relatives à des applications données (Vi, par exemple). Pour
+# personnaliser ces définitions, copiez ce fichier dans # $HOME/.dt/types/user-prefs.dt
+# et indiquez les actions de votre choix dans les entrées MAP_ACTION.
+#
+# Pour identifier les actions disponibles sur votre système, ouvrez le
+# Gestionnaire d'applications à partir du Tableau de bord.
+# 
+# ##########################################################################
+
+
+# Pour utiliser l'éditeur vi, remplacez Dtpad (l'éditeur
+# Motif du Bureau CDE) par l'action Vi.
+
+ACTION TextEditor
+{
+        LABEL		Editeur de texte
+        ICON            Dtpenpd
+	TYPE		MAP
+	MAP_ACTION	Dtpad
+        DESCRIPTION	L'action Editeur de texte permet de lancer \
+                        l'éditeur de texte choisi par l'utilisateur.
+}
+
+# #####
+
+# Le terminal par défaut pour le Bureau CDE est Dtterm.
+
+ACTION Terminal
+{
+        LABEL		Terminal
+        ICON            Dtterm
+	TYPE		MAP
+	MAP_ACTION	Dtterm
+        DESCRIPTION	L'action Terminal permet de lancer l'émulateur \
+                        de terminal choisi par l'utilisateur.
+}
+
+# #####
+
+# La corbeille par défaut du Bureau CDE est Dttrash.
+
+ACTION Trash
+{
+        LABEL		Corbeille
+        ICON		Dttrsh
+	TYPE		MAP
+	MAP_ACTION	Dttrash
+        DESCRIPTION	L'action Corbeille permet de lancer \
+                        le client Corbeille choisi par l'utilisateur.
+}
+
+# ###################### EOF ############################################

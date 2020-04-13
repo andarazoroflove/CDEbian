@@ -1,0 +1,169 @@
+'\" t
+...\" dtcm_ent.sgm /main/6 1996/09/08 20:17:21 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcm_entry" "special file"
+.SH "NAME"
+\fBdtcm_entry\fP \(em format of calendar/appointment entry
+.SH "DESCRIPTION"
+.PP
+The calendar entry file format defines how one entry is saved to a file
+or used in a drag-and-drop transaction with another client\&. A grammar for
+the entry format is:
+.TS
+tab();
+lw(1.885081i) lw(0.864919i) lw(2.750000i).
+\f(CWappt_file\fP\f(CW::=\fP\f(CWheader_string\fP \f(CWentry_definition\fP
+\f(CW::=\fPT{
+\f(CW`\n\n\t**Calendar Appointment
+**\n\&'\fP
+T}
+\f(CWentry_definition\fP\f(CW::=\fPT{
+\f(CWappt_def\fP
+`\n\&' \f(CWold_appt\fP
+T}
+\f(CW|\fP\f(CWold_appt;\fP
+\f(CWold_appt\fP\f(CW::=\fPT{
+\f(CWdate_mark start_mark end_mark
+repeat_mark\fP
+T}
+\f(CW|\fP\f(CWduration_mark text_mark\fP
+\f(CWdate_mark\fP\f(CW::=\fP\f(CW`\tDate: \&'\fP \f(CWdate_value\fP `\n\&'
+\f(CWdate_value\fP\f(CW::=\fPDate as \fImm\fP/ \fIdd\fP/ \fIyyyy\fP
+\f(CWstart_mark\fP\f(CW::=\fP\f(CW`\tStart: \&'\fP \f(CWstart_value\fP `\n\&'
+\f(CWstart_value\fP\f(CW::=\fPT{
+Entry begin time as \fIhh\fP:\fImm\fP\fB[\fP\fIampm\fP \fB]\fP, where \fIhh\fP and \fImm\fP
+represent two-digit hours and minutes and the optional \fIampm\fP suffix is the string \fBam\fP or \fBpm\fP
+T}
+\f(CWend_mark\fP\f(CW::=\fP\f(CW`\tEnd: \&'\fP \f(CWend_value\fP `\n\&'
+\f(CWend_value\fP\f(CW::=\fPEntry begin time as \fIhh\fP:\fImm\fP\fB[\fP\fIampm\fP \fB]\fP
+\f(CWrepeat_mark\fP\f(CW::=\fP\f(CW`\tRepeat: \&'\fP \f(CWrepeat_value\fP `\n\&'
+\f(CWrepeat_value\fP\f(CW::=\fPT{
+\f(CW`One Time\&' | `Daily\&' | `Weekly\&'
+| `Every Two Weeks\&'\fP
+T}
+\f(CW|\fPT{
+\f(CW`Monthly By Date\&' | `Yearly\&'
+| `Monthly By Weekday\&'\fP
+T}
+\f(CW|\fPT{
+\f(CW`Monday Thru Friday\&' | `Mon,
+Wed, Fri\&' | `Tuesday, Thursday\&'\fP
+T}
+\f(CWduration_mark\fP\f(CW::=\fP\f(CW`\tFor: \&'\fP \f(CWduration_value\fP `\n\&'
+\f(CWduration_value\fP\f(CW::=\fPT{
+Integer that describes the number of repetitions\&.
+T}
+\f(CWtext_mark\fP\f(CW::=\fP\f(CW`\tWhat: \&'\fP \f(CWtext_value\fP
+\f(CWtext_value\fP\f(CW::=\fPT{
+Up to 5 lines of text\&. Each line after the
+first must have a leading \fB<tab>\fP character\&.
+T}
+\f(CWappt_def\fP\f(CW::=\fPT{
+\f(CWappt_start_marker\fP \f(CWattr_list\fP \f(CWappt_end_marker\fP
+T}
+\f(CWattr_list\fP\f(CW::=\fP\f(CWattr_def\fP \f(CWatt_list\fP
+\f(CW|\fP\f(CWattr_def\fP
+\f(CWappt_start_marker\fP\f(CW::=\fPT{
+\f(CWappt_marker\fP
+`:string:begin\n\&'
+T}
+\f(CWappt_end_marker\fP\f(CW::=\fPT{
+\f(CWappt_marker\fP
+`:string:end\n\&'
+T}
+\f(CWappt_marker\fP\f(CW::=\fPT{
+\f(CW`-//CDE_XAPIA_PRIVATE/CS/API/ENTRYATTR//NONSGML
+ApptDelimiter//EN\&'\fP
+T}
+\f(CWattr_def\fP\f(CW::=\fPT{
+\f(CWattr_name\fP
+`:\&' \f(CWattr_type\fP `:\&' \f(CWattr_value\fP `\n\&'
+T}
+\f(CWattr_type\fP\f(CW::=\fP\f(CW`string\&' | `integer\&' | `reminder\&'\fP
+\f(CW|\fPT{
+\f(CW`accesslist\&' | `repeatdefinition\&'
+| `custom\&'\fP
+T}
+\f(CWattr_name\fP\f(CW::=\fPT{
+XAPIA string\&. The span of characters that
+can be used in the definition of an attribute name is specified in the  CAE Specification,  XAPIA Calendar API\&.
+T}
+.TE
+.PP
+An example entry:
+.PP
+.nf
+\f(CW        ** Calendar Appointment **
+-//CDE_XAPIA_PRIVATE/CS/API/ENTRYATTR//NONSGML ApptDelimiter//EN:string:begin
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Start Date//EN:integer:775148400
+-//XAPIA/CS/API/ENTRYATTR//NONSGML End Date//EN:integer:775148900
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Type//EN:string:CSA_TYPE_EVENT
+-//CDE_XAPIA_PRIVATE/CS/API/ENTRYATTR//NONSGML Showtime//EN:integer:1
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Summary//EN:string:Foundation planning meeting
+        in Hari\&'s office
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Status//EN:integer:0
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Recurrence Rule//EN:string:M60 #12
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Audio Reminder//EN:reminder:-60:
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Flashing Reminder//EN:reminder:-60:
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Mail Reminder//EN:reminder:-1800:hseldon@trantor
+-//XAPIA/CS/API/ENTRYATTR//NONSGML Popup Reminder//EN:reminder:300:
+-//CDE_XAPIA_PRIVATE/CS/API/ENTRYATTR//NONSGML ApptDelimiter//EN:string:end
+
+        Date: 7/25/1994
+        Start:  8:00am
+        End:  9:00am
+        Repeat: Every Two Weeks, last
+        For:26
+        What: Foundation planning meeting
+                in Hari\&'s office\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBcsa/csa\&.h - csacsa\fP(5), \fBcsa_add_entry\fP(3), \fBcsa_call_callbacks\fP(3), \fBcsa_delete_calendar\fP(3), \fBcsa_delete_entry\fP(3), \fBcsa_free\fP(3), \fBcsa_free_time_search\fP(3), \fBcsa_list_calendar_attributes\fP(3), \fBcsa_list_calendars\fP(3), \fBcsa_list_entries\fP(3), \fBcsa_list_entry_attributes\fP(3), \fBcsa_list_entry_sequence\fP(3), \fBcsa_logoff\fP(3), \fBcsa_logon\fP(3), \fBcsa_look_up\fP(3), \fBcsa_query_configuration\fP(3), \fBcsa_read_calendar_attributes\fP(3), \fBcsa_read_entry_attributes\fP(3), \fBcsa_read_next_reminder\fP(3), \fBcsa_register_callback\fP(3), \fBcsa_unregister_callback\fP(3), \fBcsa_update_calendar_attributes\fP(3), \fBcsa_update_entry_attributes\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

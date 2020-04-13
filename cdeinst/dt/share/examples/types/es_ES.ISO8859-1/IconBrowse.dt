@@ -1,0 +1,142 @@
+# ##########################################################################
+# 
+#      IconBrowse.dt
+# 
+#      DataType definitions for instance-based icons.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp. 
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.   
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#    $XConsortium: IconBrowse.dt.src /main/4 1996/04/23 20:23:49 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# Los dos tipos de datos de este archivo (BM y PM) habilitan los iconos
+# "basados en cada caso" para archivos de mapas de bits y de mapas de
+# pixels. Esto significa que los archivos de iconos (extensiones .bm y .pm)
+# hacen referencia a sí mismos como sus propios iconos. Esto es útil para
+# examinar una carpeta de iconos, porque no se tiene que abrir cada archivo
+# para ver como es -- el icono lo muestra.
+#
+# Para habilitar los iconos basados en cada caso copie este archivo en la
+# subcarpeta .dt/types/ de la carpeta de inicio, después recarge la base de
+# datos de acciones y de tipos de datos. (Se puede recargar la base de datos
+# de acciones y de tipos de datos finalizando la sesión y e iniciándola de
+# nuevo o ejecutando la acción RecargarApls en la carpeta HerramientasDt
+# del Gestor de aplicaciones)
+#
+#   NOTA:  Debido al trabajo adicional necesario para leer y mostrar iconos
+#          personalizados, puede que el Gestor de archivos ejecute con más
+#          lentitud con estos tipos de datos habilitados.
+#
+# Para volver a los iconos predeteminados para estos tipos de datos, elimine
+# este archivo de la subcarpeta .dt/types/, después recargue la base de datos
+# de acciones y de tipos de datos.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Atributos de datos
+# 
+# ##################################################################
+DATA_ATTRIBUTES BM
+{
+        ACTIONS         Open,Print
+        ICON		Dtbitmp
+        NAME_TEMPLATE  	%s.bm
+        MIME_TYPE       text/plain
+        SUNV3_TYPE      xbm-file
+        INSTANCE_ICON	%dir%/%name%
+        DESCRIPTION     Es un archivo que contiene datos en formato de \
+                        mapa de bits X11. Su tipo de datos se denomina BM. \
+                        Los nombres de los archivos BM finalizan en \
+                        '.bm' o '.xbm'.
+        TYPE_LABEL      BM
+}
+DATA_CRITERIA BM1
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            	f
+        NAME_PATTERN    	*.bm
+}
+DATA_CRITERIA BM2
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            	f
+        NAME_PATTERN    	*.xbm
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION      Dticon
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# ##################################################################
+
+DATA_ATTRIBUTES PM
+{
+        ACTIONS         Open,Print
+        ICON		Dtpixmp
+        NAME_TEMPLATE  	%s.pm
+        MIME_TYPE       text/plain
+        SUNV3_TYPE      xpm-file
+        INSTANCE_ICON	%dir%/%name%
+        DESCRIPTION     Es un archivo de mapas de pixels que contiene una imagen \
+                        multicolor. Su tipo de datos se denomina PM. Los \
+                        nombres de los archivos PM finalizan en \
+                        '.pm' o '.xpm' o contienen los caracteres \
+                        "! XPM2".
+        TYPE_LABEL      PM
+}
+DATA_CRITERIA PM1
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            	f
+        NAME_PATTERN    	*.pm
+}
+DATA_CRITERIA PM2
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            	f
+        NAME_PATTERN    	*.xpm
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION      Dticon
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+# ######################## EOF ############################################

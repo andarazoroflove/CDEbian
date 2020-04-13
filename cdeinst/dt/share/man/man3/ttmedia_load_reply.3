@@ -1,0 +1,112 @@
+'\" t
+...\" load_rep.sgm /main/5 1996/08/30 14:44:20 rws $
+...\" load_rep.sgm /main/5 1996/08/30 14:44:20 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttmedia_load_reply" "library call"
+.SH "NAME"
+\fBttmedia_load_reply\fP \(em reply to a Display, Edit or Compose request
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_message \fBttmedia_load_reply\fP\fR(
+\fBTt_message \fBcontract\fR\fR,
+\fBconst unsigned char *\fBnew_contents\fR\fR,
+\fBint \fBnew_len\fR\fR,
+\fBint \fBreply_and_destroy\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttmedia_load_reply\fP function
+is used to reply to a Media Exchange request
+to display, edit or compose a document\&.
+The editor working on the request usually calls
+\fBttmedia_load_reply\fP when the
+user has indicated in some way that he or
+she is finished viewing or modifying
+the document\&.
+.PP
+If
+\fInew_contents\fP and
+\fInew_len\fP are non-
+\fBNULL\fP and non-zero, respectively,
+\fBttmedia_load_reply\fP uses their values to set the new contents of
+the document back in the appropriate output argument of
+\fIcontract\fP\&. If
+\fIreply_and_destroy\fP is True,
+\fBttmedia_load_reply\fP replies to
+\fIcontract\fP and then destroys it\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttmedia_load_reply\fP function returns the created
+\fBTt_message\fR; otherwise, it returns an error pointer\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned handle:
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_NOTHANDLER" 10
+This application is not the handler for this message\&.
+.IP "TT_ERR_NUM" 10
+The integer value passed was invalid (out of range)\&.
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.SH "APPLICATION USAGE"
+.PP
+If
+\fIcontract\fP is a
+\fBDisplay\fP request, then
+\fInew_contents\fP and
+\fInew_len\fP should be zero\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttmedia_load\fP(3), \fBttmedia_ptype_declare\fP(3), \fBttmedia_Deposit\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

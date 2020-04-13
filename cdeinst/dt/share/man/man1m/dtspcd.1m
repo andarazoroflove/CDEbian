@@ -1,0 +1,205 @@
+'\" t
+...\" dtspcd.sgm /main/7 1996/09/23 14:38:34 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtspcd" "user cmd"
+.SH "NAME"
+\fBdtspcd\fP \(em CDE Subprocess Control Service
+.SH "SYNOPSIS"
+.PP
+\fBdtspcd\fP [-debug]  [-log]  [-auth_dir\fIdirectory\fP]  [-timeout\fInum_minutes\fP]  [-mount_point\fImount_point\fP] 
+.SH "DESCRIPTION"
+.PP
+The daemon for the
+CDE Subprocess Control service,
+\fBdtspcd\fP, is not intended to be started directly by the user,
+rather it should be started automatically by the inetd
+daemon (see
+\fBinetd\fP(1m)) in response to a CDE client
+requesting a process to be started on the daemon\&'s host\&.
+.SH "OPTIONS"
+.IP "\fB-auth_dir\fP \fIdirectory\fP" 10
+The default authentication directory is the user\&'s
+$HOME directory\&.
+This option allows the system
+administrator to use a different directory\&.
+Note that
+\fIdirectory\fP must be exported to hosts wishing
+to use the
+\fBdtspc\fP service\&.
+\fIdirectory\fP - the name of the directory to use for authentication\&.
+.IP "\fB-timeout\fP \fIminutes\fP" 10
+By default, the dtspcd process will terminate if it does
+not have any activity (process start or process stop)
+for 10 minutes and
+\fBdtspcd\fP has no child processes running\&.
+To change the timeout, set
+\fIminutes\fP to the
+desired number of minutes\&.
+To force the daemon to not use a timer,
+set
+\fIminutes\fP to -1\&.
+\fIminutes\fP - the number of minutes for the timer\&.
+.IP "\fB-mount_point\fP \fImount_point\fP" 10
+The file system\&'s mount point is named
+\fImount_point\&.\fP For example,
+\fImount_point\fP could
+be "/net" or "/nfs"\&.
+The daemon sets the
+environment variable
+\fIDTMOUNTPOINT\fP to the
+value of
+\fImount_point\fP\&. This value
+of
+\fIDTMOUNTPOINT\fP will override all other
+definitions of
+\fIDTMOUNTPOINT\fP\&.
+.IP "\fB-log\fP" 10
+This option turns on logging of status information
+to the file
+\fB/var/dt/tmp/DTSPCD\&.log\fP\&. The information logged
+includes the name of the client host, the client\&'s
+username, error messages and the name of the file
+used for authentication\&.
+The default is to not do any logging\&.
+.IP "\fB-debug\fP" 10
+This option turns on logging of dtspc protocol
+to the file
+\fB/var/dt/tmp/DTSPCD\&.log\&.\fP The
+protocol information logged includes
+the name of the protocol and number of bytes
+in the request\&.
+The default is to not log the protocol\&.
+.SH "AUTHENTICATION"
+.PP
+When a CDE client attempts to connect to a
+\fBdtspcd\fP daemon,
+the client sends the daemon its username\&.
+The
+daemon uses the username to determine the user\&'s
+home directory on the daemon\&'s host\&.
+The home
+directory is used during authentication and it
+must be readable by the daemon and writable by
+the client\&.
+Therefore, the user\&'s home directory
+on the daemon\&'s host must be mounted to the client
+host\&.
+If the user\&'s home directory is not readable
+and the
+\fB-auth_dir\fP command line option is not used,
+the directory
+\fB/var/dt/tmp\fP will be used\&.
+.PP
+To use a directory other than the user\&'s home directory
+for authentication, use the
+\fB-auth_dir\fP command
+line option\&.
+.SH "CONFIGURATION"
+.PP
+The
+\fBdtspcd\fP daemon is an Internet service that must
+be registered in the file
+\fB/etc/services\fP as follows:
+.PP
+.nf
+\f(CWdtspc      6112/tcp\fR
+.fi
+.PP
+.PP
+and in the file
+\fB/etc/inetd\&.conf\fP as follows:
+.PP
+.nf
+\f(CWdtspc  stream  tcp  nowait  root  /usr/dt/bin/dtspcd /usr/dt/bin/dtspcd\fR
+.fi
+.PP
+.SH "ENVIRONMENT VARIABLE MANAGEMENT"
+.PP
+The CDE Subprocess Control service allows
+the user and system administrator to
+create files of environment variable
+definitions to be placed in the
+processes environment before a remote
+process is started\&.
+See \fBdtspcdenv\fP(4) for more information\&.
+.SH "OPERATING SYSTEM DEPENDENCIES"
+.PP
+On HP-UX, the file
+\fB/usr/adm/inetd\&.sec\fP may be used to
+control access to the
+\fBdtspcd\fP daemon\&.
+See
+\fBinetd\&.sec\fP(4) for more information\&.
+.SH "FILES"
+.IP "\fB/usr/dt/bin/dtspcd\fP" 10
+The CDE Subprocess Control daemon
+.IP "\fB/etc/services\fP" 10
+The Internet service name data base
+.IP "\fB/etc/inted\&.conf\fP" 10
+The inetd configuration file
+.IP "\fB/etc/dt/config/dtspcdenv\fP" 10
+System-wide, locally defined environment variable
+definitions used when a process is executed
+.IP "\fB/usr/dt/config/dtspcdenv\fP" 10
+System-wide, installed environment variable definitions
+used when a process is executed
+.IP "\fB$HOME/\&.dt/dtspcdenv\fP" 10
+User-specific environment variable definitions used
+when a process is executed
+.IP "\fB/var/dt/tmp/DTSPCD\&.log\fP" 10
+The dtspcd log file
+.SH "DIAGNOSTICS"
+.PP
+Use the command line options
+\fB-log\fP and
+\fB-debug\fP (described above) to get diagnostic
+information\&.
+.SH "SEE ALSO"
+.PP
+\fBinetd\fP(1m), \fBservices\fP(4), \fBinetd\&.conf\fP(4), \fBdtspcdenv\fP(4)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

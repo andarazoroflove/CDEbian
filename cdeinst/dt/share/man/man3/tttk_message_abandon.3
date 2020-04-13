@@ -1,0 +1,102 @@
+'\" t
+...\" m_abando.sgm /main/5 1996/08/30 14:02:17 rws $
+...\" m_abando.sgm /main/5 1996/08/30 14:02:17 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tttk_message_abandon" "library call"
+.SH "NAME"
+\fBtttk_message_abandon\fP \(em finalize a message properly
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_status \fBtttk_message_abandon\fP\fR(
+\fBTt_message \fBmsg\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtttk_message_abandon\fP function is used by an application
+when it does not understand a message
+and wants to get rid of it\&.
+The
+\fBtttk_message_abandon\fP function fails or rejects
+\fImsg\fP if appropriate, and then destroys it\&.
+The
+\fBtttk_message_abandon\fP will reject or fail the message only if
+\fImsg\fP is a
+\fBTT_REQUEST\fP in
+\fBTt_state\fR \fBTT_SENT\fP\&. If it has a
+\fBTt_address\fR of
+\fBTT_HANDLER\fP or a
+\fBtt_message_status\fP of
+\fBTT_WRN_START_MESSAGE\fP, then it fails the message;
+otherwise, it rejects it\&.
+In either case,
+\fBtttk_message_abandon\fP gives
+\fImsg\fP a message status (see
+\fBtt_message_status\fP(3)) of
+\fBTT_DESKTOP_ENOTSUP\fP\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtttk_message_abandon\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_NOTHANDLER" 10
+This application is not the handler for this message\&.
+.IP "TT_ERR_POINTER" 10
+The pointer passed does not point to an object
+of the correct type for this operation\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBtt_message_status\fP(3), \fBtttk_message_fail\fP(3), \fBtttk_message_reject\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

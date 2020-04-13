@@ -1,0 +1,56 @@
+! $XConsortium: Palettes.src /main/2 1995/07/20 12:05:51 drk $
+!######################################################################
+!#
+!#     Palettes
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Palette file used for localization of backdrop names
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary 
+!#	   of Novell, Inc.
+!#
+!#
+!######################################################################
+
+!###
+!#
+!#   C palette names followed by message tags for the translated names 
+!#   
+!###
+
+Palettes*Alpine.desc: Ghiaccio
+Palettes*Arizona.desc: Vinaccia
+Palettes*Black.desc: Nero
+Palettes*BlackWhite.desc: NeroBianco
+Palettes*Broica.desc: Ferro
+Palettes*Cabernet.desc: Bosco
+Palettes*Camouflage.desc: Mimetico
+Palettes*Charcoal.desc: Carbone
+Palettes*Chocolate.desc: After Eight
+Palettes*Cinnamon.desc: Cannella
+Palettes*Clay.desc: Argilla
+Palettes*Default.desc: Colori predefiniti
+Palettes*Golden.desc: Blu
+Palettes*GrayScale.desc: Scala di grigi
+Palettes*Lilac.desc: Lillà
+Palettes*Mustard.desc: Mattone
+Palettes*Neptune.desc: Nettuno
+Palettes*NorthernSky.desc: Cielo notturno
+Palettes*Nutmeg.desc: Noce moscata
+Palettes*Olive.desc: Oliva
+Palettes*Orchid.desc: Glicine
+Palettes*Sand.desc: Sabbia
+Palettes*SantaFe.desc: SantaFe
+Palettes*Savannah.desc: Savana
+Palettes*SeaFoam.desc: Schiuma marina
+Palettes*SoftBlue.desc: Azzurro
+Palettes*SouthWest.desc: Sud-est
+Palettes*Tundra.desc: Tundra
+Palettes*Urchin.desc: Alghe
+Palettes*Wheat.desc: Grano
+Palettes*White.desc: Bianco
+Palettes*WhiteBlack.desc: BiancoNero

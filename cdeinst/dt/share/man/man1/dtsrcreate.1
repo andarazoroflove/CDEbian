@@ -1,0 +1,266 @@
+'\" t
+...\" srcreate.sgm /main/9 1996/09/08 19:56:18 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsrcreate" "user cmd"
+.SH "NAME"
+\fBdtsrcreate\fP \(em Create
+and initialize a DtSearch database
+.SH "SYNOPSIS"
+.PP
+\fBdtsrcreate\fP [-q]  [-o]  [-fd]  [-fa]  [-a\fIabstr\fP]  [-d\fIdir\fP]  [-wn\fImin\fP]  [-wx \fImax\fP]  [-l\fIlang\fP] \fIdbname\fP 
+.SH "DESCRIPTION"
+.PP
+The \fBdtsrcreate\fP command creates and initializes an
+instance of a DtSearch database\&. A DtSearch database consists of a set of
+related files\&. If the specified database already exists, after prompting for
+confirmation, \fBdtsrcreate\fP will erase and reinitialize the
+preexisting database\&.
+.SS "Database Name"
+.PP
+The \fIdbname\fP argument is the database
+name\&. It is a 1 to 8 ascii character string used at creation time as a base
+file name, and as a general database identifier thereafter\&. All created database
+files are named by assembling the base name, plus a period and a 1 to 3 ASCII
+character suffix\&. The database names \fBdtsearch\fP and \fBaustext\fP are reserved and may not be specified\&.
+.SS "Target Directory"
+.PP
+The \fIdbname\fP argument can include an
+optional path prefix\&. If it does, the database files will be created and initialized
+in the specified target directory\&. If no path prefix is specified, the target
+directory is the current working directory\&.
+.SS "Model File"
+.PP
+One of the created database files is based on a model file,
+\fBdtsearch\&.dbe\fP, provided with DtSearch\&. Database creation will fail
+if the model file cannot be found\&. \fBdtsrcreate\fP looks for
+the model file first in the directory specified by a command line option,
+if any; secondly in the current working directory; and thirdly in the optional \fIdbname\fP target directory\&.
+.SS "Configuration Options"
+.PP
+DtSearch databases can be customized with a number of configuration
+options that are specified only at creation time\&. Initialization consists
+of loading into the database a configuration and status record identifying
+the configuration options for the particular database instance\&. After initialization, \fBdtsrcreate\fP prints a small report of the current contents of the
+configuration record to stdout\&. (See also \fBdtsrdbrec\fP(1),
+which prints the report without changing the database)\&.
+.SS "Database Types"
+.PP
+The customizable features available at database creation time fall into
+clusters of related capabilities that constitute a set of basic database types\&.
+When you select a database type, you prespecify a number of features that
+are optimized for the basic type of database you want\&.
+.PP
+In the \fBDtSearch\fP database type, documents are not
+stored in a repository and are not available from the search engine after
+a search\&. The abstract returned from a search typically contains a document
+reference, usually the file name, and the application is itself responsible
+for accessing the document\&. Hilighting of search words is possible when the
+application passes the document cleartext back to the DtSearch API\&.
+.PP
+In an \fBAusText\fP database type, compressed documents
+are stored directly into a repository and the originals are thereafter ignored\&.
+The abstracts returned from searches are typically descriptive of the documents
+they represent, and are displayed directly to users\&. Documents can be retrieved
+from an \fBAusText\fP type database through the API, and the
+search words are highlighted as desired\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.PP
+.RS
+\fBNote:  
+.PP
+If an option takes a value, the value must be directly appended to the
+option name without white space\&.
+.RE
+.IP "\fB-q\fP" 10
+Suppresses printing of configuration record report\&.
+.IP "\fB-o\fP" 10
+Suppresses overwrite prompt; preauthorizes erasure and reinitialization
+of preexisting database\&.
+.IP "\fB-d\fP\fIdir\fP" 10
+Specifies where to find the model \fBdtsearch\&.dbe\fP
+file, rather than in the current working directory or target directory\&.
+.IP "\fB-fd\fP" 10
+Configure a \fBDtSearch\fP type database\&. This is the default\&.
+.IP "\fB-fa\fP" 10
+Configure an \fBAusText\fP type database\&.
+.IP "\fB-a\fP\fIabstr\fP" 10
+Set the maximum abstract size to \fIabstr\fP
+bytes\&. This is the maximum permitted length in characters for an abstract
+string\&. To optimize space considerations in the database the choice for abstract
+length may be adjusted upward\&. Default size depends on the specified database
+type\&. (See \fBdtsrfzkfiles\fP(4) and \fBDtSearch\fP(5)
+for more information about abstract fields\&.)
+.IP "\fB-wn\fP\fImin\fP" 10
+Change minimum word size to \fImin\fP characters\&.
+This is the minimum word size in characters to be indexed in the database\&.
+Document and query words shorter than the minimum are treated as stop list
+words (see \fBdtsrfzkfiles\fP(4))\&. The minimum can be overridden
+for specific individual words by adding them to the optional include list
+file (see \fBdtsrfzkfiles\fP(4))\&. For most natural languages the
+default minimum word size is usually correct; permitting very short words
+will usually cause a significant increase in the storage requirements for
+the database\&. This option is typically applicable to single-byte European
+languages and may be ignored by multibyte language processors\&. (See
+\fBDtSearch\fP(5) for more information about DtSearch word sizes)\&.
+.IP "\fB-wx\fP\fImax\fP" 10
+Change maximum word size to \fImax\fP characters\&.
+This is the maximum word size in characters\&. Smaller is better since extraordinarily
+long words in most documents do not represent words at all, but nonsemantic
+symbol strings\&. To optimize space considerations in the database, the choice
+for maximum word size will usually be adjusted upward\&. For most natural languages
+the default maximum word size is usually correct\&. This option is typically
+applicable to single-byte European languages and may be ignored by multibyte
+language processors\&. (See \fBDtSearch\fP(5) for more information
+about DtSearch word sizes)\&.
+.IP "\fB-l\fP\fIlang\fP" 10
+Change the language number to \fIlang\fP\&.
+The default is 0\&.
+.IP "" 10
+Supported languages include:
+.TS
+tab();
+lw(0.51in) lw(1.36in) lw(4.35in).
+0\fBDtSrLaENG\fPEnglish, ASCII character set
+1\fBDtSrLaENG2\fPEnglish, ISO Latin-1 character set
+2\fBDtSrLaESP\fPSpanish, ISO Latin-1 character set
+3\fBDtSrLaFRA\fPFrench, ISO Latin-1 character set
+4\fBDtSrLaITA\fPItalian, ISO Latin-1 character set
+5\fBDtSrLaDEU\fPGerman, ISO Latin-1 character set
+6\fBDtSrLaJPN\fPT{
+Japanese, packed EUC character set;
+all possible kanji substrings are indexed
+T}
+7\fBDtSrLaJPN2\fPT{
+Japanese, packed EUC character set;
+only individual kanjis are indexed, plus compounds from a knj language file
+T}
+.TE
+.IP "" 10
+Specifying an unsupported language number will establish a DtSearch
+custom language for the database\&. (See \fBDtSearch\fP(5) for
+information about DtSearch languages)\&.
+.SH "OPERAND"
+.PP
+The \fIdbname\fP operand specifies the new
+DtSearch database\&. It consists of an optional path prefix, a 1- to 8-character
+database name, an optional period, and an optional 1- to 3-character extension\&.
+This is the name that the other build tools and the the search API will use
+to reference the database\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+None\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "RETURN VALUES"
+.PP
+The return values are as follows:
+.IP "0" 10
+\fBdtsrcreate\fP completed successfully\&.
+.IP "non-zero" 10
+\fBdtsrcreate\fP encountered an error\&.
+.SH "FILES"
+.PP
+\fBdtsrcreate\fP reads \fBdtsearch\&.dbe\fP\&.
+.PP
+It creates or reinitializes the following database files:
+.IP "" 10
+\fIdbname\fP\&.d00
+.IP "" 10
+\fIdbname\fP\&.d01
+.IP "" 10
+\fIdbname\fP\&.d21
+.IP "" 10
+\fIdbname\fP\&.d22
+.IP "" 10
+\fIdbname\fP\&.d23
+.IP "" 10
+\fIdbname\fP\&.k00
+.IP "" 10
+\fIdbname\fP\&.k01
+.IP "" 10
+\fIdbname\fP\&.k21
+.IP "" 10
+\fIdbname\fP\&.k22
+.IP "" 10
+\fIdbname\fP\&.k23
+.PP
+It deletes the file \fIdbname\fP\&.d99\&.
+.PP
+Note that not all necessary database files are created by \fBdtsrcreate\fP\&. Some additional files are included in the DtSearch distribution,
+are created by later database build programs, or may be provided by the developer\&.
+.SH "EXAMPLES"
+.PP
+Create a standard DtSearch type database named \fBmydb\fP
+that will index ASCII English words of standard length for that language\&.
+.PP
+.nf
+\f(CWdtsrcreate mydb\fR
+.fi
+.PP
+.PP
+Create an AusText type database named \fBjpndb\fP\&. It will
+index Japanese words expressed in packed EUC, with automatic compounding of
+all kanji substrings\&. When the text contains embedded ASCII, words that are
+between 2 and 20 characters long will be indexed\&. At least 150 bytes will
+be available for the abstract field\&.
+.PP
+.nf
+\f(CWdtsrcreate -fa -a150 -wn2 -wx20 -l6 jpndb\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBdtsrdbrec\fP(1), \fBDtSrAPI\fP(3),
+\fBdtsrdbfiles\fP(4), \fBDtSearch\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

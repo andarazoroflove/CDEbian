@@ -1,0 +1,683 @@
+'\" t
+...\" csacsa.sgm /main/5 1996/09/08 20:00:44 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "csa/csa\&.h" "file formats"
+.SH "NAME"
+\fBcsa/csa\&.h\fP \(em calendar and appointment services definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <csa/csa\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBcsa/csa\&.h\fP header defines the following data types through
+\fBtypedef\fP:
+.PP
+.nf
+\f(CWtypedef short int               CSA_sint16;
+typedef long int                CSA_sint32;
+typedef unsigned char           CSA_uint8;
+typedef unsigned short int      CSA_uint16;
+typedef unsigned long int       CSA_uint32;
+typedef void *                  CSA_buffer;
+typedef CSA_uint32              CSA_entry_handle;
+typedef CSA_uint32              CSA_session_handle;
+typedef char *                  CSA_string;
+typedef CSA_string      CSA_attribute_reference;
+typedef CSA_uint32      CSA_boolean;
+typedef CSA_string      CSA_date_time;
+typedef CSA_string      CSA_date_time_range;
+typedef CSA_sint32      CSA_enum;
+typedef CSA_uint32      CSA_flags;
+typedef CSA_uint32      CSA_return_code;
+typedef CSA_string      CSA_service_reference;
+typedef CSA_string      CSA_time_duration;
+#define CSA_FALSE               ((CSA_boolean)0)
+#define CSA_TRUE                ((CSA_boolean)1)
+/* EXTENSION FLAGS */
+#define CSA_EXT_REQUIRED        ((CSA_flags)0x10000)
+#define CSA_EXT_OUTPUT          ((CSA_flags)0x20000)
+#define CSA_EXT_LAST_ELEMENT    ((CSA_flags)0x40000)
+/* CALENDAR USER TYPE */
+#define CSA_USER_TYPE_INDIVIDUAL        ((CSA_enum)0)
+#define CSA_USER_TYPE_GROUP             ((CSA_enum)1)
+#define CSA_USER_TYPE_RESOURCE          ((CSA_enum)2)
+/* CLASSIFICATION
+#define CSA_CLASS_PUBLIC                ((CSA_enum)0)
+#define CSA_CLASS_PRIVATE               ((CSA_enum)1)
+#define CSA_CLASS_CONFIDENTIAL          ((CSA_enum)2)
+/* ACCESS RIGHTS FLAGS */
+#define CSA_FREE_TIME_SEARCH                    ((CSA_flags)0x1)
+#define CSA_VIEW_PUBLIC_ENTRIES                 ((CSA_flags)0x2)
+#define CSA_VIEW_CONFIDENTIAL_ENTRIES           ((CSA_flags)0x4)
+#define CSA_VIEW_PRIVATE_ENTRIES                ((CSA_flags)0x8)
+#define CSA_INSERT_PUBLIC_ENTRIES               ((CSA_flags)0x10)
+#define CSA_INSERT_CONFIDENTIAL_ENTRIES         ((CSA_flags)0x20)
+#define CSA_INSERT_PRIVATE_ENTRIES              ((CSA_flags)0x40)
+#define CSA_CHANGE_PUBLIC_ENTRIES               ((CSA_flags)0x80)
+#define CSA_CHANGE_CONFIDENTIAL_ENTRIES         ((CSA_flags)0x100)
+#define CSA_CHANGE_PRIVATE_ENTRIES              ((CSA_flags)0x200)
+#define CSA_VIEW_CALENDAR_ATTRIBUTES            ((CSA_flags)0x400)
+#define CSA_INSERT_CALENDAR_ATTRIBUTES          ((CSA_flags)0x800)
+#define CSA_CHANGE_CALENDAR_ATTRIBUTES          ((CSA_flags)0x1000)
+#define CSA_ORGANIZER_RIGHTS                    ((CSA_flags)0x2000)
+#define CSA_SPONSOR_RIGHTS                      ((CSA_flags)0x4000)
+#define CSA_OWNER_RIGHTS                        ((CSA_flags)0x8000)
+/* ATTENDEE PRIORITIES */
+#define CSA_FOR_YOUR_INFORMATION        ((CSA_enum)0)
+#define CSA_ATTENDANCE_REQUESTED        ((CSA_enum)1)
+#define CSA_ATTENDANCE_REQUIRED         ((CSA_enum)2)
+#define CSA_IMMEDIATE_RESPONSE          ((CSA_enum)3)
+/* ATTENDEE STATUS */
+#define CSA_STATUS_ACCEPTED             ((CSA_enum)0)
+#define CSA_STATUS_NEEDS_ACTION         ((CSA_enum)1)
+#define CSA_STATUS_SENT                 ((CSA_enum)2)
+#define CSA_STATUS_TENTATIVE            ((CSA_enum)3)
+#define CSA_STATUS_CONFIRMED            ((CSA_enum)4)
+#define CSA_STATUS_REJECTED             ((CSA_enum)5)
+#define CSA_STATUS_COMPLETED            ((CSA_enum)6)
+#define CSA_STATUS_DELEGATED            ((CSA_enum)7)
+/* ATTRIBUTE VALUE TYPE */
+#define CSA_VALUE_BOOLEAN                       ((CSA_enum) 0)
+#define CSA_VALUE_ENUMERATED                    ((CSA_enum) 1)
+#define CSA_VALUE_FLAGS                         ((CSA_enum) 2)
+#define CSA_VALUE_SINT32                        ((CSA_enum) 3)
+#define CSA_VALUE_UINT32                        ((CSA_enum) 4)
+#define CSA_VALUE_STRING                        ((CSA_enum) 5)
+#define CSA_VALUE_CALENDAR_USER                 ((CSA_enum) 6)
+#define CSA_VALUE_DATE_TIME                     ((CSA_enum) 7)
+#define CSA_VALUE_DATE_TIME_RANGE               ((CSA_enum) 8)
+#define CSA_VALUE_TIME_DURATION                 ((CSA_enum) 9)
+#define CSA_VALUE_ACCESS_LIST                   ((CSA_enum) 10)
+#define CSA_VALUE_ATTENDEE_LIST                 ((CSA_enum) 11)
+#define CSA_VALUE_DATE_TIME_LIST                ((CSA_enum) 12)
+#define CSA_VALUE_REMINDER                      ((CSA_enum) 13)
+#define CSA_VALUE_OPAQUE_DATA                   ((CSA_enum) 14)
+/* CROSS FUNCTION FLAGS */
+/* SCOPE */
+#define CSA_SCOPE_ALL                           ((CSA_enum)0)
+#define CSA_SCOPE_ONE                           ((CSA_enum)1)
+#define CSA_SCOPE_FORWARD                       ((CSA_enum)2)
+/* OPERATORS */
+#define CSA_MATCH_ANY                           ((CSA_enum)0)
+#define CSA_MATCH_EQUAL_TO                      ((CSA_enum)1)
+#define CSA_MATCH_NOT_EQUAL_TO                  ((CSA_enum)2)
+#define CSA_MATCH_GREATER_THAN                  ((CSA_enum)3)
+#define CSA_MATCH_LESS_THAN                     ((CSA_enum)4)
+#define CSA_MATCH_GREATER_THAN_OR_EQUAL_TO      ((CSA_enum)5)
+#define CSA_MATCH_LESS_THAN_OR_EQUAL_TO         ((CSA_enum)6)
+#define CSA_MATCH_CONTAIN                       ((CSA_enum)7)
+#define CSA_LOOKUP_RESOLVE_PREFIX_SEARCH        ((CSA_flags)0x1)
+#define CSA_LOOKUP_RESOLVE_IDENTITY             ((CSA_flags)0x2)
+#define CSA_CONFIG_CHARACTER_SET                ((CSA_enum)0)
+#define CSA_CONFIG_LINE_TERM                    ((CSA_enum)1)
+#define CSA_CONFIG_DEFAULT_SERVICE              ((CSA_enum)2)
+#define CSA_CONFIG_DEFAULT_USER                 ((CSA_enum)3)
+#define CSA_CONFIG_REQ_PASSWORD                 ((CSA_enum)4)
+#define CSA_CONFIG_REQ_SERVICE                  ((CSA_enum)5)
+#define CSA_CONFIG_REQ_USER                     ((CSA_enum)6)
+#define CSA_CONFIG_UI_AVALI                     ((CSA_enum)7)
+#define CSA_CONFIG_VER_IMPLEM                   ((CSA_enum)8)
+#define CSA_CONFIG_VER_SPEC                     ((CSA_enum)9)
+/* CHARACTER SET IDENTIFIERS */
+#define CSA_CHARSET_437         "-//XAPIA//CHARSET IBM 437//EN"
+#define CSA_CHARSET_850         "-//XAPIA//CHARSET IBM 850//EN"
+#define CSA_CHARSET_1252        "-//XAPIA//CHARSET Microsoft 1252//EN"
+#define CSA_CHARSET_ISTRING     "-//XAPIA//CHARSET Apple ISTRING//EN"
+#define CSA_CHARSET_UNICODE     "-//XAPIA//CHARSET UNICODE//EN"
+#define CSA_CHARSET_T61         "-//XAPIA//CHARSET TSS T61//EN"
+#define CSA_CHARSET_IA5         "-//XAPIA//CHARSET TSS IA5//EN"
+#define CSA_CHARSET_ISO_10646   "-//XAPIA//CHARSET ISO 10646//EN"
+#define CSA_CHARSET_ISO_646     "-//XAPIA//CHARSET ISO 646//EN"
+#define CSA_CHARSET_ISO_8859_1  "-//XAPIA//CHARSET ISO 8859-1//EN"
+#define CSA_CB_CALENDAR_LOGON                   ((CSA_flags)0x0
+#define CSA_CB_CALENDAR_DELETED                 ((CSA_flags)0x1)
+#define CSA_CB_CALENDAR_ATTRIBUTE_UPDATED       ((CSA_flags)0x2)
+#define CSA_CB_ENTRY_ADDED                      ((CSA_flags)0x4)
+#define CSA_CB_ENTRY_DELETED                    ((CSA_flags)0x8)
+#define CSA_CB_ENTRY_UPDATED                    ((CSA_flags)0x10)
+/* Entry Types */
+#define CSA_TYPE_EVENT          ((CSA_enum)0)
+#define CSA_TYPE_TODO           ((CSA_enum)1)
+#define CSA_TYPE_MEMO           ((CSA_enum)2)
+/* RETURN ERROR FLAGS */
+#define CSA_ERROR_RSV_MASK      ((CSA_return_code)0x0000FFFF)
+#define CSA_ERROR_IMPL_MASK     ((CSA_return_code)0xFFFF0000)
+/* RETURN CODES */
+#define CSA_SUCCESS                             ((CSA_return_code)0)
+#define CSA_E_AMBIGUOUS_USER                    ((CSA_return_code)1)
+#define CSA_E_CALENDAR_EXISTS                   ((CSA_return_code)2)
+#define CSA_E_CALENDAR_NOT_EXIST                ((CSA_return_code)3)
+#define CSA_E_CALLBACK_NOT_REGISTERED           ((CSA_return_code)4)
+#define CSA_E_DISK_FULL                         ((CSA_return_code)5)
+#define CSA_E_FAILURE                           ((CSA_return_code)6)
+#define CSA_E_FILE_EXIST                        ((CSA_return_code)7)
+#define CSA_E_FILE_NOT_EXIST                    ((CSA_return_code)8)
+#define CSA_E_INSUFFICIENT_MEMORY               ((CSA_return_code)9)
+#define CSA_E_INVALID_ATTRIBUTE                 ((CSA_return_code)10)
+#define CSA_E_INVALID_ATTRIBUTE_VALUE           ((CSA_return_code)11)
+#define CSA_E_INVALID_CALENDAR_SERVICE          ((CSA_return_code)12)
+#define CSA_E_INVALID_CONFIGURATION             ((CSA_return_code)13)
+#define CSA_E_INVALID_DATA_EXT                  ((CSA_return_code)14)
+#define CSA_E_INVALID_DATE_TIME                 ((CSA_return_code)15)
+#define CSA_E_INVALID_ENTRY_HANDLE              ((CSA_return_code)16)
+#define CSA_E_INVALID_ENUM                      ((CSA_return_code)17)
+#define CSA_E_INVALID_FILE_NAME                 ((CSA_return_code)18)
+#define CSA_E_INVALID_FLAG                      ((CSA_return_code)19)
+#define CSA_E_INVALID_FUNCTION_EXT              ((CSA_return_code)20)
+#define CSA_E_INVALID_MEMORY                    ((CSA_return_code)21)
+#define CSA_E_INVALID_PARAMETER                 ((CSA_return_code)22)
+#define CSA_E_INVALID_PASSWORD                  ((CSA_return_code)23)
+#define CSA_E_INVALID_RETURN_CODE               ((CSA_return_code)24)
+#define CSA_E_INVALID_SESSION_HANDLE            ((CSA_return_code)25)
+#define CSA_E_INVALID_USER                      ((CSA_return_code)26)
+#define CSA_E_LOCALE_MISMATCH                   ((CSA_return_code)27)
+#define CSA_E_LOGON_FAILURE                     ((CSA_return_code)28)
+#define CSA_E_NO_AUTHORITY                      ((CSA_return_code)29)
+#define CSA_E_NOT_SUPPORTED                     ((CSA_return_code)30)
+#define CSA_E_PASSWORD_REQUIRED                 ((CSA_return_code)31)
+#define CSA_E_READONLY                          ((CSA_return_code)32)
+#define CSA_E_SERVICE_UNAVAILABLE               ((CSA_return_code)33)
+#define CSA_E_TEXT_TOO_LARGE                    ((CSA_return_code)34)
+#define CSA_E_TOO_MANY_USERS                    ((CSA_return_code)35)
+#define CSA_E_UNABLE_TO_OPEN_FILE               ((CSA_return_code)36)
+#define CSA_E_UNSUPPORTED_ATTRIBUTE             ((CSA_return_code)37)
+#define CSA_E_UNSUPPORTED_CHARACTER_SET         ((CSA_return_code)38)
+#define CSA_E_UNSUPPORTED_DATA_EXT              ((CSA_return_code)39)
+#define CSA_E_UNSUPPORTED_FLAG                  ((CSA_return_code)40)
+#define CSA_E_UNSUPPORTED_FUNCTION_EXT          ((CSA_return_code)41)
+#define CSA_E_UNSUPPORTED_PARAMETER             ((CSA_return_code)42)
+#define CSA_E_UNSUPPORTED_VERSION               ((CSA_return_code)43)
+#define CSA_E_USER_NOT_FOUND                    ((CSA_return_code)44)
+/* CALENDAR ATTRIBUTES */
+/* CALENDAR ATTRIBUTE NAMES */
+#define CSA_CAL_ATTR_ACCESS_LIST                              \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Access List//EN"
+#define CSA_CAL_ATTR_CALENDAR_NAME                            \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Calendar Name//EN"
+#define CSA_CAL_ATTR_CALENDAR_OWNER                           \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Calendar Owner//EN"
+#define CSA_CAL_ATTR_CALENDAR_SIZE                            \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Calendar Size//EN"
+#define CSA_CAL_ATTR_CODE_PAGE                                \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Character Set//EN"
+#define CSA_CAL_ATTR_COUNTRY                                  \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Country//EN"
+#define CSA_CAL_ATTR_DATE_CREATED                             \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Date Created//EN"
+#define CSA_CAL_ATTR_LANGUAGE                                 \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Language//EN"
+#define CSA_CAL_ATTR_NUMBER_ENTRIES                           \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Number Entries//EN"
+#define CSA_CAL_ATTR_PRODUCT_IDENTIFIER                       \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Product Identifier//EN"
+#define CSA_CAL_ATTR_TIME_ZONE                                \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Time Zone//EN"
+#define CSA_CAL_ATTR_VERSION                                  \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Version//EN"
+#define CSA_CAL_ATTR_WORK_SCHEDULE                            \e
+        "-//XAPIA/CSA/CALATTR//NONSGML Work Schedule//EN"
+/* ENTRY ATTRIBUTES */
+/* ENTRY ATTRIBUTES NAMES */
+#define CSA_ENTRY_ATTR_ATTENDEE_LIST                          \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Attendee List//EN"
+#define CSA_ENTRY_ATTR_AUDIO_REMINDER                         \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Audio Reminder//EN"
+#define CSA_ENTRY_ATTR_CLASSIFICATION                         \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Classification//EN"
+#define CSA_ENTRY_ATTR_DATE_COMPLETED                         \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Date Complated//EN"
+#define CSA_ENTRY_ATTR_DATE_CREATED                           \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Date Created//EN"
+#define CSA_ENTRY_ATTR_DESCRIPTION                            \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Description//EN"
+#define CSA_ENTRY_ATTR_DUE_DATE                               \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Due Date//EN"
+#define CSA_ENTRY_ATTR_END_DATE                               \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML End Date//EN"
+#define CSA_ENTRY_ATTR_EXCEPTION_DATES                        \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Exception Dates//EN"
+#define CSA_ENTRY_ATTR_EXCEPTION_RULE                         \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Exception Rule//EN"
+#define CSA_ENTRY_ATTR_FLASHING_REMINDER                      \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Flashing Reminder//EN"
+#define CSA_ENTRY_ATTR_LAST_UPDATE                            \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Last Update//EN"
+#define CSA_ENTRY_ATTR_MAIL_REMINDER                          \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Mail Reminder//EN"
+#define CSA_ENTRY_ATTR_NUMBER_RECURRENCES                     \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Number Recurrences//EN"
+#define CSA_ENTRY_ATTR_ORGANIZER                              \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Organizer//EN"
+#define CSA_ENTRY_ATTR_POPUP_REMINDER                         \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Popup Reminder//EN"
+#define CSA_ENTRY_ATTR_PRIORITY                               \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Priority//EN"
+#define CSA_ENTRY_ATTR_RECURRENCE_RULE                        \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Recurrence Rule//EN"
+#define CSA_ENTRY_ATTR_RECURREING_DATES                       \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Recurring Dates//EN"
+#define CSA_ENTRY_ATTR_REFERENCE_IDENTIFIER                   \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Reference_identifier//EN"
+#define CSA_ENTRY_ATTR_SEQUENCE_NUMBER                        \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Sequence Number//EN"
+#define CSA_ENTRY_ATTR_SPONSOR                                \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Sponsor//EN"
+#define CSA_ENTRY_ATTR_START_DATE                             \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Start Date//EN"
+#define CSA_ENTRY_ATTR_STATUS                                 \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Status//EN"
+#define CSA_ENTRY_ATTR_SUBTYPE                                \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Subtype//EN"
+#define CSA_ENTRY_ATTR_SUMMARY                                \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Summary//EN"
+#define CSA_ENTRY_ATTR_TIME_TRANSPARENCY                      \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Transparency//EN"
+#define CSA_ENTRY_ATTR_TYPE                                   \e
+        "-//XAPIA/CSA/ENTRYATTR//NONSGML Type//EN"
+/* COMMON EXTENSIONS DECLARATIONS */
+/* EXTENSION SET ID */
+/* Common Extension Set */
+#define CSA_XS_COM                      ((CSA_uint32) 0)
+/* Bilateral Extension Set */
+#define CSA_XS_BLT                      ((CSA_uint32) 256)
+/* FUNCTION EXTENSIONS */
+/* Query for extension support in implementation */
+#define CSA_X_COM_SUPPORT_EXT           ((CSA_uint32) 1)
+#define CSA_X_COM_SUPPORTED             ((CSA_flags) 1)
+#define CSA_X_COM_NOT_SUPPORTED         ((CSA_flags) 2)
+#define CSA_X_COM_DATA_EXT_SUPPORTED    ((CSA_flags) 4)
+#define CSA_X_COM_FUNC_EXT_SUPPORTED    ((CSA_flags) 8)
+#define CSA_X_COM_SUP_EXCLUDE           ((CSA_flags) 16)
+#define CSA_X_UI_ID_EXT                 ((CSA_uint32)2)
+/* EXTENSION FLAGS */
+#define CSA_X_LOGON_UI_ALLOWED          ((CSA_flags)0x1)
+#define CSA_X_ERROR_UI_ALLOWED          ((CSA_flags)0x2)
+#define CSA_X_LOOKUP_RESOLVE_UI         ((CSA_flags)0x4)
+#define CSA_X_LOOKUP_DETAILS_UI         ((CSA_flags)0x8)
+#define CSA_X_LOOKUP_ADDRESSING_UI      ((CSA_flags)0x10)
+#define CSA_X_ADD_DEFINE_ENTRY_UI       ((CSA_flags)0x20)
+/* EXTENSION RETURN CODES */
+#define CSA_X_E_INVALID_UI_ID           ((CSA_return_code)1025)
+#define CSA_X_E_LOGON_FAILURE           ((CSA_return_code)1026)
+#define CSA_X_E_USER_CANCEL             ((CSA_return_code)1027)
+#define CSA_X_XT_APP_CONTEXT_EXT        ((CSA_uint32)3)\fR
+.fi
+.PP
+.PP
+The header declares the following structures:
+.PP
+.nf
+\f(CWtypedef struct CSA_TAG_EXTENSION {
+        CSA_uint32 \fIitem_code\fP;
+        CSA_uint32 \fIitem_data\fP;
+        CSA_buffer \fIitem_reference\fP;
+        CSA_flags \fIextension_flags\fP;
+} CSA_extension;
+typedef struct CSA_TAG_CALENDAR_USER {
+        CSA_string \fIuser_name\fP;
+        CSA_enum \fIuser_type\fP;
+        CSA_string \fIcalendar_address\fP;
+        CSA_extension *\fIcalendar_user_extensions\fP;
+} CSA_calendar_user;
+typedef struct CSA_TAG_ACCESS_RIGHTS {
+        CSA_calendar_user *\fIuser\fP;
+        CSA_flags \fIrights\fP;
+        struct CSA_TAG_ACCESS_RIGHTS *\fInext\fP;
+} CSA_access_rights, *CSA_access_list;
+typedef struct CSA_TAG_ATTENDEE {
+        CSA_calendar_user \fIattendee\fP;
+        CSA_enum \fIpriority\fP;
+        CSA_enum \fIstatus\fP;
+        CSA_boolean \fIrsvp_requested\fP;
+        struct CSA_TAG_ATTENDEE *\fInext\fP;
+} CSA_attendee, *CSA_attendee_list;
+typedef struct CSA_TAG_OPAQUE_DATA {
+        CSA_uint32 \fIsize\fP;
+        CSA_uint8 *\fIdata\fP;
+} CSA_opaque_data;
+typedef void (*CSA_callback)(
+        CSA_session_handle \fIsession\fP,
+        CSA_flags \fIreason\fP,
+        CSA_buffer \fIcall_data\fP,
+        CSA_buffer \fIclient_data\fP,
+        CSA_extension *\fIcallback_extensions\fP
+);
+typedef struct CSA_TAG_LOGON_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+} CSA_logon_callback_data;
+typedef struct CSA_TAG_CALENDAR_DELETED_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+} CSA_calendar_deleted_callback_data;
+typedef struct CSA_TAG_CALENDAR_ATTR_UPDATE_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+        CSA_uint32 \fInumber_attributes\fP;
+        CSA_attribute_reference *\fIattribute_names\fP;
+} CSA_calendar_attr_update_callback_data;
+typedef struct CSA_TAG_ADD_ENTRY_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+        CSA_opaque_data \fIadded_entry_id\fP;
+} CSA_add_entry_callback_data;
+typedef struct CSA_TAG_DELETE_ENTRY_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+        CSA_opaque_data \fIdeleted_entry_id\fP;
+        CSA_enum \fIscope\fP;
+        CSA_date_time \fIdate_and_time\fP;
+} CSA_delete_entry_callback_data;
+typedef struct CSA_TAG_UPDATE_ENTRY_CB_DATA {
+        CSA_calendar_user *\fIuser\fP;
+        CSA_opaque_data \fIold_entry_id\fP;
+        CSA_opaque_data \fInew_entry_id\fP;
+        CSA_enum \fIscope\fP;
+        CSA_date_time \fIdate_and_time\fP;
+} CSA_update_entry_callback_data;
+typedef struct CSA_TAG_DATE_TIME_ITEM {
+        CSA_date_time \fIdate_time\fP;
+        struct CSA_TAG_DATE_TIME_ITEM *\fInext\fP;
+} CSA_date_time_entry, *CSA_date_time_list;
+typedef struct CSA_TAG_FREE_TIME {
+        CSA_uint32 \fInumber_free_time_data\fP;
+        CSA_date_time_range *\fIfree_time_data\fP;
+} CSA_free_time;
+typedef struct CSA_TAG_REMINDER {
+        CSA_time_duration \fIlead_time\fP;
+        CSA_time_duration \fIsnooze_time\fP;
+        CSA_uint32 \fIrepeat_count\fP;
+        CSA_opaque_data \fIreminder_data\fP;
+} CSA_reminder;
+typedef struct CSA_TAG_REMINDER_REFERENCE {
+        CSA_entry_handle \fIentry\fP;
+        CSA_date_time \fIrun_time\fP;
+        CSA_time_duration \fIsnooze_time\fP;
+        CSA_uint32 \fIrepeat_count\fP;
+        CSA_attribute_reference \fIattribute_name\fP;
+} CSA_reminder_reference;
+typedef struct CSA_TAG_ATTRIBUTE_ITEM {
+        CSA_enum \fItype\fP;
+        union {
+                CSA_boolean \fIboolean_value\fP;
+                CSA_enum \fIenumerated_value\fP;
+                CSA_flags \fIflags_value\fP;
+                CSA_sint32 \fIsint32_value\fP;
+                CSA_uint32 \fIuint32_value\fP;
+                CSA_calendar_user \fIcalendar_user_value\fP;
+                CSA_date_time \fIdate_time_value\fP;
+                CSA_date_time_range \fIdate_time_range_value\fP;
+                CSA_time_duration \fItime_duration_value\fP;
+                CSA_string \fIstring_value\fP;
+                CSA_attendee_list \fIattendee_list_value\fP;
+                CSA_date_time_list \fIdate_time_list_value\fP;
+                CSA_access_list \fIaccess_list_value\fP;
+                CSA_reminder *\fIreminder_value\fP;
+                CSA_opaque_data *\fIopaque_data_value\fP;
+        } item;
+} CSA_attribute_value;
+typedef struct CSA_TAG_ATTRIBUTE {
+        CSA_string \fIname\fP;
+        CSA_attribute_value *\fIvalue\fP;
+        CSA_extension *\fIattribute_extensions\fP;
+} CSA_attribute;
+typedef struct CSA_TAG_WORK_SCHEDULE {
+        CSA_date_time \fIschedule_begin_time\fP;
+        CSA_boolean \fIcyclic_definition_flag\fP;
+        CSA_date_time \fIcycle_end_time\fP;
+        CSA_date_time_list *\fIwork_cycle\fP;
+} CSA_work_schedule;
+typedef struct CSA_TAG_XCOM {
+        CSA_uint32 \fIitem_code\fP;
+        CSA_flags \fIflags\fP;
+} CSA_X_COM_support;\fR
+.fi
+.PP
+.PP
+The header declares the following as functions:
+.PP
+.nf
+CSA_return_code csa_add_calendar(CSA_session_handle \fIsession\fP,
+        CSA_calendar_user *\fIuser\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIcalendar_attributes\fP,
+        CSA_extension *\fIadd_calendar_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_add_entry(CSA_session_handle \fIsession\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIentry_attributes\fP,
+        CSA_entry_handle *\fIentry\fP,
+        CSA_extension *\fIadd_entry_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_call_callbacks(CSA_session_handle \fIsession\fP,
+        CSA_flags \fIreason\fP,
+        CSA_extension *\fIcall_callbacks_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_delete_calendar(CSA_session_handle \fIsession\fP,
+        CSA_extension *\fIdelete_calendar_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_delete_entry(CSA_session_handle \fIsession\fP,
+        CSA_entry_handle \fIentry\fP,
+        CSA_enum \fIdelete_scope\fP,
+        CSA_extension *\fIdelete_entry_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_free(CSA_buffer \fImemory\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_free_time_search(CSA_session_handle \fIsession\fP,
+        CSA_date_time_range \fIdate_time_range\fP,
+        CSA_time_duration \fItime_duration\fP,
+        CSA_uint32 \fInumber_users\fP,
+        CSA_calendar_user *\fIcalendar_users\fP,
+        CSA_free_time **\fIfree_time\fP,
+        CSA_extension *\fIfree_time_search_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_list_calendar_attributes(CSA_session_handle \fIsession\fP,
+        CSA_uint32 *\fInumber_names\fP,
+        CSA_attribute_reference **\fIcalendar_attributes_names\fP,
+        CSA_extension *\fIlist_calendar_attributes_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_list_calendars(CSA_service_reference \fIcalendar_service\fP,
+        CSA_uint32 *\fInumber_names\fP,
+        CSA_calendar_user **\fIcalendar_names\fP,
+        CSA_extension *\fIlist_calendars_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_list_entries(CSA_session_handle \fIsession\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIentry_attributes\fP
+        CSA_enum *\fIlist_operators\fP,
+        CSA_uint32 *\fInumber_entries\fP,
+        CSA_entry_handle **\fIentries\fP,
+        CSA_extension *\fIlist_entries_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_list_entry_attributes(CSA_session_handle \fIsession\fP,
+        CSA_entry_handle \fIentry\fP,
+        CSA_uint32 *\fInumber_names\fP,
+        CSA_attribute_reference **\fIentry_attributes_names\fP
+        CSA_extension *\fIlist_entry_attributes_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_list_entry_sequence(CSA_session_handle \fIsession\fP,
+        CSA_entry_handle \fIentry\fP,
+        CSA_date_time_range \fItime_range\fP,
+        CSA_uint32 *\fInumber_entries\fP,
+        CSA_entry_handle **\fIentry_list\fP,
+        CSA_extension *\fIlist_entry_sequence_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_logoff(CSA_session_handle \fIsession\fP,
+        CSA_extension *\fIlogoff_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_logon(CSA_service_reference \fIcalendar_service\fP,
+        CSA_calendar_user *\fIuser\fP,
+        CSA_string \fIpassword\fP,
+        CSA_string \fIcharacter_set\fP,
+        CSA_string \fIrequired_csa_version\fP,
+        CSA_session_handle *\fIsession\fP,
+        CSA_extension *\fIlogon_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_look_up(CSA_session_handle \fIsession\fP,
+        CSA_calendar_user *\fIusers\fP,
+        CSA_flags \fIlook_up_flags\fP,
+        CSA_uint32 *\fInumber_users\fP,
+        CSA_calendar_user **\fIuser_list\fP,
+        CSA_extension *\fIlook_up_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_query_configuration(CSA_session_handle \fIsession\fP,
+        CSA_enum \fIitem\fP,
+        CSA_buffer *\fIreference\fP,
+        CSA_extension *\fIquery_configuration_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_read_calendar_attributes(CSA_session_handle \fIsession\fP,
+        CSA_uint32 \fInumber_names\fP,
+        CSA_attribute_reference *\fIattribute_names\fP,
+        CSA_uint32 *\fInumber_attributes\fP,
+        CSA_attribute **\fIcalendar_attributes\fP
+        CSA_extension *\fIread_calendar_attributes_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_read_entry_attributes(CSA_session_handle \fIsession\fP,
+        CSA_entry_handle \fIentry\fP,
+        CSA_uint32 \fInumber_names\fP,
+        CSA_attribute_reference *\fIattribute_names\fP,
+        CSA_uint32 *\fInumber_attributes\fP,
+        CSA_attribute **\fIentry_attributes\fP,
+        CSA_extension *\fIread_entry_attributes_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_read_next_reminder(CSA_session_handle \fIsession\fP,
+        CSA_uint32 \fInumber_names\fP,
+        CSA_attribute_reference *\fIreminder_names\fP,
+        CSA_date_time \fIgiven_time\fP,
+        CSA_uint32 *\fInumber_reminders\fP
+        CSA_reminder_reference **\fIreminder_references\fP,
+        CSA_extension *\fIread_next_reminder_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_register_callback(CSA_session_handle \fIsession\fP,
+        CSA_flags \fIreason\fP,
+        CSA_callback \fIcallback\fP,
+        CSA_buffer \fIclient_data\fP,
+        CSA_extension *\fIregister_callback_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_restore(CSA_session_handle \fIsession\fP,
+        CSA_string \fIarchive_name\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIattributes\fP,
+        CSA_enum *\fIoperators\fP,
+        CSA_extension *\fIrestore_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_save(CSA_session_handle \fIsession\fP,
+        CSA_string \fIarchive_name\fP,
+        CSA_uint32 \fInumber_attributes\fP
+        CSA_attribute *\fIattributes\fP,
+        CSA_enum *\fIoperators\fP,
+        CSA_boolean \fIdelete_entry\fP,
+        CSA_extension *\fIsave_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_unregister_callback(CSA_session_handle \fIsession\fP,
+        CSA_flags \fIreason\fP,
+        CSA_callback \fIcallback\fP,
+        CSA_buffer \fIclient_data\fP,
+        CSA_extension *\fIunregister_callback_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_update_calendar_attributes(CSA_session_handle \fIsession\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIcalendar_attributes\fP,
+        CSA_extension *\fIupdate_calendar_attributes_extensions\fP);
+.fi
+.PP
+.nf
+CSA_return_code csa_update_entry_attributes(CSA_session_handle \fIsession\fP,
+        CSA_entry_handle \fIentry\fP,
+        CSA_enum \fIupdate_scope\fP,
+        CSA_boolean \fIupdate_propagation\fP,
+        CSA_uint32 \fInumber_attributes\fP,
+        CSA_attribute *\fIentry_attributes\fP,
+        CSA_entry_handle *\fInew_entry\fP,
+        CSA_extension *\fIupdate_entry_attributes_extensions\fP);
+.fi
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

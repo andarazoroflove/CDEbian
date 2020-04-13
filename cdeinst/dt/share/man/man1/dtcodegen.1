@@ -1,0 +1,373 @@
+'\" t
+...\" codegen.sgm /main/10 1996/09/08 19:50:57 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcodegen" "user cmd"
+.SH "NAME"
+\fBdtcodegen\fP \(em generate code from
+a XCDE application building services project or module file
+.SH "SYNOPSIS"
+.PP
+\fBdtcodegen\fP [-changed]  [-main]  [-merge]  [-nomerge]  [-module\0\fImymod\fP]  [-useWC\0\fIclass\fP]  [-p  | -project\0\fImyproj\fP ]  [-np  | -noproject ]  [-showall]  [-noshowall]  [-s  | -silent ]  [-v  | -verbose ]  [\fIfile\fP  | \0\&.\!\&.\!\&. ] 
+.PP
+\fBdtcodegen\fP [-help] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtcodegen\fP utility reads Builder
+Interface Language (BIL) files created by the XCDE application building
+services graphical user interface and produces C, Motif and XCDE source
+code for the user interface and application elements defined\&. The BIL files
+supplied can be individual module files (files with a \fB\&.bil\fP suffix) or a project file (files with a \fB\&.bip\fP suffix) that contains references to zero or more module
+files\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-changed\fP" 10
+Generate only source code for those modules that have changed since
+the last time \fBdtcodegen\fP was run\&.
+.IP "\fB-help\fP" 10
+Write a help message to standard output explaining all \fBdtcodegen\fP options and then terminate\&.
+.IP "\fB-main\fP" 10
+Produce the project files associated with the application\&'s \fBmain\fP routine\&.
+.IP "\fB-merge\fP" 10
+Merge generated stubs files with previous versions, perpetuating changes
+made or custom edits done to the previous stubs file\&. This is the default
+behavior\&.
+.IP "\fB-nomerge\fP" 10
+Do not merge existing and new \fB_stubs\&.c\fP files\&. This
+option overrides the default merging behavior\&. If both \fB-merge\fP and \fB-nomerge\fP are used, the one given last
+on the command line takes precedence\&. 
+.IP "\fB-module\0\fP\fImymod\fP" 10
+Generate code for the module \fImymod\fP, (which is expected
+to be defined in the file \fImymod\fP \fB\&.bil\fP)\&. Using multiple \fB-module\fP options includes
+multiple modules in the generated code\&.
+.IP "\fB-useWC\0\fP\fIclass\fP" 10
+Use the specified widget class whenever possible\&. Valid values are:
+.RS
+.IP "\fBdt\fP" 10
+Generate \fBDtComboBox\fP and \fBDtSpinBox\fP
+widgets\&. This value retains the CDE 1\&.0 behavior\&.
+.IP "\fBxm\fP" 10
+Generate \fBXmComboBox\fP and \fBXmSimpleSpinBox\fP widgets\&. This value selects the Motif/Xm behavior\&.
+.RE
+.IP "\fB-p\!|\!-project\0\fP \fImyproj\fP" 10
+Generate code for the project \fImyproj\fP, (which is
+expected to be defined in the file \fImyproj\fP \fB\&.bip\fP)\&.
+.IP "\fB-noproject\fP" 10
+Ignore the \fIproject\fP\fB\&.bip\fP project
+file and use default project settings instead\&. This is useful in producing
+an application from one or a few module files (for example, for testing) as
+an alternative to generating the entire project\&. 
+.IP "\fB-showall\fP" 10
+Cause the generated application to show (map) all application windows
+(main windows and dialogs) at startup, ignoring whether they are set to be
+initially visible or not\&. If no project is specified on the command line, either
+by using \fB-project\fP or by specifying a \fIproject\fP \fB\&.bip\fP file as an
+operand, \fBdtcodegen\fP performs as if \fB-showall\fP had been specified\&. (The \fB-noshowall\fP option
+suppresses this behavior)\&.
+.IP "\fB-noshowall\fP" 10
+Cause the generated application to show at startup (map) only those
+windows (main windows and dialogs) whose initially visible attribute is true\&.
+If a project is specified on the command line, either by
+using \fB-project\fP or by specifying a \fIproject\fP \fB\&.bip\fP file as an operand,  \fBdtcodegen\fP performs as if \fB-noshowall\fP had
+been specified\&. (The \fB-showall\fP option suppresses this
+behavior)\&.
+.IP "\fB-s\!|\!-silent\fP" 10
+Work silently, producing no output except error messages while generating
+source code\&.
+.IP "\fB-v\!|\!-verbose\fP" 10
+Be more verbose in providing progress and status messages during the
+generation of source code\&.
+.SH "OPERANDS"
+.PP
+The following operand is supported:
+.IP "\fIfile\fP" 10
+A pathname of a project or module file\&. It is not necessary
+to specify the \fB\&.bip\fP or \fB\&.bil\fP extension
+for any file because \fBdtcodegen\fP uses a sequence of search
+algorithms in the current directory to determine what files should be read
+in order to satisfy the specified command line\&.
+.IP "" 10
+If no
+\fIfile\fP operands are given, \fBdtcodegen\fP
+searches the current directory for a project file (a file with a \fB\&.bip\fP suffix)\&. If one is found, it is used as if it had been specified
+on the command line\&. If more than one is found, the first one encountered
+is used\&.
+.IP "" 10
+If one or more \fIfile\fP
+operands are specified, \fBdtcodegen\fP checks to see if any
+of them is a project file in the current working directory, and uses the
+first one found\&. If none of the \fIfile\fP operands
+are project files, then the directory is searched for a project file\&. This
+search is similar to the no-operand case, but is modified to look for a project
+file that contain modules corresponding to other \fIfile\fP operands\&.
+.IP "" 10
+Operands other than the project file are
+taken to be module names\&.
+.PP
+See the EXAMPLES section for more on the interpretation of filename
+operands and how the search features of \fBdtcodegen\fP may be
+used\&.
+.SH "RESOURCES"
+.PP
+If the \fB-useWC\fP option is not specified, \fBdtcodegen\fP uses the \fBuseWidgetClass\fP resource in
+the Xt resources table to determine which class to use for generated widgets\&.
+The class/type is \fBXmCUseWidgetClass\fP/\fBXtEnum\fP and the valid
+values are:
+.IP "\fBxm\fP (the default)" 10
+Generate \fBXmComboBox\fP and \fBXmSimpleSpinBox\fP widgets\&. This value selects the Motif/Xm behavior\&.
+.IP "\fBdt\fP" 10
+Generate \fBDtComboBox\fP and \fBDtSpinBox\fP
+widgets\&. This value retains the CDE 1\&.0 behavior\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+All input files are text files in the BIL
+format\&. See \fBBIL\fP(4)\&. 
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of \fBdtcodegen\fP:
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables that
+are unset or null\&. If \fBLANG\fP is
+unset or null, the corresponding value from the implementation-specific default
+locale will be used\&. If any of the internationalization variables contains
+an invalid setting, the utility behaves as if none of the variables had been
+defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value, override the values of all the other
+internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect the format and contents
+of diagnostic messages written to standard error and informative messages
+written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues for the processing of \fILC_MESSAGES\fP\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The \fBdtcodegen\fP utility takes the
+standard action for all signals\&.
+.SH "STDOUT"
+.PP
+When \fB-help\fP is specified, \fBdtcodegen\fP writes to standard output a usage message in an unspecified format\&.
+Otherwise, standard output is not used\&.
+.SH "STDERR"
+.PP
+When \fB-verbose\fP is specified, \fBdtcodegen\fP writes to standard error informational progress messages
+and diagnostic messages in an unspecified format\&.
+Otherwise, standard error is used only for diagnostic messages\&.
+.SH "OUTPUT FILES"
+.PP
+The
+\fBdtcodegen\fP utility produces the following files:
+.IP "\fImodname\fP\fB_ui\&.c\fP" 10
+The primary source code file for module
+\fImodname\fP, containing C code to create the objects in the
+module and
+establish connections for those objects\&.
+.IP "\fImodname\fP\fB_ui\&.h\fP" 10
+Declarations and C externs for module
+\fImodname\fP\&.
+.IP "\fImodname\fP\fB_stubs\&.c\fP" 10
+Callback functions for the element handlers specific to module
+\fImodname\fP\&.
+.IP "\fIproject\fP\fB\&.c\fP" 10
+If
+\fBdtcodegen\fP is generating code for a project, this file contains
+\fBmain\fP plus any callback functions that are common across
+modules\&.
+.IP "\fIproject\fP\fB\&.h\fP" 10
+If
+\fBdtcodegen\fP is generating code for a project, this file contains
+declarations for any callback functions and C externs
+that are common across interfaces\&.
+.IP "\fB\&.dtcodegen\&.log\fP" 10
+A record of per-module code generation and the date and time of
+each module as it was processed\&.
+This data is required to provide support for the
+\fB-changed\fP option as part of determining which files
+need to be regenerated and
+which ones do not\&.
+.PP
+Additional application code should be added to the
+\fImodname\fP \fB_stubs\&.c\fP, \fIproject\fP \fB\&.c\fP and
+\fIproject\fP \fB\&.c\fP files, as appropriate,
+because their contents are merged across runs of
+\fBdtcodegen\fP\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+successful completion
+.IP ">0" 10
+an error occurred
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Because code generation involves the sequential production of a set
+of application files, errors that cause the
+\fBdtcodegen\fP utility to exit prematurely also may result in
+some module or
+project source files having been generated while others were not\&.
+Attempts to build the application from this mix of new and old
+generated code produce undefined results\&.
+.SH "APPLICATION USAGE"
+.PP
+Typically the
+\fBdtcodegen\fP utility is used indirectly through the
+XCDE Application Builder\&'s Code Generator dialog\&.
+This allows application code to be generated while the user is working
+with the Application Builder rather than through a separate interface or
+shell command line\&.
+The Code Generator dialog provides a graphical user interface
+for
+\fBdtcodegen\fP that makes it easy to generate code, build the
+resulting application
+and then execute it\&.
+.PP
+In some cases, however, it may be desirable to use the
+\fBdtcodegen\fP utility directly\&.
+A common example of this usage is to employ the
+code generator from within an application Makefile to produce
+a portion of the application code from pre-existing project or module files\&.
+.SH "EXAMPLES"
+.PP
+Run the code generator on the application defined by the
+project file
+\fBmyproject\&.bip\fP:
+.PP
+.nf
+\f(CWdtcodegen -p myproject\fR
+.fi
+.PP
+.PP
+Run the code generator for the project
+\fBmyproject\&.bip\fP, but only generate code for the module
+\fBmodulename\&.bil\fP:
+.PP
+.nf
+\f(CWdtcodegen myproject\&.bip modulename\fR
+.fi
+.PP
+.PP
+Search the current working directory
+for a project file that
+references the module
+\fBmymodule\fP and then silently generate code for just that
+module:
+.PP
+.nf
+\f(CWdtcodegen -silent mymodule\fR
+.fi
+.PP
+.PP
+In the following example:
+.PP
+.nf
+\f(CWdtcodegen name1 name2\fR
+.fi
+.PP
+.PP
+if the project file
+\fBname1\&.bip\fP exists, it is used and code is generated for
+module
+\fBname2\&.bil\fP\&. Otherwise, both
+\fBname1\fP and
+\fBname2\fP are taken as the name of modules, the current working
+directory is
+searched for a project file that references both modules, and code
+for those two modules is generated\&.
+.PP
+Run the code generator, which
+searches the current working
+directory for a project file to be processed, and generates all code
+associated with that project:
+.PP
+.nf
+\f(CWdtcodegen\fR
+.fi
+.PP
+.PP
+Generate just the files associated with the main routine
+for the project
+\fBmyproject\fP, namely
+\fBmyproject\&.c\fP and
+\fBmyproject\&.h\fP:
+.PP
+.nf
+\f(CWdtcodegen -main -p myproject\fR
+.fi
+.PP
+.PP
+Search the current working directory for a project file and,
+if one is found, generate code for only those modules that have changed
+since the code generator was last run:
+.PP
+.nf
+\f(CWdtcodegen -changed\fR
+.fi
+.PP
+.PP
+Generate, for the project
+\fBmyproject\&.bip\fP, code only for those modules among the
+set
+\fBmodule1\fP, \fBmodule2\fP and
+\fBmodule3\fP that have changed since the last time the code
+generator was run:
+.PP
+.nf
+\f(CWdtcodegen -changed -p myproject module1 module2 module3\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBdtbuilder\fP(1), \fBBIL\fP(4)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,220 @@
+# ##########################################################################
+# 
+#      print.dt
+# 
+#      Action and DataType Definitions for the printing
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: print.dt.src /main/4 1996/04/23 17:36:13 drk $
+# 
+
+#  Das Druckermodell für CDE wird in der Mitte der Aktion 'Drucken' angezeigt.
+#
+#  Es können verschiedene Aktionen für 'Drucken' definiert werden; eine pro Datentyp.
+#  Wenn für die Aktion 'Drucken' keine Argumente angegeben sind, wird der Befehl
+#  dtprintinfo aufgerufen, um den Drucker und den Status des Jobs anzuzeigen.
+#
+#  'dtprintinfo -populate' ist ein Verwaltungswerkzeug zum Erstellen von  
+#  Standarddruckaktionen in der Form  '<Druckername>_Drucken'.  
+#
+#  Wenn ein neuer Dateityp zum System hinzugefügt wird,  kann eine spezifische Aktion
+#  'Drucken' für den Dateityp erstellt werden, die vom Desktop automatisch
+#  anstelle der Standardaktion verwendet wird. Diese neue Aktion kann 
+#  mit 'dtlp' oder anhand der eigenen Druckfunktionen anwendungsspezifische
+#  Argumente zusammenstellen.
+# 
+# ##########################################################################
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES PRINTER_UNKNOWN
+{
+        ACTIONS         PrinterUnconfigured
+        ICON		DtPrtun
+        IS_EXECUTABLE   true
+        DESCRIPTION     Dieses Symbol stellt einen Drucker dar, der \
+                        nicht mehr auf dem Desktop eingetragen ist.
+        TYPE_LABEL      PRINTER_UNKNOWN
+}
+DATA_CRITERIA PRINTER_UNKNOWN1
+{
+	DATA_ATTRIBUTES_NAME PRINTER_UNKNOWN
+	MODE		f&x
+        NAME_PATTERN    *_Print
+}
+
+# 
+# Die für generische Dateien des Typs ARG_TYPE aufgerufene Standarddruckaktion wird
+# für Dateien verwendet, für die keine andere Druckaktion definiert wurde.
+# 
+ACTION Print
+{
+	LABEL		Drucken
+	ARG_TYPE	*
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     /usr/dt/bin/dtlp "%(File)Arg_1%"
+	DESCRIPTION	Dies ist die Standarddruckaktion. Wenn sie mit einem \
+                        Dateiargument ausgeführt wird, stellt sie druckerspezifische \
+                        Optionen zusammen und druckt die Datei dann aus. Wenn sie \
+                        ohne Argumente ausgeführt wird, erscheint das Fenster \
+                        'Druckjobs'.
+}
+ACTION PrintRaw
+{
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     /usr/dt/bin/dtlp -w "%(File)Arg_1%"
+}
+
+# 
+#   Wenn keine Dateiargumente angegeben sind, die Aktion Dtprintinfo
+#   aufrufen.
+# 
+ACTION Print
+{
+	LABEL			Drucken
+	ARG_COUNT		0
+	TYPE			MAP
+	MAP_ACTION		Dtprintinfo
+}
+
+# 
+#   Mit der Aktion 'Druckmanager' (DtPrintManager) wird der Befehl
+#  'dtprintinfo -all' aufgerufen.
+# 
+ACTION DtPrintManager
+{
+	LABEL		Druckmanager
+        ICON            FpPrtmg
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo -all
+	DESCRIPTION	Mit der Aktion 'Druckmanager' (DtPrintManager) können die Druckjobs \
+                        mehrerer Drucker sowie deren Status angezeigt werden. \
+			Mit dieser Aktion können Drucker auch in Bedientafeln \
+                        auf das Installationssymbol gezogen werden.
+}
+
+# 
+#  Die Aktion 'Druckjobs' (Dtprintinfo) ruft den Befehl 'dtprintinfo'
+#  oder 'dtprintinfo -p Drucker' auf.
+# 
+ACTION Dtprintinfo
+{
+	LABEL		Druckjobs
+        ICON            Fpprnt
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo -p "%(String)Arg_1%"
+	DESCRIPTION	Mit der Aktion 'Druckjobs' (Dtprintinfo) können Druckjobs eines \
+                        Druckers und deren Status angezeigt werden.
+}
+
+ACTION Dtprintinfo
+{
+	LABEL		Druckjobs
+	ARG_COUNT	0
+        ICON            Fpprnt
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo
+	DESCRIPTION	Mit der Aktion 'Druckjobs' (Dtprintinfo) können Druckjobs eines \
+                        Druckers und deren Status angezeigt werden.
+}
+
+# ###############################################################
+#  
+#   Aktionen für den Standarddrucker
+#  
+# ###############################################################
+ 
+# 
+#   Wenn ein Dateiargument angegeben ist, die Aktion 'Drucken'
+#   aufrufen.
+# 
+ACTION DtPrint
+{
+	LABEL		Standarddrucker
+	ARG_TYPE	*
+        ICON		Fpprnt
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	/usr/dt/bin/dtaction Print "%(File)Arg_1%"
+	DESCRIPTION	Dies ist die Standarddruckaktion. Wenn sie mit einem \
+                        Dateiargument ausgeführt wird, stellt sie druckerspezifische \
+                        Optionen zusammen und druckt die Datei dann aus. Wenn sie \
+                        ohne Argumente ausgeführt wird, erscheint das Fenster \
+                        'Druckjobs'.
+}
+
+# 
+#   Wenn kein Dateiargument angegeben ist, die Aktion
+#   'Dtprintinfo' aufrufen.
+# 
+ACTION DtPrint
+{
+	LABEL		Standarddrucker
+	ARG_COUNT	0
+        ICON		Fpprnt
+	TYPE		MAP
+	MAP_ACTION	Dtprintinfo
+	DESCRIPTION	Mit der Aktion 'Druckjobs' (Dtprintinfo) können Druckjobs eines \
+                        Druckers und deren Status angezeigt werden.
+}
+
+
+# 
+#   Dies sind einige Aktionen und Datenattribute für unbekannte und nicht konfigurierte
+#   Druckerobjekte.
+# 
+ACTION PrinterUnconfigured
+{
+	LABEL		DruckerUnkonfiguriert
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                         "Diese Druckeraktion ist nicht konfiguriert.\\nZum Konfigurieren \
+                        'Hilfe' drücken und den Anweisungen\\nfolgen."                         "Nicht konfigurierter Drucker"                         "OK"                         "HELP"
+
+
+
+
+	DESCRIPTION	Mit der Aktion 'DruckerUnkonfiguriert' wird ein \
+                        Dialog angezeigt, der dem Benutzer mitteilt, daß der Drucker \
+                        noch nicht konfiguriert ist.
+}
+
+ACTION Printer_Trash
+{
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                         "Ein Drucker kann nicht entfernt werden, indem er in \\n\
+                        den Papierkorb gestellt wird. Informationen zum\\n\
+                        Entfernen eines Druckers vom System enthält die\\n\
+                        Dokumentation zur Systemverwaltung."                         "Drucker entfernen"                         "OK"
+
+
+
+        DESCRIPTION     Mit der Aktion 'Drucker_Papierkorb' wird ein Dialog angezeigt, \
+                        der dem Benutzer mitteilt, daß ein Drucker nicht vom \
+                        System entfernt werden kann, indem er in den Papierkorb \
+                        gestellt wird.
+}
+# ######################## EOF ############################################

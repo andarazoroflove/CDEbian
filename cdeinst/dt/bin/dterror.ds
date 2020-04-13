@@ -1,0 +1,51 @@
+#! /usr/dt/bin/dtksh
+#  $XConsortium: error.ds.src /main/3 1996/04/23 17:35:47 drk $
+# #####################################################################
+# 
+#      dterror.ds
+# 
+#      This file is used by datatype definitions to
+#      output an error message. It uses dtksh.
+# 
+#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994 International Business Machines Corp.
+#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994 Novell, Inc.
+# 
+# 
+# #####################################################################
+
+#  When the OK button is pressed, lets exit out
+QuitCB()
+{
+   exit 0
+}
+
+#  When the Help button is pressed, map a help window.
+HelpCB()
+{
+    /usr/dt/bin/dthelpview -helpVolume Misctopic -locationId ConfigurePrintersSubpanelTA
+}
+
+# ################# Create the Main UI #################################
+XtInitialize TOPLEVEL ps_error PSError "$@"
+
+XmCreateErrorDialog MYDIALOG $TOPLEVEL mydialog messageString:"$(print $1)"
+
+XtSetValues $MYDIALOG dialogTitle:"$(print $2)" okLabelString:"$(print $3)"
+
+XtAddCallback $MYDIALOG okCallback QuitCB 
+
+XmMessageBoxGetChild CANCEL_BUTTON $MYDIALOG DIALOG_CANCEL_BUTTON
+XmMessageBoxGetChild HELP_BUTTON $MYDIALOG DIALOG_HELP_BUTTON
+
+XtUnmanageChild $CANCEL_BUTTON
+if [ "$#" == "4" ];then
+  XtAddCallback $MYDIALOG helpCallback HelpCB
+else
+  XtUnmanageChild $HELP_BUTTON
+fi
+
+XtManageChild $MYDIALOG
+
+XtMainLoop

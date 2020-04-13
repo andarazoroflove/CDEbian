@@ -1,0 +1,216 @@
+'\" t
+...\" pdm.sgm /main/4 1996/10/22 09:42:03 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtpdm" "user cmd"
+.SH "NAME"
+\fBdtpdm\fP \(em Print Dialog Manager to provide
+printer-specific GUIs
+.SH "SYNOPSIS"
+.PP
+\fBdtpdm\fP [-vdisplay \fIvdpy\fP]  [-window \fIvwid\fP]  [-pdisplay \fIpdpy\fP]  [-pcontext \fIpcid\fP] 
+.SH "DESCRIPTION"
+.PP
+\fBdtpdm\fP is the Print Dialog Manager (PDM) that is
+invoked by the Print Dialog Manager Daemon (\fBdtpdmd\fP) to
+provide printer-specific GUIs on behalf of a printing application\&. It is
+a process separate from the print server\&.
+.PP
+At an application\&'s request \fBdtpdm\fP posts to
+the user\&'s display a set of printer-specific dialogs that enable the
+user to configure a variety of printer options\&.
+.PP
+The \fBdtpdm\fP program provides a setup dialog to X printing
+applications that allows the user to set printer specific and job specific
+options\&. The setup dialog appears to be part of the application, but it is
+actually managed by the \fBdtpdm\fP on behalf of the application\&.
+It is capable of providing dialogs in all locales for which there exist applicable
+message catalogs\&.
+.PP
+\fBdtpdm\fP presents a dialog containing
+the printer name and description plus an \fBXmNotebook\fP
+widget\&. This widget contains two tabs: one for the Printer
+Setup Box and one for the Job Setup Box\&. Each of these boxes provides
+controls that allow for configuration of various printing options\&.
+.PP
+The \fBdtpdm\fP dialog also contains three pushbuttons
+labelled \fBOK\fP, \fBCancel\fP, and \fBHelp\fP\&. When the user presses \fBOK\fP, \fBdtpdm\fP dismisses the dialog and sets the newly configured printing options
+in the current print context (via \fBXpSetAttributes\fP)\&.
+When the user presses \fBCancel\fP, \fBdtpdm\fP
+dismisses the dialog and makes no changes to the print context\&.
+.SS "Printer Setup Box"
+.PP
+The Printer Setup box presents options specific to the currently selected
+printer\&. The options presented may vary in other PDM implementations\&. The
+printer setup options presented by \fBdtpdm\fP are as follows:
+.IP "Printer Information" 10
+Provides information about the X Printer\&. The information consists of the
+printer model and the document
+format used to generate documents sent to this X Printer\&.
+.IP "Page Orientation" 10
+Specifies how the output will be oriented on the page\&. The orientation options
+presented in the menu depend on the printer, but up to four orientations
+are possible: portrait, landscape, reverse portrait, and reverse landscape\&.
+An icon adjacent to the \fBOptions\fP menu presents a graphical
+illustration showing the current selection\&.
+.IP "Printed Sides" 10
+Specifies single or double-sided printing\&. The actual choices available depend
+on the printer, but up to three choices are possible: simplex, duplex, and
+tumble\&. An icon adjacent to the \fBOptions\fP menu presents
+a graphical illustration showing the current selection\&.
+.IP "Tray" 10
+Specifies the printer tray from which the media will be drawn\&. The
+\fBAuto-select\fP tray option is available
+for all printers\&. Selecting this
+option indicates no preference as to which tray to use\&. Remaining Tray selections
+are dependent on the printer\&.
+.IP "Page Size" 10
+Specifies the media size for printing\&. The entries in this list box depend on
+whether the \fBLoaded in Printer\fP or \fBAll Sizes\fP
+radio button is selected\&.
+.IP "Loaded in Printer" 10
+Provides a list of the media sizes currently available on the printer\&. If the
+current \fBTray\fP option is \fBAuto-select\fP,
+the user will see all media sizes available in all of the printer\&'s
+trays\&. If a specific tray is selected, only the media size loaded in that
+tray will be shown\&. Information on which media size is available in which
+tray is provided by the system administrator via the
+\fBinput-trays-medium\fP attribute\&.
+If the system administrator does not provide this information,
+the \fBLoaded in Printer\fP radio button will be inactive\&.
+.IP "All Sizes" 10
+Provides a list of all supported media sizes available for the printer\&. If the
+user selects this button, the \fBTray\fP option is set to
+\fBAuto-select\fP\&. This button is provided for the following situations:
+.RS
+.IP "   \(bu" 6
+If the system administrator has not specified
+which sizes are loaded in the printer
+.IP "   \(bu" 6
+If a desired media size is not loaded and the printer
+prompts for the requested size
+.IP "   \(bu" 6
+If the output never reaches an actual printer (for
+example, when printing to a file)
+.RE
+.SS "Job Setup Box"
+.PP
+The Job Setup box presents options specific to the spooler controlling
+the printer\&. The options presented may vary in other PDM implementations,
+depending on the spooler\&. The job setup options presented by \fBdtpdm\fP are as follows:
+.IP "Send Mail When Done" 10
+Instructs \fBdtpdm\fP to send an email message to the user
+when the job is completed\&.
+.IP "Banner Page Title" 10
+Specifies the text the user wants to appear on the banner page of the
+output\&.
+.IP "Print Command Options" 10
+Specifies command line options and arguments that the user wants to
+pass to the spooler\&. \fBdtpdm\fP performs no parsing of this
+field\&. All parsing and argument validation is performed by the underlying
+spooler\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-vdisplay\fP \fIvdpy\fP" 10
+Specifies the display connection to the Video X-Server\&.
+.IP "\fB-window\fP \fIvwid\fP" 10
+Specifies the window id on the Video X-Server to which the PDM\&'s
+dialogs should be posted as transient windows\&.
+.IP "\fB-pdisplay\fP \fIpdpy\fP" 10
+Specifies the display connection to the Print X-Server\&.
+.IP "\fB-pcontext\fP \fIpcid\fP" 10
+Specifies the print context id on the Print X-Server\&. The PDM uses
+this id to gain access to the print context being used by the requesting
+application\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The Dt Print Dialog Manager uses the environment variable
+\fBLANG\fP to identify
+the location of its localized message file\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "RETURN VALUES"
+.PP
+The return values (defined as integer constants in
+\fBDt/dtpdmd\&.h\fP) are as follows:
+.IP "\fBPDM_EXIT_OK\fP" 10
+The PDM is telling the PDMD that the user selected \fBOK\fP
+to dismiss the PDM\&.
+.IP "\fBPDM_EXIT_CANCEL\fP" 10
+The PDM is telling the PDMD that the user selected
+\fBCANCEL\fP to dismiss the PDM\&.
+.IP "\fBDM_EXIT_VXAUTH\fP" 10
+The PDM is telling the PDMD that it did not have proper authority to
+make a display connection on the Video X-Server\&.
+.IP "\fBPDM_EXIT_PXAUTH\fP" 10
+The PDM is telling the PDMD that it did not have proper authority to
+make a display connection to the Print X-Server\&.
+.IP "\fBPDM_EXIT_ERROR\fP" 10
+The PDM is telling the PDMD that it encountered an error\&.
+.IP "all other values" 10
+The PDMD treats all unknown return values the same as
+\fBPDM_EXIT_ERROR\fP\&. Such return values
+are likely from uncontrollable exit conditions
+often found in other libraries (for example, untrapped XIO errors from libX)\&.
+.SH "ERRORS/WARNINGS"
+.PP
+None\&.
+.SH "FILES"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBdtpdmd\fP1
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,63 @@
+#! /usr/dt/bin/dtksh
+# $XConsortium: dtfile_error.cpp /main/3 1996/04/21 19:29:14 drk $
+# ##################################################################
+#  Display an error dialog using the argument(s) as the message
+#
+#  This script can be used by applications to display an error
+#  dialog when it would be difficult or impossible to do in the
+#  context of the executing program. For example, it can be used
+#  when exec fails in a child process or if an error is detected
+#  before an applications main window can be realized.
+#
+# (c) Copyright 1996 Digital Equipment Corporation.
+# (c) Copyright 1993,1994,1996 Hewlett-Packard Company.
+# (c) Copyright 1993,1994,1996 International Business Machines Corp.
+# (c) Copyright 1993,1994,1996 Sun Microsystems, Inc.
+# (c) Copyright 1996 Novell, Inc. 
+# (c) Copyright 1996 FUJITSU LIMITED.
+# (c) Copyright 1996 Hitachi.
+# (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary of
+#     Novell, Inc.
+# ###################################################################
+
+# --------------------
+#  OK button callback
+# --------------------
+
+okCallback()
+{
+   exit
+}
+
+
+# ------
+#  main
+# ------
+
+MESSAGE="$@"
+
+
+
+
+TITLE="dt Error"
+
+
+XtInitialize TOP dtError DtError "$@"
+
+XmCreateErrorDialog DIALOG                     $TOP                     "Test"                     dialogTitle:"$TITLE"                     messageString:"$MESSAGE"
+
+
+
+
+
+# remove cancel and help buttons
+XmMessageBoxGetChild CANCEL $DIALOG DIALOG_CANCEL_BUTTON
+XmMessageBoxGetChild HELP   $DIALOG DIALOG_HELP_BUTTON
+XtUnmanageChild $CANCEL
+XtUnmanageChild $HELP
+
+XtAddCallback $DIALOG okCallback "okCallback"
+
+XtManageChild $DIALOG
+
+XtMainLoop

@@ -1,0 +1,138 @@
+'\" t
+...\" calc.sgm /main/6 1996/09/08 19:50:01 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcalc" "user cmd"
+.SH "NAME"
+\fBdtcalc\fP \(em The CDE
+Calculator
+.SH "SYNOPSIS"
+.PP
+\fBdtcalc\fP [-a accuracy]  [-m mode]  [-b numeric_base]  [-notation
+display_notation]  [-trig trigonometric_type]  [-no_menu_bar]  [-session session_file]  [-?] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtcalc\fP utility is a calculator for use within
+the CDE\&. It provides an easy-to-use interface designed to give access to common
+arithmetic and financial calculations\&.
+.PP
+The calculator is designed to operate in much the same way as many
+hand-held calculators\&. It provides three modes of operation: scientific, financial,
+and logical\&. The default operation is scientific, but with the easy-to-use
+GUI, changing to the modes of operation is easy\&. When the operation mode is
+changed, a number of the keys change for the new operations\&.
+.SH "OPTIONS"
+.PP
+The \fBdtcalc\fP utility defines a number of command-line
+options that allow the user to configure how the calculator displays itself\&.
+Command-line options have a higher precedence than resources\&. By using command-line
+options a user can override anything specified in a resource file\&.
+.IP "\fB-a\fP \fI<accuracy>\fP" 10
+This is the initial number of digits displayed after the numeric point\&.
+This value must be in the range 0 to 9\&. The default value is 2\&.
+.IP "\fB-m\fP \fI<mode>\fP" 10
+This determines which mode the calculator will display itself in\&. The
+possible values for <\fImode\fP> are: scientific,
+financial, or logical\&. Scientific is the default mode\&. Some of the calculator
+keys change operations when the calculator\&'s mode is changed\&.
+.IP "\fB-b\fP \fI<numeric_base>\fP" 10
+This determines which numeric base the calculator will use when it does
+calculations\&. There are four bases the calculator supports: binary (base 2),
+octal (base 8), decimal (base 10), or hexadecimal (base 16)\&. The possible
+values for <\fInumeric_base\fP> are: binary, octal, decimal,
+or hexadecimal\&. The default is decimal\&.
+.IP "\fB-notation\fP \fI<display_notation>\fP" 10
+This determines how the answers are to be displayed on the calculator\&.
+The possible values for <\fIdisplay_notation\fP> are: scientific,
+engineering, or fixed\&. The default is fixed\&.
+.IP "\fB-trig\fP \fI<trigonometric_type>\fP" 10
+This determines how answers are presented when the calculator is in
+scientific mode\&. The possible values for <\fItrigonometric_type\fP > are: degrees, radians, or gradients\&. The default is degrees\&.
+.IP "\fB-no_menu_bar\fP" 10
+This option makes the calculator come up with no menubar\&.
+.IP "\fB-session\fP \fI<session_file>\fP" 10
+The dtcalc utility runs with the session file specified in the \fIsession_file\fP parameter\&. Session files are generated as a dtcalc
+session shuts down\&.
+.IP "\fB-?\fP" 10
+This prints out the usage message\&.
+.SH "RESOURCES"
+.PP
+The calculator supports a number of resources which make it much more
+configurable\&. Following is the list of supported resources and their default
+values\&.
+.SS "Client Resource Set"
+.TS
+tab();
+lw(1.362939i) lw(1.387061i) lw(0.916667i) lw(1.833333i).
+NameClassTypeDefault
+postMenuBarPostMenuBarBooleanTrue
+accuracyAccuracyint2
+baseBasestringdecimal
+displayNotationDisplayNotationstringfixed
+modeModestringscientific
+trigTypeTrigTypestringdegrees
+.TE
+.IP "\fBDtcalc*postMenuBar:\fP" 10
+Specifies whether the menu bar should appear or not\&.
+.IP "\fBDtcalc*accuracy:\fP" 10
+Specifies whether the menu bar should appear or not\&.
+.IP "\fBDtcalc*base:\fP" 10
+This resource allows the user to change the default for the numeric
+base the calculator uses when it does its calculations\&. The default is "decimal"
+which is base 10\&. Possible values are: \fBbinary\fP (or \fBbin\fP): do calculations in base 2\&. \fBoctal\fP (or \fBoct\fP): do calculations in base 8\&. \fBdecimal\fP (or \fBdec\fP): do calculations in base 10\&. \fBhexadecimal\fP
+(or \fBhex\fP): do calculations in base 16\&.
+.IP "\fBDtcalc*display:\fP" 10
+This resource allows the user to change the default for the way answers
+are displayed on the calculator\&. The default is "fixed"\&. Possible values are: \fBfixed\fP (or \fBfix\fP): display in fixed mode\&. \fBscientific\fP (or \fBsci\fP): display in scientific mode\&. \fBengineering\fP (or \fBeng\fP): display in engineering
+mode\&.
+.SH "FILES"
+.IP "\fB/usr/dt/bin/dtcalc\fP" 10
+This is the executable for the CDE Calculator\&.
+.IP "\fB/usr/dt/app-defaults/<LANG>/Dtcalc\fP" 10
+This file includes the application defaults for the CDE Calculator\&.
+.PP
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

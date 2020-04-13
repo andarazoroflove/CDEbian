@@ -1,0 +1,383 @@
+'\" t
+...\" dtsrqery.sgm 1996
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtSearchQuery" "library call"
+.SH "NAME"
+\fBDtSearchQuery\fP \(em Perform a DtSearch database search for a specified query
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Search\&.h>
+\fBint \fBDtSearchQuery\fP\fR(
+\fBvoid \fB*qry\fR\fR,
+\fBchar \fB*dbname\fR\fR,
+\fBint \fBsearch_type\fR\fR,
+\fBchar \fB*date1\fR\fR,
+\fBchar \fB*date2\fR\fR,
+\fBDtSrResult \fB**results\fR\fR,
+\fBlong \fB*resultscount\fR\fR,
+\fBchar \fB*stems\fR\fR,
+\fBint \fB*stemcount\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+\fBDtSearchQuery\fP is the DtSearch API search function\&.
+.PP
+\fBDtSearchQuery\fP is passed a query string and some
+search options, performs the requested search, and if successful returns a
+linked list of \fBDtSrResult\fR structures representing
+the documents satisfying the search\&.
+.PP
+The results list contains information about the documents that can be
+used for subsequent retrievals, as well as information suitable for
+display to an end user\&.
+.SS "Search Types"
+.PP
+\fBDtSearchQuery\fP supports three types of searches:
+\fBP\fP, \fBW\fP, and \fBS\fP\&.
+.SS "Type \fBP\fP Search Query Strings"
+.PP
+Query strings for search type \fBP\fP have the simplest syntax, namely a
+sequence of words separated by ASCII whitespace\&. Punctuation and invalid words
+are silently discarded by the search engine\&. The only possible syntax error
+is that all query words happen to be invalid in the language of the database\&.
+.PP
+Search type \fBP\fP is often used to implement a limited
+Query-by-Example (QBE) search paradigm\&. In this scenario, users
+typically paste document text from whatever source into a query string
+text field\&. Their expectation is that the search engine will return the
+documents in the database that are "most similar" to the text of the
+query string, and the statistical sort of the results list usually
+satisfies that expectation\&.
+.PP
+Note that although search type \fBP\fP does not use boolean
+syntax, it is actually implemented as a stemmed search (type
+\fBS\fP search) with implied boolean ORs between words\&.
+.SS "Types \fBS\fP and \fBW\fP Boolean Query Strings"
+.PP
+Query strings for search types \fBS\fP (stemmed boolean)
+and \fBW\fP (exact word boolean) must be syntactically
+valid boolean expressions as described below\&. Any string that does not
+match a valid expression rule is invalid and will fail with an error
+message\&.
+.PP
+Query words for all search types may be entered in any codeset for a
+supported DtSearch language, including multibyte languages\&. Words may be
+identified as invalid by the language module of the database for a
+number of reasons including any words that would not have been indexed
+because they are too short, too long, on the stop list, etc\&. With one
+exception, linguistically invalid words result in a syntax error\&. The
+exception is in the case of an "all ANDs" query, where invalid words and
+valid words that happen not to be in the database are silently erased
+from the query string\&.
+.PP
+The boolean query operators are the ASCII metacharacters: \&'&\&' for
+AND, \&'|\&' for OR, \&'~\&' for NOT, \&'(\&' and \&')\&' for open and close parentheses
+respectively, and \&'@ \fBnnn\fP\&' for collocation expressions\&.
+.PP
+All expression tokens are separated by ASCII whitespace\&. Typically this
+i 1 or more space or tab characters\&. Omitting whitespace separators is
+legal if it can be done unambiguously\&. For example "word1&word2" is
+a legal expression but "word1word2" would be interpreted as a single
+word token\&.
+.PP
+The ASCII "at" sign (@) marks a special boolean \fIcollocation
+operator\fP\&. The collocation operator has the syntax "@n\&.\&.\&.",
+the ASCII "at" sign followed by one or more ASCII numeric digits,
+representing an integer with value greater than zero\&. Collocation is a
+variation of the AND search where a user can specify the maximum
+distance in bytes between any two words\&. In most languages a byte is
+equivalent to a character position\&. For example to find "ice" and
+"cream" separated by no more than five characters, the search query "ice
+@5 cream" may be used\&. Unlike other boolean operators, the collocation
+operator can apply only to naked word tokens, not other expressions\&.
+Searches including collocation operators are slower than searches
+without them, and can be much slower for common words\&.
+.PP
+There are a maximum of 8 distinct word tokens\&. Collocation operators
+count as part of the 8\&. There is no limit to the number of operators, as
+long as they match the syntax rules\&.
+.PP
+.RS
+\fBNote:  
+.PP
+Collocation operators are only supported for "Austext flavor" databases\&.
+The default flavor of database created by \fBdtsrcreate\fP is
+"Dtinfo flavor," which does not support collocation\&.
+.RE
+.SS "Boolean Query Syntax Rules"
+.PP
+There are only 6 syntax rules and the rules are recursive\&. Ambiguity is
+resolved by precedence and associativity rules\&.
+.IP "   1." 6
+\fIvalid_expression\fP := \fIword_token\fP
+.IP "" 10
+A valid expression can be just a valid naked word token\&. Semantically,
+the expression returns all documents containing the specified word\&. The
+\fIword_token\fP must be a valid word in the language of
+the database being searched\&.
+.IP "   2." 6
+\fIvalid_expression\fP := \fIvalid_expression\fP \&'&\&' \fIvalid_expression\fP
+.IP "" 10
+The ASCII ampersand character is the AND character\&. Semantically, it
+returns all documents satisfying both the first and second expressions
+(boolean intersection)\&. AND is also the "implied" boolean operator in
+the following sense: the query parser will insert an ampersand between
+words or expressions that otherwise would be separated only by
+whitespace\&. For example "word1 word2" becomes "word1 & word2"\&.
+.IP "   3." 6
+\fIvalid_expression\fP := \fIvalid_expression\fP \&'|\&' \fIvalid_expression\fP
+.IP "" 10
+The ASCII virgule (vertical slash) character is the OR character\&. It
+means return all documents satisfying either the first or the second
+expression (boolean union)\&.
+.IP "   4." 6
+\fIvalid_expression\fP := \&'(\&' \fIvalid_expression\fP \&')\&'
+.IP "" 10
+Valid expressions may be recursively nested in ASCII open and close
+parentheses characters\&. The query parser "forgives" two common human errors\&.
+It will automatically discard excessive close parentheses characters, and
+it will automatically generate close parentheses characters if necessary at
+the end of a query\&. For example, "aaa | (bbb & ccc)))))) ddd" becomes
+"aaa | ( bbb & ccc) & ddd", and "aaa ((bbbb" becomes "aaa ( ( bbb
+) )"\&.
+.IP "   5." 6
+\fIvalid_expression\fP := \&'~\&' \fIvalid_expression\fP
+.IP "" 10
+The ASCII tilde character is the unary NOT operator\&. It returns every
+document in the database that is not in the set satisfying the expression\&.
+.IP "   6." 6
+\fIvalid_expression\fP := \fIword_token\fP
+\fIcollocation_operator\fP \fIword_token\fP
+.IP "" 10
+Collocation operators are permitted only between words, not expressions\&.
+Each of the word tokens and the collocation operator itself occupy slots
+in the table of 8 maximum word tokens\&.
+.SS "Boolean Associativity and Precedence Table"
+.PP
+In order from highest precedence to lowest:
+.TS
+tab();
+l l lw(3.51in).
+AssociativityOperatorExample
+(none)COLLOC
+rightNOTT{
+"aaa~bbb" resolved as "aaa & (~(bbb)"
+T}
+leftANDT{
+"aaa bbb ccc" resolved
+as "(aaa & bbb) & ccc"
+T}
+leftORT{
+"aaa|bbb|ccc"
+resolved as "(aaa | bbb) | ccc"
+T}
+(none)naked word
+.TE
+.SS "Example Boolean Queries"
+.PP
+.nf
+\f(CWaaa bbb ccc\fR
+.fi
+.PP
+.PP
+Returns all records that contain at least one occurrence of all three words\&.
+.PP
+.nf
+\f(CWaaa | (bbb ~ccc)\fR
+.fi
+.PP
+.PP
+Retrieves all records containing "aaa"
+and also all records containing "bbb", but not
+"ccc"\&.
+.PP
+.nf
+\f(CWaaa ~(aaa @1 bbb)\fR
+.fi
+.PP
+.PP
+Returns all records containing "aaa" but omits those
+where "aaa" is one character away from "bbb"\&.
+.PP
+It is possible to formulate a query that requires retrieving all records
+in the database that contain none of the query words (for example,
+\fB~aaa\fP\&. Users should be warned that in
+a large database such a search can take a very long time\&.
+.PP
+Using the implied associativity and precedence rules, the ambiguous
+query string \fBaaa ~bbb | ccc ~ddd @10 eee\fP
+is disambiguated as \fB(aaa & (~bbb))
+| (ccc & (~(ddd @10 eee)))\fP\&.
+.SH "ARGUMENTS"
+.IP "\fIsearch_type\fP" 10
+Specifies the type of search to perform\&. Valid values are
+\fBP\fP, \fBW\fP, and \fBS\fP\&.
+.IP "" 10
+Search type \fBP\fP indicates that the query string is a
+sequence of words separated by ASCII whitespace\&.
+It requests that the words be stemmed prior to searching, that all
+documents containing any of the words be returned, that the results list
+be statistically sorted, and that no more than the top
+\fIMaxResults\fP list items be returned where
+\fIMaxResults\fP is the current value
+returned from \fBDtSearchGetMaxResults\fP\&. Note that a
+type \fBP\fP search is identical to a type
+\fBS\fP boolean search with an implied boolean OR between
+words\&.
+.IP "" 10
+Search types \fBW\fP and \fBS\fP are boolean
+query searches\&. They indicate that the query string is a sequence of
+words and boolean operators matching the syntax described under "Types
+\fBS\fP and \fBW\fP Boolean Query Strings"
+above\&.
+.IP "" 10
+Type \fBS\fP requests that words be stemmed prior to
+searching\&. Type \&'W\&' requests that words be left unstemmed\&. Both types
+request that all documents containing the combinations of query words
+specified by the boolean operations be returned, that the results list
+be statistically sorted if possible, and that no more than the top
+\fIMaxResults\fP list items be returned
+where\fIMaxResults\fP is the current value
+returned from \fBDtSearchGetMaxResults\fP\&.
+.IP "\fIdbname\fP" 10
+Specifies which database is to be searched\&. It is any one of the
+database name strings returned from \fBDtSearchInit\fP or
+\fBDtSearchReinit\fP\&. If
+\fIdbname\fP is NULL, the first database name string
+is used\&.
+.IP "" 10
+Within the specified database, searches will be restricted to those
+documents whose \fIDtSrKeytype\&.is_selected\fP
+field is nonzero\&.
+.IP "\fIdate1\fP and
+\fIdate2\fP" 10
+Specify a range of document dates to use for the search\&. Only documents
+within the specified range will be returned on the results list\&.
+.IP "" 10
+\fIdate1\fP is the older end of the range and
+if not NULL, requests DtSearch to return only those records younger than
+(that is, after) the specified date\&.
+.IP "" 10
+\fIdate2\fP is the younger end of the range
+and if not NULL, requests DtSearch to return only those records older
+than (that is before) the specified date\&.
+.IP "" 10
+It is valid to specify just one of the arguments\&.
+.IP "" 10
+Undated documents always qualify for a results list regardless of search
+date strings\&. The format of a valid date string is described in
+\fBDtSearchValidDateString\fP(3)\&.
+.IP "\fIstems\fP and
+\fIstemscount\fP" 10
+Specify a character buffer to hold parsed and stemmed words and a
+variable to receive the number of stored words\&.
+\fIstems\fP and \fIstemscount\fP are optional; they can be NULL\&. However, if either
+is specified, they must both be specified\&.
+.IP "" 10
+If specified \fIstems\fPmust point to a
+character buffer large enough to hold
+\fIDtSrMAX_STEMCOUNT\fP by
+\fIDtSrMAXWIDTH_HWORD\fP bytes\&. An array of parsed
+and stemmed query words will be stored here by the API for use by a
+later call to \fBDtSearchHighlight\fP\&.
+.IP "" 10
+The size of the array will be stored in
+\fIstemscount\fP\&.
+.IP "\fIresults\fP and
+\fIresultscount\fP" 10
+Specify where a pointer to the results list will be stored and a
+variable to receive the number of items on the list\&.
+.IP "" 10
+Results lists can be manipulated with several utility functions\&.
+.IP "" 10
+In \fBDtSearch\fP, frequency of occurrence information is
+maintained for words across the whole database and within documents\&. For
+most queries, results lists are sorted by this statistical information
+and presented to the user as a "proximity" number for each document on
+the list\&. Proximity is meant to appear to a user as a distance, or a
+measure of the nearness of the query to the document\&. Conceptually, the
+smaller the proximity the "closer" the document is to the query and the
+more likely it will be valuable to the user
+.IP "" 10
+DtSearch searches only one database at a time and returns only results
+lists for that single database\&. However, browsers often provide the
+illusion of simultaneous searches in multiple databases, merging the
+results lists by proximity when completed\&. Since the domain of knowledge
+and density of words and records may vary from database to database, the
+value of proximity numbers may similarly vary, and some databases may be
+underrepresented on merged results lists\&.
+.SH "RETURN VALUE"
+.PP
+This function has three common return codes\&.
+.PP
+\fBDtSrOK\fP is returned, as well
+as a results list and stems array, when the search was completely successful\&.
+.PP
+\fBDtSrNOTAVAIL\fP is returned when
+the query was valid but the search was unsuccessful (that is, no set of
+documents matched the query)\&. There are usually no messages with
+\fBDtSrNOTAVAIL\fP\&.
+.PP
+\fBDtSrFAIL\fP is returned when the
+search was unsuccessful, usually because of an invalid query, and user
+messages on the MessageList explain why\&.
+.PP
+Any API function can also return \fBDtSrREINIT\fP and the return codes for fatal engine errors at any time\&.
+.SH "SEE ALSO"
+.PP
+\fBDtSrAPI\fP(3),
+\fBDtSearchReinit\fP(3),
+\fBDtSearchGetMaxResults\fP(3),
+\fBDtSearchSetMaxResults\fP(3),
+\fBDtSearchGetKeytypes\fP(3),
+\fBDtSearchValidDateString\fP(3),
+\fBDtSearchSortResults\fP(3),
+\fBDtSearchFreeResults\fP(3),
+\fBDtSearchHighlight\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,108 @@
+'\" t
+...\" GetWsOcc.sgm /main/5 1996/08/30 15:29:51 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtWsmGetWorkspacesOccupied" "library call"
+.SH "NAME"
+\fBDtWsmGetWorkspacesOccupied\fP \(em get the workspaces in which a window resides
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Wsm\&.h>
+\fBStatus \fBDtWsmGetWorkspacesOccupied\fP\fR(
+\fBDisplay *\fBdisplay\fR\fR,
+\fBWindow \fBwindow\fR\fR,
+\fBAtom **\fBppaWorkspaces\fR\fR,
+\fBint *\fBpNumWs\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtWsmGetWorkspacesOccupied\fP function works with the
+XCDE
+workspace manager,
+\fBdtwm\fP(1), and returns the list of workspaces in which this window resides\&.
+Each element of the list is the name of a workspace (converted to an X atom)\&.
+.PP
+The
+\fIdisplay\fP argument is the X display\&.
+.PP
+The
+\fIwindow\fP argument is the window of interest\&.
+.PP
+The
+\fI*ppaWorkspaces\fP argument is the address of a pointer to receive the pointer to
+a list of workspace names (converted to X atoms)\&.
+.PP
+The
+\fIpNumWs\fP argument is the address of an integer to receive the number
+of elements in the list of workspaces returned in
+\fI*ppaWorkspaces\fP\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBDtWsmGetWorkspacesOccupied\fP function returns Success and the workspace manager returns in
+\fI*ppaWorkspaces\fP a list of atoms identifying the
+occupied workspaces, and returns in
+\fIpNumWs\fP the number of occupied
+workspaces; otherwise, it returns a value not equal to Success\&.
+.SH "APPLICATION USAGE"
+.PP
+If the
+\fBDtWsmGetWorkspacesOccupied\fP function
+is not successful, failure may be due to a memory allocation error or
+failure to find the correct workspace information (that is, the
+XCDE
+workspace manager,
+\fBdtwm\fP(1), is not running)\&.
+The application must use
+\fBXtFree\fP(3) to free data returned in
+\fI*ppaWorkspaces\fP\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Wsm\&.h - DtWsm\fP(5), \fBXtFree\fP(3), \fBdtwm\fP(1)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

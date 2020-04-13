@@ -1,0 +1,289 @@
+'\" t
+...\" mail.sgm /main/12 1996/10/30 18:20:57 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtmail" "user cmd"
+.SH "NAME"
+\fBdtmail\fP \(em the desktop
+mailer
+.SH "SYNOPSIS"
+.PP
+\fBdtmail\fP [-h]  [-c]  [-f\fImailfile\fP]  [-a \fIfile1\fP  | \&.\&.\&.\fIfileN\fP ] 
+.SH "DESCRIPTION"
+.PP
+The \fIDtmail\fP program is a mailer for use on the desktop\&.
+It provides an easy-to-use interface for viewing, filing, composing and
+sending electronic mail containers and mail messages\&.
+.PP
+The Mailer provides a GUI-based interface for manipulating electronic
+mail messages that can have attachments\&. Use the interface to compose a
+message, view a message or a container holding messages, load new mail, copy
+or move messages from one container to another, delete messages, reply to
+messages, add and delete attachments to a message when composing, and view
+contents of attachments in a message\&. The Mailer also provides a mail-pervasive
+desktop environment by providing a public Tooltalk API\&. Other clients can
+use the Tooltalk API to compose and send messages\&.
+.SH "OPTIONS"
+.IP "-a file1 \&.\&.\&. fileN" 10
+Bring up a Compose window with \!file1\! through \!fileN\!
+as attachments\&.
+.IP "-c" 10
+Bring up an empty Compose window
+.IP "-f filename" 10
+This specifies the mail file to be loaded in at start up time\&. Ordinarily,
+the mailfile pointed to by the environment variable MAIL is read in as the
+user\&'s inbox\&. Use of this option overrides the use of the MAIL variable\&.
+.IP "-h" 10
+Display help for command line options
+.SH "RESOURCES"
+.PP
+The Mailer provides the following resources:
+.IP "Dtmail*Message_List*doubleClickInterval" 10
+The double click time out (in milliseconds) for the scrolling message
+header list\&. Default is 400 milliseconds\&.
+.IP "Dtmail*Message_List*background" 10
+Color to use for the scrolling message header list background\&. Default
+is system dependent\&.
+.IP "Dtmail*Message_List*foreground" 10
+Color to use for the scrolling message header list foreground\&. Default
+is system dependent\&.
+.IP "Dtmail*Message_List*fontList" 10
+The list of fonts to use in the scrolling message header list\&. The
+list must contain two fonts\&. The first must be tagged "plain" and is the
+font used to render the header text\&. The second must be tagged "attach" and
+is used to render the attachment indicator\&. Default is to use system dependent
+fixed width fonts\&.
+.IP "Dtmail*Work_Area*Text*background" 10
+Color to use for the View and Compose window text background\&. Default
+is system dependent\&.
+.IP "Dtmail*Work_Area*Text*foreground" 10
+Color to use for the View and Compose window text foreground\&. Default
+is system dependent\&.
+.IP "Dtmail*Work_Area*Text*fontList" 10
+The list of fonts to use in the View and Compose windows\&. Font tag
+"plain"\&. Default is to use a system dependent variable width font\&.
+.SH "MAIL VARIABLES"
+.PP
+In addition to the variables recognized by \fBmailx\fP(1), \fBdtmail\fP recognizes those listed below\&. They can be set by editing
+your \fB\&.mailrc\fP file; however, since most of the variables
+are accessible through the Mailer Options menu, we strongly recommend that
+you modify them there to reduce the chance of error\&. Unless otherwise noted,
+the default for the following variables is \fIoff\&.\fP
+.IP "additionalfields" 10
+A list of header fields to access via the \fBFormat\fP
+menu\&. This variable can be accessed through the \fBCustom Fields:\fP, \fBHeader Field:\fP, and \fBDefault Value:\fP portions of the Compose Window
+category in the Mail Options dialog\&.
+.IP "bell" 10
+The number of times to ring the bell when new mail arrives\&. This variable
+can be accessed through the \fBSignal\fP \fBNew Mail\fP portion in the Message
+Header List category of the Mail Options dialog\&. The default is 0\&.
+.IP "composeinterval" 10
+The interval in seconds for checkpointing to dead\&.letter\&. Default is
+every 600 seconds (10 minutes)\&.
+.IP "dontlogmessages" 10
+This variable controls whether or not the \fBLog Message\fP item is selected in the File Menu in the Compose window\&.
+The default is to log messages\&. This variable can be accessed through the \fBLog all sent messages\fP item in the Message Filing category of the Mail Options dialog\&.
+.IP "expert" 10
+Set expert mode in which minimal confirmations are requested\&. This variable
+can be accessed through the \fBShow confirmation notices\fP check box in the Advanced category of
+the Mail Options dialog\&. 
+.IP "filemenu2" 10
+A list of files from which to initialize the \fBMove\fP,
+and \fBCopy To\fP menus\&. These can be absolute
+pathnames or pathnames relative to the directory specified in the \fIfolder\fP variable\&. This variable can be accessed through the \fBMove Menu\fP and \fBCopy To Menu:\fP scrolling list in
+the Message Filing category of the Mail Options dialog\&.
+.IP "filemenusize" 10
+Specifies the maximum number of entries in the \fBMove\fP,
+and \fBCopy To\fP menus\&. The default is 10\&.
+.IP "flash" 10
+The number of times to flash the window or icon when new mail arrives\&.
+This variable can be accessed through the Signal New Mail portion of the
+Message Header List category of the Mail Options Dialog\&. The default is 0\&.
+.IP "folder" 10
+The directory for saving mail files\&. This variable can be accessed
+through the \fBStart Looking In\fP item in the Mail Filing category of the Mail Options Dialog\&.
+.IP "headerlines" 10
+The number of lines to display at a time in the scrolling header list\&.
+This variable can be accessed through the \fBDisplay\fP
+item in the Message View category of the Mail Options dialog\&. The default
+is 15\&.
+.IP "hideattachments" 10
+Hide the attachments pane in the Compose Message window by default\&.
+This variable can be accessed through the \fBShow Attachment List\fP item in the Compose Window category
+of the Mail Options dialog\&. The default is to show the attachment pane\&.
+.IP "indentprefix" 10
+When indentprefix is set, the string that it is set to is used to mark
+indented lines from included messages\&. The default indentprefix is "> "\&. This
+variable can be accessed through the \fBIndent String\fP item in the Compose Window category of
+the Mail Options dialog\&. 
+.IP "keepdeleted" 10
+Don\&'t purge the mailbox of deleted messages when closing (exiting) dtmail\&.
+Default is to ask the user if they would like to purge the mailbox on exit\&.
+This variable can be set in the \fBDestroy Deleted Messages\fP portion in the Message Header List
+category of the Mail Options dialog\&. See \fBquietdelete\fP
+.IP "quietdelete" 10
+Don\&'t ask for confirmation when purging the mailbox of deleted messages
+when exiting dtmail\&. This variable can be set in the \fBDestroy Deleted Messages\fP portion in the Message Header
+List category of the Mail Options dialog\&. See \fBkeepdeleted\fP
+.IP "record" 10
+The mail file in which to record outgoing messages\&. You can control
+recording of outgoing mail on a per message basis by the \fBLog Message\fP item in the Compose window\&'s File menu\&. The \fIdontlogmessages\fP variable controls whether or not this item is selected by default\&.
+The \fIrecord\fP variable may be set through the \fBMailbox for Sent Messages:\fP item in the Message Filing category of the Mail Options
+Dialog\&. If \fIrecord\fP is not set and the user chooses to
+log a message then the message will be saved in ~/sent\&.mail\&.
+.IP "retrieveinterval" 10
+The interval in seconds to check for new mail\&. This variable can be
+accessed through the \fBCheck for New Mail Every:\fP
+item in the Message Header List category of the Mail Options Dialog\&. The default
+is 300 seconds\&.
+.IP "saveinterval" 10
+The interval (in seconds) at which to checkpoint the state of the mail
+box to disk\&. Default is 1800 seconds (30 minutes)\&. This variable can be set
+using the \fBUpdate Mailbox State\fP item in the Advanced category of the Mail Options dialog\&. 
+.IP "showmsgnum" 10
+Show message numbers in the scrolling list of message headers\&. This
+variable can be set using the \fBDisplay message numbers\fP item in the Message Header List
+category of the Mail Options dialog\&. Default is to not show message numbers\&. \fBshowto\fP Show the "To" field of mail messages in the Header Window
+if the mail is from the same user that is reading mail (eg\&. you)\&. This variable
+is accessed using the \fBShow To: recipient when mail is\fP item in the Message Header List category of the Mail Options
+dialog\&. 
+.IP "strictmime" 10
+Use strict MIME character encoding for outgoing mail\&. In this case all
+lines longer than 72 characters are broken with a newline (and a trailing
+"=" is appended to the line), and all trailing spaces are encoded (appearing
+as "=20")\&. Any time character encoding takes place all "=" must be protected
+and are therefore are encoded as "=3d"\&. Note that 8 bit characters are always
+encoded, even if strictmime is not specified\&. If you typically send mail to
+users of non MIME compliant readers you may want to consider not specifying
+strictmime\&. This variable can be set by selecting the \fBUse strict MIME character encoding\fP item in the Advanced category of the Mail Options dialog\&.
+The default is to use more relaxed character encoding (ie don\&'t break long
+lines and don\&'t protect trailing spaces)\&.
+.IP "templates" 10
+A list of \fIname:path\fP pairs to access via the \fBTemplates\fP item in the \fBFormat\fP menu of the Compose
+window\&. \fIname\fP appears in the menu; \fIpath\fP is the file included when name is selected\&. This variable
+can be accessed in the Template category of the Mail Options dialog\&.
+.IP "toolcols" 10
+Default width of the primary windows (in columns)\&. This variable can
+be accessed through the item in the Message View category of the Mail Options
+dialog\&. 
+.SH "MAIL COMMANDS"
+.PP
+In addition to the commands recognized by \fBmailx\fP(1)
+in the \fI\&.mailrc\fP file, \fBdtmail\fP also recognizes
+the following commands\&.
+.IP "ignore [header-field\&.\&.\&.]" 10
+Suppress displaying of the specified header fields\&. Examples of header
+fields to ignore are Status and Received\&. The fields are also ignored when
+the message is printed\&. This variable can be accessed through the Abbreviated
+Header item in the Message View category of the Mail Options dialog\&.
+.SH "PRINTING"
+.PP
+You can print messages using command invocation by selecting the
+message or messages to be printed and then activating the \fBPrint\&.\&.\&.\fP command in the \fBMessage\fP pulldown menu in the \fBdtmail\fP menu bar or the \fBPrint\&.\&.\&.\fP command in the
+\fBMailer - Messages\fP popup menu that is displayed on
+\fBBMenu Down\fP events in the message list\&.
+.PP
+In addition, you can use the \fBPrint\fP command button
+located at the bottom of the message headers list to print the currently
+selected messages\&. In this case, the print job is started using the print
+setup context from the last print command without displaying any of the print
+setup dialogs\&.
+.PP
+Alternatively, you can print messages using Drag and Drop invocation\&.
+.PP
+Messages containing attachments are printed with summary lines in place
+of the attachment\&. You must print attachments individually in separate
+print job invocations\&.
+.PP
+You can choose to print multiple messages either as a single print
+job or as separate print jobs\&. If you print multiple messages in
+a single print job, you can choose to separate the messages using
+a blank line or a page break\&.
+.PP
+To print a mailboxes, use CDE Drag and Drop to drag the icon for the
+mailbox from the File Manager to the printer icon in
+the desktop\&.
+.PP
+When you invoke printing, whether by command invocation or by
+drag and drop, \fBdtmail\fP displays a Print Setup window that
+allows you to set a number of generic and printer-specific printing
+options\&. For example, you can send the output to a file
+or a printer\&. In the case of printed output, you can specify how many copies
+you want\&. You can also access another window to set options specific to
+the printer/spooler you are using\&. For example, you can select paper size,
+orientation, a banner page title, one- or two-sided printing, and email notification
+on completion of the print job\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following are environment variables taken from the execution environment
+and are not alterable within \fBdtmail\fP\&.
+.IP "HOME= directory" 10
+The user\&'s home directory\&.
+.IP "MAIL= filename" 10
+The name of the initial mailbox file to read (in lieu of the standard
+system mailbox)\&. The default is system dependent\&.
+See FILE section\&.
+.IP "MAILRC= filename" 10
+The name of the start-up file\&.
+Default is
+$HOME/\&.mailrc\&.
+.SH "FILES"
+.IP "/var/mail/* (Sun)" 10
+.IP "/var/spool/mail/* (IBM)" 10
+.IP "/usr/mail* (HP)" 10
+System mailboxes
+.IP "/etc/mail/mailx\&.rc" 10
+System setup file that is read in before ~/\&.mailrc\&.
+.IP "~/\&.mailrc" 10
+Start-up file for
+\fBmail\fP and
+\fBdtmail\fP\&.
+.IP "/usr/dt/bin/dtmail" 10
+Executable for the desktop Mailer\&.
+.IP "/usr/dt/app-defaults/<LANG>/Dtmail" 10
+Application defaults for the desktop Mailer\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

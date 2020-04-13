@@ -1,0 +1,282 @@
+'\" t
+...\" cm.sgm /main/11 1996/09/08 19:50:10 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcm" "user cmd"
+.SH "NAME"
+\fBdtcm\fP \(em The CDE
+Calendar Manager\&.
+.SH "SYNOPSIS"
+.PP
+\fBdtcm\fP [-v\fIview\fP]  [-c\fIcalendar\fP]  [-p\fIprinter\fP] 
+.SH "DESCRIPTION"
+.PP
+\fBdtcm\fP is the CDE appointment and resource scheduling
+tool\&. Use it to:
+.PP
+- Display day, week, month, and year views of your calendar
+.PP
+- Schedule single or repeating calendar entries
+.PP
+- Browse and edit another user\&'s calendar
+.PP
+- Schedule reminders to give you notice of events
+.PP
+- Restrict access to your calendar
+.PP
+- Print high-quality hardcopy
+.PP
+- View and Schedule entries for a group of calendars
+.PP
+- Change the time zone context
+.PP
+- Announce appointments via electronic mail
+.PP
+- Schedule appointments received in electronic mail
+.SH "OPTIONS"
+.PP
+\fBdtcm\fP accepts all of the standard X Toolkit command
+line options as well as the following:
+.IP "-c calendar" 10
+Specifies the calendar to display\&. The default value is equivalent
+to $USER@$HOST\&.
+.IP "-p printer" 10
+Specifies the default printer\&. The default is the system\&'s default
+printer\&.
+.IP "-v view" 10
+Specifies the initial view\&. Values can be "day", "week", "month" or
+"year"\&.
+.SH "CONCEPTS"
+.PP
+A \fIcalendar\fP is a persistent entity existing somewhere
+on the network, which contains scheduling data for a \fIuser\fP\&.
+A \fIcalendar entry\fP is an event recorded within the context
+of a calendar\&. Calendar entries supported by dtcm are \fIappointment\fP and \fIto-do\fP\&. Calendar entries can be \fIsingle\fP, or \fIrepeat\fP entries\&. A calendar entry
+may have one or more \fIreminders\fP associated with it\&. A
+reminder causes dtcm to notify you by issuing an \fIalarm\fP
+when the system time enters your specified \fIreminder notice period\fP before the event\&. When viewing your calendar, you have the notion
+of the \fIcurrent date\fP, which is the date you last selected
+by selecting the Day View, or by clicking in any of the other views\&. The
+current date does not change until you select another date, even if you have
+navigated out of a view that would contain the current date\&.
+.PP
+dtcm presents a \fInetwork calendar model\fP\&. To operate
+on a calendar belonging to some user on the network, dtcm establishes a session
+with a \fIcalendar server\fP\&. The calendar server is (conceptually
+at least) a separate process running on the host where the calendar is located\&.
+It manages all the calendars for the host on which it is running, and can
+service multiple connected applications simultaneously\&. The calendar server
+responds to authentication, session control and calendar transactions initiated
+by dtcm\&. In addition dtcm responds to events occurring at the server, such
+as updates caused by other connected applications instances\&.
+.SH "USAGE"
+.PP
+dtcm has a single main window, containing a graphical calendar\&. You
+can choose to view day, week, month or year in the main window\&. Navigating
+between the views is achieved by selecting the view from the \fIView\fP menu, or by clicking one of the navigation buttons displayed in
+the current view\&.
+.PP
+\fBMenu\fP \fBBar\fP
+.PP
+\fBFile\fP \fBMenu\fP
+.IP "Print Current View" 10
+Prints hard-copy based on the currently displayed calendar view\&.
+.IP "Print\&.\&.\&." 10
+Brings up a Print Setup window that allows you to select the report
+type to use for the currently selected view, as well as various printing
+options\&. You can specify a from/to date range, the printer name, and the
+number of copies\&. You can set other more generic options, such as margins
+and footers, by clicking on the \fBMore\&.\&.\&.\fP button\&.
+.IP "Options\&.\&.\&." 10
+Brings up default options for all of dtcm\&'s global attributes\&.
+.IP "Exit" 10
+Terminates the dtcm application\&.
+.PP
+\fBEdit\fP \fBMenu\fP
+.IP "Appointment\&.\&.\&." 10
+Brings up the appointment editor, described below\&.
+.IP "ToDo\&.\&.\&." 10
+Brings up the to-do editor, described below\&.
+.IP "Properties\&.\&.\&." 10
+Brings up the properties dialog for appointments and to-do entries\&.
+This item is for properties of calendar data entities\&. For properties of
+the dtcm application, use the \fIProperties\&.\&.\&.\fP entry in
+the \fIFile\fP menu\&.
+.PP
+\fBView\fP \fBMenu\fP
+.IP "Day" 10
+Changes the current view in the main window to Day View\&.
+.IP "Week" 10
+Changes the current view in the main window to Week View\&.
+.IP "Month" 10
+Changes the current view in the main window to Month View\&.
+.IP "Year" 10
+Changes the current view in the main window to Year View\&.
+.IP "Appointment List\&.\&.\&." 10
+Brings up the \fIAppointment List\fP dialog\&.
+.IP "ToDo List\&.\&.\&." 10
+Brings up the \fIToDo List\fP dialog\&.
+.IP "Find\&.\&.\&." 10
+Brings up the \fIFind\fP dislog, which you can use to
+locate calendar entries by specifying some search criteria\&.
+.IP "Go to Date\&.\&.\&." 10
+Brings up the \fIGo to Date\fP dialog, which allows you
+to change the view to a specified date\&. This is a convenient way to get to
+dates that are distant from the current date\&.
+.PP
+\fBBrowse\fP \fBMenu\fP
+.IP "Show Other Calendar\&.\&.\&." 10
+Brings up a dialog to let you connect to a different calendar than the
+one currently displayed, in the main window\&. You will still be displaying
+a single calendar\&.
+.IP "Compare Calendars\&.\&.\&." 10
+Brings up the \fICompare Calendars\fP dialog, described
+below\&.
+.IP "Menu Editor\&.\&.\&." 10
+Brings up a dialog that allows you to add frequently used calendars
+to the \fIBrowse\fP menu for this and future sessions with
+dtcm\&.
+.IP "<user>@<host>" 10
+.IP "\&.\&.\&." 10
+This sequence of entries consists of your own calendar, followed by
+an optional list of calendars that you can add to the menu using the \fIMenu Editor\&.\&.\&.\fP option described above\&. Your own calendar always
+appears first\&. The other options are listed in alphabetical order\&.
+.PP
+\fBSecondary\fP \fBWindows\fP
+.PP
+In addition to the main window, dtcm has several secondary windows,
+which give you access to the scheduling and browsing features of dtcm\&.
+.PP
+The \fIAppointment Editor\fP allows scheduling of appointments\&.
+An appointment is the most common type of calendar entry\&. It is useful for
+scheduling time-slots in your calendar, and can be exported to other users
+either by direct entry to their calendars, or through electronic mail\&. To
+invoke the appointment editor, select it from the \fISchedule\fP
+menu in the main window, or double-click anywhere in the graphical calendar
+view\&.
+.PP
+The \fITo Do Editor\fP allows you to maintain a list
+of to-do items for your personal use\&. To-do entries are not visible to other
+dtcm users who are browsing your calendar; they are private to you\&. To-do
+entries differ from appointments in that they do not necessarily appear as
+scheduled events in your calendar views\&. If they have a \fIDue Date\fP associated with them, you will see that on your calendar view\&.
+The main purpose of to-do entries is to allow you to maintain a list of work
+items, without necessarily allocating calendar time for them\&. Invoke the
+to-do editor from by selecting it form the \fISchedule\fP menu
+in the main window\&.
+.PP
+The \fIGroup Appointment Editor\fP allows you to schedule
+an appointment on multiple calendars at once\&. Invoke the group appointment
+editor by clicking \fISchedule\fP in the \fICompare
+Calendars\fP window\&. You may optionally announce the appointment
+over electronic mail\&.
+.PP
+The \fICompare Calendars\fP window allows you to connect
+to several calendars simultaneously, and get a graphical overview of busy
+and available time in the resultant "virtual calendar"\&. Invoke the compare
+calendars window by selecting it from the \fIBrowse\fP menu
+in the main window\&.
+.PP
+The \fIPrint Setup Box\fP window allows you to select
+the report type to use for the currently selected view\&. In addition to selecting
+the view information, you can set a number of generic and printer-specific
+printing options\&. For example, you can send the output to a file or a printer\&.
+In the case of printed output, you can specify how many copies you want\&.
+You can also access another window to set options specific to the printer/spooler
+you are using\&. For example, you can select paper size, one- or two-sided
+printing, and email notification on completion of the print job\&.
+.PP
+The \fIOptions\fP window, accessible from the \fIFile\fP menu, gives you access to the dtcm options that you can configure\&.
+There are several categories of options: Editor Defaults; Display Settings;
+Access List and Permissions; Printer Settings; Date Format\&. Set the options
+to suit your requirements, and save them by clicking \fIApply\fP\&.
+.SH "RESOURCES"
+.PP
+dtcm supports a number of application resources to allow you to configure
+its behaviour\&. The application class name for dtcm is \fIDtcm\fP\&. To set application resources, you can copy the system default
+version of this file from /usr/dt/app-defaults/<LANG>/Dtcm to a personal
+version, typically ~/app-defaults/Dtcm, and edit it with your changes\&.
+Following is the list of supported resources and their default values\&.
+.TS
+tab();
+lw(1.459430i) lw(1.447368i) lw(1.278509i) lw(1.314693i).
+\fBApplication Resources\fP
+NameClassTypeDefault
+labelFontLabelFontXmRFontList(varies)
+viewFontViewFontXmRFontList(varies)
+bold FontBoldFontXmRFontList(varies)
+iconFontIconFontXmRFontList-dt-application-bold-r-normal-sans
+applicationFontFamilyApplicationFontFamilyXmRXmStringapplication
+.TE
+.IP "dtcm*labelFont" 10
+Specifies the font to use for the labels in the calendar\&'s views\&.
+.IP "dtcm*viewFont" 10
+Specifies the font to use for the text of the appointments in the calendar\&'s views\&.
+.IP "dtcm*boldFont" 10
+Specifies the font to use for the time ranges in the week view\&.
+.IP "dtcm*iconFont" 10
+Specifies the icon font\&.
+.IP "dtcm*applicationFontFamily" 10
+Specifies the font family name to use for the text of the appointments in
+the calendar\&'s views\&. A font is used with this family name and an appropriate
+size to match the system font size chosen via
+\fBdtstyle\fP\&.
+\fBdtcm*viewFont\fP
+and
+\fBdtcm*boldFont\fP
+have a higher precedent than
+\fBdtcm*applicationFontFamily\fP\&.
+.SH "FILES"
+.IP "/usr/dt/bin/dtcm" 10
+This is the executable for dtcm\&.
+.IP "/usr/dt/app-defaults/<LANG>/Dtcm" 10
+This is the system-default application defaults file for dtcm\&.
+.IP "/usr/dt/bin/rpc/cmsd" 10
+This is the calendar daemon (server) that manages calendars on a machine\&.
+.IP "/var/spool/calendar/callog\&.<user>" 10
+This is the persistent calendar database for a user on this machine\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

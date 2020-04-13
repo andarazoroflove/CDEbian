@@ -1,0 +1,153 @@
+'\" t
+...\" dthffile.sgm /main/6 1996/09/08 20:18:15 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dthffile" "special file"
+.SH "NAME"
+\fBdthffile\fP \(em define the format of CDE Help Family files
+.SH "SYNOPSIS"
+.PP
+.nf
+CDE
+\fBHelp\fP \fBFamily\fP file format description\&.
+.fi
+.SH "DESCRIPTION"
+.PP
+The Family file is based on the X11 syntax for application resources\&.
+Family files are used in conjunction with
+\fBdthelpgen\fP(1) to generate a browser Help volume
+that allows users to navigate through all of the available Help information\&.
+.PP
+The Family file,
+\fB<filename>\&.hf\fP, contains the following fields: character set,
+title, abstract, volume list and an optional image name\&.
+.PP
+The
+\fBcharSet\fP field specifies the standard CDE locale and code set value to be used in
+parsing the title and abstract fields of the Family file\&.
+The default
+value is \fBen_US\&.iso8859-1\fP\&.
+See the
+\fICDE\fP \fIHelp\fP \fISystem\fP \fIAuthor\&'s\fP \fIand\fP \fIProgrammer\&'s\fP for a complete list of supported locales and code sets\&.
+The Family title and abstract must not contain any HelpTag
+markup as this file is not processed by the HelpTag
+software\&.
+.PP
+The
+\fBtitle\fP field specifies the title of the family, as displayed in the top-level of
+the browser Help volume\&.
+.PP
+The
+\fBabstract\fP field specifies the abstract for the Family\&.
+Used to describe the family, it
+gives information about what type of volumes are in this Family or
+why these volumes are related\&.
+For long abstracts, the
+backslash character can be used to continue to the next line\&.
+.PP
+The
+\fBvolumes\fP field specifies which volumes belong to the Family\&.
+The
+volumes are listed in the order they appear on this line\&.
+A volume may
+be listed in more than one Family\&.
+This is a list of volume
+names separated by spaces\&.
+The ending \fB\&.sdl\fP
+extension must be specified if the search path contains a
+\fB%H\fP rather than an
+\fB%H\&.sdl\fP\&. See
+\fBDtHelpDialog\fP(3) for more information about CDE Help search path syntax and use\&.
+.PP
+The
+\fB[bitmap]\fP field specifies the image that pictorially describes the Family\&.
+This image is displayed in the top-level browser volume just under the
+Family title, and to the left of the abstract text\&.
+.PP
+The
+\fBicon\fP file is optional\&.
+If one is provide, the
+path used to specify the location of the file should be a complete
+pathname\&.
+If an icon file is not provided, the
+\fB*\&.bitmap\fP resource in the Family file should not be provided\&.
+.PP
+\fBSupported\fP \fBGraphics\fP \fBFormats:\fP
+.IP "\fB*\&.xwd\fP" 10
+X11 XWD file
+.IP "\fB*\&.tif\fP" 10
+TIFF 5\&.0 image file
+.IP "\fB*\&.pm\fP" 10
+X11 X Pixmap file
+.IP "\fB*\&.bm\fP" 10
+X11 Bitmap file
+.SS "Registering A Product Family"
+.PP
+To register a product family, create and install a Help
+Family file (\fBproduct\&.hf\fP) with the rest of the product\&'s Help files\&.
+Register the Family file by running the
+\fBdtappintegrate\fP script, which
+creates a symbolic link to the \fBproduct\&.hf\fP file\&.
+For most products, the
+appropriate place for the link is
+\fB/etc/dt/appconfig/help/language/\fP\&. See
+\fBdtappintegrate\fP(1) for more information on registering Help within the desktop\&.
+.SH "EXAMPLES"
+.IP "\fB*\&.charSet:\fP" 10
+iso8859-1
+.IP "\fB*\&.title:\fP" 10
+Developer\&'s Information About The Help System
+.IP "\fB*\&.abstract:\fP" 10
+Abstract giving a short description about the Help system\&.
+.IP "\fB*\&.volumes:\fP" 10
+helpkit\&.sdl helpdemo\&.sdl
+.IP "\fB*\&.bitmap:\fP" 10
+\fB/usr/local/bitmap/helpGraphic\&.bm\fP
+.SH "SEE ALSO"
+.PP
+\fBdthelpgen\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

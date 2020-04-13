@@ -1,0 +1,143 @@
+###############################################################################
+#
+#     dtcm.dt
+#
+#     Action and DataType definitions for the Common Desktop Environment
+#     (CDE) Calendar Component.
+#
+#    (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#    (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#    (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#    (c) Copyright 1993, 1994, 1995 Novell, Inc.
+#
+#
+###############################################################################
+set DtDbVersion=1.0
+
+###############################################################################
+#
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+#
+###############################################################################
+
+###################################################################
+#
+# Atributos de datos
+#
+###################################################################
+DATA_ATTRIBUTES DtcmAppointmentAttrs
+{
+	ACTIONS		Open,Insert,Print
+	ICON		DtCMapt
+	NAME_TEMPLATE	%s.appt
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      ae-file
+	MEDIA		DT_APPOINTMENT
+	DESCRIPTION	Este archivo contiene información que pertenece a las citas \
+                        del Gestor de agendas. Su tipo de datos se denomina \
+                        CalendarAppointmentAttrs. Los nombres de los archivos \
+                        CalendarAppointmentAttrs finalizan en '.appt'.
+	TYPE_LABEL      DtcmAppointmentAttrs
+}
+DATA_CRITERIA DtcmAppointmentAttrs1
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	NAME_PATTERN	*.appt
+}
+DATA_CRITERIA DtcmAppointmentAttrs2
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	CONTENT		3 string ** Calendar Appointment **
+}
+DATA_CRITERIA DtcmAppointmentAttrs3
+{
+        DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+        MODE            fr
+        CONTENT         3 string ** Calendar To Do Item **
+}
+ACTION Open
+{
+        LABEL		Abrir
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmEdit
+}
+ACTION Insert
+{
+        LABEL		Insertar
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmInsert
+}
+ACTION Print
+{
+        LABEL		Imprimir
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+
+###################################################################
+###################################################################
+#
+# Acciones
+#
+###################################################################
+ACTION Dtcm
+{
+        LABEL		Agenda
+        ICON            DtCM
+	TYPE		COMMAND
+	EXEC_STRING	/usr/dt/bin/dtcm
+	WINDOW_TYPE	NO_STDIO
+	DESCRIPTION	La acción Agenda (Dtcm) inicia el Gestor de \
+                        agendas del escritorio.
+}
+
+######
+
+ACTION DtcmInsert
+{
+        LABEL		Insertar en la agenda
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     sh -c '/usr/dt/bin/dtcm_insert  -a "%(File)Arg_1%" ;\
+			if [ \$? -ne 0 ] ; then \
+			  /usr/dt/bin/dterror.ds \
+			    "La cita no se incluyó en su \
+			     agenda\\n\
+			     debido a un error.  Es posible que el formato \
+			     de la cita\\n\
+			     no sea correto o que no se puede \
+			     obtener acceso a la agenda." \
+			    "Agenda: Error - Horario" \
+			    "OK" ; \
+			fi'
+	DESCRIPTION	La acción Insertar en la agenda (DtcmInsert) \
+                        inserta una cita en la agenda predeterminada del usuario.
+}
+
+######
+
+ACTION DtcmEdit
+{
+        LABEL		Edición de agenda
+        TYPE            TT_MSG
+	TT_SCOPE	TT_SESSION
+	TT_CLASS	TT_REQUEST
+	TT_OPERATION	Edit
+	TT_ARG0_MODE	TT_INOUT
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_FILE		%Arg_1"Appointment File:"%
+	DESCRIPTION	La acción Edición de agenda (DtcmEdit) ejecuta \
+                        el editor de citas autónomo para una cita \
+                        de la agenda.
+}
+
+########################### EOF ##############################################

@@ -1,0 +1,58 @@
+!# @(#)$XConsortium: Dtimsstart /main/3 1996/09/20 18:08:17 cde-hp $
+!	dtimsstart
+
+*fontList:	-dt-interface user-medium-r-normal-m*-*-*-*-*-m-*:
+
+! title on title bar
+Dtimsstart*title:			dtimsstart
+
+! title
+Dtimsstart*Selection*title.labelString:	Input Method Selection
+Dtimsstart*Host*title.labelString:	Change Host
+Dtimsstart*Mode*title.labelString:	Input Method Selection Mode
+
+! button label
+Dtimsstart*OK.labelString:		OK
+Dtimsstart*Clear.labelString:		Clear
+Dtimsstart*Cancel.labelString:		Cancel
+Dtimsstart*ChangeHost.labelString:	Change Host
+Dtimsstart*Help.labelString:		Help
+
+! border width (selection dialog appears without window manager)
+Dtimsstart*Selection.borderWidth:	3
+Dtimsstart*Host.borderWidth:		3
+Dtimsstart*XmDialogShell.borderWidth:	0
+
+! default spacing
+Dtimsstart*cmd_rc.marginWidth:		10
+Dtimsstart*cmd_rc.spacing:		10
+
+! ims selection dialog
+Dtimsstart*Selection*cmd_rc.spacing:	4
+Dtimsstart*Selection*cmd_rc.OK.marginWidth:	16
+Dtimsstart*Selection*select_rc.marginWidth:	40
+
+! change host dialog
+Dtimsstart*host_label.labelString:	Hostname:
+Dtimsstart*Host*host_desc.alignment:	XmALIGNMENT_BEGINNING
+Dtimsstart*Host*host_desc.marginLeft:	20
+Dtimsstart*Host*host_desc.marginRight:	20
+Dtimsstart*Host*host_desc.labelString:	 Enter the hostname where the registered\n input method servers should be shown.\n Empty hostname indicates the local host.
+Dtimsstart*Host*host_text.maxLength:	63
+Dtimsstart*Host*host_text.columns:	14
+Dtimsstart*Host*host_rc.marginWidth:	60
+Dtimsstart*Host*cmd_rc.marginWidth:	20
+Dtimsstart*Host*cmd_rc.spacing:		90
+
+! selection mode dialog
+Dtimsstart*Mode*button_0.labelString:	Ask at login
+Dtimsstart*Mode*button_1.labelString:	Resume current input method
+Dtimsstart*Mode*cmd_rc.spacing:		50
+Dtimsstart*Mode*cmd_rc.marginWidth:	20
+
+! help message
+Dtimsstart.selectionHelpMsg:	\n         Input Method Selection\n \n     Select one Input Method among the listed ones, then click [OK] button.\n     The configuration for the selected input method will be done.\n \n       [OK]:        effectuates the selection and closes the window.\n \n       [Change Host]: specify a hostname.  Input method registered on\n                    the host will be shown.\n \n       [Cancel]:    discards the selection and closes the window.\n \n       [Help]:      shows this message.\n \n \n        NOTE:  input methods not installed on the system will be listed\n               with netted, and cannot be selected.\n \n     How to change Input Method Selection Mode:\n \n         The selection window usually appears at each log-in.\n         You can select the same input method as the previously selected\n         one without any window operation.  To do so, execute the action\n         'DtImsMode', located at Desktop_Tools in Application Manager,\n         and select 'Resume current input method' on the dialog window.\n
+
+Dtimsstart.modeHelpMsg:	\n         Input Method Selection Mode\n \n     Select either of the followings and click [OK] button.\n \n         Ask at login:\n             The selection window appears to prompt the selection of input\n             method at each login.\n \n         Resume current input method:\n             Once a input method is selected, the same input method will\n             be automatically selected without any window operation at the\n             succeeding login.\n \n       [OK]:        effectuates the changes and closes the window.\n \n       [Cancel]:    discards the changes and closes the window.\n \n       [Help]:      shows this message.\n
+
+!#

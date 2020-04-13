@@ -1,0 +1,92 @@
+! $XConsortium: Dtstyle.src /main/4 1996/04/23 20:20:51 drk $
+!######################################################################
+!#
+!#     Dtstyle
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Application Defaults for the Style Manager
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary 
+!#	   of Novell, Inc.
+!#
+!#
+!######################################################################
+
+# include "Dt"
+
+!###
+!#
+!#   Main Window configuration
+!#   
+!#   Do not translate the following
+!###
+!# componentList specifies the buttons that appear in the Style Manager. 
+!# The last button I18N is locale dependent.
+Dtstyle*componentList:  Color Font Backdrop Keyboard Mouse Beep Screen Dtwm Startup  
+
+!# The Style Manager may be oriented vertically by commenting out this line
+Dtstyle*mainRC.orientation:         HORIZONTAL
+
+!###
+!#
+!#  Font Dialog
+!#
+!# Font resource values must be a valid interface font alias name.
+!#
+!# Font resource values must match exactly the default font resources
+!# specified in /usr/dt/%L/sys.fonts.
+!# 
+!# Do not translate the following
+!###
+
+Dtstyle*NumFonts: 7
+
+Dtstyle*SystemFont1: -dt-interface system-medium-r-normal-xxs*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont2: -dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont3: -dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont4: -dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont5: -dt-interface system-medium-r-normal-l*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont6: -dt-interface system-medium-r-normal-xl*-*-*-*-*-*-*-*-*:
+Dtstyle*SystemFont7: -dt-interface system-medium-r-normal-xxl*-*-*-*-*-*-*-*-*:
+
+Dtstyle*UserFont1: -dt-interface user-medium-r-normal-xxs*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont2: -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont3: -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont4: -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont5: -dt-interface user-medium-r-normal-l*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont6: -dt-interface user-medium-r-normal-xl*-*-*-*-*-*-*-*-*:
+Dtstyle*UserFont7: -dt-interface user-medium-r-normal-xxl*-*-*-*-*-*-*-*-*:
+
+
+!###
+!#
+!#  Audio Dialog
+!#  
+!#  These resources specify the minimum and maximum tome for the bell,
+!#  and the bell duration.  Tones outside this range are hard to hear.
+!#  The duration scale is in tenths of a second, 25 means 2.5 seconds.
+!#
+!#  Do not translate the following
+!###
+Dtstyle*toneScale.maximum: 9000
+Dtstyle*toneScale.minimum: 82
+Dtstyle*durationScale.maximum: 25
+
+
+!###
+!#
+!#  Accelerators
+!#
+!#  Do not translate the following
+!###
+Dtstyle*fileMenu.exit.acceleratorText:          Alt+F4
+Dtstyle*fileMenu.exit.accelerator:              Alt<key>F4
+
+!###########################   eof   ###########################
+
+
+

@@ -1,0 +1,413 @@
+'\" t
+...\" udcfonte.sgm /main/8 1996/09/08 19:57:56 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtudcfonted" "user cmd"
+.SH "NAME"
+\fBdtudcfonted\fP \(em Edit user-defined characters
+.SH "SYNOPSIS"
+.PP
+\fBdtudcfonted\fP
+.SH "DESCRIPTION"
+.PP
+The \fBdtudcfonted\fP utility is a tool for editing user-defined
+characters (UDCs)\&. It runs only in GUI mode\&.
+.PP
+The procedure for editing user-defined characters is:
+.IP "   1." 6
+Start the font editor to display the \fBFont Selection\fP window\&.
+.IP "   2." 6
+Select the code set, style, and character size of the font to be edited\&.
+The \fBFont Selection\fP window lists the fonts satisfying
+these specifications\&. After specifying a font, select the
+\fBOpen\fP button to display the
+\fBCharacter Edit\fP window\&.
+.IP "   3." 6
+Edit a character pattern in the \fBCharacter Edit\fP
+window\&. You can register the code for the character to be edited, and
+you can delete unnecessary characters\&.
+.IP "   4." 6
+After editing the character pattern, select \fBSave\fP from
+the \fBFont\fP menu to register the edited character pattern
+with the user-defined character file\&.
+.IP "   5." 6
+Edit another font by selecting \fBOpen\fP
+from the \fBFont\fP menu\&. The
+\fBFont Selection\fP window is displayed\&.
+Repeat steps 2 through 5\&.
+.SS "Starting the Font Editor"
+.PP
+Start the font editor by entering the
+\fBdtudcfonted\fP command\&. The \fBFont Selection\fP
+window appears\&.
+.SS "Selecting the Font"
+.PP
+The \fBFont Selection\fP window is displayed immediately
+after the utility is started, or by choosing \fBOpen\fP
+from the \fBFont\fP menu on the \fBCharacter Edit\fP window\&. The
+code sets for the editable font files are listed in \fBCodeset Selection\fP\&.
+.PP
+To list the applicable fonts (files), select the code set, style, and
+definition character size of the desired font in the selection item field\&.
+Specifying one font and then selecting the \fBOpen\fP button
+displays the \fBCharacter Edit\fP window\&. Selecting the
+\fBCancel\fP button closes the \fBFont
+Selection\fP window and terminates the UDC font editor\&.
+.SS "Editing Characters"
+.PP
+Character patterns are edited on the \fBCharacter Edit\fP
+window\&. The \fBCharacter Edit\fP window contains:
+.IP "   \(bu" 6
+A list of the characters being edited
+.IP "   \(bu" 6
+The editing pane, with each square corresponding to one dot
+.IP "   \(bu" 6
+Drawing tools
+.IP "   \(bu" 6
+The currently displayed character pattern in the exact size and its code
+.PP
+Select the code for the character to be edited from the
+character list\&. This displays the associated character pattern
+in the edit pane\&. If the character pattern has not been created in
+the UDC area, nothing is displayed\&.
+.PP
+If the character code is not registered, add the code on the
+\fBCharacter Control\fP window, or copy the pattern on the
+\fBCharacter Copy\fP window\&. For details on how to add
+character codes, see "Adding and Deleting Character Codes"\&. For details
+on how to copy character patterns, see "Copying Character Patterns"\&.
+.PP
+Characters are edited on the edit pane using the following operations:
+.IP "Marking Dots" 10
+To mark one dot at the cursor position:
+.RS
+.IP "   6." 6
+Choose \fBPencil\fP at the top of the drawing tools\&.
+.IP "   7." 6
+Move the cursor to the appropriate position\&.
+.IP "   8." 6
+Click the left mouse button\&.
+.RE
+.IP "Drawing Straight Lines" 10
+To draw a straight line (one dot wide):
+.RS
+.IP "   9." 6
+Choose \fBStraight line\fP from the drawing tools\&.
+.IP "   10." 6
+Move the cursor to the line start position, and then press the left mouse button\&.
+.IP "   11." 6
+While holding down the left mouse button, move the cursor to the line
+end position\&. Then release the left button\&.
+.RE
+.IP "" 10
+To cancel the line after starting, move the cursor outside the edit
+pane, then release the left button\&.
+.IP "Drawing Rectangles" 10
+To draw a rectangle (one dot wide):
+.RS
+.IP "   12." 6
+Choose \fBRectangle\fP from the drawing tools\&.
+.IP "   13." 6
+Move the cursor to one corner of the rectangle, then press the left
+mouse button\&.
+.IP "   14." 6
+While holding down the left mouse button, move the cursor to the
+diagonally opposite corner\&. Then release the left button\&.
+.RE
+.IP "" 10
+To cancel the rectangle after specifying one corner, move the cursor
+outside the edit pane, then release the left button\&.
+.IP "Drawing Circles" 10
+To draw a circle (one dot wide):
+.RS
+.IP "   15." 6
+Choose \fBCircle\fP from the drawing tools\&.
+.IP "   16." 6
+Move the cursor to the center of the circle, then press the left mouse
+button\&.
+.IP "   17." 6
+While holding down the left mouse button, move the cursor to a point on
+the circumference of the circle\&. Then release the left button\&.
+.RE
+.IP "" 10
+To cancel the circle after selecting the center point, move the cursor
+outside the edit pane, then release the left button\&.
+.IP "Selecting an Area for Editing" 10
+To select a rectangular area for editing:
+.RS
+.IP "   18." 6
+Choose \fBSelect\fP from the drawing tools\&.
+.IP "   19." 6
+Move the cursor to one corner of the rectangle, then press the left
+mouse button\&.
+.IP "   20." 6
+While holding down the left mouse button, move the cursor to the
+diagonally opposite corner\&. Then release the left button\&.
+To cancel the rectangular area after specifying one corner, move the cursor
+outside the edit pane, then release the left button\&.
+.IP "   21." 6
+Choose the desired function from the \fBEdit\fP menu\&.
+.RE
+.IP "Clearing an Area" 10
+To clear all the dots within a selected area, choose
+\fBClear\fP from the \fBEdit\fP menu\&.
+.IP "Setting an Area" 10
+To set all the dots within a selected area,
+choose \fBSet\fP from the \fBEdit\fP menu\&.
+.IP "Reversing Video in an Area" 10
+To reverse the video (change black dots to white and vice cersa) within
+a selected area, choose \fBReverse video\fP from the
+\fBEdit\fP menu\&.
+.IP "Copying an Area" 10
+To copy a selected area:
+.RS
+.IP "   22." 6
+Choose \fBCopy\fP from the \fBEdit\fP menu\&.
+.IP "   23." 6
+Choose \fBPaste\fP from the \fBEdit\fP menu\&.
+.IP "   24." 6
+Move the cursor to the copy destination within the edit pane\&.
+The frame of the selected area moves with the cursor\&.
+.IP "   25." 6
+Click the left mouse button\&.
+.RE
+.IP "Moving an Area" 10
+To move a selected area:
+.RS
+.IP "   26." 6
+Choose \fBCut\fP from the \fBEdit\fP menu\&.
+.IP "   27." 6
+Choose \fBPaste\fP from the \fBEdit\fP menu\&.
+.IP "   28." 6
+Move the cursor to the copy destination within the edit pane\&.
+The frame of the selected area moves with the cursor\&.
+.IP "   29." 6
+Click the left mouse button\&.
+.RE
+.IP "Rotating an Area" 10
+To rotate the contents of a selected area 90 degrees clockwise,
+choose \fBRotate\fP from the \fBEdit\fP menu\&.
+.IP "Flipping an Area" 10
+To flip the contents of a selected area vertically,
+choose \fBFlip vertically\fP from the \fBEdit\fP menu\&.
+.IP "" 10
+To flip the contents of a selected area horizontally,
+choose \fBFlip horizontally\fP from the \fBEdit\fP menu\&.
+.IP "Inverting Dots" 10
+To invert (change from black to white and vice versa) the dot at the
+current cursor location, click the middle mouse button\&.
+.IP "Canceling Edits" 10
+To cancel the results of the most recent edit operation,
+choose \fBCancel\fP from the \fBEdit\fP menu\&.
+.SS "Adding and Deleting Character Codes"
+.PP
+Character codes are added and deleted on the \fBCharacter
+Control\fP window\&. To display this window,
+choose \fBAdd/Delete\fP from the \fBCharacter\fP menu\&.
+.SS "Adding Character Codes"
+.PP
+To add a character code, specify its four hexadecimal digits within the
+user-defined character area\&. To add a range of characters, specify the
+four hexadecimal digits for the last character code in the range in the
+right input field\&. After specifying a single character code or a range,
+select the \fBAdd\fP button\&.
+.PP
+The character code is added to a list of the characters being edited on
+the \fBCharacter Edit\fP window\&. The character to be edited
+is the first character of the added character code (or the added
+character code field)\&. If already registered, the character pattern for
+the specified character code is not changed\&.
+.SS "Deleting Character Codes"
+.PP
+To delete a character code, specify its four hexadecimal digits within
+the user-defined character area\&. To delete a range of characters,
+specify the four hexadecimal digits for the last character code in the
+range in the right input field\&. After specifying a single character code
+or a range, select the \fBDelete\fP button\&. The
+\fBCharacter Deletion Confirmation\fP window appears\&.
+Choose \fBOK\fP to delete the character\&. Choose
+\fBCancel\fP to cancel the deletion\&.
+.PP
+Deleting a character code removes it from the list of characters being
+edited on the \fBCharacter Edit\fP window\&. The character
+code following the deleted character code becomes the current editable
+character code\&. Note that a deleted character code is not actually
+removed from the user-defined character file until you choose
+\fBSave\fP on the \fBFont\fP menu\&.
+.SS "Entering Character Codes Graphically"
+.PP
+To enter a character code graphically, choose the
+\fBCode\fP button on the \fBCharacter
+Control\fP window\&. The \fBCharacter Code Input\fP
+window appears\&. On this window, click on the desired character, then
+press the \fBApply\fP button to insert the code for the
+selected character in the code input field of the \fBCharacter
+Control\fP window\&.
+.SS "Copying Character Patterns"
+.PP
+You can copy character patterns already registered or created using the
+\fBCharacter Copy window\fP\&. To access this window, choose
+\fBCopy\fP from the \fBCharacter\fP menu\&.
+Copying adds the character code specified for the copy destination to
+the list of the character list on the Editing window\&.
+.PP
+To copy a character pattern:
+.IP "   1." 6
+Select the size of the character to be copied from the character size
+selection field, then enter the four-hexadecimal-digit code for the
+character in the copy code field\&. To copy a range of character patterns
+in a single operation, enter the code for the last character in the
+range in the right input field\&.
+.IP "   2." 6
+Specify the four-hexadecimal-digit code for the copy destination\&.
+Multiple character patterns are copied in a single
+operation in ascending order of codes starting at the specified copy
+destination code\&. A code in the user-defined character area can be
+specified\&.
+.IP "   3." 6
+Select the \fBCopy\fP button\&. If the destination area
+already contains the copied character pattern, the
+\fBConfirmation\fP window appears\&. To replace the existing
+pattern with the copy, select \fBClose\fP\&. To cancel the
+copy, select \fBCancel\fP\&.
+.IP "" 10
+Note that if the size of the copy source character differs from that of the copy
+destination character, the pattern is automatically enlarged or reduced
+for copying\&.
+.PP
+You can also perform a composite copy, which ORs the dots in the source
+character pattern with the dots in the destination character pattern\&. To
+copy a composite pattern, specify the copy source and the copy
+destination, then choose the \fBCopy Compositions\fP button\&.
+.SS "Getting Information"
+.PP
+The \fBInformation\fP menu provides explanations of the
+following items:
+.IP "XLFD name" 10
+Displays the \fBXLFD name\fP window,
+which lists the file name and XLFD name of the font
+being edited\&.
+.IP "Code area" 10
+Displays the \fBCode area\fP window, which provides
+information about the code area\&.
+.SS "Saving Editing Results"
+.PP
+To save your edits on a character pattern, you must save the
+pattern in the user-defined character file\&. Choose \fBSave\fP
+from the \fBFont\fP\&.
+.SS "Exiting the Font Editor"
+.PP
+To exit from the Font Editor, choose \fBExit\fP from the
+\fBFont\fP menu or \fBClose\fP from the window
+menu\&. If you have not saved the edited pattern, the \fBTermination
+Confirmation\fP window appears and asks whether you want to save
+the pattern or not\&. Choose \fBSave\fP to save your edits,
+\fBNot Save\fP to discard your edits, or
+\fBCancel\fP to abort the exit itself\&.
+.SH "EXIT STATUS"
+.IP "0" 10
+The Font Editor exited successfully\&.
+.IP ">1" 10
+An error occurred\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+\fBdtudcfonted\fP references the \fBDTUDCFONTPATH\fP variable, which is a colon-separated list of directories
+to search when looking for UDC font files\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.PP
+The following errors can occur when the font file is read or saved:
+.PP
+.nf
+\f(CWFailed in reading the selected font file\&.
+
+Failed in the registration of the selected font file\&.\fR
+.fi
+.PP
+.PP
+The following errors can occur when the UDC is added, deleted, or copied:
+.PP
+.nf
+\f(CWThe specified code is without the range of UDC code\&.
+
+Because the memory allocation cannot be done, it is not possible to add\&.
+
+The specified copy origin code is without the range of UDC code\&.
+
+The specified copy target code is without the range of UDC code\&.
+
+There is no character in the specified area\&.\fR
+.fi
+.PP
+.PP
+The following errors can occur when the font file is opened:
+.PP
+.nf
+\f(CWBecause the selected font file is already open for editing by another
+user, it cannot be opened\&.
+
+Failed to open the selected font file\&.
+
+You have no right to access for the font file, or the format of the file
+is not consistent\&.\fR
+.fi
+.PP
+.SH "FILES"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBdtudcexch\fP(1)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

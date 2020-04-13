@@ -1,0 +1,822 @@
+'\" t
+...\" searchpa.sgm /main/15 1996/10/31 09:40:34 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsearchpath" "user cmd"
+.SH "NAME"
+\fBdtsearchpath\fP \(em set desktop search paths
+.SH "SYNOPSIS"
+.PP
+\fBdtsearchpath\fP [-u \fIusername\fP]  [-v]  [-o]  [-csh]  [-ksh] 
+.SH "DESCRIPTION"
+.PP
+The
+\fBdtsearchpath\fP command line utility
+sets local and remote locations that desktop components should
+search for Application Manager groups, for filetype and action
+definitions,
+for desktop icons, and for help files\&.
+.PP
+The \fB/usr/dt/bin/Xsession\fP startup script sources
+the user\&'s
+\fB$HOME/\&.dtprofile\fP
+script and any scripts located under \fB/etc/dt/config/Xsession\&.d\fP
+and \fB/usr/dt/config/Xsession\&.d\fP\&.
+After sourcing the \fBXsession\&.d\fP
+files, the \fBXsession\fP script will invoke
+\fB/usr/dt/bin/dtsearchpath\fP to
+set and export the environment variables
+\fBDTAPPSEARCHPATH\fP, \fBDTDATABASESEARCHPATH\fP, \fIDTHELPSEARCHPATH\fP, \fBXMICONSEARCHPATH\fP, and
+\fIXMICONBMSEARCHPATH\fP (see the
+\fBENVIRONMENT\fP heading in this man page for a more detailed description)\&.
+.SS "Search Path Syntax"
+.PP
+Each of the exported search path variables is supported by, that is,
+built from, two comma-separated search path environment variables\&.
+For example:
+\fBDTAPPSEARCHPATH\fP is supported by
+\fIDTSPSYSAPPHOSTS\fP and
+\fIDTSPUSERAPPHOSTS\fP\&. \fBXMICONSEARCHPATH\fP is supported by
+\fIDTSPSYSICON\fP and
+\fIDTSPUSERICON\fP\&.
+.PP
+The input search path environment variables fall into two categories -
+those that support the host:/path syntax and those that do not\&.
+If the name of
+the input environment variable contains the string
+\fIHOSTS\fP, it will
+support host:/path syntax\&.
+The syntax for search paths that support
+host:/path is:
+.PP
+.nf
+\f(CWsearch path element
+[ \fIhost\fP \fB|\fP \fIpathname\fP \fB|\fP \fIhostname+pathname\fP ]
+host
+<hostname>:
+pathname
+/<\fIabsolute path\fP>\fR
+.fi
+.PP
+.PP
+The syntax for search paths that do not support host:/path is:
+.PP
+.nf
+\f(CWsearch path element
+[ \fIpathname\fP ]
+pathname
+/<\fIabsolute path\fP>\fR
+.fi
+.PP
+.SS "Examples"
+.PP
+To set the Icon search path to include the
+\fB/usr/local/games/icons\fP subdirectory,
+the following line would appear
+in a script in the \fB/etc/dt/config/Xsession\&.d/\fP subdirectory:
+\fBDTSPSYSICON=/usr/local/games/icons\fP
+To set the Database search path to include host \fBmarlin\fP,
+the following line would appear
+in a script in the \fB/etc/dt/config/Xsession\&.d/\fP subdirectory:
+\fBDTSPSYSDATABASEHOSTS=marlin:\fP
+To set the Application Manager path to include the applications on host
+steelhead under subdirectory \fB/usr/local\fP, and under the default
+help location on host \fBhalibut\fP,
+the following line would appear
+in a script in the \fB/etc/dt/config/Xsession\&.d/\fP subdirectory:
+\fBDTSPSYSAPPHOSTS=steelhead:/usr/local,halibut:\fP
+The
+\fBdtsearchpath\fP command line utility
+parses these path elements and transforms them into a form suitable
+for the desktop components\&.
+.PP
+If a
+\fBhost\fP element is included,
+then the Tooltalk library\&'s filename mapping capabilities will
+control how
+a path to files on that host are constructed\&.
+For example, the path to file
+\fB/tmp/file\fP on host \fBgoby\fP may be constructed
+as \fB/net/goby/tmp/file\fP or as \fB/nfs/goby/tmp/file\fP\&.
+.SS "Default Locations"
+.PP
+By default,
+\fBdtsearchpath\fP sets up three search locations for each subsystem\&.
+In search
+order, they are:
+.IP "   \(bu" 6
+The user\&'s personal location, under \fB$HOME/\&.dt\fP\&.
+.IP "   \(bu" 6
+The system administrator\&'s configuration location, under
+\fB/etc/dt/appconfig\fP\&.
+.IP "   \(bu" 6
+The factory default location, under \fB/usr/dt/appconfig\fP\&.
+.SS "Precedence"
+.PP
+When searching a path for a particular item, such as an icon file, the
+desktop will always be satisfied by the first item found\&.
+For example,
+when searching for an icon whose basename is
+\fBbeeper\fP,
+if that icon exists in both the
+\fB/etc/dt/appconfig/icons\fP
+and the
+\fB/usr/dt/appconfig/icons\fP subdirectories,
+then the icon under
+\fB/etc/dt/appconfig/icons\fP
+will be found first and used, because that
+element appears first in the
+\fBXMICONSEARCHPATH\fP\&.
+The search terminates when the first match occurs\&.
+.PP
+Each of the \fIDTSPSYS\fP search path environment variables has a
+corresponding \fIDTSPUSER\fP environment variable which will take
+precedence over the system setting\&.
+The \fIDTSPUSER\fP values will
+be prepended to the \fBDT\fP search path whereas the
+\fIDTSPSYS\fP values will come after the
+\fB$HOME/\&.dt\fP configuration location but before the factory default location\&.
+The relationship between the system administrator\&'s customization and the
+default \fB/etc/dt\fP configuration location is up to the user of the
+\fIDTSPSYS\fP value\&.
+.SH "OPTIONS"
+.IP "\fB-u user\fP" 10
+Causes
+\fBdtsearchpath\fP to return the search paths for the specified user\&.
+This option is useful
+for system administrators who need to understand the search paths for
+a particular user\&.
+.IP "\fB-v\fP" 10
+The verbose option causes
+\fBdtsearchpath\fP to print to standard output the values of the search environment
+formatted for easier human reading\&. By default, the command runs silently\&.
+.IP "\fB-csh\fP" 10
+Causes \fBdtsearchpath\fP to return values suitable for
+evaluation by a C Shell script\&. By default, the command returns values suitable for
+evaluation by a Bourne Shell script\&.
+.IP "\fB-ksh\fP" 10
+Causes \fBdtsearchpath\fP to return values suitable fore
+evaluation by a Korn Shell script\&. By default, the command returns values suitable for
+evaluation by a Bourne Shell script\&.
+.SH "RETURN VALUES"
+.IP "0" 10
+Command completed successfully\&.
+.IP "1" 10
+Command invoked with incorrect usage\&.
+.SH "ENVIRONMENT"
+.PP
+The values set by
+\fBdtsearchpath\fP are passed through to the individual desktop subsystems, such as
+the action
+database and the help system, by means of environment variables\&.
+.PP
+The \fIDTSPSYSAPPHOSTS\fP variable is the primary environment
+variable and drives the remaining search paths for filetypes and
+actions, for desktop icons, and for help files\&.
+.PP
+In the following list, all values are derived from three places: the
+user\&'s \fB$HOME\fP directory (\fB$HOME/\&.dt\fP),
+the system configuration directory (\fB/etc/dt/appconfig\fP),
+and the factory defaults directory (\fB/usr/dt/appconfig\fP)\&.
+The values are listed as transformed for the individual desktop
+subsystems\&.
+.PP
+To verify these values, execute
+\fBdtsearchpath\fP with the verbose (\fB-v\fP) option\&.
+\fBDTAPPSEARCHPATH\fP, \fIDTSPSYSAPPHOSTS\fP, \fIDTSPUSERAPPHOSTS\fP: Used to discover application hosts and their registry subdirectories\&.
+The default transformed value is:
+\fB$HOME/\&.dt/appmanager
+/etc/dt/appconfig/appmanager/%L
+/etc/dt/appconfig/appmanager/C
+/usr/dt/appconfig/appmanager/%L
+/usr/dt/appconfig/appmanager/C\fP
+Where \fB%L\fP is the value of the
+\fBLANG\fP environment variable\&.
+.PP
+The value of
+\fBDTAPPSEARCHPATH\fP can be altered by either of two
+environment variables:
+\fIDTSPSYSAPPHOSTS\fP and/or
+\fIDTSPUSERAPPHOSTS\fP\&. \fIDTSPSYSAPPHOSTS\fP is for use by system administrators\&.
+Values are
+specified by adding a ksh script to the
+\fB/etc/dt/config/Xsession\&.d\fP directory that exports the variable\&.
+export DTSPSYSAPPHOSTS=marlin:,goby:/vipapps,/opt
+The expected syntax for
+\fIDTSPSYSAPPHOSTS\fP is a comma-separated list\&.
+\fIDTSPSYSAPPHOSTS\fP accepts host:, host:/path, or just /path\&.
+The effect
+is to insert a searchpath after the configuration location
+(\fB/etc/dt/appconfig/appmanager\fP) and before the factory default location
+(\fB/usr/dt/appconfig/appmanager\fP)\&.
+\fB$HOME/\&.dt/appmanager
+/etc/dt/appconfig/appmanager/%L
+/etc/dt/appconfig/appmanager/C
+/nfs/marlin/etc/dt/appconfig/appmanager/%L
+/nfs/marlin/etc/dt/appconfig/appmanager/C
+/nfs/goby/vipapps/appconfig/appmanager/%L
+/nfs/goby/vipapps/appconfig/appmanager/C
+/opt/appconfig/appmanager/%L
+/opt/appconfig/appmanager/C
+/usr/dt/appconfig/appmanager/%L
+/usr/dt/appconfig/appmanager/C\fP
+If the system administrator wants the local configuration directory to
+appear in a different location within the configurable search paths,
+the special host term \&'localhost:\&' can be inserted anywhere into the
+environment variable:
+export DTSPSYSAPPHOSTS=marlin:,localhost:,goby:/vipapps,/opt
+The resulting value for
+\fBDTAPPSEARCHPATH\fP would be:
+\fB$HOME/\&.dt/appmanager
+/nfs/marlin/etc/dt/appconfig/appmanager/%L
+/nfs/marlin/etc/dt/appconfig/appmanager/C
+/etc/dt/appconfig/appmanager/%L
+/etc/dt/appconfig/appmanager/C
+/nfs/goby/vipapps/appconfig/appmanager/%L
+/nfs/goby/vipapps/appconfig/appmanager/C
+/opt/appconfig/appmanager/%L
+/opt/appconfig/appmanager/C
+/usr/dt/appconfig/appmanager/%L
+/usr/dt/appconfig/appmanager/C\fP
+In fact, the value \&'localhost:\&' can be inserted anywhere in the
+\fIDTSPSYSAPPHOSTS\fP value and its order within the
+\fIDTSPSYSAPPHOSTS\fP will be reflected in the
+\fBDTAPPSEARCHPATH\fP value\&.
+\fIDTSPUSERAPPHOSTS\fP is for use by end users\&.
+Values are specified by exporting
+the value in the user\&'s \&.dtprofile\&.
+export DTSPUSERAPPHOSTS=appsvr:,/myapps
+\fIDTSPUSERAPPHOSTS\fP also accepts host:, host:/path, and /path
+specifications\&.
+The effect is to insert a searchpath before any other
+searchpath\&.
+\fB/nfs/appsvr/etc/dt/appconfig/appmanager/%L
+/nfs/appsvr/etc/dt/appconfig/appmanager/C
+/myapps/appmanager/%L
+/myapps/appmanager/C
+$HOME/\&.dt/appmanager
+/etc/dt/appconfig/appmanager/%L
+/etc/dt/appconfig/appmanager/C
+/usr/dt/appconfig/appmanager/%L
+/usr/dt/appconfig/appmanager/C\fP
+\fBDTDATABASESEARCHPATH\fP, \fIDTSPSYSDATABASEHOSTS\fP, \fIDTSPUSERDATABASEHOSTS\fP: Used to collect filetype and action definitions, as expressed in
+\fB*\&.dt\fP files\&.
+The default transformed value is:
+\fB$HOME/\&.dt/types
+/etc/dt/appconfig/types/%L
+/etc/dt/appconfig/types/C
+/usr/dt/appconfig/types/%L
+/usr/dt/appconfig/types/C\fP
+Where \fB%L\fP is the value of the
+\fBLANG\fP environment variable\&.
+.PP
+The value of
+\fBDTDATABASESEARCHPATH\fP can be altered by either of two
+environment variables:
+\fIDTSPSYSDATABASEHOSTS\fP and/or
+\fIDTSPUSERDATABASEHOSTS\fP\&. \fIDTSPSYSDATABASEHOSTS\fP is for use by system administrators\&.
+Values are
+specified by adding a ksh script to the \fB/etc/dt/config/Xsession\&.d\fP
+directory that exports the variable\&.
+export DTSPSYSDATABASEHOSTS=marlin:,goby:/vipapps,/opt
+The expected syntax for
+\fIDTSPSYSDATABASEHOSTS\fP is a comma-separated
+list\&.
+\fIDTSPSYSDATABASEHOSTS\fP accepts host:, host:/path, or just /path\&.
+The effect is to insert a searchpath after the configuration location
+(\fB/etc/dt/appconfig/types\fP) and before the factory default location
+(\fB/usr/dt/appconfig/types\fP)\&.
+\fB$HOME/\&.dt/types
+/etc/dt/appconfig/types/%L
+/etc/dt/appconfig/types/C
+marlin:/etc/dt/appconfig/types/%L
+marlin:/etc/dt/appconfig/types/C
+goby:/vipapps/appconfig/types/%L
+goby:/vipapps/appconfig/types/C
+/opt/appconfig/types/%L
+/opt/appconfig/types/C
+/usr/dt/appconfig/types/%L
+/usr/dt/appconfig/types/C\fP
+As is the case for
+\fBDTAPPSEARCHPATH\fP, the placement of the local configuration
+directory can be affected by the adding special host term \&'localhost:\&'
+to the
+\fIDTSPSYSDATABASEHOSTS\fP environment variable\&.
+export DTSPSYSDATABASEHOSTS=marlin:,localhost:,goby:/vipapps
+The resulting value for
+\fBDTDATABASESEARCHPATH\fP would be:
+\fB$HOME/\&.dt/types
+marlin:/etc/dt/appconfig/types/%L
+marlin:/etc/dt/appconfig/types/C
+/etc/dt/appconfig/types/%L
+/etc/dt/appconfig/types/C
+goby:/vipapps/appconfig/types/%L
+goby:/vipapps/appconfig/types/C
+/usr/dt/appconfig/types/%L
+/usr/dt/appconfig/types/C\fP
+.PP
+\fIDTSPUSERDATABASEHOSTS\fP is for use by end users\&.
+Values are specified by
+exporting the value in the user\&'s \&.dtprofile\&.
+.PP
+export DTSPUSERDATABASEHOSTS=dbsvr:,/mytypes
+\fIDTSPUSERDATABASEHOSTS\fP also accepts host:, host:/path, and /path
+specifications\&.
+The effect is to insert a searchpath before any other
+searchpath\&.
+\fBdbsvr:/etc/dt/appconfig/types/%L
+dbsvr:/etc/dt/appconfig/types/C
+/mytypes/types/%L
+/mytypes/types/C
+$HOME/\&.dt/types
+/etc/dt/appconfig/types/%L
+/etc/dt/appconfig/types/C
+/usr/dt/appconfig/types/%L
+/usr/dt/appconfig/types/C\fP
+\fBXMICONSEARCHPATH\fP, \fIXMICONBMSEARCHPATH\fP, \fIDTSPSYSICON\fP, \fIDTSPUSERICON\fP: Used to locate desktop icons\&.
+The default transformed value is:
+\fB$HOME/\&.dt/icons/%B%M\&.pm
+$HOME/\&.dt/icons/%B%M\&.bm
+$HOME/\&.dt/icons/%B
+/etc/dt/appconfig/icons/%L/%B%M\&.pm
+/etc/dt/appconfig/icons/%L/%B%M\&.bm
+/etc/dt/appconfig/icons/%L/%B
+/etc/dt/appconfig/icons/C/%B%M\&.pm
+/etc/dt/appconfig/icons/C/%B%M\&.bm
+/etc/dt/appconfig/icons/C/%B
+/usr/dt/appconfig/icons/%L/%B%M\&.pm
+/usr/dt/appconfig/icons/%L/%B%M\&.bm
+/usr/dt/appconfig/icons/%L/%B
+/usr/dt/appconfig/icons/C/%B%M\&.pm
+/usr/dt/appconfig/icons/C/%B%M\&.bm
+/usr/dt/appconfig/icons/C/%B\fP
+.PP
+Where
+\fB%B\fP is the basename of the requested icon,
+\fB%M\fP is the magnitude
+(size) of the icon, and
+\fB%L\fP is the value of the
+\fBLANG\fP environment variable\&.
+.PP
+The value of
+\fBXMICONSEARCHPATH\fP can be altered by either of two
+environment variables:
+\fIDTSPSYSICON\fP and/or
+\fIDTSPUSERICON\fP\&. \fIDTSPSYSICON\fP is for use by system administrators\&.
+Values are
+specified by adding a ksh script to the
+\fB/etc/dt/config/Xsession\&.d\fP directory that exports the variable\&.
+export DTSPSYSICON=/vipapps/icons
+.PP
+The expected syntax for
+\fIDTSPSYSICON\fP is a comma-separated list\&.
+\fIDTSPSYSICON\fP accepts the /path format\&.
+The effect
+is to insert a searchpath after the configuration location
+(\fB/etc/dt/appconfig/icons\fP) and before the factory default location
+(\fB/usr/dt/appconfig/icons\fP)\&.
+\fB$HOME/\&.dt/icons/%B%M\&.pm
+$HOME/\&.dt/icons/%B%M\&.bm
+$HOME/\&.dt/icons/%B%M
+/etc/dt/appconfig/icons/%L/%B%M\&.pm
+/etc/dt/appconfig/icons/%L/%B%M\&.bm
+/etc/dt/appconfig/icons/%L/%B%M
+/etc/dt/appconfig/icons/C/%B%M\&.pm
+/etc/dt/appconfig/icons/C/%B%M\&.bm
+/etc/dt/appconfig/icons/C/%B%M
+/vipapps/icons/%L/%B%M\&.pm
+/vipapps/icons/%L/%B%M\&.bm
+/vipapps/icons/%L/%B%M
+/vipapps/icons/C/%B%M\&.pm
+/vipapps/icons/C/%B%M\&.bm
+/vipapps/icons/C/%B%M
+usr/dt/appconfig/icons/%L/%B%M\&.pm
+/usr/dt/appconfig/icons/%L/%B%M\&.bm
+/usr/dt/appconfig/icons/%L/%B%M
+/usr/dt/appconfig/types/C/%B%M\&.pm
+/usr/dt/appconfig/types/C/%B%M\&.bm
+/usr/dt/appconfig/types/C/%B%M\fP
+.PP
+The placement of the local configuration directory can be affected by
+the adding the path term
+\fB/etc/dt/appconfig\fP to the
+\fIDTSPSYSICON\fP environment variable\&.
+export DTSPSYSICON=/vipapps/icons,/etc/dt/appconfig
+.PP
+The resulting value for
+\fBXMICONSEARCHPATH\fP would be:
+.PP
+\fB$HOME/\&.dt/icons/%B%M\&.pm
+$HOME/\&.dt/icons/%B%M\&.bm
+$HOME/\&.dt/icons/%B%M
+/vipapps/icons/%L/%B%M\&.pm
+/vipapps/icons/%L/%B%M\&.bm
+/vipapps/icons/%L/%B%M
+/vipapps/icons/C/%B%M\&.pm
+/vipapps/icons/C/%B%M\&.bm
+/vipapps/icons/C/%B%M
+/etc/dt/appconfig/icons/%L/%B%M\&.pm
+/etc/dt/appconfig/icons/%L/%B%M\&.bm
+/etc/dt/appconfig/icons/%L/%B%M
+/etc/dt/appconfig/icons/C/%B%M\&.pm
+/etc/dt/appconfig/icons/C/%B%M\&.bm
+/etc/dt/appconfig/icons/C/%B%M
+usr/dt/appconfig/icons/%L/%B%M\&.pm
+/usr/dt/appconfig/icons/%L/%B%M\&.bm
+/usr/dt/appconfig/icons/%L/%B%M
+/usr/dt/appconfig/types/C/%B%M\&.pm
+/usr/dt/appconfig/types/C/%B%M\&.bm
+/usr/dt/appconfig/types/C/%B%M\fP
+\fIDTSPUSERICON\fP is for use by end users\&.
+Values are specified by
+exporting the value in the user\&'s \&.dtprofile\&.
+.PP
+export DTSPUSERICON=$HOME/myicons
+.PP
+\fIDTSPUSERICON\fP accepts /path specifications\&.
+The effect is to insert a
+searchpath before any other searchpath\&.
+.PP
+\fB$HOME/myicons/%B%M\&.pm
+$HOME/myicons/%B%M\&.bm
+$HOME/myicons/%B%M
+$HOME/\&.dt/icons/%B%M\&.pm
+$HOME/\&.dt/icons/%B%M\&.bm
+$HOME/\&.dt/icons/%B%M
+/etc/dt/appconfig/icons/%L/%B%M\&.pm
+/etc/dt/appconfig/icons/%L/%B%M\&.bm
+/etc/dt/appconfig/icons/%L/%B%M
+/etc/dt/appconfig/icons/C/%B%M\&.pm
+/etc/dt/appconfig/icons/C/%B%M\&.bm
+/etc/dt/appconfig/icons/C/%B%M
+/usr/dt/appconfig/icons/%L/%B%M\&.pm
+/usr/dt/appconfig/icons/%L/%B%M\&.bm
+/usr/dt/appconfig/icons/%L/%B%M
+/usr/dt/appconfig/types/C/%B%M\&.pm
+/usr/dt/appconfig/types/C/%B%M\&.bm
+/usr/dt/appconfig/types/C/%B%M\fP
+\fIDTHELPSEARCHPATH\fP, \fIDTSPSYSHELP\fP, \fIDTSPUSERHELP\fP:
+.PP
+Used to locate help volumes and families for the desktop help
+subsystem\&.
+The default transformed value is:
+\fB$HOME/\&.dt/help/<session>/%H
+$HOME/\&.dt/help/<session>/%H\&.sdl
+$HOME/\&.dt/help/<session>/%H\&.hv
+$HOME/\&.dt/help/%H
+$HOME/\&.dt/help/%H\&.sdl
+$HOME/\&.dt/help/%H\&.hv
+/etc/dt/appconfig/help/%L/%H
+/etc/dt/appconfig/help/%L/%H\&.sdl
+/etc/dt/appconfig/help/%L/%H\&.hv
+/etc/dt/appconfig/help/C/%H
+/etc/dt/appconfig/help/C/%H\&.sdl
+/etc/dt/appconfig/help/C/%H\&.hv
+/usr/dt/appconfig/help/%L/%H
+/usr/dt/appconfig/help/%L/%H\&.sdl
+/usr/dt/appconfig/help/%L/%H\&.hv
+/usr/dt/appconfig/help/C/%H
+/usr/dt/appconfig/help/C/%H\&.sdl
+/usr/dt/appconfig/help/C/%H\&.hv\fP
+.PP
+Where
+\fB%H\fP is the basename of the requested help volume, and
+\fB%L\fP is the
+value of the
+\fBLANG\fP environment variable\&.
+.PP
+The value of
+\fIDTHELPSEARCHPATH\fP can be altered by either of two
+environment variables:
+\fIDTSPSYSHELP\fP and/or
+\fIDTSPUSERHELP\fP\&. \fIDTSPSYSHELP\fP is for use by system administrators\&.
+Values are
+specified by adding a ksh script to the
+\fB/etc/dt/config/Xsession\&.d\fP directory that exports the variable\&.
+.PP
+export DTSPSYSHELP=/vipapps/help
+.PP
+The expected syntax for
+\fIDTSPSYSHELP\fP is a comma-separated list\&.
+\fIDTSPSYSHELP\fP accepts the /path format\&.
+The effect
+is to insert a searchpath after the configuration location
+(\fB/etc/dt/appconfig/help\fP) and before the factory default location
+(\fB/usr/dt/appconfig/help\fP)\&.
+\fB$HOME/\&.dt/help/<session>/%H
+$HOME/\&.dt/help/<session>/%H\&.sdl
+$HOME/\&.dt/help/<session>/%H\&.hv
+$HOME/\&.dt/help/%H
+$HOME/\&.dt/help/%H\&.sdl
+$HOME/\&.dt/help/%H\&.hv
+/etc/dt/appconfig/help/%L/%H
+/etc/dt/appconfig/help/%L/%H\&.sdl
+/etc/dt/appconfig/help/%L/%H\&.hv
+/etc/dt/appconfig/help/C/%H
+/etc/dt/appconfig/help/C/%H\&.sdl
+/etc/dt/appconfig/help/C/%H\&.hv
+/vipapps/help/%L/%H
+/vipapps/help/%L/%H\&.sdl
+/vipapps/help/%L/%H\&.hv
+/vipapps/help/C/%H
+/vipapps/help/C/%H\&.sdl
+/vipapps/help/C/%H\&.hv
+/usr/dt/appconfig/help/%L/%H
+/usr/dt/appconfig/help/%L/%H\&.sdl
+/usr/dt/appconfig/help/%L/%H\&.hv
+/usr/dt/appconfig/help/C/%H
+/usr/dt/appconfig/help/C/%H\&.sdl
+/usr/dt/appconfig/help/C/%H\&.hv\fP
+The placement of the local configuration directory can be affected by
+the adding the path term \fB/etc/dt/appconfig\fP
+to the
+\fIDTSPSYSHELP\fP environment variable\&.
+.PP
+export DTSPSYSHELP=/vipapps/help,/etc/dt/appconfig
+.PP
+The resulting value for
+\fIDTHELPSEARCHPATH\fP would be:
+\fB$HOME/\&.dt/help/<session>/%H
+$HOME/\&.dt/help/<session>/%H\&.sdl
+$HOME/\&.dt/help/<session>/%H\&.hv
+$HOME/\&.dt/help/%H
+$HOME/\&.dt/help/%H\&.sdl
+$HOME/\&.dt/help/%H\&.hv
+/vipapps/help/%L/%H
+/vipapps/help/%L/%H\&.sdl
+/vipapps/help/%L/%H\&.hv
+/vipapps/help/C/%H
+/vipapps/help/C/%H\&.sdl
+/vipapps/help/C/%H\&.hv
+/etc/dt/appconfig/help/%L/%H
+/etc/dt/appconfig/help/%L/%H\&.sdl
+/etc/dt/appconfig/help/%L/%H\&.hv
+/etc/dt/appconfig/help/C/%H
+/etc/dt/appconfig/help/C/%H\&.sdl
+/etc/dt/appconfig/help/C/%H\&.hv
+/usr/dt/appconfig/help/%L/%H
+/usr/dt/appconfig/help/%L/%H\&.sdl
+/usr/dt/appconfig/help/%L/%H\&.hv
+/usr/dt/appconfig/help/C/%H
+/usr/dt/appconfig/help/C/%H\&.sdl
+/usr/dt/appconfig/help/C/%H\&.hv\fP
+\fIDTSPUSERHELP\fP is for use by end users\&.
+Values are specified by
+exporting the value in the user\&'s \&.dtprofile\&.
+.PP
+export DTSPUSERHELP=$HOME/myhelp
+.PP
+\fIDTSPUSERHELP\fP accepts /path specifications\&.
+The effect is to insert a
+searchpath before any other searchpath\&.
+\fB$HOME/myhelp/%H
+$HOME/myhelp/%H\&.sdl
+$HOME/myhelp/%H\&.hv
+$HOME/\&.dt/help/<session>/%H
+$HOME/\&.dt/help/<session>/%H\&.sdl
+$HOME/\&.dt/help/<session>/%H\&.hv
+$HOME/\&.dt/help/%H
+$HOME/\&.dt/help/%H\&.sdl
+$HOME/\&.dt/help/%H\&.hv
+/etc/dt/appconfig/help/%L/%H
+/etc/dt/appconfig/help/%L/%H\&.sdl
+/etc/dt/appconfig/help/%L/%H\&.hv
+/etc/dt/appconfig/help/C/%H
+/etc/dt/appconfig/help/C/%H\&.sdl
+z\&.br
+/etc/dt/appconfig/help/C/%H\&.hv
+/usr/dt/appconfig/help/%L/%H
+/usr/dt/appconfig/help/%L/%H\&.sdl
+/usr/dt/appconfig/help/%L/%H\&.hv
+/usr/dt/appconfig/help/C/%H
+/usr/dt/appconfig/help/C/%H\&.sdl
+/usr/dt/appconfig/help/C/%H\&.hv\fP
+.PP
+(See also the \fBOPTIMIZATIONS\fP heading in this man page\&.)
+.PP
+At the conclusion of \fBdtsearchpath\fP, \fIDTSPSYS\fP and
+\fIDTSPUSER\fP variables are explicitly unset, so that only the
+\fIDT*SEARCHPATH\fP values remain\&.
+.PP
+\fIMANPATH\fP, \fIDTMANPATH\fP:
+.PP
+In addition to setting the application search paths,
+\fBdtsearchpath\fP augments the \fIMANPATH\fP environment variable with the path to the
+CDE man pages,
+\fB/usr/dt/man\&.\fP For example, if the value of \fIMANPATH\fP prior to execution of:
+\fBdtsearchpath\fP is
+\fB/net/manserver/usr/man:/usr/man\fP
+then the augmented value will be:
+\fB/usr/dt/man:/net/manserver/usr/man:/usr/man\fP\&.
+.PP
+If the \fIMANPATH\fP environment variable is not set prior to the
+invocation of
+\fBdtsearchpath\fP, the system-defined default value of \fIMANPATH\fP will be included in the
+augmented \fIMANPATH\fP value\&.
+For example, if the system-defined
+default value is:
+\fB/usr/man:/usr/local/man\fP
+then
+\fBdtsearchpath\fP will generate a \fIMANPATH\fP value of:
+\fB/usr/dt/man:/usr/man:/usr/local/man\fP
+.PP
+\fBDTSROCFPATH\fP:
+.PP
+\fBDTSROCFPATH\fP is used
+by the \fBDtSearchInit\fP function to locate the default API
+configuration \fBocf\fP file\&. If the
+\fIocf_file\fP argument is NULL,
+\fBDtSearchInit\fP looks for an \fBocf\fP
+file with a base name of either \fBdtsearch\&.ocf\fP or
+\fBaustext\&.ocf\fP in the directory specified by \fBDTSROCFPATH\fP, in the current working directory,
+or in the \fBHOME\fP directory, in that order\&.
+.PP
+\fBDTINFOLIBSEARCHPATH\fP,
+\fBDTINFOLIBDEFAULT\fP:
+.PP
+\fBDTINFOLIBSEARCHPATH\fP is used
+by \fBdtinfo\fP to locate information libraries on local
+and remote mounted systems\&. \fBDTINFOLIBDEFAULT\fP is used by
+\fBdtinfo\fP to identify the default information library(s)
+to load if the \fB-l\fP or \fB-sect\fP option
+is not specified\&.
+.PP
+\fBDTINFOLIBSEARCHPATH\fP and
+\fBDTINFOLIBDEFAULT\fP
+are defined at installation time by \fBdtsearchpath\fP\&.
+.PP
+The default infolib search path includes personal, system-wide, and
+built-in locations as follows:
+.IP "System-wide location" 10
+\fB/etc/dt/infolib/language/%I\&.dti\fP
+.IP "Built-in location" 10
+\fB/usr/dt/appconfig/infolib/language/%I\&.dti\fP
+.PP
+The default language is C\&.
+.PP
+When a location is added to the application search path, the appropriate
+infolib subdirectory is automatically added to the infolib search path\&.
+.PP
+For example, if the application server \fBhosta:\fP is
+added to the application search path, the directory
+\fBhosta:/etc/dt/appconfig/infolib/language\fP is
+automatically added to the infolib search path\&.
+.PP
+The infolib search path is assembled from the built-in locations and the
+following input variables:
+.IP "\fBDTSPSYSINFOLIB\fP" 10
+System-wide infolib search path input variable
+.IP "\fBDTSPUSERINFOLIB\fP" 10
+Personal infolib search path input variable
+.PP
+Use these input variables to specify locations outside the application
+search path\&.
+.PP
+The assembled database search path is specified by the output variable
+\fBDTINFOLIBSEARCHPATH\fP\&.
+.PP
+The syntax for the \fBDTSPSYSINFOLIB\fP and \fBDTSPUSERINFOLIB\fP
+variables is:
+.PP
+\fBVARIABLE =\fP \fIlocation\fP \fB[,\fP \fIlocation\fP\fB]\fP
+.PP
+where \fIlocation\fP is the pathname for a directory on the
+local (session server) system\&. Use this syntax to add a local directory\&.
+.PP
+To specify a location on another system, use its network file name\&.
+For example:
+.PP
+.nf
+\f(CW/nfs/servera/projects/infolib\&.\fR
+.fi
+.PP
+.PP
+The value of the infolib search path ( \fBDTINFOLIBSEARCHPATH\fP) is created by
+assembling the following locations, listed in order of precedence:
+.IP "   1." 6
+Locations specified using the \fBDTSPUSERINFOLIB\fP variable
+.IP "   2." 6
+Locations derived from the \fBDTSPUSERAPPHOSTS\fP variable
+.IP "   3." 6
+The default location:
+\fB/etc/dt/appconfig/infolib/language/%I\&.dti\fP
+.IP "   4." 6
+Locations specified using the \fBDTSPSYSINFOLIB\fP variable
+.IP "   5." 6
+Locations derived from the \fBDTSPSYSAPPHOSTS\fP variable
+.IP "   6." 6
+\fB/usr/dt/appconfig/infolib/language/%I\&.dti\fP
+.SH "LOCALES"
+.PP
+Each of the search path elements contain a path that references the
+\fBLANG\fP variable using the
+\fB%L\fP construct\&.
+When the user
+selects a different language from the greeting screen and logs in, the
+search path will already be set up\&.
+At the same time, the
+factory defaults are still included, but after the localized elements\&.
+.PP
+For example, if the user chooses
+the German locale
+from the greeting screen, then his/her
+\fBDTDATABASESEARCHPATH\fP
+will already include these elements, as specified by the \fBLANG\fP value
+set at session startup:
+\fB$HOME/\&.dt/types
+/etc/dt/appconfig/types/%L
+/etc/dt/appconfig/types/C
+/usr/dt/appconfig/types/%L
+/usr/dt/appconfig/types/C\fP
+.PP
+(See also the \fBOPTIMIZATIONS\fP heading in this man page\&.)
+.PP
+Note that the search path does not use locales under the user\&'s
+\fB$HOME\fP directory\&.
+Whether the user adds personal icons under
+\fB$HOME/\&.dt/icons\fP or personal applications under
+\fB$HOME/\&.dt/appmanager\fP, they will be found regardless of the language
+selected at login\&.
+.SH "OPTIMIZATIONS"
+.PP
+Before exporting the search paths to the user\&'s environment,
+\fBdtsearchpath\fP first checks to ensure that each subdirectory exists\&.
+If a directory
+does not exist at login, then that element will not be added to the
+user\&'s search path, to save needless file system accesses by the
+desktop components\&.
+.SH "FILES"
+.IP "\fB$HOME/\&.dtprofile\fP" 10
+Enables setting of the user\&'s
+\fIDTSPUSER\fP environment variables\&.
+.IP "\fBXsession\&.d/*\fP" 10
+Enables setting of the system
+\fIDTSPSYS\fP environment variables\&.
+.SH "NOTES"
+.PP
+In order to inject the values from
+\fBdtsearchpath\fP into the user\&'s environment, the command must be
+\fIeval\&'d\fP,
+as is done by the
+\fBXsession\fP
+login script\&.
+.PP
+eval `/usr/dt/bin/dtsearchpath`
+Simply running
+\fBdtsearchpath\fP from the command line will have no affect on the parent shell\&.
+.PP
+It is not possible to affect the DT search paths after logging in\&.
+Components such as the Window Manager and File Manager inherit the
+values from
+\fBdtsearchpath\fP by being invoked from the same shell\&.
+Hence, if the system
+administrator creates a new search path element for the end user,
+the user will not be able to access it until the next login\&.
+.SH "SEE ALSO"
+.PP
+\fBdtappgather\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

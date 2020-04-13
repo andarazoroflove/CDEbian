@@ -1,0 +1,4028 @@
+'\" t
+...\" ksh93.sgm /main/15 1996/10/30 16:32:16 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ksh" "user cmd"
+.SH "NAME"
+\fBksh\fP \(em KornShell, a
+standard/restricted command and programming language
+.SH "SYNOPSIS"
+.PP
+\fBksh\fP [\(+-abcefhikmnoprstuvxCP]  [-I  | file ]  [\(+-o  | option ]  [\&.\!\&.\!\&.]  [-]  [arg \&.\!\&.\!\&.]  [rksh]  [\(+-abcefhikmnoprstuvxCP]  [-I  | file ]  [\(+-o  | option ]  [\&.\!\&.\!\&.]  [-]  [arg \&.\!\&.\!\&.] 
+.SH "DESCRIPTION"
+.PP
+\fIKsh\^\fP is a command and programming language
+that executes commands read from a terminal
+or a file\&.
+\fIRksh\^\fP is a restricted version of the
+command interpreter
+\fIksh\fP; it is used to set up login names and execution environments whose
+capabilities are more controlled than those of the standard shell\&.
+See
+\fIInvocation\^\fP below
+for the meaning of arguments to the shell\&.
+.SS "Definitions\&."
+.PP
+A
+\fImetacharacter\^\fP is one of the following characters:
+.PP
+\fB; & ( ) \(or < > new-line space tab\fP
+.PP
+A
+\fIblank\^\fP is a
+\fBtab\fP or a
+\fBspace\fP\&. An
+\fIidentifier\^\fP is a sequence of letters, digits, or underscores
+starting with a letter or underscore\&.
+Identifiers are used as components of
+\fIvariable\^\fP names\&.
+A
+\fIvname\^\fP is a sequence of one or more identifiers
+separated by a\&. and optionally preceded
+by a \&.\&.
+Vnames are used as function and variable names\&.
+A
+\fIword\^\fP is a sequence of
+\fIcharacters\^\fP excluding non-quoted
+\fImetacharacters\fP\&.
+.PP
+A
+\fIcommand\^\fP is a sequence of characters in the syntax
+of the shell language\&.
+The shell reads each command and
+carries out the desired action either directly or by invoking
+separate utilities\&.
+A built-in command is a command that is carried out by the
+shell itself without creating a separate process\&.
+Some commands are built-in purely for convenience
+and are not documented here\&.
+Built-ins that cause
+side effects in the shell environment and
+built-ins that are found before performing a
+path search (see
+\fIExecution\^\fP below)
+are documented here\&.
+For historical reasons, some of
+these built-ins behave differently than
+other built-ins and are called
+\fIspecial built-ins\fP\&.
+.SS "Commands\&."
+.PP
+A
+\fIsimple-command\^\fP is a list of variable assignments
+(see
+\fIVariable\fP \fIAssignments\^\fP below)
+or a sequence of
+\fIblank\^\fP separated words
+which may be preceded by a list of variable assignments
+(see
+\fIEnvironment\^\fP below)\&.
+The first word specifies the name of the command to
+be executed\&.
+Except as specified below,
+the remaining words are passed as arguments
+to the invoked command\&.
+The command name is passed as argument 0
+(see
+\fIexec\fP(2))\&. The
+\fIvalue\^\fP of a simple-command is its exit status; 0-255
+if it terminates normally; 256+\fIsignum\^\fP if
+it terminates abnormally (the name of the signal corresponding
+to the exit status can be
+obtained via the
+\fB-l $?\fP option of the
+\fBkill\^\fP built-in utility)\&.
+.PP
+An
+\fIarithmetic command\fP begins with a
+\fB((\fP, and consists of an arithmetic expression formed by
+all the characters until a matching
+\fB))\fP\&. (See
+\fIArithmetic evaluation\fP below\&.)
+The exit status of an arithmetic command is 0 when the
+arithmetic expression evaluates to a non-zero value and
+is 1 when the arithmetic expression evaluates to 0\&.
+.PP
+A
+\fIpipeline\^\fP is a sequence of one or more
+\fIcommands\^\fP separated by
+\fB\(or\fP\&. The standard output of each command but the last
+is connected by a
+\fIpipe\fP(2) to the standard input of the next command\&.
+Each command,
+except possibly the last,
+is run as a separate process;
+the shell waits for the last command to terminate\&.
+The exit status of a pipeline is the exit
+status of the last command\&.
+Each pipeline can be preceded by the
+\fIreserved word\fP \fB!\fP which negates the exit status of the pipeline\&.
+.PP
+A
+\fIlist\^\fP is a sequence of one or more
+pipelines
+separated by
+\fB;\fP, \fB&\fP, \fB\(or&\fP, \fB&&\fP, or
+\fB\(or\!\(or\fP, and optionally terminated by
+\fB;\fP, \fB&\fP, or
+\fB\(or&\fP\&. Of these five symbols,
+\fB;\fP, \fB&\fP, and
+\fB\(or&\fP have equal precedence,
+which is lower than that of
+\fB&&\fP and
+\fB\(or\!\(or\fP\&. The symbols
+\fB&&\fP and
+\fB\(or\!\(or\fP also have equal precedence\&.
+A semicolon
+(\fB;\fP) causes sequential execution of the preceding pipeline; an ampersand
+(\fB&\fP) causes asynchronous execution of the preceding pipeline (i\&.e\&., the shell does
+\fInot\^\fP wait for that pipeline to finish)\&.
+The symbol
+\fB\(or&\fP causes asynchronous execution of the preceding pipeline
+with a two-way pipe established to the parent shell;
+the standard input and output of the spawned pipeline
+can be written to and read from by the parent shell
+by applying
+the redirection operators
+\fB<&\fP and
+\fB>&\fP with arg
+\fBp\fP to commands and by using
+\fB-p\fP option of
+the built-in commands
+\fBread\fP and
+\fBprint\fP described later\&.
+The symbol
+\fB&&\fP (\!\fB\(or\!\(or\fP\^) causes the
+\fIlist\^\fP following it to be executed only if the preceding
+pipeline
+returns a zero (non-zero) value\&.
+An arbitrary number of new-lines may appear in a
+\fIlist\^\fP instead of a semicolon,
+to delimit a command\&.
+.PP
+A
+\fIcommand\^\fP is either a simple-command
+or one of the following\&.
+Unless otherwise stated,
+the value returned by a command is that of the
+last simple-command executed in the command\&.
+.IP "for vname\^ in word\^ \&.\!\&.\!\&. ;do list\^ ;done" 10
+Each time a
+\fBfor\fP command is executed,
+\fIname\^\fP is set to the next
+\fIword\^\fP taken from the
+\fBin\fP \fIword\^\fP list\&.
+If
+\fBin\fP \fIword\^\fP \&.\!\&.\!\&.
+is omitted, then
+the
+\fBfor\fP command executes the \fBdo\fP \fIlist\^\fP once for each positional parameter
+that is set
+(see
+\fIParameter Expansion\fP below)\&.
+Execution ends when there are no more words in the list\&.
+.IP "for (( expr1\^; expr2\^; expr3\^ )) ;do list\^ ;done" 10
+The arithmetic expression
+\fIexpr1\fP is evaluated first\&.
+(See
+\fIArithmetic evaluation\fP below\&.)
+The arithmetic expression
+\fIexpr2\fP is repeatedly evaluated until it evalues to zero and when non-zero,
+\fIlist\fP is executed and the arithmetic expression
+\fIexpr3\fP evaluated\&.
+If any expression
+is omitted, then it behaves as if it evaluated to 1\&.
+.IP "select vname\^ in word\^ \&.\!\&.\!\&. ;do list\^ ;done" 10
+A
+\fBselect\fP command prints on standard error (file descriptor 2) the set of
+\fIword\fPs, each preceded by a number\&.
+If
+\fBin\fP \fIword\^\fP \&.\!\&.\!\&.
+is omitted, then
+the
+positional parameters
+are used instead
+(see
+\fIParameter Expansion\fP below)\&.
+The
+\fBPS3\fP prompt is printed
+and a line is read from the standard input\&.
+If this line consists of the number
+of one of the listed
+\fIword\fPs, then the value of the variable
+\fIvname\^\fP is set to the
+\fIword\^\fP corresponding to this number\&.
+If this line is empty the selection list is
+printed again\&.
+Otherwise the value of the variable
+\fIvname\^\fP is set to
+\fInull\fP\&. The contents of the line read from standard input is
+saved in
+the variable
+\fBREPLY\fP\&. The
+\fIlist\^\fP is executed for each selection until a
+\fBbreak\^\fP or
+\fIend-of-file\^\fP is encountered\&.
+If the
+\fBREPLY\fP variable is set to
+\fInull\^\fP by the execution of
+\fIlist\fP, then the selection list is printed before
+displaying the
+\fBPS3\fP prompt for the next selection\&.
+.IP "case word\^ in (pattern\^ \(or pattern\^ \&.\!\&.\!\&.) list\^ ;; \&.\!\&.\!\&. esac" 10
+A
+\fBcase\fP command executes the
+\fIlist\^\fP associated with the first
+\fIpattern\^\fP that matches
+\fIword\fP\&. The form of the patterns is
+the same as that used for
+file-name generation (see
+\fIFile Name Generation\^\fP below)\&.
+The
+\fB;;\fP operator causes execution of
+\fBcase\fP to terminate\&.
+If
+\fB;&\fP is used in place of
+\fB;;\fP the next subsequent list, if any, is executed\&.
+.IP "if list\^ ;then list\^" 10
+\fBelif\fP \fIlist\^\fP \fB;then\fP \fIlist\^\fP \!] \&.\!\&.\!\&.
+[\! \fB;else\fP \fIlist\^\fP \!] \fB;fi\fP
+The
+\fIlist\^\fP following \fBif\fP is executed and,
+if it
+returns a zero exit status, the
+\fIlist\^\fP following
+the first
+\fBthen\fP is executed\&.
+Otherwise, the
+\fIlist\^\fP following \fBelif\fP
+is executed and, if its value is zero,
+the
+\fIlist\^\fP following
+the next
+\fBthen\fP is executed\&.
+Failing that, the
+\fBelse\fP \fIlist\^\fP is executed\&.
+If the
+\fBif\fP \fIlist\^\fP has non-zero exit status
+and there is no
+\fBelse\fP \fIlist\fP, then the
+\fBif\fP command returns a zero exit status\&.
+.IP "while list\^ ;do list\^ ;done" 10
+.IP "until list\^ ;do list\^ ;done" 10
+A
+\fBwhile\fP command repeatedly executes the
+\fBwhile\fP \fIlist\^\fP and, if the exit status of the last command in the list is zero, executes
+the
+\fBdo\fP \fIlist\fP; otherwise the loop terminates\&.
+If no commands in the
+\fBdo\fP \fIlist\^\fP are executed, then the
+\fBwhile\fP command returns a zero exit status;
+\fBuntil\fP may be used in place of
+\fBwhile\fP to negate
+the loop termination test\&.
+.IP "(list\^)" 10
+Execute
+\fIlist\^\fP in a separate environment\&.
+Note, that if two adjacent open parentheses are
+needed for nesting, a space must be inserted to avoid
+evaluation as an arithmetic command as described above\&.
+.IP "{ list\^;}" 10
+\fIlist\^\fP is simply executed\&.
+Note that unlike the metacharacters
+\fB(\fP and
+\fB)\fP, \fB{\fP and
+\fB}\fP are
+\fIreserved word\fPs and must occur
+at the beginning of a line or after a
+\fB;\fP in order to be recognized\&.
+.IP "[[ expression \^]]" 10
+Evaluates
+\fIexpression\^\fP and returns a zero exit status when
+\fIexpression\^\fP is true\&.
+See
+\fIConditional Expressions\^\fP below, for a description of
+\fIexpression\fP\&.
+.IP "function varname\^ { list\^ ;}" 10
+.IP "varname\^ () { list\^ ;}" 10
+Define a function which is referenced by
+\fIvarname\fP\&. A function whose
+\fIvarname\^\fP contains a
+\&. is called a discipline function and the portion
+of the
+\fIvarname\^\fP preceding the last
+\&. must refer to an existing variable\&.
+The body of the function is the
+\fIlist\^\fP of commands between
+\fB{\fP and
+\fB}\fP\&. A function defined with the \fBfunction\fP \fIvarname\^\fP
+syntax can also be used as an argument to the\&.
+special built-in command to get the equivalent behavior
+as if the \fIvarname\^\fP\fB()\fP syntax were used to define it\&.
+(See
+\fIFunctions\^\fP below\&.)
+.IP "time pipeline\^" 10
+If \fIpipeline\^\fP is omitted the user and system time for
+the current shell and completed child processes is printed
+on standard error\&.
+Otherwise,
+\fIpipeline\^\fP is executed and the elapsed time as well as
+the user and system time are printed on standard error\&.
+.IP "" 10
+The following reserved words
+are only recognized as such when they are the first word of a command
+and are not quoted:
+.IP "" 10
+\fBif then else elif fi case esac for
+while until do done { } function
+select time [[ ]] !\fP
+.SS "Variable Assignments\&."
+.PP
+One or more variable assignments can start a simple command
+or can be an arguments to the
+\fBtypeset\fP, \fBexport\fP, or
+\fBreadonly\fP special built-in commands\&.
+The syntax for an \fIassignment\^\fP is of the form:
+.IP "varname\^=word\^" 10
+.IP "varname\^[word\^]=word\^" 10
+No space is permitted between \fIvarname\^\fP and the \fB=\fP or
+between \fB=\fP and \fIword\^\fP\&.
+.IP "varname\^=(assign_list\^)" 10
+No space is permitted between \fIvarname\^\fP and the \fB=\fP\&.
+An \fIassign_list\^\fP can be one of the following:
+.RS
+.IP "word\^ \&.\&.\&." 10
+Indexed array assignment\&.
+.IP "[word\^]=word\^ \&.\!\&.\!\&." 10
+Associative array assignment\&.
+.IP "assignment\^ \&.\!\&.\!\&." 10
+Nested variable assignment\&.
+.IP "typeset options assignment\^ \&.\!\&.\!\&." 10
+Nested variable assignment\&. Multiple assignments
+can be specified by separating each of them with a \fB;\fP\&.
+.RE
+.SS "Comments\&."
+.PP
+A word beginning with
+\fB#\fP causes that word and all the following characters up to a new-line
+to be ignored\&.
+.SS "Aliasing\&."
+.PP
+The first word of each command is replaced by the text of an
+\fBalias\fP if an
+\fBalias\fP for this word has been defined\&.
+An
+\fBalias\fP name consists of any number of characters excluding metacharacters,
+quoting characters,
+file expansion characters,
+parameter expansion and command substitution
+characters,
+and
+\fB=\fP\&. The replacement string can contain any
+valid shell script
+including the metacharacters listed above\&.
+The first word of each command in the
+replaced text,
+other than
+any that are in the process of being replaced,
+will be tested for aliases\&.
+If the last character of the alias value is a
+\fIblank\^\fP then the word following the alias will also be checked for alias
+substitution\&.
+Aliases can be used to redefine
+built-in commands but cannot be used to redefine
+the reserved words listed above\&.
+Aliases can be created and listed with the
+\fBalias\fP command and can be removed with the
+\fBunalias\fP command\&.
+.PP
+\fIAliasing\^\fP is performed when
+scripts are read,
+not while they are executed\&.
+Therefore,
+for an alias to take effect
+the
+\fBalias
+definition command has to be executed before
+the command which references the alias is read\&.\fP
+.PP
+The following
+\fIexported\fP \fIaliases\fP are compiled into the shell
+but can be unset or redefined:
+.IP "   \(bu" 6
+autoload=\&'typeset -fu\&'
+.IP "   \(bu" 6
+command=\&'command \&'
+.IP "   \(bu" 6
+fc=hist
+.IP "   \(bu" 6
+float=\&'typeset -E\&'
+.IP "   \(bu" 6
+functions=\&'typeset -f\&'
+.IP "   \(bu" 6
+hash=\&'alias -t --\&'
+.IP "   \(bu" 6
+history=\&'hist -l\&'
+.IP "   \(bu" 6
+integer=\&'typeset -i\&'
+.IP "   \(bu" 6
+nameref=\&'typeset -n\&'
+.IP "   \(bu" 6
+nohup=\&'nohup \&'
+.IP "   \(bu" 6
+r=\&'hist -s\&'
+.IP "   \(bu" 6
+redirect=\&'command exec\&'
+.IP "   \(bu" 6
+stop=\&'kill -s STOP\&'
+.IP "   \(bu" 6
+times=\&'{ {time;} 2>&1;}\&'
+.IP "   \(bu" 6
+type=\&'whence -v\&'
+.SS "Tilde Substitution\&."
+.PP
+After alias substitution is performed, each word
+is checked to see if it begins with an unquoted
+\fB\(ap\fP\&. For tilde substitution,
+\fIword\^\fP also refers to the
+\fIword\^\fP portion of parameter expansion
+( see
+\fIParameter Expansion\fP below\&.)
+If it does, then the word up to a
+\fB/\fP is checked to see if it matches a user name in the
+password database (
+often the
+\fB/etc/passwd\fP file)\&.
+If a match is found, the
+\fB\(ap\fP and the matched login name are replaced by the
+login directory of the matched user\&.
+If no match is found, the original text is left unchanged\&.
+A
+\fB\(ap\fP by itself, or in front of a
+\fB/\fP, is replaced by
+\fB$HOME\fP\&. A
+\fB\(ap\fP followed by a
+\fB+\fP or
+\fB-\fP is replaced by the value of
+$PWDand
+$OLDPWDrespectively\&.
+.PP
+In addition,
+when expanding a
+\fIvariable assignment\fP, \fItilde\fP substitution is attempted when
+the value of the assignment
+begins with a
+\fB\(ap\fP, and when a
+\fB\(ap\fP appears after a
+\fB:\fP\&. The
+\fB:\fP also terminates a
+\fB\(ap\fP login name\&.
+.SS "Command Substitution\&."
+.PP
+The standard output from a command enclosed in
+parentheses preceded by a dollar sign (
+\fB$(\!)\fP)
+or a pair of grave accents (\^\fB`\^`\fP\^)
+may be used as part or all
+of a word;
+trailing new-lines are removed\&.
+In the second (obsolete) form, the string between the quotes is processed
+for special quoting characters before the command is executed (see
+\fIQuoting\^\fP below)\&.
+The command substitution
+\^\fB$(\^cat file\^)\fP\^
+can be replaced by the equivalent but faster
+\^\fB$(\^<file\^)\fP\^\&.
+.SS "Arithmetic Substitution\&."
+.PP
+An arithmetic expression enclosed in double
+parentheses preceded by a dollar sign (
+\fB$((\!))\fP)
+is replaced by the value of the arithmetic expression
+within the double parentheses\&.
+.SS "Process Substitution\&."
+.PP
+This feature is only available on
+versions of the UNIX operating system that support the
+\fB/dev/fd\fP directory for naming open files\&.
+Each command argument of the form
+\fB<(\fP\fIlist\^\fP\fB)\fP
+or
+\fB>(\fP\fIlist\^\fP\fB)\fP
+will run process
+\fIlist\fP asynchronously connected to some file in
+\fB/dev/fd\fP\&. The name of this file will become the argument to the command\&.
+If the form with
+\fB>\fP is selected then writing on this file will provide input for
+\fIlist\fP\&. If
+\fB<\fP is used,
+then the file passed as an argument will contain the output of the
+\fIlist\fP process\&.
+For example,
+.PP
+\fBpaste <(cut -f1\fP \fIfile1\fP\fB) <(cut -f3\fP \fIfile2\fP\fB) | tee >(\fP\fIprocess1\fP\fB) >(\fP\fIprocess2\fP\fB)\fP
+.PP
+\fIcuts\fP fields 1 and 3 from
+the files
+\fIfile1\fP and
+\fIfile2\fP respectively,
+\fIpastes\fP the results together, and
+sends it
+to the processes
+\fIprocess1\fP and
+\fIprocess2\fP, as well as putting it onto the standard output\&.
+Note that the file, which is passed as an argument to the command,
+is a UNIX
+\fIpipe\fP(2) so programs that expect to
+\fIlseek\fP(2) on the file will not work\&.
+.SS "Parameter Expansion\&."
+.PP
+A
+\fIparameter\^\fP is an
+\fIvariable\fP, one or more digits,
+or any of the characters
+\fB*\fP, \fB@\fP, \fB#\fP, \fB?\fP, \fB-\fP, \fB$\fP, and
+\fB!\^\fP\&. A
+\fIvariable\^\fP is denoted by a \fIvname\fP\&.
+To create a variable whose
+\fIvname\^\fP contains a .,
+a variable whose
+\fIvname\^\fP consists of everything before the last . must already exist\&.
+A
+\fIvariable\^\fP has a
+\fIvalue\^\fP and zero or more
+\fIattributes\fP\&. \fIVariables\^\fP can be assigned
+\fIvalues\^\fP and
+\fIattributes\fP by using the
+\fBtypeset\^\fP special built-in command\&.
+The attributes supported by the shell are described
+later with the
+\fBtypeset\^\fP special built-in command\&.
+Exported variables pass values and attributes to
+the environment\&.
+.PP
+The shell supports both indexed and associative arrays\&.
+An element of an array variable is referenced by a
+\fIsubscript\fP\&. A
+\fIsubscript\^\fP for an indexed array is denoted by
+an
+\fIarithmetic\fP \fIexpression\^\fP (see
+\fIArithmetic evaluation\fP below)
+between a
+\fB[\fP and a
+\fB]\fP\&. To assign values to an indexed array, use
+\fBset -A\fP \fIvname\fP \fIvalue\fP \&.\!\&.\!\&.\&.
+The value of all
+subscripts must be in the
+range of
+0 through 4095\&.
+Indexed arrays need not be declared\&.
+Any reference to a variable
+with a valid subscript is
+legal and an array will be created if necessary\&.
+.PP
+An associative array is created with the
+\fB-A\fP option to
+\fBtypeset\&.\fP A
+\fIsubscript\^\fP for an associative array is denoted by
+a string enclosed between
+\fB[\fP and
+\fB]\fP\&.
+.PP
+Referencing any array without a subscript
+is equivalent to referencing the array with subscript 0\&.
+.PP
+The
+\fIvalue\^\fP of a
+\fIvariable\^\fP may be assigned by writing:
+.PP
+\fIvname\fP\fB=\fP\fIvalue\^\!\fP [\!
+\fIvname\fP\fB=\fP\fIvalue\^\fP \!] \&.\!\&.\!\&.
+.PP
+or
+.PP
+\fIvname\fP\fB[\fP\fIsubscript\fP\fB]=\fP\fIvalue\^\!\fP [\!
+\fIvname\fP\fB[\fP\fIsubscript\fP\fB]=\fP\fIvalue\^\fP \!] \&.\!\&.\!\&.
+.PP
+Note that no space is allowed before or after the
+\fB=\fP\&.
+.PP
+A
+\fInameref\^\fP is a variable that is a reference to another variable\&.
+A nameref is created with the
+\fB-n\fP attribute of
+\fBtypeset\fP\&. The value of the variable at the time of the
+\fBtypeset\fP command becomes the variable that will be referenced whenever
+the nameref variable is used\&.
+The name of a nameref variable cannot contain a \&.\&.
+When a variable or function name contains a \&., and the portion
+of the name up to the first . matches the
+name of a nameref, the variable referred to is obtained by
+replacing the nameref portion with the name of the variable
+referenced by the nameref\&.
+A nameref provides a convenient way to refer to the variable
+inside a function whose name is passed as an argument to a function\&.
+For example, if the name of a variable is passed as the first
+argument to a function, the command
+.PP
+typeset -n var=$1
+.PP
+inside the function causes references and assignments to
+\fBvar\fP to be references and assignments to the variable whose
+name has been passed to the function\&.
+.PP
+If either of the floating point attributes,
+\fB-E\fP, or
+\fB-F\fP, or the integer attribute,
+\fB-i\fP, is set for
+\fIvname\fP, then the
+\fIvalue\^\fP is subject to arithmetic evaluation as described below\&.
+.PP
+Positional parameters,
+parameters denoted by a number,
+may be assigned values with the
+\fBset\^\fP special built-in command\&.
+Parameter
+\fB$0\fP is set from argument zero when the shell
+is invoked\&.
+.PP
+The character
+\fB$\fP is used to introduce substitutable
+\fIparameters\fP\&.
+.IP "${parameter\^}" 10
+The shell
+reads all the characters from
+\fB${\fP to the matching
+\fB}\fP as part of the same word even if it contains
+braces or metacharacters\&.
+The value, if any, of the parameter is substituted\&.
+The braces are required when
+\fIparameter\^\fP is followed by a letter, digit, or underscore
+that is not to be interpreted as part of its name,
+when the variable name contains a \&.,
+or when a variable is subscripted\&.
+If
+\fIparameter\^\fP is one or more digits then it is a positional parameter\&.
+A positional parameter of more than one digit must be
+enclosed in braces\&.
+If
+\fIparameter\^\fP is
+\fB*\fP or
+\fB@\fP, then all the positional
+parameters, starting with
+\fB$1\fP, are substituted
+(separated by a field separator character)\&.
+If an array
+\fIvname\^\fP with subscript
+\fB*\fP or
+\fB@\fP is used,
+then the value
+for each of the
+elements
+is substituted
+(separated by a field separator character)\&.
+.IP "${#parameter\^}" 10
+If
+\fIparameter\^\fP is
+\fB*\fP or
+\fB@\fP, the number of positional parameters is substituted\&.
+Otherwise, the length of the value of the
+\fIparameter\^\fP is substituted\&.
+.IP "${#vname[*]}" 10
+The number of elements in the array
+\fIvname\^\fP is substituted\&.
+.IP "${!vname\^}" 10
+Expands to the name of the variable referred to by
+\fIvname\fP\&. This will be
+\fIvname\^\fP except when
+\fIvname\^\fP is a name reference\&.
+.IP "${!vname\^[subscript\^]}" 10
+Expands to name of the subscript unless
+\fIsubscript\^\fP is
+\fB*\fP, or
+\fB@\fP\&. When
+\fIsubscript\^\fP is
+\fB*\fP, the list of array subscripts for \fIvname\^\fP
+is generated\&.
+For a variable that is not an array, the value is 0 if the variable
+is set\&. Otherwise it is null\&.
+When
+\fIsubscript\^\fP is
+\fB@\fP, same as above, except that when used in double quotes,
+each array subscript yields a separate
+argument\&.
+.IP "${!prefix\^*}" 10
+Expands to the names of the variables whose names begin with
+\fIprefix\fP\&.
+.IP "${parameter\^:-word\^}" 10
+If
+\fIparameter\^\fP is set and is non-null then substitute its value;
+otherwise substitute
+\fIword\fP\&.
+.IP "${parameter\^:=word\^}" 10
+If
+\fIparameter\^\fP is not set or is null then set it to
+\fIword\fP; the value of the parameter is then substituted\&.
+Positional parameters may not be assigned to
+in this way\&.
+.IP "${parameter\^:?word\^}" 10
+If
+\fIparameter\^\fP is set and is non-null then substitute its value;
+otherwise, print
+\fIword\^\fP and exit from the shell\&.
+If
+\fIword\^\fP is omitted then a standard message is printed\&.
+.IP "${parameter\^:+word\^}" 10
+If
+\fIparameter\^\fP is set and is non-null then substitute
+\fIword\fP; otherwise substitute nothing\&.
+.IP "${parameter\^:offset\^:length\^}" 10
+.IP "${parameter\^:offset\^}" 10
+Expands to the portion of the value of
+\fIparameter\^\fP starting at the character determined by expanding
+\fIoffset\^\fP as an arithmetic expression and consisting of the
+number of characters determined by the arithmetic expression
+defined by
+\fIlength\&.\fP In the second form, the remainder of the value is used\&.
+If
+\fIparameter\^\fP is
+\fB*\fP or
+\fB@\fP, or is an array name indexed by
+\fB*\fP or
+\fB@\fP, then
+\fIoffset\^\fP and
+\fIlength\^\fP refer to the array index and number
+of elements respectively\&.
+.IP "${parameter\^#pattern\^}" 10
+.IP "${parameter\^##pattern\^}" 10
+If
+the shell
+\fIpattern\^\fP matches the beginning of the value of
+\fIparameter\fP, then the value of
+this expansion is the value of the
+\fIparameter\^\fP with the matched portion deleted;
+otherwise the value of this
+\fIparameter\^\fP is substituted\&.
+In the first form the smallest matching pattern is deleted and in the
+second form the largest matching pattern is deleted\&.
+When
+\fIparameter\^\fP is
+\fB@\fP, \fB*\fP, or an array variable with subscript
+\fB@\fP, or
+\fB*\fP, the substring operation is applied to each element in turn\&.
+.IP "${parameter\^%pattern\^}" 10
+.IP "${parameter\^%%pattern\^}" 10
+If
+the shell
+\fIpattern\^\fP matches the end of the value of
+\fIparameter\fP, then the value of
+this expansion is the value of the
+\fIparameter\^\fP with the matched part deleted;
+otherwise substitute the value of
+\fIparameter\fP\&. In the first form the smallest matching pattern is deleted and in the
+second form the largest matching pattern is deleted\&.
+When
+\fIparameter\^\fP is
+\fB@\fP, \fB*\fP, or an array variable with subscript
+\fB@\fP, or
+\fB*\fP, the substring operation is applied to each element in turn\&.
+.IP "${parameter\^/pattern\^/string\^}" 10
+.IP "${parameter\^//pattern\^/string\^}" 10
+Expands
+\fIparameter\^\fP and replaces
+\fIpattern\^\fP with the given
+\fIstring\&.\fP In the first form,
+only the first occurrence of
+\fIpattern\^\fP is replaced\&.
+In the second form,
+each match for
+\fIpattern\^\fP is replaced by the given
+\fIstring\&.\fP When
+\fIstring\^\fP is null, the
+\fIpattern\^\fP will be deleted and the
+\fB/\fP in front of
+\fIstring\^\fP may be omitted\&.
+When
+\fIparameter\^\fP is
+\fB@\fP, \fB*\fP, or an array variable with subscript
+\fB@\fP, or
+\fB*\fP, the substitution operation is applied to each element in turn\&.
+.PP
+In the above,
+\fIword\fP is not evaluated unless it is
+to be used as the substituted string,
+so that, in the following example,
+\fBpwd\fP is executed only if
+\fBd\fP is not set or is null:
+.PP
+print \!${d:-\^$(\^pwd\^)\^}
+.PP
+If the colon (
+\fB:\fP \fB)\fP is omitted from the above expressions,
+then the shell only checks whether
+\fIparameter\^\fP is set or not\&.
+.PP
+The following
+parameters
+are automatically set by the shell:
+.IP "#" 10
+The number of positional parameters in decimal\&.
+.IP "-" 10
+Options supplied to the shell on invocation or by
+the
+\fBset\fP command\&.
+.IP "?" 10
+The decimal value returned by the last executed command\&.
+.IP "$" 10
+The process number of this shell\&.
+.IP "_" 10
+Initially, the value of
+\fB_\fP is an absolute pathname of the shell or script being executed
+as passed in the
+\fIenvironment\fP\&. Subsequently it is assigned the last argument of the previous command\&.
+This parameter is not set for commands which are asynchronous\&.
+This parameter is also used to hold the name of the matching
+MAILfile when checking for mail\&.
+.IP "!" 10
+The process number of the last background command invoked\&.
+.IP "\&.sh\&.edchar" 10
+This variable contains the value of the keyboard character
+(or sequence of characters if the first character is an ESC, ascii
+\fB033\fP \fB)\fP that has
+been entered when processing a
+KEYBDtrap\&.
+If the value is changed as part of the trap action, then the new
+value replaces the key (or key sequence) that caused the trap\&.
+.IP "\&.sh\&.edcol" 10
+The character position of the cursor at the time of the most recent
+KEYBDtrap\&.
+.IP "\&.sh\&.edmode" 10
+The value is set to ESC when processing a
+KEYBDtrap while in
+\fBvi\fP insert mode\&. (See
+\fIVi Editing Mode\fP \fI\^\fP below\&.)
+Otherwise,
+\fB\&.sh\&.edmode\fP is null when processing a
+KEYBDtrap\&.
+.IP "\&.sh\&.edtext" 10
+The characters in the input buffer at the time of the most recent
+KEYBDtrap\&.
+The value is null when not processing a
+KEYBDtrap\&.
+.IP "\&.sh\&.name" 10
+Set to the name of the variable at the time of a
+\fBset\fP or
+\fBget\fP discipline is invoked\&.
+.IP "\&.sh\&.subscript" 10
+Set to the name subscript of the variable at the time of a
+\fBset\fP or
+\fBget\fP discipline is invoked\&.
+.IP "\&.sh\&.value" 10
+Set to the value of the variable at the time of a
+\fBset\fP discipline\&.
+.IP "\&.sh\&.version" 10
+Set to a value that identifies the version of this shell\&.
+.IP "LINENO" 10
+The line number of the current line within the script or
+function being executed\&.
+.IP "OLDPWD" 10
+The previous working directory set by the
+\fBcd\fP command\&.
+.IP "OPTARG" 10
+The value of the last option argument processed by the
+\fBgetopts\fP built-in command\&.
+.IP "OPTIND" 10
+The index of the last option argument processed by the
+\fBgetopts\fP built-in command\&.
+.IP "PPID" 10
+The process number of the parent of the shell\&.
+.IP "PWD" 10
+The present working directory set by the
+\fBcd\fP command\&.
+.IP "RANDOM" 10
+Each time this variable is referenced, a random integer,
+uniformly distributed between 0 and 32767, is generated\&.
+The sequence of random numbers can be initialized by assigning
+a numeric value to
+\fBRANDOM\fP\&.
+.IP "REPLY" 10
+This variable is set by the
+\fBselect\fP statement and by
+the
+\fBread\fP built-in command when no arguments are supplied\&.
+.IP "SECONDS" 10
+Each time this variable is referenced, the number of
+seconds since shell invocation is returned\&.
+If this variable is
+assigned a value, then the value returned upon reference will
+be the value that was assigned plus the number of seconds since the assignment\&.
+.PP
+The following
+variables
+are used by the shell:
+.IP "CDPATH" 10
+The search path for the
+\fBcd\fP command\&.
+.IP "COLUMNS" 10
+If this variable is set,
+the value is used to define the width of the edit window
+for the shell edit modes and for printing
+\fBselect\fP lists\&.
+.IP "EDITOR" 10
+If the value of this variable ends in
+\fIemacs\fP, \fIgmacs\fP, or
+\fIvi\fP and the
+VISUALvariable is not set,
+then the corresponding option
+(see Special Command
+\fBset\fP below)
+will be turned on\&.
+.IP "ENV" 10
+If this variable is set, then
+parameter expansion, command substitution, and arithmetic substitution,
+are performed on
+the value to generate
+the pathname of the script that will be
+executed when the shell
+is invoked\&.
+(See
+\fIInvocation\^\fP below\&.)
+This file is typically used for
+\fIalias\fP and
+\fIfunction\fP definitions\&.
+.IP "FCEDIT" 10
+Obsolete name for
+the default editor name for the
+\fBhist\fP command\&.
+FCEDITis not used when
+HISTEDITis set\&.
+.IP "FIGNORE" 10
+A pattern that defines the set of filenames that will be
+ignored when performing filename matching\&.
+.IP "FPATH" 10
+The search path for function definitions\&.
+This path is searched when a function with the
+\fB-u\fP attribute is referenced and when a command is not found\&.
+If an executable file is found, then it is read and executed
+in the current environment\&.
+.IP "IFS" 10
+Internal field separators,
+normally
+\fBspace\fP, \fBtab\fP, and
+\fBnew-line\fP that are used to separate the results of
+command substitution or parameter expansion
+and to separate fields with the built-in command
+\fBread\fP\&. The first character of the
+\fBIFS\fP variable is used to separate arguments for the
+\fB"$*"
+substitution\&. (See\fP \fIQuoting\fP below\&.)
+Each single occurrence of
+an
+\fBIFS\fP character in the string to be split,
+except
+\fBspace\fP, \fBtab\fP, and
+\fBnew-line\fP, separates a field\&.
+One or more
+\fBspace\fP, \fBtab\fP, or
+\fBnew-line\fP characters separate a field\&.
+.IP "HISTEDIT" 10
+Name for
+the default editor name for the
+\fBhist\fP command\&.
+.IP "HISTFILE" 10
+If this variable is set when the shell is invoked, then
+the value is the pathname of the file that will be
+used to store the command history\&.
+(See
+\fICommand re-entry\^\fP below\&.)
+.IP "HISTSIZE" 10
+If this variable is set when the shell is invoked, then
+the number of previously entered commands that
+are accessible by this shell
+will be greater than or equal to this number\&.
+The default is 128\&.
+.IP "HOME" 10
+The default argument (home directory) for the
+\fBcd\fP command\&.
+.IP "LINES" 10
+If this variable is set,
+the value is used to determine the column length for printing
+\fBselect\fP lists\&.
+Select lists will print vertically until about two-thirds of
+LINESlines are filled\&.
+.IP "MAIL" 10
+If this variable is set to the name of a mail file
+\fIand\^\fP the
+MAILPATHvariable is not set,
+then the shell informs the user of arrival of mail
+in the specified file\&.
+.IP "MAILCHECK" 10
+This variable specifies how often (in seconds) the
+shell will check for changes in the modification time
+of any of the files specified by the
+MAILPATHor
+MAILvariables\&.
+The default value is 600 seconds\&.
+When the time has elapsed
+the shell will check before issuing the next prompt\&.
+.IP "MAILPATH" 10
+A colon (
+\fB:\fP)
+separated list of file names\&.
+If this variable is set
+then the shell informs the user of
+any modifications to the specified files
+that have occurred within the last
+MAILCHECKseconds\&.
+Each file name can be followed by a
+\fB?\fP and a message that will be printed\&.
+The message will undergo parameter expansion, command substitution,
+and arithmetic substitution
+with the variable
+\fB$_\fP defined as the name of the file that has changed\&.
+The default message is
+\fIyou\fP \fIhave\fP \fImail\fP \fIin\fP \fI$_\^\&.\fP
+.IP "PATH" 10
+The search path for commands (see
+\fIExecution\^\fP below)\&.
+The user may not change
+\fBPATH\fP if executing under
+\fBrksh\fP (except in
+\fB\&.profile\^)\&.\fP
+.IP "PS1" 10
+The value of this variable is expanded for parameter
+expansion, command substitution, and arithmetic substitution to define the
+primary prompt string which by default is
+``\fB$\!\!\!\fP\&'\&'\&. The character
+\fB!\fP in the primary prompt string is replaced by the
+\fIcommand\^\fP number (see
+\fICommand Re-entry\fP \fI\^\fP below)\&.
+Two successive occurrences of
+\fB!\fP will produce a single
+\fB!\fP when the prompt string is printed\&.
+.IP "PS2" 10
+Secondary prompt string, by default
+``\fB> \!\fP\&'\&'\&.
+.IP "PS3" 10
+Selection prompt string
+used within a
+\fBselect\fP loop, by default
+``\fB#? \!\fP\&'\&'\&.
+.IP "PS4" 10
+The value of this variable is expanded for parameter evaluation,
+command substitution, and arithmetic substitution
+and precedes each line of an execution trace\&.
+If omitted, the execution trace prompt is
+``\fB+ \!\fP\&'\&'\&.
+.IP "SHELL" 10
+The pathname of the
+\fIshell\^\fP is kept in the environment\&.
+At invocation, if the basename of this variable is
+\fBrsh\fP, \fBrksh\fP, or
+\fBkrsh\fP, then the shell becomes restricted\&.
+.IP "TMOUT" 10
+If set to a value greater than zero,
+the
+\fBread\fP built-in command terminates after
+TMOUTseconds when input is from a terminal\&.
+Otherwise,
+the shell will terminate if a line is not entered within
+the prescribed number of seconds while reading from a terminal\&.
+(Note that the shell can be compiled with a maximum bound
+for this value which cannot be exceeded\&.)
+.IP "VISUAL" 10
+If the value of this variable ends in
+\fIemacs\fP, \fIgmacs\fP, or
+\fIvi\fP then the corresponding option
+(see Special Command
+\fBset\fP below)
+will be turned on\&.
+.PP
+The shell gives default values to
+\fBPATH\fP, \fBPS1\fP, \fBPS2\fP,
+\fBPS3\fP, \fBPS4\fP, \fBMAILCHECK\fP, \fBHISTEDIT\fP,
+\fBTMOUT\fP and \fBIFS\fP,
+while
+\fBHOME\fP, \fBSHELL\fP, \fBENV\fP, and
+\fBMAIL\fP are
+not set at all by the shell (although
+\fBHOME\fP \fIis\^\fP set by
+\fIlogin\fP(1))\&. On some systems
+\fBMAIL\fP and
+\fBSHELL\fP are also
+set by
+\fIlogin\fP(1)\&.
+.SS "Field Splitting"
+.PP
+After parameter expansion and command substitution,
+the results of substitutions are scanned for the field separator
+characters (those found in
+\fBIFS\^\fP)
+and split into distinct fields where such characters are found\&.
+Explicit null fields (\^\fB"\^"\fP or \fB(fm\^(fm\fP\^) are retained\&.
+Implicit null fields
+(those resulting from
+\fIparameters\^\fP that have no values or command substitutions with no output) are removed\&.
+.SS "File Name Generation\&."
+.PP
+Following splitting, each field is scanned for the characters
+\fB*\fP, \fB?\fP, \fB(\fP, and
+\fB[\!\^\fP unless the
+\fB-f\fP option has been set\&.
+If one of these characters appears
+then the word is regarded as a
+\fIpattern\fP\&. Each file name component that contains any pattern character
+is replaced with a lexicographically sorted set of names
+that matches the pattern
+from
+that directory\&.
+If no file name is found that matches the pattern, then
+that component of the filename is left unchanged\&.
+If
+\fBFIGNORE\fP is set,
+then each file name component
+that matches the pattern defined by the value of
+\fBFIGNORE\fP is ignored when generating the matching filenames\&.
+The names
+\&. and
+\fB\&.\&.\fP are also ignored\&.
+If
+\fBFIGNORE\fP is not set,
+the character
+\&. at the start of each file name component
+will be ignored unless the first character of the pattern
+corresponding to this component is the character
+\&. itself\&.
+Note, that for other
+uses of pattern matching the
+\fB/\fP and
+\&. are not treated specially\&.
+.IP "*" 10
+Matches any string, including the null string\&.
+.IP "?" 10
+Matches any single character\&.
+.IP "\^\&.\!\&.\!\&.\^" 10
+Matches any one of the enclosed characters\&.
+A pair of characters separated by
+\fB-\fP matches any
+character lexically between the pair, inclusive\&.
+If the first character following the opening
+\fB[\!\^\fP is a
+\fB!\fP then any character not enclosed is matched\&.
+A
+\fB-\fP can be included in the character set by putting it as the
+first or last character\&.
+Within
+\fB[\!\^\fP and
+\fB\!]\^\fP character classes can be specified with the syntax
+\fB[:\fP\fIclass\fP\fB:]\fP
+where class is one of the following:
+.IP "" 10
+\fBalnum alpha cntrl digit graph lower print punct space upper xdigit\fP
+.PP
+A
+\fIpattern-list\fP is a list of one or more patterns separated from each other
+with a
+\fB\(or\fP\&. Composite patterns can be formed with one or more of the following:
+.IP "?(pattern-list\^)" 10
+Optionally matches any one of the given patterns\&.
+.IP "*(pattern-list\^)" 10
+Matches zero or more occurrences of the given patterns\&.
+.IP "+(pattern-list\^)" 10
+Matches one or more occurrences of the given patterns\&.
+.IP "@(pattern-list\^)" 10
+Matches exactly one of the given patterns\&.
+.IP "!(pattern-list\^)" 10
+Matches anything except one of the given patterns\&.
+.SS "Quoting\&."
+.PP
+Each of the
+\fImetacharacters\^\fP listed earlier (see
+\fIDefinitions\^\fP above)
+has a special meaning to the shell
+and causes termination of a word unless quoted\&.
+A character may be
+\fIquoted\^\fP (i\&.e\&., made to stand for itself)
+by preceding
+it with a
+\fB\e\fP\&. The pair
+\fB\enew-line\fP is removed\&.
+All characters enclosed between a pair of single quote marks
+(\^\fB\&'\^\&'\fP\^)
+that is not preceded by a
+\fB$\fP are quoted\&.
+A single quote cannot appear within the single quotes\&.
+A single quoted string preceded an unquoted
+\fB$\fP is processed as an ANSI-C string
+except that
+\fB\e0\fP within the string causes the remainder of the
+string to be ignored and
+\fB\eE\fP is equivalent to the escape character
+(ascii
+\fB033\fP)\&. Inside double quote marks
+(\fB"\^"\fP),
+parameter and command substitution occur and
+\fB\e\fP quotes the characters
+\fB\e\fP, \fB`\fP, \fB"\fP,
+and
+\fB$\fP\&. The meaning of
+\fB$*\fP and
+\fB$@\fP is identical when not quoted or when used as a variable assignment value
+or as a file name\&.
+However, when used as a command argument,
+\fB"$*"
+is equivalent to\fP \fB"$1\fP\fId\fP\fB\!$2\fP\fId\fP\!\&.\!\&.\!\&.\fB"\fP,
+where
+\fId\fP is the first character of the
+\fBIFS\fP variable, whereas
+\fB"$@"
+is equivalent to\fP \fB"$1"\!\fP \fB"$2"\!
+\&.\!\&.\!\&.\^\&.
+Inside grave quote marks
+(\fP\fB`\^`\fP),
+\fB\e\fP quotes the characters
+\fB\e\fP, \fB`\fP, and
+\fB$\fP\&. If the grave quotes occur within double quotes then
+\fB\e\fP also quotes the character
+\fB"\fP\&.
+.PP
+The special meaning of reserved words or aliases can be removed by quoting any
+character of the reserved word\&.
+The recognition of function names or built-in command names listed below
+cannot be altered by quoting them\&.
+.SS "Arithmetic Evaluation\&."
+.PP
+The shell performs arithmetic evaluation for
+arithmetic substitution, to evaluate an arithmetic command,
+to evaluate an indexed array subscript,
+and to evaluate arguments to
+the built-in commands
+\fBshift\^\fP and
+\fBlet\fP\&. Evaluations are performed using
+double precision floating point
+arithmetic\&.
+Floating point constants follow the ANSI-C programming language
+conventions\&.
+Integer constants are of the form
+[\!\fIbase\fP\fB#\^\fP\!]\fIn\^\fP
+where
+\fIbase\^\fP is a decimal number between two and sixty-four
+representing the arithmetic base
+and
+\fIn\^\fP is a number in that base\&.
+The digits above 9 are represented
+by the lower case characters, the upper case characters,
+\fB@\fP, and
+\fB_\fP respectively\&.
+For bases less than 36, upper and lower case
+character can be used interchangeably\&.
+If
+\fIbase\^\fP is omitted
+then base 10 is used\&.
+.PP
+An arithmetic expression uses the same syntax, precedence, and
+associativity of
+expression as the C language\&.
+All the C language operators
+that apply to floating point quantities can be used\&.
+In addition, when the value of an arithmetic variable
+or sub-expression can be represented as a long integer,
+all C language integer arithmetic operations can be performed\&.
+Variables can be referenced by name within an arithmetic expression
+without using the parameter expansion syntax\&.
+When a variable is referenced, its value is evaluated as
+an arithmetic expression\&.
+The following math library functions can be used with an arithmetic
+expression:
+.PP
+\fBabs acos asin atan cos cosh exp int log sin sinh sqrt tan tanh\fP
+.PP
+An internal representation of a
+\fIvariable\^\fP as a double precision floating point can be specified with the
+\fB-E\fP [\!\fIn\^\fP\!]
+or
+\fB-F\fP [\!\fIn\^\fP\!]
+option of the
+\fBtypeset\fP special built-in command\&.
+The
+\fB-E\fP option causes the expansion of the value to be represented using
+scientific notation when it is expanded\&.
+The optional option argument
+\fIn\fP defines the number of significant figures\&.
+The
+\fB-F\fP option causes the expansion to be represented as a floating decimal number
+when it is expanded\&.
+The optional option argument
+\fIn\fP defines the number of places after the decimal point in this case\&.
+.PP
+An internal integer representation of a
+\fIvariable\^\fP can be specified with the
+\fB-i\fP [\!\fIn\^\fP\!]
+option of the
+\fBtypeset\fP special built-in command\&.
+The optional option argument
+\fIn\fP specifies an arithmetic base to be used when expanding the variable\&.
+If you do not specify an arithmetic base,
+the first assignment to the
+variable determines the arithmetic base\&.
+.PP
+Arithmetic evaluation is performed on the value of each
+assignment to a variable with the
+\fB-E\fP, \fB-F\fP, or
+\fB-i\fP attribute\&.
+Assigning a floating point number to a
+variable whose type is an integer causes the fractional
+part to be truncated\&.
+.SS "Prompting\&."
+.PP
+When used interactively,
+the shell prompts with the value of
+\fBPS1\fP after expanding it for parameter expansion, command substitution, and
+arithmetic substitution,
+before reading a command\&.
+In addition, each single
+\fB!\fP in the prompt is replaced by the command number\&.
+A
+\fB!!\fP is required to place
+\fB!\fP in the prompt\&.
+If at any time a new-line is typed and further input is needed
+to complete a command, then the secondary prompt
+(i\&.e\&., the value of
+\fBPS2\fP) is issued\&.
+.SS "Conditional Expressions\&."
+.PP
+A
+\fIconditional expression\fP is used with the
+\fB[[\fP compound command to test attributes of files and to compare
+strings\&.
+Field splitting and file name generation are
+not performed on the words between
+\fB[[\fP and
+\fB]]\fP\&. Each expression can be constructed from one or more
+of the following unary or binary expressions:
+.IP "string" 10
+True, if
+\fIstring\fP is not null\&.
+.IP "-a file" 10
+Same is \fB-e\fP below\&.
+This is obsolete\&.
+.IP "-b file" 10
+True, if
+\fIfile\fP exists and is a block special file\&.
+.IP "-c file" 10
+True, if
+\fIfile\fP exists and is a character special file\&.
+.IP "-d file" 10
+True, if
+\fIfile\fP exists and is a directory\&.
+.IP "-e file" 10
+True, if
+\fIfile\fP exists\&.
+.IP "-f file" 10
+True, if
+\fIfile\fP exists and is an ordinary file\&.
+.IP "-g file" 10
+True, if
+\fIfile\fP exists and is has its setgid bit set\&.
+.IP "-k file" 10
+True, if
+\fIfile\fP exists and is has its sticky bit set\&.
+.IP "-n string" 10
+True, if length of
+\fIstring\fP is non-zero\&.
+.IP "-o option" 10
+True, if option named
+\fIoption\fP is on\&.
+.IP "-p file" 10
+True, if
+\fIfile\fP exists and is a fifo special file or a pipe\&.
+.IP "-r file" 10
+True, if
+\fIfile\fP exists and is readable by current process\&.
+.IP "-s file" 10
+True, if
+\fIfile\fP exists and has size greater than zero\&.
+.IP "-t fildes" 10
+True, if file descriptor number
+\fIfildes\fP is open and associated with a terminal device\&.
+.IP "-u file" 10
+True, if
+\fIfile\fP exists and is has its setuid bit set\&.
+.IP "-w file" 10
+True, if
+\fIfile\fP exists and is writable by current process\&.
+.IP "-x file" 10
+True, if
+\fIfile\fP exists and is executable by current process\&.
+If
+\fIfile\fP exists and is a directory, then true if the current process
+has permission to search in the directory\&.
+.IP "-z string" 10
+True, if length of
+\fIstring\fP is zero\&.
+.IP "-L file" 10
+True, if
+\fIfile\fP exists and is a symbolic link\&.
+.IP "-O file" 10
+True, if
+\fIfile\fP exists and is owned by the effective user id of this process\&.
+.IP "-G file" 10
+True, if
+\fIfile\fP exists and its group matches the effective group id of this process\&.
+.IP "-S file" 10
+True, if
+\fIfile\fP exists and is a socket\&.
+.IP "file1 -nt file2" 10
+True, if
+\fIfile1\fP exists and is newer than
+\fIfile2\fP\&.
+.IP "file1 -ot file2" 10
+True, if
+\fIfile1\fP exists and is older than
+\fIfile2\fP\&.
+.IP "file1 -ef file2" 10
+True, if
+\fIfile1\fP and
+\fIfile2\fP exist and refer to the same file\&.
+.IP "string == pattern" 10
+True, if
+\fIstring\fP matches
+\fIpattern\fP\&. Any part of
+\fIpattern\^\fP can be quoted to cause it to be matched as a string\&.
+.IP "string = pattern" 10
+Same as \fB==\fP above, but is obsolete\&.
+.IP "string != pattern" 10
+True, if
+\fIstring\fP does not match
+\fIpattern\fP\&.
+.IP "string1 < string2" 10
+True, if
+\fIstring1\fP comes before
+\fIstring2\fP based on ASCII value of their characters\&.
+.IP "string1 > string2" 10
+True, if
+\fIstring1\fP comes after
+\fIstring2\fP based on ASCII value of their characters\&.
+.IP "" 10
+The following obsolete arithmetic comparisons are also permitted:
+.IP "exp1 -eq exp2" 10
+True, if
+\fIexp1\fP is equal to
+\fIexp2\fP\&.
+.IP "exp1 -ne exp2" 10
+True, if
+\fIexp1\fP is not equal to
+\fIexp2\fP\&.
+.IP "exp1 -lt exp2" 10
+True, if
+\fIexp1\fP is less than
+\fIexp2\fP\&.
+.IP "exp1 -gt exp2" 10
+True, if
+\fIexp1\fP is greater than
+\fIexp2\fP\&.
+.IP "exp1 -le exp2" 10
+True, if
+\fIexp1\fP is less than or equal to
+\fIexp2\fP\&.
+.IP "exp1 -ge exp2" 10
+True, if
+\fIexp1\fP is greater than or equal to
+\fIexp2\fP\&.
+.PP
+In each of the above expressions, if
+\fIfile\fP is of the form
+\fB/dev/fd/\fP\fIn\fP,
+where
+\fIn\fP is an integer,
+then the test is applied to the open file whose
+descriptor number is
+\fIn\fP\&.
+.PP
+A compound expression can be constructed from these primitives by
+using any of the following, listed in decreasing order of precedence\&.
+.IP "(expression)" 10
+True, if
+\fIexpression\fP is true\&.
+Used to group expressions\&.
+.IP "! expression" 10
+True if
+\fIexpression\fP is false\&.
+.IP "expression1 && expression2" 10
+True, if
+\fIexpression1\fP and
+\fIexpression2\fP are both true\&.
+.IP "expression1 \(or\(or expression2" 10
+True, if either
+\fIexpression1\fP or
+\fIexpression2\fP is true\&.
+.SS "Input/Output\&."
+.PP
+Before a command is executed, its input and output
+may be redirected using a special notation interpreted by the shell\&.
+The following may appear anywhere in a simple-command
+or may precede or follow a
+\fIcommand\^\fP and are
+\fInot\^\fP passed on to the invoked command\&.
+Command substitution, parameter expansion,
+and arithmetic substitution occur before
+\fIword\^\fP or
+\fIdigit\^\fP is used except as noted below\&.
+File name generation
+occurs only if the shell is interactive and
+the pattern matches a single file,
+Field splitting is not performed\&.
+.IP "< word" 10
+Use file
+\fIword\^\fP as standard input (file descriptor 0)\&.
+.IP "> word" 10
+Use file
+\fIword\^\fP as standard output (file descriptor 1)\&.
+If the file does not exist then it is created\&.
+If the file exists, and the
+\fBnoclobber\fP option is on,
+this causes an error;
+otherwise, it is truncated to zero length\&.
+.IP ">| word" 10
+Sames as
+\fB>\fP, except that it overrides the
+\fBnoclobber\fP option\&.
+.IP ">> word" 10
+Use file
+\fIword\^\fP as standard output\&.
+If the file exists then output is appended to it (by first seeking to the end-of-file);
+otherwise, the file is created\&.
+.IP "<> word" 10
+Open file
+\fIword\^\fP for reading and writing
+as standard input\&.
+.IP "<<[-]word" 10
+The shell input is read up to a line that is the same as
+\fIword\fP after any quoting has been removed remove,
+or to an end-of-file\&.
+No parameter substitution, command substitution, arithmetic substitution or
+file name generation is performed on
+\fIword\fP\&. The resulting document,
+called a
+\fIhere-document\fP, becomes
+the standard input\&.
+If any character of
+\fIword\^\fP is quoted, then no interpretation
+is placed upon the characters of the document;
+otherwise, parameter expansion, command substitution, and arithmetic
+substitution occur,
+\fB\enew-line\fP is ignored,
+and
+\fB\e\fP must be used to quote the characters
+\fB\e\fP, \fB$\fP, \fB`\fP\&. If
+\fB-\fP is appended to
+\fB<<\fP, then all leading tabs are stripped from
+\fIword\^\fP and from the document\&.
+.IP "<& digit" 10
+The standard input is duplicated from file descriptor
+\fIdigit\fP (see
+\fIdup\fP(2))\&. Similarly for the standard output using
+\fB>&\^\fP\fIdigit\fP\&.
+.IP "<&-" 10
+The standard input is closed\&.
+Similarly for the standard output using
+\fB>&-\fP\&.
+.IP "<&p" 10
+The input from the co-process is moved to standard input\&.
+.IP ">&p" 10
+The output to the co-process is moved to standard output\&.
+.IP "" 10
+If one of the above is preceded by a digit,
+then the
+file descriptor number referred to is that specified
+by the digit
+(instead of the default 0 or 1)\&.
+For example:
+.IP "" 10
+\&.\!\&.\!\&. \!2>&1
+.IP "" 10
+means file descriptor 2 is to be opened
+for writing as a duplicate
+of file descriptor 1\&.
+.IP "" 10
+The order in which redirections are specified is significant\&.
+The shell evaluates each redirection in terms of the
+(\fIfile descriptor\fP, \fIfile\fP) association at the time of evaluation\&.
+For example:
+.IP "" 10
+\&.\!\&.\!\&. \!1>\fIfname\^\fP 2>&1
+.IP "" 10
+first associates file descriptor 1 with file
+\fIfname\^\fP\&. It then associates file descriptor 2 with the file associated with file
+descriptor 1 (i\&.e\&.
+\fIfname\^\fP)\&. If the order of redirections were reversed, file descriptor 2 would be associated
+with the terminal (assuming file descriptor 1 had been) and then file descriptor
+1 would be associated with file
+\fIfname\^\fP\&.
+.IP "" 10
+If a command is followed by
+\fB&\fP and job control is not active,
+then the default standard input
+for the command
+is the empty file
+\fB/dev/null\fP\&. Otherwise, the environment for the execution of a command contains the
+file descriptors of the invoking shell as modified by
+input/output specifications\&.
+.SS "Environment\&."
+.PP
+The
+\fIenvironment\^\fP (see
+\fIenviron\fP(7)) is a list of name-value pairs that is passed to
+an executed program in the same way as a normal argument list\&.
+The names must be
+\fIidentifiers\^\fP and the values are character strings\&.
+The shell interacts with the environment in several ways\&.
+On invocation, the shell scans the environment
+and creates a
+variable
+for each name found,
+giving it the corresponding value and attributes and marking it
+\fIexport\fP\&. Executed commands inherit the environment\&.
+If the user modifies the values of these
+variables
+or creates new ones,
+using the
+\fBexport\fP or
+\fBtypeset\fP \fB-x\fP commands they become part of the
+environment\&.
+The environment seen by any executed command is thus composed
+of any name-value pairs originally inherited by the shell,
+whose values may be modified by the current shell,
+plus any additions
+which must be noted in
+\fBexport\fP or
+\fBtypeset\fP \fB-x\fP commands\&.
+.PP
+The environment for any
+\fIsimple-command\^\fP or function
+may be augmented by prefixing it with one or more variable assignments\&.
+A variable assignment argument is a word of the form
+\fIidentifier=value\fP\&. Thus:
+.PP
+.nf
+\f(CWTERM=450 \!cmd \!args\fR
+.fi
+.PP
+.PP
+and
+.PP
+.nf
+\f(CW(export \!TERM; \!TERM=450; \!cmd \!args)\fR
+.fi
+.PP
+.PP
+are equivalent (as far as the above execution of
+\fIcmd\^\fP is concerned except for special built-in commands listed below -
+those that are
+preceded with a dagger)\&.
+.PP
+If the obsolete
+\fB-k\fP option is set,
+\fIall\^\fP variable assignment arguments are placed in the environment,
+even if they occur after the command name\&.
+The following
+first prints
+\fBa=b c\fP and then
+\fBc\fP:
+.PP
+.nf
+\f(CWecho a=b c
+set ;-k
+echo a=b c\fR
+.fi
+.PP
+.PP
+This feature is intended for use with scripts written
+for early versions of the shell and its use in new scripts
+is strongly discouraged\&.
+It is likely to disappear someday\&.
+.SS "Functions\&."
+.PP
+For historical reasons, there are two
+ways to define functions,
+the
+\fIname\fP\fB(\^)\fP syntax and
+the
+\fBfunction\fP \fIname\^\fP syntax, described in the
+\fICommands\fP section above\&.
+Shell functions are read in and stored internally\&.
+Alias names are resolved when the function is read\&.
+Functions are executed like commands with the arguments
+passed as positional parameters\&.
+(See
+\fIExecution\fP below\&.)
+.PP
+Functions defined by the
+\fBfunction\fP \fIname\fP syntax and called by name execute in the same process as the caller and
+share all files
+and present working directory with the
+caller\&.
+Traps caught by the caller are reset to their default action
+inside the function\&.
+A trap condition that is not caught or ignored by the
+function causes the function to terminate and the condition
+to be passed on to the caller\&.
+A trap on
+\fBEXIT\fP set inside a function
+is executed after the function completes in the environment
+of the caller\&.
+Ordinarily,
+variables are shared between the calling program
+and the function\&.
+However,
+the
+\fBtypeset\fP special built-in command used within a function
+defines local variables whose scope includes
+the current function and
+all functions it calls\&.
+Errors within functions return control to the caller\&.
+.PP
+Functions defined with the
+\fIname\fP\fB(\^)\fP syntax and functions defined with the
+\fBfunction\fP \fIname\fP syntax that are invoked with the .
+special built-in
+are executed in the caller\&'s
+environment and share all variables
+and traps with the caller\&.
+Errors within these function executions cause the script that contains
+them to abort\&.
+.PP
+The special built-in command
+\fBreturn\fP is used to return
+from function calls\&.
+.PP
+Function names
+can be listed with the
+\fB-f\fP or
+\fB+f\fP option of the
+\fBtypeset\fP special built-in command\&.
+The text of functions, when available, will also
+be listed with
+\fB-f\fP\&. Functions can be undefined with the
+\fB-f\fP option of the
+\fBunset\fP special built-in command\&.
+.PP
+Ordinarily, functions are unset when the shell executes a shell script\&.
+Functions that need to be defined across separate
+invocations of the shell should
+be placed in a directory and the
+FPATH
+variable should contains the name of this directory\&.
+They may also
+be specified in the
+ENV
+file\&.
+.SS "Jobs\&."
+.PP
+If the
+\fBmonitor\fP option of the
+\fBset\fP command is turned on,
+an interactive shell associates a \fIjob\fP with each pipeline\&.
+It keeps
+a table of current jobs, printed by the
+\fBjobs\fP command, and assigns them small integer numbers\&.
+When a job is started asynchronously with
+\fB&\fP, the shell prints a line which looks
+like:
+.PP
+[1] 1234
+.PP
+indicating that the job which was started asynchronously was job number
+1 and had one (top-level) process, whose process id was 1234\&.
+.PP
+This paragraph and the next require features that are
+not in all versions of UNIX and may not apply\&.
+If you are running a job and wish to do something else you may hit the key
+\fB^Z\fP (control-Z) which sends a STOP signal to the current job\&.
+The shell will then normally indicate that the job has been `Stopped\&',
+and print another prompt\&.
+You can then manipulate the state of this job,
+putting it in the background with the
+\fBbg\fP command, or run some other
+commands and then eventually bring the job back into the foreground with
+the foreground command
+\fBfg\fP\&. A \fB^Z\fP takes effect immediately and
+is like an interrupt in that pending output and unread input are discarded
+when it is typed\&.
+.PP
+A job being run in the background will stop if it tries to read
+from the terminal\&.
+Background jobs are normally allowed to produce output,
+but this can be disabled by giving the command ``stty tostop\&'\&'\&.
+If you set this
+tty option, then background jobs will stop when they try to produce
+output like they do when they try to read input\&.
+.PP
+There are several ways to refer to jobs in the shell\&.
+A job can be referred to by the process id of any process of the job
+or by one of the following:
+.IP "% number" 10
+The job with the given number\&.
+.IP "% string" 10
+Any job whose command line begins with
+\fIstring\fP\&.
+.IP "%? string" 10
+Any job whose command line contains
+\fIstring\fP\&.
+.IP "%%" 10
+Current job\&.
+.IP "%+" 10
+Equivalent to
+\fB%%\fP\&.
+.IP "%-" 10
+Previous job\&.
+.PP
+The shell learns immediately whenever a process changes state\&.
+It normally informs you whenever a job becomes blocked so that
+no further progress is possible, but only just before it prints
+a prompt\&.
+This is done so that it does not otherwise disturb your work\&.
+The
+\fBnotify\fP option causes
+the shell to print these job change messages
+as soon as they occur\&.
+.PP
+When the
+\fBmonitor\fP option is on, each background job that completes
+triggers any trap set for
+\fBCHLD\fP\&.
+.PP
+When you try to leave the shell while jobs are running or stopped, you will
+be warned that `You have stopped(running) jobs\&.\&'
+You may use the
+\fBjobs\fP command to see what they are\&.
+If you immediately try to
+exit again, the shell will not warn you a second time, and the stopped
+jobs will be terminated\&.
+When a login shell receives a HUP signal, it sends
+a HUP signal to each job that has not been disowned with a the
+\fBdisown\fP built-in command described below\&.
+.SS "Signals\&."
+.PP
+The INT and QUIT signals for an invoked
+command are ignored if the command is followed by
+\fB&\fP and the
+\fBmonitor\fP option is not active\&.
+Otherwise, signals have the values
+inherited by the shell from its parent
+(but see also
+the
+\fBtrap\fP built-in command below)\&.
+.SS "Execution\&."
+.PP
+Each time a command is read, the above substitutions
+are carried out\&.
+If the command name matches one
+of the
+\fISpecial built-in Commands\^\fP listed below,
+it is executed within the
+current shell process\&.
+Next, the command name is checked to see if
+it matches a user defined function\&.
+If it does,
+the positional parameters are saved
+and then reset to the arguments of the
+\fIfunction\^\fP call\&.
+When the
+\fIfunction\^\fP completes or issues a
+\fBreturn\fP, the positional parameter list is restored\&.
+For functions defined with the
+\fBfunction\fP \fIname\^\fP syntax,
+any trap set on
+\fBEXIT\fP within the function is executed\&.
+The value of a
+\fIfunction\^\fP is the value of the last command executed\&.
+A function is also executed in the
+current shell process\&.
+If a command name is not a
+\fIspecial built-in command\^\fP or a user defined
+\fIfunction\fP, but it is one of the built-in commands listed below
+it is executed in the current shell process\&.
+.PP
+The shell variable
+PATHdefines the search path for
+the directory containing the command\&.
+Alternative directory names are separated by
+a colon
+(\fB:\fP)\&. The default path is
+\fB/bin:/usr/bin:\fP (specifying
+\fB/bin\fP, \fB/usr/bin\fP, and the current directory
+in that order)\&.
+The current directory can be specified by
+two or more adjacent colons, or by a colon
+at the beginning or end of the path list\&.
+If the command name contains a \fB/\fP then the search path
+is not used\&.
+Otherwise, each directory in the path is
+searched for an executable file that is not a directory\&.
+If the shell
+determines that there is a built-in version
+of a command corresponding to a given pathname,
+this built-in is invoked in the current process\&.
+A process is created and
+an attempt is made to execute the command via
+\fIexec\fP(2)\&. If the file has execute permission but is not an
+\fBa\&.out\fP file,
+it is assumed to be a file containing shell commands\&.
+A separate shell is spawned to read it\&.
+All non-exported variables are removed in this case\&.
+If the shell command
+file doesn\&'t have read permission,
+or if the
+\fIsetuid\fP and/or
+\fIsetgid\fP bits are set on the file,
+then the shell executes an agent whose job it is to
+set up the permissions and execute the shell with the
+shell command file passed down as an open file\&.
+A parenthesized command is executed in
+a sub-shell without removing non-exported variables\&.
+.SS "Command Re-entry\&."
+.PP
+The text of the last
+HISTSIZE
+(default 128)
+commands entered from a terminal device
+is saved in a
+\fIhistory\fP file\&.
+The file
+\fB$HOME/\&.sh_history\fP is used if the
+HISTFILE
+variable is not set
+or if the file it names is not writable\&.
+A shell can access the commands of
+all
+\fIinteractive\fP shells which use the same named
+\fBHISTFILE\fP\&. The built-in command
+\fBhist\^\fP is used to list or
+edit a portion of this file\&.
+The portion of the file to be edited or listed can be selected by
+number or by giving the first character or
+characters of the command\&.
+A single command or range of commands can be specified\&.
+If you do not specify an editor program as
+an argument to
+\fBhist\^\fP then the value of the variable
+\fBHISTEDIT\fP is used\&.
+If
+\fBHISTEDIT\fP is unset, the obsolete variable
+\fBFCEDIT\fP is used\&.
+If
+\fBFCEDIT\fP is not defined then
+\fB/bin/ed\fP is used\&.
+The edited command(s) is printed and re-executed upon
+leaving the editor unless you quit without writing\&.
+The
+\fB-s\fP option
+(
+an in obsolete versions, the editor name
+\fB-\fP)
+is used to skip the editing phase and
+to re-execute the command\&.
+In this case a substitution parameter of the form
+\fIold\fP\fB=\fP\fInew\fP
+can be used to modify the command before execution\&.
+For example, with the preset alias
+\fBr\fP, which is aliased to
+\fB\&'hist -s\&'\fP, typing
+`\fBr bad=good c\fP\&'
+will re-execute the most recent command which starts with the letter
+\fBc\fP, replacing the first occurrence of the string
+\fBbad\fP with the string
+\fBgood\fP\&.
+.SS "In-line Editing Options"
+.PP
+Normally, each command line entered from a terminal device is simply
+typed followed by a \fBnew-line\fP (`RETURN\&' or `LINE\ FEED\&')\&.
+If either the
+\fBemacs\fP, \fBgmacs\fP, or
+\fBvi\fP option is active, the user can edit the command line\&.
+To be in either of these edit modes
+\fBset\fP the corresponding
+option\&.
+An editing option is automatically selected each time the
+\fBVISUAL\fP or
+\fBEDITOR\fP variable is assigned a value ending in either of these
+option names\&.
+.PP
+The editing features require that the user\&'s terminal
+accept `RETURN\&' as carriage return without line feed
+and that a space (`\ \&') must overwrite the current character on
+the screen\&.
+.PP
+The editing modes implement a concept where the user is looking through a
+window at the current line\&.
+The window width is the value of
+\fBCOLUMNS\fP if it is defined, otherwise 80\&.
+If the window width is too small to display the prompt and leave
+at least 8 columns to enter input, the prompt is truncated from the
+left\&.
+If the line is longer than the window width minus two, a mark is
+displayed at the end of the window to notify the user\&.
+As the cursor moves and reaches the window boundaries the window will be
+centered about the cursor\&.
+The mark is a
+\fB>\fP (<, \fB*\fP) if the line extends on the
+right (left, both) side(s) of the window\&.
+.PP
+The search commands in each edit mode provide access to the history file\&.
+Only strings are matched, not patterns, although a leading
+\fB^\fP in the string restricts the match
+to begin at the first character in the line\&.
+.PP
+Each of the edit modes has an operation to list the files
+or commands that match a partially entered word\&.
+When applied to the first word on the line,
+or the first word after a
+\fB;\fP, \fB\(or\fP, \fB&\fP, or
+\fB(\fP, and the word does not begin with
+\fB\(ap\fP or contain a
+\fB/\fP, the list of aliases, functions, and executable commands
+defined by the
+PATHvariable that could match the partial word is displayed\&.
+Otherwise, the list of files that match the given
+word is displayed\&.
+If the partially entered word does not contain any
+file expansion characters, a
+\fB*\fP is appended before generating these lists\&.
+After displaying the generated list, the input line
+is redrawn\&.
+These operations are called command name listing and file name listing,
+respectively\&.
+There are additional operations, referred to as command name
+completion and file name completion, which compute the list
+of matching commands or files, but instead of printing the list,
+replace
+the current word with a complete or partial match\&.
+For file name completion,
+if the match is unique, a
+\fB/\fP is appended if the file is a directory and a space is
+appended if the file is not a directory\&.
+Otherwise, the longest common prefix for all the matching
+files replaces the word\&.
+For command name completion, only the portion of the file names
+after the last
+\fB/\fP are used to find the longest command prefix\&.
+If only a single name matches this prefix, then the
+word is replaced with the command name followed by a space\&.
+.SS "Key Bindings\&."
+.PP
+The
+KEYBDtrap can be used to intercept keys as they are typed
+and change the characters that are actually seen by
+the shell\&.
+This trap is executed after each character
+( or sequence of characters when the first character is
+\fBESC\fP) is entered while reading from a terminal\&.
+The variable
+\fB\&.sh\&.edchar\fP contains the character or character sequence which
+generated the trap\&.
+Changing the value of
+\fB\&.sh\&.edchar\fP in the trap action causes the shell to behave as if the
+new value were entered from the keyboard rather than
+the original value\&.
+.PP
+The variable
+\fB\&.sh\&.edcol\fP is set to the input column number of the cursor at the time
+of the input\&.
+The variable
+\fB\&.sh\&.edmode\fP is set to
+\fBESC\fP when in vi insert mode (see below) and is null otherwise\&.
+By prepending
+\fB${\&.sh\&.editmode}\fP to a value assigned to
+\fB\&.sh\&.edchar\fP it will cause the shell
+to change to control mode if it is not already in this mode\&.
+.PP
+This trap is not invoked for characters entered as arguments to
+editing directives, or while reading input for a character search\&.
+.SS "Emacs Editing Mode\&."
+.PP
+This mode is entered by enabling either the
+\fIemacs\fP or
+\fIgmacs\fP option\&.
+The only difference between these two modes is the way
+they handle
+\fB^T\fP\&. To edit, the user
+moves the cursor to the point needing correction and
+then inserts or deletes characters or words as needed\&.
+All the editing commands are control characters or escape
+sequences\&.
+The notation for control characters is caret (
+\fB^\fP) followed
+by the character\&.
+For example,
+\fB^F\fP is the notation for control
+\fBF\fP\&. This is entered by depressing `f\&' while holding down the
+`CTRL\&' (control) key\&.
+The `SHIFT\&' key is
+\fInot\fP depressed\&.
+(The notation
+\fB^?\fP indicates the DEL (delete) key\&.)
+.PP
+The notation for escape sequences is
+\fBM-\fP followed by a
+character\&.
+For example,
+\fBM-f\fP (pronounced Meta f)
+is entered by depressing ESC
+(ascii
+\fB033\fP) followed by `f\&'\&.
+(\fBM-F\fP would be the notation for ESC followed by `SHIFT\&' (capital) `F\&'\&.)
+.PP
+All edit commands
+operate from any place on the line
+(not just at the beginning)\&.
+Neither the "RETURN" nor the "LINE FEED" key is
+entered after edit commands except when noted\&.
+.IP "^F" 10
+Move cursor forward (right) one character\&.
+.IP "M-f" 10
+Move cursor forward one word\&.
+(The
+\fBemacs\fP editor\&'s idea of a word is a string of characters
+consisting of only letters, digits and underscores\&.)
+.IP "^B" 10
+Move cursor backward (left) one character\&.
+.IP "M-b" 10
+Move cursor backward one word\&.
+.IP "^A" 10
+Move cursor to start of line\&.
+.IP "^E" 10
+Move cursor to end of line\&.
+.IP "^] char" 10
+Move cursor forward to character
+\fIchar\fP on current line\&.
+.IP "M-^] char" 10
+Move cursor backward to character
+\fIchar\fP on current line\&.
+.IP "^X^X" 10
+Interchange the cursor and mark\&.
+.IP "erase" 10
+(User defined erase character as defined
+by the
+\fIstty\fP(1) command, usually
+\fB^H\fP or
+\fB#\fP\&.) Delete previous character\&.
+.IP "^D" 10
+Delete current character\&.
+.IP "M-d" 10
+Delete current word\&.
+.IP "M-^H" 10
+(Meta-backspace) Delete previous word\&.
+.IP "M-h" 10
+Delete previous word\&.
+.IP "M-^?" 10
+(Meta-DEL) Delete previous word (if your interrupt character is
+\fB^?\fP (DEL, the default) then this command will not work)\&.
+.IP "^T" 10
+Transpose current character with next character in
+\fIemacs\fP mode\&.
+Transpose two previous characters in
+\fIgmacs\fP mode\&.
+.IP "^C" 10
+Capitalize current character\&.
+.IP "M-c" 10
+Capitalize current word\&.
+.IP "M-l" 10
+Change the current word to lower case\&.
+.IP "^K" 10
+Delete from the cursor to the end of the line\&.
+If preceded by a numerical parameter whose value is less than the
+current cursor position, then delete from given position
+up to the cursor\&.
+If preceded by a numerical parameter whose value is greater than the
+current cursor position, then delete from cursor up to
+given cursor position\&.
+.IP "^W" 10
+Kill from the cursor to the mark\&.
+.IP "M-p" 10
+Push the region from the cursor to the mark on the stack\&.
+.IP "kill" 10
+(User defined kill character as defined
+by the stty command, usually
+\fB^G\fP or
+\fB@\fP\&.) Kill the entire current line\&.
+If two
+\fIkill\fP characters are entered in succession, all
+kill characters from then on cause a line feed
+(useful when using paper terminals)\&.
+.IP "^Y" 10
+Restore last item removed from line\&. (Yank item back to the line\&.)
+.IP "^L" 10
+Line feed and print current line\&.
+.IP "^@" 10
+(Null character) Set mark\&.
+.IP "M- space" 10
+(Meta space) Set mark\&.
+.IP "^J" 10
+(New\ line) Execute the current line\&.
+.IP "^M" 10
+(Return) Execute the current line\&.
+.IP "eof" 10
+End-of-file character,
+normally
+\fB^D\fP, is processed as an End-of-file only
+if the current line is null\&.
+.IP "^P" 10
+Fetch previous command\&.
+Each time
+\fB^P\fP is entered
+the previous command back in time is accessed\&.
+Moves back one line when not on the first line of a multi-line command\&.
+.IP "M-<" 10
+Fetch the least recent (oldest) history line\&.
+.IP "M->" 10
+Fetch the most recent (youngest) history line\&.
+.IP "^N" 10
+Fetch next command line\&.
+Each time
+\fB^N\fP is entered
+the next command line forward in time is accessed\&.
+.IP "^R string" 10
+Reverse search history for a previous command line containing
+\fIstring\fP\&. If a parameter of zero is given, the search is forward\&.
+\fBString\fR is terminated by a "RETURN" or "NEW\ LINE"\&.
+If string is preceded by a
+\fB^\fP, the matched line must begin with
+\fIstring\fP\&. If
+\fIstring\fP is omitted,
+then the next command line containing the most recent
+\fIstring\fP is accessed\&.
+In this case a parameter of zero
+reverses the direction of the search\&.
+.IP "^O" 10
+Operate - Execute the current line and fetch
+the next line relative to current line from the
+history file\&.
+.IP "M- digits" 10
+(Escape) Define numeric parameter, the digits
+are taken as a parameter to the next command\&.
+The commands that accept a parameter are
+\fB^F\fP, \fB^B\fP, \fIerase\fP, \fB^C\fP, \fB^D\fP, \fB^K\fP, \fB^R\fP, \fB^P\fP, \fB^N\fP, \fB^]\fP, \fBM-\&.\fP, \fBM-^]\fP, \fBM-_\fP, \fBM-b\fP, \fBM-c\fP, \fBM-d\fP, \fBM-f\fP, \fBM-h\fP, \fBM-l\fP and
+\fBM-^H\fP\&.
+.IP "M- letter" 10
+Soft-key - Your alias list is searched for an
+alias by the name
+\fB_\fP\fIletter\fP and if an alias of this name is defined, its
+value will be inserted on the input queue\&.
+The
+\fIletter\fP must not be one of the above meta-functions\&.
+.IP "M-[ letter" 10
+Soft-key - Your alias list is searched for an
+alias by the name
+\fB__\fP\fIletter\fP and if an alias of this name is defined, its
+value will be inserted on the input queue\&.
+The can be used to program functions keys on many terminals\&.
+.IP "M-\&." 10
+The last word of the previous command is inserted
+on the line\&.
+If preceded by a numeric parameter, the value
+of this parameter determines which word to insert rather than
+the last word\&.
+.IP "M-_" 10
+Same as
+\fBM-\&.\fP\&.
+.IP "M-*" 10
+Attempt file name generation on the current word\&.
+An asterisk is appended if the word doesn\&'t match any file
+or contain any special
+pattern characters\&.
+.IP "Command or file name completion as described above\&." 10
+.IP "M-=" 10
+Command or file name listing as described above\&.
+.IP "^U" 10
+Multiply parameter of next command by 4\&.
+.IP "\e" 10
+Escape next character\&.
+Editing characters, the user\&'s erase, kill and
+interrupt (normally
+\fB^?\fP) characters
+may be entered
+in a command line or in a search string if preceded by a
+\fB\e\fP\&. The
+\fB\e\fP removes the next character\&'s
+editing features (if any)\&.
+.IP "^V" 10
+Display version of the shell\&.
+.IP "M-#" 10
+If the line does not begin with a
+\fB#\fP, a
+\fB#\fP is inserted
+at the beginning of the line
+and after each new-line,
+and the line is entered\&.
+This causes a comment to be inserted in the history file\&.
+If the line begins with a
+\fB#\fP, the
+\fB#\fP is deleted and one
+\fB#\fP after each new-line is also deleted\&.
+.SS "Vi Editing Mode\&."
+.PP
+There are two typing modes\&.
+Initially, when you enter a command you are in the
+\fIinput\^\fP mode\&.
+To edit, the user enters
+\fIcontrol\^\fP mode by typing ESC
+(\fB033\fP) and moves the cursor to the point needing correction and
+then inserts or deletes characters or words as needed\&.
+Most control commands accept an optional repeat
+\fIcount\fP prior to the command\&.
+.PP
+When in
+\fBvi\fP mode on most systems,
+canonical processing is initially enabled and the
+command will be echoed again if the speed is 1200 baud or greater and it
+contains any control characters or less than one second has elapsed
+since the prompt was printed\&.
+The ESC character terminates canonical processing for the remainder of the command
+and the user can then modify the command line\&.
+This scheme has the advantages of canonical processing with the type-ahead
+echoing of raw mode\&.
+.PP
+If the option
+\fBviraw\^\fP is also set, the terminal will always have canonical processing
+disabled\&.
+This mode is implicit for systems that do not support two
+alternate end of line delimiters,
+and may be helpful for certain terminals\&.
+.SS "Input Edit Commands"
+.PP
+By default the editor is in input mode\&.
+.IP "erase" 10
+(User defined erase character as defined
+by the stty command, usually
+\fB^H\fP or
+\fB#\fP\&.) Delete previous character\&.
+.IP "^W" 10
+Delete the previous blank separated word\&.
+One some systems the \fBviraw\fP option
+may be required for this to work\&.
+.IP "eof" 10
+As the first character of the line causes
+the shell to terminate unless the \fBignoreeof\fP
+option is set\&.
+Otherwise this character is ignored\&.
+.IP "^V" 10
+Escape next character\&.
+Editing characters and the user\&'s erase or kill
+characters may be entered
+in a command line or in a search string if preceded by a
+\fB^V\fP\&. The
+\fB^V\fP removes the next character\&'s
+editing features (if any)\&.
+One some systems the \fBviraw\fP option
+may be required for this to work\&.
+.IP "\e" 10
+Escape the next
+\fIerase\fP or
+\fIkill\fP character\&.
+.SS "Motion Edit Commands"
+.PP
+These commands will move the cursor\&.
+.IP "[count]l" 10
+Cursor forward (right) one character\&.
+.IP "[count]w" 10
+Cursor forward one alpha-numeric word\&.
+.IP "[count]W" 10
+Cursor to the beginning of the next word that follows a blank\&.
+.IP "[count]e" 10
+Cursor to end of word\&.
+.IP "[count]E" 10
+Cursor to end of the current blank delimited word\&.
+.IP "[count]h" 10
+Cursor backward (left) one character\&.
+.IP "[count]b" 10
+Cursor backward one word\&.
+.IP "[count]B" 10
+Cursor to preceding blank separated word\&.
+.IP "[count]\(or" 10
+Cursor to column
+\fIcount\fP\&.
+.IP "[count]fc" 10
+Find the next character \fIc\fP in the current line\&.
+.IP "[count]Fc" 10
+Find the previous character \fIc\fP in the current line\&.
+.IP "[count]tc" 10
+Equivalent to
+\fBf\fP followed by
+\fBh\fP\&.
+.IP "[count]Tc" 10
+Equivalent to
+\fBF\fP followed by
+\fBl\fP\&.
+.IP "[count];" 10
+Repeats
+\fIcount\fP times,
+the last single character find command,
+\fBf\fP, \fBF\fP, \fBt\fP, or
+\fBT\fP\&.
+.IP "[count]," 10
+Reverses the last single character find command
+\fIcount\fP times\&.
+.IP "0" 10
+Cursor to start of line\&.
+.IP "^" 10
+Cursor to first non-blank character in line\&.
+.IP "$" 10
+Cursor to end of line\&.
+.IP "%" 10
+Moves to balancing
+\fB(\fP, \fB)\fP, \fB{\fP, \fB}\fP, \fB[\fP, or
+\fB]\fP\&. If cursor is not on one of the above characters,
+the remainder of the line is searched for the first
+occurrence of one of the above characters first\&.
+.SS "Search Edit Commands"
+.PP
+These commands access your command history\&.
+.IP "[count]k" 10
+Fetch previous command\&.
+Each time
+\fBk\fP is entered
+the previous command back in time is accessed\&.
+.IP "[count]-" 10
+Equivalent to
+\fBk\fP\&.
+.IP "[count]j" 10
+Fetch next command\&.
+Each time
+\fBj\fP is entered
+the next command forward in time is accessed\&.
+.IP "[count]+" 10
+Equivalent to
+\fBj\fP\&.
+.IP "[count]G" 10
+The command number
+\fIcount\fP is fetched\&.
+The default is the least recent history command\&.
+.IP "/ string" 10
+Search backward through history for a previous command containing
+\fIstring\fP\&. \fBString\fR is terminated by a "RETURN" or "NEW\ LINE"\&.
+If string is preceded by a
+\fB^\fP, the matched line must begin with
+\fIstring\fP\&. If \fIstring\fP is null the previous string will be used\&.
+.IP "? string" 10
+Same as
+\fB/\fP except that search will be in the forward direction\&.
+.IP "n" 10
+Search for next match of the last pattern to
+\fB/\fP or
+\fB?\fP commands\&.
+.IP "N" 10
+Search for next match of the last pattern to
+\fB/\fP or
+\fB?\fP, but in reverse direction\&.
+.SS "Text Modification Edit Commands"
+.PP
+These commands will modify the line\&.
+.IP "a" 10
+Enter input mode and enter text after the current character\&.
+.IP "A" 10
+Append text to the end of the line\&.
+Equivalent to
+\fB$a\fP\&.
+.IP "[count]cmotion" 10
+.IP "c[count]motion" 10
+Delete current character through the character that
+\fImotion\fP would move the cursor to and enter input mode\&.
+If \fImotion\fP is
+\fBc\fP, the entire line will be deleted and
+input mode entered\&.
+.IP "C" 10
+Delete the current character through the end of line and enter input mode\&.
+Equivalent to
+\fBc$\fP\&.
+.IP "S" 10
+Equivalent to
+\fBcc\fP\&.
+.IP "D" 10
+Delete the current character through the end of line\&.
+Equivalent to
+\fBd$\fP\&.
+.IP "[count]dmotion" 10
+.IP "d[count]motion" 10
+Delete current character through the character that
+\fImotion\fP would move to\&.
+If \fImotion\fP is
+\fBd\fP, the entire line will be deleted\&.
+.IP "i" 10
+Enter input mode and insert text before the current character\&.
+.IP "I" 10
+Insert text before the beginning of the line\&.
+Equivalent to
+\fB0i\fP\&.
+.IP "[count]P" 10
+Place the previous text modification before the cursor\&.
+.IP "[count]p" 10
+Place the previous text modification after the cursor\&.
+.IP "R" 10
+Enter input mode and
+replace characters on the screen with characters you type overlay fashion\&.
+.IP "[count]rc" 10
+Replace the
+\fIcount\fP character(s) starting at the current cursor position with
+\fIc\fP, and advance the cursor\&.
+.IP "[count]x" 10
+Delete current character\&.
+.IP "[count]X" 10
+Delete preceding character\&.
+.IP "[count]\&." 10
+Repeat the previous text modification command\&.
+.IP "[count]\(ap" 10
+Invert the case of the
+\fIcount\fP character(s) starting at the current cursor position and advance the cursor\&.
+.IP "[count]_" 10
+Causes the
+\fIcount\^\fP word of the previous command to be appended and
+input mode entered\&.
+The last word is used
+if
+\fIcount\^\fP is omitted\&.
+.IP "*" 10
+Causes an
+\fB*\fP to be appended to the current word and file name generation attempted\&.
+If no match is found,
+it rings the bell\&.
+Otherwise, the word is replaced
+by the matching pattern and input mode is entered\&.
+.IP "\e" 10
+Command or file name completion as described above\&.
+.SS "Other Edit Commands"
+.PP
+Miscellaneous commands\&.
+.IP "[count]ymotion" 10
+.IP "y[count]motion" 10
+Yank current character through character that
+\fImotion\fP would move the cursor to and puts them into the delete buffer\&.
+The text and cursor are unchanged\&.
+.IP "Y" 10
+Yanks from current position to end of line\&.
+Equivalent to
+\fBy$\fP\&.
+.IP "u" 10
+Undo the last text modifying command\&.
+.IP "U" 10
+Undo all the text modifying commands performed on the line\&.
+.IP "[count]v" 10
+Returns the command
+\fBhist -e ${VISUAL:-${EDITOR:-vi}}\fP \fIcount\fP in the input buffer\&.
+If
+\fIcount\^\fP is omitted, then the current line is used\&.
+.IP "^L" 10
+Line feed and print current line\&.
+Has effect only in control mode\&.
+.IP "^J" 10
+(New\ line) Execute the current line, regardless of mode\&.
+.IP "^M" 10
+(Return) Execute the current line, regardless of mode\&.
+.IP "#" 10
+If the first character of the command is a
+\fB#\fP, then this command deletes this
+\fB#\fP and each
+\fB#\fP that follows a newline\&.
+Otherwise,
+sends the line after
+inserting a
+\fB#\fP in front of each line in the command\&.
+Useful for causing the current line to be
+inserted in the history as a comment and
+uncommenting previously commented commands
+in the history file\&.
+.IP "=" 10
+Command or file name listing as described above\&.
+.IP "@ letter" 10
+Your alias list is searched for an
+alias by the name
+\fB_\fP\fIletter\fP and if an alias of this name is defined, its
+value will be inserted on the input queue for processing\&.
+.SS "Built-in Commands\&."
+.PP
+The following simple-commands are executed in the shell process\&.
+Input/Output redirection is permitted\&.
+Unless otherwise indicated, the output is written on file descriptor 1
+and the exit status, when there is no syntax error, is zero\&.
+Except for
+\fB:\fP, \fBtrue\fP, \fBfalse\fP, \fBecho\fP, \fBcommand\fP, \fBnewgrp\fP, and
+\fBlogin\fP, all built-in commands accept
+\fB--\fP to indicate end of options\&.
+They also interpret the option
+\fB-?\fP as a help request and print a
+\fIusage\^\fP message
+on standard error\&.
+Commands that are preceded by one or two -
+are special built-in commands and
+are treated specially in the following ways:
+.IP "   1." 6
+Variable assignment lists preceding the command
+remain in effect when the command completes\&.
+.IP "   2." 6
+I/O redirections are processed after variable assignments\&.
+.IP "   3." 6
+Errors
+cause a script
+that contains them to abort\&.
+.IP "   4." 6
+They are not valid function names\&.
+.IP "   5." 6
+Words,
+following a command preceded by --
+that are in the format of a variable assignment,
+are expanded with the same rules as a variable assignment\&.
+This means that
+tilde substitution is performed after the
+\fB=\fP sign and field splitting and file name generation are not
+performed\&.
+.IP "-: arg\^ \&.\!\&.\!\&." 10
+The command only expands parameters\&.
+.IP "- \!\&. name\^ arg\^ \&.\!\&.\!\&." 10
+If
+\fIname\^\fP is a function defined with the
+\fBfunction\fP \fIname\^\fP reserved word syntax,
+the function is executed in the current environment
+( as if it had been defined with the
+\fIname\fP\fB()\fP syntax\&.)
+Otherwise if
+\fIname\^\fP refers to a file, the
+file is read in its entirety and the commands are
+executed in the current shell environment\&.
+The search path
+specified by
+PATHis used to find the directory containing file\&.
+If any arguments
+\fIarg\^\fP are given,
+they become the positional parameters while processing
+the
+\&. command and are restored upon completion\&.
+Otherwise the positional parameters are unchanged\&.
+The exit status is the exit status of the last command executed\&.
+.IP "-- alias -ptx name =value\^ \&.\!\&.\!\&." 10
+\fBalias\^\fP with no arguments prints the list of aliases
+in the form
+\fIname=value\^\fP on standard output\&.
+The
+\fB-p\fP option
+causes the word
+\fBalias\fP to be inserted before each one\&.
+When one or more arguments are given
+an
+\fIalias\^\fP is defined
+for each
+\fIname\^\fP whose
+\fIvalue\^\fP is given\&.
+A trailing space in
+\fIvalue\^\fP causes the next word to be checked for
+alias substitution\&.
+The obsolete
+\fB-t\fP option is used to set and list tracked aliases\&.
+The value of a tracked alias is the full pathname
+corresponding to the given
+\fIname\fP\&. The value becomes undefined when the value of
+\fBPATH\fP is reset but the alias remains tracked\&.
+Without the
+\fB-t\fP option,
+for each
+\fIname\^\fP in the argument list
+for which no
+\fIvalue\^\fP is given, the name
+and value of the alias is printed\&.
+The obsolete
+\fB-x\fP option has no effect\&.
+The exit status is non-zero if a
+\fIname\^\fP is given, but no value, and no alias has been defined for the
+\fIname\^\fP\&.
+.IP "bg job\^\&.\!\&.\!\&." 10
+This command is only on systems that support job control\&.
+Puts each specified
+\fIjob\^\fP into the background\&.
+The current job is put in the background
+if
+\fIjob\^\fP is not specified\&.
+See
+\fIJobs\fP for a description of the format of
+\fIjob\fP\&.
+.IP "- break n\^" 10
+Exit from the enclosing
+\fBfor\^\fP, \fBwhile\^\fP, \fBuntil\^\fP, or
+\fBselect\^\fP loop, if any\&.
+If
+\fIn\^\fP is specified then break
+\fIn\^\fP levels\&.
+.IP "builtin -ds -f file\^ name\^ \&.\!\&.\!\&." 10
+If
+\fIname\^\fP is not specified, the built-ins are printed on standard output\&.
+The
+\fB-s\fP option prints only the special built-ins\&.
+Otherwise, each
+\fIname\^\fP represents the pathname whose basename is the name of the built-in\&.
+The entry point function name is determined by prepending
+\fBb_\fP to the built-in name\&.
+Special built-ins cannot be bound to a pathname or deleted\&.
+The
+\fB-d\fP option deletes each of the given built-ins\&.
+On systems that support dynamic loading, the
+\fB-f\fP option names a shared library containing the code for built-ins\&.
+Once a library is loaded, its symbols become available
+for subsequent invocations of
+\fBbuiltin\fP\&. Multiple libraries can be specified with separate invocations
+of the \fBbuiltin\fP command\&.
+Libraries are searched in the reverse order in which they are specified\&.
+.IP "" 10
+Each command that is to be built-in must be written as a C function whose name is of the form
+\fBb_funcName\fP, where \fBfuncName\fP is the name of the built-in
+to be added\&. This function has the same argument calling convention as \&'main\&' (i\&.e\&. \fBargc\fP
+and \fBargv\fP\(em a list of strings)\&.  The \fBb_funcName\fP parses and
+error-checks the incoming arguments and then calls the real \fBfuncName\fP function\&.
+.IP "cd -LP arg\^" 10
+.IP "cd -LP old\^ new\^" 10
+This command can be in either of two forms\&.
+In the first form it
+changes the current directory to
+\fIarg\fP\&. If
+\fIarg\^\fP is
+\fB-\fP the directory is changed to the previous
+directory\&.
+The shell
+variable
+HOMEis the default
+\fIarg\fP\&. The variable
+\fBPWD\fP is set to the current directory\&.
+The shell variable
+CDPATHdefines the search path for
+the directory containing
+\fIarg\fP\&. Alternative directory names are separated by
+a colon
+(\fB:\fP)\&. The default path is
+\fB<null>\fP (specifying the current directory)\&.
+Note that the current directory is specified by a null path name,
+which can appear immediately after the equal sign
+or between the colon delimiters anywhere else in the path list\&.
+If
+\fIarg\fP begins with a \fB/\fP then the search path
+is not used\&.
+Otherwise, each directory in the path is
+searched for
+\fIarg\fP\&.
+.IP "" 10
+The obsolete second form of
+\fBcd\fP substitutes the string
+\fInew\fP for the string
+\fIold\fP in the current directory name,
+\fBPWD\fP and tries to change to this new directory\&.
+.IP "" 10
+By default, symbolic links are not followed when
+finding the directory name\&.
+This is equivalent to the
+\fB-L\fP option\&.
+The
+\fB-P\fP option causes
+symbolic links to be followed when determining the directory\&.
+The last instance of
+\fB-L\fP or
+\fB-P\fP determines which method is used\&.
+.IP "" 10
+The
+\fBcd\^\fP command may not be executed by
+\fBrksh\^\&.\fP
+.IP "command -pvV name\^ arg\^ \&.\!\&.\!\&." 10
+Without the
+\fB-v\fP or
+\fB-V\fP options,
+\fBcommand\fP executes
+\fIname\^\fP with the arguments given by
+\fIarg\fP\&. The
+\fB-p\fP option causes
+a default path to be searched
+rather than the one defined by the value of
+\fBPATH\fP\&. Functions will not be searched for when finding
+\fIname\fP\&. In addition, if
+\fIname\^\fP refers to a special built-in,
+none of the special properties associated with the leading
+daggers will be honored\&.
+(
+For example, the predefined alias
+\fBredirect=\&'command exec\&'\fP prevents a script from terminating when an invalid
+redirection is given\&.)
+With the
+\fB-v\fP option,
+\fBcommand\fP is equivalent to the built-in
+\fBwhence\fP command described below\&.
+The
+\fB-V\fP options, causes
+\fBcommand\fP to
+\fBwhence -v\fP\&.
+.IP "- continue n\^" 10
+Resume the next iteration of the enclosing
+\fBfor\^\fP, \fBwhile\^\fP, \fBuntil\^\fP, or
+\fBselect\^\fP loop\&.
+If
+\fIn\^\fP is specified then resume at the
+\fIn\fP-th enclosing loop\&.
+.IP "disown job\^\&.\!\&.\!\&." 10
+Causes the shell not to send a HUP signal to
+each given
+\fIjob\fP, or all active jobs if
+\fIjob\fP is omitted,
+when a login shell terminates\&.
+.IP "echo arg\^ \&.\!\&.\!\&." 10
+When the first
+\fIarg\^\fP does not begin with a -, and
+none of the arguments contain a \e,
+then
+\fBecho\fP prints each of its arguments separated by a space
+and terminated by a new-line\&.
+Otherwise, the behavior of
+\fBecho\fP is system dependent
+and
+\fBprint\fP or
+\fBprintf\fP described below should be used\&.
+See
+\fIecho\fP(1) for usage and description\&.
+.IP "- eval arg\^ \&.\!\&.\!\&." 10
+The arguments are read as input
+to the shell
+and the resulting command(s) executed\&.
+.IP "- exec -c -a name\^ arg\^ \&.\!\&.\!\&." 10
+If
+\fIarg\^\fP is given,
+the command specified by
+the arguments is executed in place of this shell
+without creating a new process\&.
+The
+\fB-c\fP option causes the environment to be cleared before applying
+variable assignments associated with the
+\fBexec\fP invocation\&.
+The
+\fB-a\fP option
+causes
+\fIname\^\fP rather than the first
+\fIarg\fP, to become
+\fBargv[0]\fP for the new process\&.
+Input/output arguments may appear and
+affect the current process\&.
+If
+\fIarg\^\fP is not given
+the effect of this command is to
+modify file descriptors
+as prescribed by the input/output redirection list\&.
+In this case,
+any file descriptor numbers greater than 2 that are
+opened with this mechanism are closed when invoking
+another program\&.
+.IP "- exit n\^" 10
+Causes the shell to exit
+with the exit status specified by
+\fIn\fP\&. The value will be the least significant 8 bits of the specified status\&.
+If
+\fIn\^\fP is omitted then the exit status is that of the last command executed\&.
+An end-of-file will also cause the shell to exit
+except for a
+shell which has the
+\fIignoreeof\fP option (see
+\fBset\fP below) turned on\&.
+.IP "-- export -p name\^=value\^ \&.\!\&.\!\&." 10
+If
+\fIname\^\fP is not given,
+the names and values of each variable with
+the export attribute are printed with the values
+quoted in a manner that allows them to be re-inputed\&.
+The
+\fB-p\fP option
+causes the word
+\fBexport\fP to be inserted before each one\&.
+Otherwise, the given
+\fIname\fPs are marked for automatic
+export to the
+\fIenvironment\^\fP of subsequently-executed commands\&.
+.IP "fg job\^\&.\!\&.\!\&." 10
+This command is only on systems that support job control\&.
+Each
+\fIjob\^\fP specified is brought to the foreground and waited for in
+the specified order\&.
+Otherwise, the current job is
+brought into the foreground\&.
+See
+\fIJobs\fP for a description of the format of
+\fIjob\fP\&.
+.IP "getconf name\^ pathname\^" 10
+Prints the current value of the configuration parameter given by
+\fIname\fP\&.
+.IP "getopts optstring vname\^ arg\^ \&.\!\&.\!\&." 10
+Checks
+\fIarg\fP for legal options\&.
+If
+\fIarg\fP is omitted,
+the positional parameters are used\&.
+An option argument begins with a
+\fB+\fP or a
+\fB-\fP\&. An option not beginning with
+\fB+\fP or
+\fB-\fP or the argument
+\fB-\!-\fP ends the options\&.
+\fIoptstring\fP contains the letters that
+\fIgetopts\fP recognizes\&.
+If a letter is followed by a
+\fB:\fP, that option is expected to have an argument\&.
+The options can be separated from the argument by blanks\&.
+.IP "" 10
+\fBgetopts
+places the next option letter it finds inside variable\fP \fIvname\^\fP each time it is invoked with a
+\fB+\fP prepended when
+\fIarg\fP begins with a
+\fB+\fP\&. The index of the next
+\fIarg\fP is stored in
+\fBOPTIND\fP\&. The option argument,
+if any,
+gets stored in
+\fBOPTARG\fP\&.
+.IP "" 10
+A leading
+\fB:\fP in
+\fIoptstring\fP causes
+\fBgetopts\fP to store the letter of an invalid
+option in
+\fBOPTARG\fP, and to set
+\fIvname\fP to
+\fB?\fP for an unknown option and to
+\fB:\fP when a required option is missing\&.
+Otherwise,
+\fBgetopts\fP prints an error message\&.
+The exit status is non-zero when there are no more options\&.
+.IP "" 10
+There is no way to specify any of the options
+\fB:\fP, \fB+\fP, \fB-\fP, \fB?\fP, \fB[\fP, and
+\fB]\fP\&. The option
+\fB#\fP can only be specified as the first option\&.
+.IP "hist -e ename\^ \  -nlr\^ first\^ last\^" 10
+.IP "hist -s old=new\^ command\^" 10
+In the first form,
+a range of commands from
+\fIfirst\^\fP to
+\fIlast\^\fP is selected from the last
+\fBHISTSIZE\fP commands that were typed at the terminal\&.
+The arguments
+\fIfirst\^\fP and
+\fIlast\^\fP may be specified as a number or as a string\&.
+A string is used to locate the most recent command starting with
+the given string\&.
+A negative number is used as an offset to the current command number\&.
+If the
+\fB-l\fP option
+is selected,
+the commands are listed on standard output\&.
+Otherwise, the editor program
+\fIename\^\fP is invoked on a file containing these
+keyboard commands\&.
+If
+\fIename\^\fP is not supplied, then the value of the variable
+\fBHISTEDIT\fP is used\&.
+If
+\fBHISTEDIT\fP is not set then
+\fBFCEDIT\fP (default
+\fB/bin/ed\^\fP) is used as the editor\&.
+When editing is complete, the edited command(s)
+is executed if the changes have been saved\&.
+If
+\fIlast\^\fP is not specified
+then it will be set to
+\fIfirst\fP\&. If
+\fIfirst\^\fP is not specified
+the default is the previous command
+for editing and -16 for listing\&.
+The option
+\fB-r\fP reverses the order of the commands and
+the option
+\fB-n\fP suppresses command numbers when listing\&.
+In the second form the
+\fIcommand\^\fP is re-executed after the substitution
+\fIold\^\fP\fB=\fP\fInew\^\fP
+is performed\&.
+.IP "jobs -lnp\^ job\^ \&.\!\&.\!\&." 10
+Lists information about each given job; or all active jobs if
+\fIjob\fP is omitted\&.
+The
+\fB-l\fP option lists process ids in addition to the normal information\&.
+The
+\fB-n\fP option only displays jobs that have stopped or exited since last
+notified\&.
+The
+\fB-p\fP option causes only the process group to be listed\&.
+See
+\fIJobs\fP for a description of the format of
+\fIjob\fP\&.
+.IP "kill -s signame\^ job\^ \&.\!\&.\!\&." 10
+.IP "kill -n signum\^ job\^ \&.\!\&.\!\&." 10
+.IP "kill -l sig\^ \&.\!\&.\!\&." 10
+Sends either the TERM (terminate) signal or the
+specified signal to the specified jobs or processes\&.
+Signals are either given by number with the
+\fB-n\fP option or by name with the
+\fB-s\fP option
+(as given in
+\fB<signal\&.h>\fP, stripped of the prefix ``SIG\&'\&' with
+the exception that SIGCLD is named CHLD)\&.
+For backward compatibility, the
+\fBn\fP and
+\fBs\fP can be omitted and the number or name placed immediately
+after the
+\fB-\fP\&. If the signal being sent is TERM (terminate) or HUP (hangup),
+then the job or process will be sent a CONT (continue) signal
+if it is stopped\&.
+The argument
+\fIjob\^\fP can be the process id of a process that is not a member of one of the
+active jobs\&.
+See
+\fIJobs\fP for a description of the format of
+\fIjob\fP\&. In the third form,
+\fBkill -l\fP, if
+\fIsig\^\fP is not specified,
+the signal names are listed\&.
+Otherwise, for each
+\fIsig\^\fP that is a name, the corresponding signal number is listed\&.
+For each
+\fIsig\^\fP that is a number, the signal name corresponding to the
+least significant 8 bits of
+\fIsig\^\fP is listed\&.
+.IP "let arg\^ \&.\!\&.\!\&." 10
+Each
+\fIarg\fP is a separate
+\fIarithmetic expression\fP to be evaluated\&.
+See
+\fIArithmetic Evaluation\fP above, for a description of arithmetic expression evaluation\&.
+.IP "" 10
+The exit status is
+0 if the value of the last expression
+is non-zero, and 1 otherwise\&.
+.IP "- newgrp arg\^ \&.\!\&.\!\&." 10
+Equivalent to
+\fBexec /bin/newgrp\fP \fIarg\^\fP \&.\!\&.\!\&.\^\&.
+.IP "print -Rnprs\^ -u unit\^ -f format\^ arg\^ \&.\!\&.\!\&." 10
+With no options or with option
+\fB-\fP or
+\fB-\!-\fP, Each
+\fIarg\fP is printed
+on standard output\&.
+The
+\fB-f\fP option causes the arguments to be printed as
+described by
+\fBprintf\fP\&. In this case any
+\fBn\fP, \fBr\fP, \fBR\fP options are ignored\&.
+Otherwise,
+unless the
+\fB-R\fP or
+\fB-r\fP, are specified, the following
+escape conventions will be applied:
+.RS
+.IP "\ea" 10
+The alert character (ascii
+\fB07\fP)\&.
+.IP "\eb" 10
+The backspace character (ascii
+\fB010\fP)\&.
+.IP "\ec" 10
+Causes
+\fBprint\fP to end without processing more arguments and
+not adding a new-line\&.
+.IP "\ef" 10
+The formfeed character (ascii
+\fB014\fP)\&.
+.IP "\en" 10
+The new-line character (ascii
+\fB012\fP)\&.
+.IP "\er" 10
+The carriage return character (ascii
+\fB015\fP)\&.
+.IP "\et" 10
+The tab character (ascii
+\fB011\fP)\&.
+.IP "\ev" 10
+The vertical tab character (ascii
+\fB013\fP)\&.
+.IP "\eE" 10
+The escape character (ascii
+\fB033\fP)\&.
+.IP "\e\e" 10
+The backslash character \e\&.
+.RE
+.IP "" 10
+The
+\fB-R\fP option will print all subsequent arguments and options
+other than
+\fB-n\fP\&. The
+\fB-p\fP option causes the
+arguments to be written onto the pipe
+of the process spawned with
+\fB\(or&\fP instead of standard output\&.
+The
+\fB-s\fP option causes the
+arguments to be written onto the history file
+instead of standard output\&.
+The
+\fB-u\fP option can be used to specify a one digit
+file descriptor unit number
+\fIunit\^\fP on which the
+output will be placed\&.
+The default is 1\&.
+If the option
+\fB-n\fP is used, no
+\fBnew-line\^\fP is added to the output\&.
+.IP "printf format\^ arg\^ \&.\!\&.\!\&." 10
+The arguments
+\fIarg\^\fP are printed on standard output
+in accordance with the ANSI-C
+formatting rules associated with the format string
+\fIformat\fP\&. The following extensions can also be used:
+.RS
+.IP "   \(bu" 6
+A
+\fB%b\fP format can be used instead of
+\fB%s\fP to cause escape sequences in the corresponding
+\fIarg\^\fP to be expanded as described in
+\fBprint\&.\fP
+.IP "   \(bu" 6
+A
+\fB%P\fP format can be used instead of
+\fB%s\fP to cause
+\fIarg\^\fP to be interpreted as an extended regular
+expression and be printed as a shell pattern\&.
+.IP "   \(bu" 6
+A
+\fB%q\fP format can be used instead of
+\fB%s\fP to cause the resulting string to be quoted in a manner than can
+be reinput to the shell\&.
+.IP "   \(bu" 6
+The precision field of the
+\fB%d\fP format can be followed by a
+\&. and the output base\&.
+.RE
+.IP "pwd -LP" 10
+Outputs the value of the current working
+directory\&.
+If the
+\fB-P\fP option is given,
+all symbolic links are resolved from the name\&.
+.IP "read -Aprs\^ -d delim\^ -t timeout\^ -u unit\^ vname?prompt\^ vname\^ \&.\!\&.\!\&." 10
+The shell input mechanism\&.
+One line is read and
+is broken up into fields using the characters in
+IFSas separators\&.
+The escape character,
+\fB\e\fP, is used to remove any special meaning for the next
+character and for line continuation\&.
+The
+\fB-d\fP option
+causes the read to continue to the first character of
+\fIdelim\^\fP rather than new-line\&.
+In raw mode,
+\fB-r,\fP the
+\fB\e\fP character is not treated specially\&.
+The first
+field is assigned to the first
+\fIvname\fP, the second field
+to the second
+\fIvname\fP, etc\&., with leftover fields assigned to the last
+\fIvname\fP\&. The
+\fB-A\fP option causes the variable
+\fIvname\^\fP to be unset and each field that is read to be stored in
+successive elements of the indexed array
+\fIvname\&.\fP The
+\fB-p\fP option causes the input line
+to be taken from the input pipe
+of a process spawned by the shell
+using
+\fB\(or&\fP\&. If the
+\fB-s\fP option is present,
+the input will be saved as a command in the history file\&.
+The option
+\fB-u\fP can be used to specify a one digit file
+descriptor unit
+\fIunit\^\fP to read from\&.
+The file descriptor can be opened with the
+\fBexec\^\fP special built-in command\&.
+The default value of unit
+\fIn\^\fP is 0\&.
+The option
+\fB-t\fP is used to specify a timeout in decimal
+seconds when reading from a terminal or pipe\&.
+If
+\fIvname\^\fP is omitted then
+\fBREPLY\fP is used as the default
+\fIvname\fP\&. An end-of-file with the
+\fB-p\fP option causes cleanup for this process
+so that another can be spawned\&.
+If the first argument contains a
+\fB?\fP, the remainder of this word is used as a
+\fIprompt\^\fP on standard error
+when the shell is interactive\&.
+The exit status is 0 unless an end-of-file is encountered
+or read has timed out\&.
+.IP "-- readonly -p vname=value\^ \&.\!\&.\!\&." 10
+If
+\fIvname\^\fP is not given
+the names and values of each variable with
+the readonly attribute is printed with the values
+quoted in a manner that allows them to be re-inputed\&.
+The
+\fB-p\fP option
+causes the word
+\fBreadonly\fP to be inserted before each one\&.
+Otherwise, the given
+\fIvname\fPs are marked
+readonly and these
+names cannot be changed
+by subsequent assignment\&.
+.IP "- return n\^" 10
+Causes a shell
+\fIfunction\fP or
+\fB\!\&.\fP
+script to return
+to the invoking script
+with the return status specified by
+\fIn\fP\&. The value will be the least significant 8 bits of the specified status\&.
+If
+\fIn\^\fP is omitted then the return status is that of the last command executed\&.
+If
+\fBreturn\fP is invoked while not in a
+\fIfunction\fP or a
+\fB\!\&.\fP
+script,
+then it behaves the same as
+\fBexit\fP\&.
+.IP "- set \(+-CPabefhkmnopstuvx \(+-o option\^ \&.\!\&.\!\&. \(+-A vname\^ arg\^ \&.\!\&.\!\&." 10
+The options for this command have meaning as follows:
+.RS
+.IP "-A" 10
+Array assignment\&.
+Unset the variable
+\fIvname\fP and assign values sequentially from the
+list
+\fIarg\fP\&. If
+\fB+A\fP is used, the variable
+\fIvname\fP is not unset first\&.
+.IP "-C" 10
+Prevents redirection
+\fB>\fP from truncating existing files\&.
+Files that are created are opened with the O_EXCL mode\&.
+Require
+\fB>\(or\fP to truncate a file when turned on\&.
+.IP "-P" 10
+Causes the
+\fBcd\fP and
+\fBpwd\fP built-in commands to default to physical mode\&.
+.IP "-a" 10
+All subsequent variables that are defined are automatically exported\&.
+.IP "-b" 10
+Prints job completion messages as soon as a background job changes
+state rather than waiting for the next prompt\&.
+.IP "-e" 10
+If a command has a non-zero exit status,
+execute the
+\fBERR\fP trap, if set,
+and exit\&.
+This mode is disabled while reading profiles\&.
+.IP "-f" 10
+Disables file name generation\&.
+.IP "-h" 10
+Each command
+becomes a tracked alias when first encountered\&.
+.IP "-k" 10
+(Obsolete)\&. All variable assignment arguments are placed in the environment for a command,
+not just those that precede the command name\&.
+.IP "-m" 10
+Background jobs will run in a separate process group
+and a line will print upon completion\&.
+The exit status of background jobs is reported in a completion message\&.
+On systems with job control,
+this option is turned on automatically for
+interactive shells\&.
+.IP "-n" 10
+Read commands and check them for syntax errors, but do not execute them\&.
+Ignored for interactive shells\&.
+.IP "-o" 10
+The following argument can be one of the following option names:
+.RS
+.IP "allexport" 10
+Same as
+\fB-a\fP\&.
+.IP "errexit" 10
+Same as
+\fB-e\fP\&.
+.IP "bgnice" 10
+All background jobs are run at a lower priority\&.
+This is the default mode\&.
+.IP "emacs" 10
+Puts you in an
+\fIemacs\fP style in-line editor for command entry\&.
+.IP "gmacs" 10
+Puts you in a
+\fIgmacs\fP style in-line editor for command entry\&.
+.IP "ignoreeof" 10
+The shell will not exit on end-of-file\&.
+The command
+\fBexit\fP must be used\&.
+.IP "keyword" 10
+Same as
+\fB-k\fP\&.
+.IP "markdirs" 10
+All directory names resulting from file name generation have a trailing
+\fB/\fP appended\&.
+.IP "monitor" 10
+Same as
+\fB-m\fP\&.
+.IP "noclobber" 10
+Same as
+\fB-C\fP\&.
+.IP "noexec" 10
+Same as
+\fB-n\fP\&.
+.IP "noglob" 10
+Same as
+\fB-f\fP\&.
+.IP "nolog" 10
+Do not save function definitions in history file\&.
+.IP "notify" 10
+Same as
+\fB-b\fP\&.
+.IP "nounset" 10
+Same as
+\fB-u\fP\&.
+.IP "physical" 10
+Same as
+\fB-P\fP\&.
+.IP "privileged" 10
+Same as
+\fB-p\fP\&.
+.IP "verbose" 10
+Same as
+\fB-v\fP\&.
+.IP "trackall" 10
+Same as
+\fB-h\fP\&.
+.IP "vi" 10
+Puts you in insert mode of a
+\fIvi\^\fP style in-line editor
+until you hit escape character
+\fB033\fP\&. This puts you in control mode\&.
+A return sends the line\&.
+.IP "viraw" 10
+Each character is processed as it is typed
+in
+\fIvi\^\fP mode\&.
+.IP "xtrace" 10
+Same as
+\fB-x\fP\&.
+.IP "If no option name is supplied then the current option settings are printed\&." 10
+.RE
+.IP "-p" 10
+Disables processing of the
+\fB$HOME/\&.profile\fP file and uses the file
+\fB/etc/suid_profile\fP instead of the
+\fBENV\fP file\&.
+This mode is on whenever the effective uid (gid)
+is not equal to the real uid (gid)\&.
+Turning this off causes the effective uid and gid to be
+set to the real uid and gid\&.
+.IP "-s" 10
+Sort the positional parameters lexicographically\&.
+.IP "-t" 10
+(Obsolete)\&. Exit after reading and executing one command\&.
+.IP "-u" 10
+Treat unset parameters as an error when substituting\&.
+.IP "-v" 10
+Print shell input lines as they are read\&.
+.IP "-x" 10
+Print commands and their arguments as they are executed\&.
+.IP "-\!-" 10
+Do not change any of the options; useful in setting
+\fB$1\fP to a value beginning with
+\fB-\fP\&. If no arguments follow this option then the positional parameters are unset\&.
+.IP "" 10
+As an obsolete feature,
+if the first
+\fIarg\^\fP is
+\fB-\fP then the
+\fB-x\fP and
+\fB-v\fP options are turned off and the next
+\fIarg\fP is treated as the first argument\&.
+Using
+\fB+\fP rather than
+\fB-\fP causes these options to be turned off\&.
+These options can also be used upon invocation of the shell\&.
+The current set of options may be found in
+\fB$-\fP\&. Unless
+\fB-A\fP is specified,
+the remaining arguments are positional
+parameters and are assigned, in order, to
+\fB$1\fP \fB$2\fP \&.\!\&.\!\&.\^\&.
+If no arguments are given then the names and values
+of all variables are printed on the standard output\&.
+.RE
+.IP "- shift n\^" 10
+The positional parameters from
+\fB$\fP\fIn\fP\fB+1\fP
+\&.\!\&.\!\&.
+are renamed
+\fB$1\fP \&.\!\&.\!\&.\^
+, default
+\fIn\^\fP is 1\&.
+The parameter
+\fIn\^\fP can be any arithmetic expression that evaluates to a non-negative
+number less than or equal to
+\fB$#\fP\&.
+.IP "sleep seconds\^" 10
+Suspends execution for the number of decimal seconds or fractions of a
+second given by
+\fIseconds\fP\&.
+.IP "- trap -p action\^ sig\^ \&.\!\&.\!\&." 10
+The -p
+option causes the trap
+action associated with each trap as specified by the arguments
+to be printed with appropriate quoting\&.
+Otherwise,
+\fIaction\^\fP will be processed as if it were an argument to
+\fBeval\fP when the shell
+receives signal(s)
+\fIsig\fP\&. Each
+\fIsig\^\fP can be given as a number or as the name of the signal\&.
+Trap commands are executed in order of signal number\&.
+Any attempt to set a trap on a signal that
+was ignored on entry to the current shell
+is ineffective\&.
+If
+\fIaction\^\fP is omitted and the first
+\fIsig\^\fP is a number, or if
+\fIaction\^\fP is
+\fB-\fP, then the trap(s) for each
+\fIsig\^\fP are reset
+to their original values\&.
+If
+\fIaction\^\fP is the null
+string then this signal is ignored by the shell and by the commands
+it invokes\&.
+If
+\fIsig\^\fP is
+\fBERR\fP then
+\fIaction\^\fP will be executed whenever a command has a non-zero exit status\&.
+If
+\fIsig\^\fP is
+\fBDEBUG\fP then
+\fIaction\^\fP will be executed before each command\&.
+If
+\fIsig\^\fP is
+\fB0\fP or
+\fBEXIT\fP and the
+\fBtrap\fP statement is executed inside the body of a function,
+then the command
+\fIaction\^\fP is executed
+after the function completes\&.
+If
+\fIsig\^\fP is
+\fB0\fP or
+\fBEXIT\fP for a
+\fBtrap\fP set outside any function
+then the command
+\fIaction\^\fP is executed
+on exit from the shell\&.
+If
+\fIsig\^\fP is
+\fBKEYBD\fP then
+\fIaction\^\fP will be executed whenever a key is read
+while in
+\fBemacs\fP, \fBgmacs\fP, or
+\fBvi\^\fP mode\&.
+The
+\fBtrap\fP command
+with no arguments prints a list
+of commands associated with each signal number\&.
+.IP "-- typeset \(+-AHflnprtux\^ \(+-EFLRZin\^ vname\^=value\^ \^ \&.\!\&.\!\&." 10
+Sets attributes and values for shell variables and functions\&.
+When invoked inside a function,
+a new instance of the variables
+\fIvname\^\fP is created\&.
+The variables\&' value and type are restored
+when the function completes\&.
+The following list of attributes may be specified:
+.RS
+.IP "-A" 10
+Declares
+\fIvname\^\fP to be an associate array\&.
+Subscripts are strings rather than arithmetic
+expressions\&.
+.IP "-E" 10
+Declares
+\fIvname\^\fP to be a double precision floating point number\&.
+If
+\fIn\^\fP is non-zero it defines the number of significant figures
+that are used when expanding
+\fIvname\fP\&. Otherwise ten significant figures will be used\&.
+.IP "-F" 10
+Declares
+\fIvname\^\fP to be a double precision floating point number\&.
+If
+\fIn\^\fP is non-zero it defines the number of places after the
+decimal point that are used when expanding
+\fIvname\fP\&. Otherwise ten places after the decimal point will be used\&.
+.IP "-H" 10
+This option provides UNIX to host-name file mapping on non-UNIX
+machines\&.
+.IP "-L" 10
+Left justify and remove leading blanks from
+\fIvalue\fP\&. If
+\fIn\^\fP is non-zero it defines the width
+of the field,
+otherwise it is determined by the width of the value of
+first assignment\&.
+When the variable is assigned to, it is
+filled on the right with blanks or truncated, if necessary, to
+fit into the field\&.
+The
+\fB-R\fP option is turned off\&.
+.IP "-R" 10
+Right justify and fill with leading blanks\&.
+If
+\fIn\^\fP is non-zero it defines the width
+of the field,
+otherwise it is determined by the width of the value of
+first assignment\&.
+The field is left filled with blanks or
+truncated from the end if the
+variable is reassigned\&.
+The
+\fB-L\fP option is turned off\&.
+.IP "-Z" 10
+Right justify and fill with leading zeros if
+the first non-blank character is a digit and the
+\fB-L\fP option has not been set\&.
+Remove leading zeros if the
+\fB-L\fP option is also set\&.
+If
+\fIn\^\fP is non-zero it defines the width
+of the field,
+otherwise it is determined by the width of the value of
+first assignment\&.
+.IP "-f" 10
+The names refer to function names rather than
+variable names\&.
+No assignments can be made and the only other
+valid options are
+\fB-t\fP, \fB-u\fP and
+\fB-x\fP\&. The option
+\fB-t\fP turns on execution tracing for this function\&.
+The option
+\fB-u\fP causes this function to be marked undefined\&.
+The
+\fBFPATH\fP variable will be searched to find the function definition
+when the function is referenced\&.
+.IP "-i" 10
+Declares
+\fIvname\^\fP to be represented internally as integer\&.
+The right hand side of an assignment is evaluated as an
+arithmetic expression when assigning to an integer\&.
+If
+\fIn\^\fP is non-zero it defines the output arithmetic base,
+otherwise the the output base will be ten\&.
+.IP "-l" 10
+All upper-case characters are
+converted to lower-case\&.
+The upper-case option,
+\fB-u\fP is turned off\&.
+.IP "-n" 10
+Declares
+\fIvname\^\fP to be a reference to the variable whose name is
+defined by the value of variable
+\fIvname\fP\&. This is usually used to reference a variable inside
+a function whose name has been passed as an argument\&.
+.IP "-r" 10
+The given
+\fIvname\fPs are marked
+readonly and these
+names cannot be changed
+by subsequent assignment\&.
+.IP "-t" 10
+Tags the variables\&.
+Tags are user definable and have no special
+meaning to the shell\&.
+.IP "-u" 10
+All lower-case characters are converted
+to upper-case characters\&.
+The lower-case option,
+\fB-l\fP, is turned off\&.
+.IP "-x" 10
+The given
+\fIvname\fPs are marked for automatic
+export to the
+\fIenvironment\^\fP of subsequently-executed commands\&.
+Variables whose names contain a .
+can not be exported\&.
+.IP "" 10
+The
+\fB-i\fP attribute can not be specified along with
+\fB-R\fP, \fB-L\fP, \fB-Z\fP, or
+\fB-f\fP\&.
+.IP "" 10
+Using
+\fB+\fP rather than
+\fB-\fP causes these options to be turned off\&.
+If no
+\fIvname\^\fP arguments are given
+a list of
+\fIvnames\^\fP (and optionally the
+\fIvalues\^\fP) of the
+\fIvariables\^\fP is printed\&.
+(Using
+\fB+\fP rather than
+\fB-\fP keeps the
+values from being printed\&.)
+The
+\fB-p\fP option causes
+\fBtypeset\fP followed by the the option letters
+to be printed before each name
+rather than the names of the options\&.
+If any option other than
+\fB-p\fP is given,
+only those variables
+which have all of the given
+options are printed\&.
+Otherwise, the
+\fIvname\fPs and
+\fIattributes\^\fP of all
+\fIvariables\^\fP are printed\&.
+.RE
+.IP "ulimit -HSacdfmnpstv limit\^" 10
+Set or display a resource limit\&.
+The available resources limits are listed below\&.
+Many systems do not contain one or more of these limits\&.
+The limit for a specified resource is set when
+\fIlimit\^\fP is specified\&.
+The value of
+\fIlimit\^\fP can be a number in the unit specified below with each resource,
+or the value
+\fBunlimited\fP\&. The
+\fB-H\fP and
+\fB-S\fP options specify whether the hard limit or the
+soft limit for the given resource is set\&.
+A hard limit cannot be increased once it is set\&. A soft
+limit can be increased up to the value of the hard limit\&.
+If neither the
+\fBH\fP or
+\fBS\fP options is specified, the limit applies to both\&.
+The current resource limit is printed when
+\fIlimit\^\fP is omitted\&.
+In this case the soft limit is printed unless
+\fBH\fP is specified\&.
+When more that one resource is specified, then the limit
+name and unit is printed before the value\&.
+.RS
+.IP "-a" 10
+Lists all of the current resource limits\&.
+.IP "-c" 10
+The number of 512-byte blocks on the size of core dumps\&.
+.IP "-d" 10
+The number of K-bytes on the size of the data area\&.
+.IP "-f" 10
+The number of 512-byte blocks on files that can be written the
+current process or by child processes (files of any size may be read)\&.
+.IP "-m" 10
+The number of K-bytes on the size of physical memory\&.
+.IP "-n" 10
+The number of file descriptors plus 1\&.
+.IP "-p" 10
+The number of 512-byte blocks for pipe buffering\&.
+.IP "-s" 10
+The number of K-bytes on the size of the stack area\&.
+.IP "-t" 10
+The number of seconds to be used by each process\&.
+.IP "-v" 10
+The number of K-bytes for virtual memory\&.
+.IP "" 10
+If no option is given,
+\fB-f\fP is assumed\&.
+.RE
+.IP "umask -S mask\^" 10
+The user file-creation mask is set to
+\fImask\^\fP (see
+\fIumask\fP(2))\&. \fImask\fP can either be an octal number or
+a symbolic value as described in
+\fIchmod\fP(1)\&. If a symbolic value is given,
+the new
+umask value is the complement of the result of
+applying
+\fImask\^\fP to the complement of the previous umask value\&.
+If
+\fImask\^\fP is omitted, the current value of the mask is printed\&.
+The
+\fB-S\fP option causes the mode to be printed as a symbolic
+value\&. Otherwise, the
+mask is printed in octal\&.
+.IP "- unalias -a name\^ \&.\!\&.\!\&." 10
+The
+\fIaliases\^\fP given by the list of
+\fIname\fPs are removed from the
+\fIalias\^\fP list\&.
+The
+\fB-a\fP option causes all the
+aliases to be unset\&.
+.IP "-unset -fv vname\^ \&.\!\&.\!\&." 10
+The variables given by the list of
+\fIvname\fPs are unassigned,
+i\&.e\&.,
+their values and attributes are erased\&.
+Readonly variables cannot be unset\&.
+If the
+\fB-f\fP option
+is set, then the names refer to
+\fIfunction\^\fP names\&.
+If the
+\fB-v\fP option is set, then the names refer to
+\fIvariable\^\fP names\&.
+The default is equivalent to
+\fB-v\fP\&. Unsetting
+\fBERRNO\fP, \fBLINENO\fP, \fBMAILCHECK\fP, \fBOPTARG\fP, \fBOPTIND\fP, \fBRANDOM\fP, \fBSECONDS\fP, \fBTMOUT\fP, and
+\fB_\fP removes their special meaning even if they are
+subsequently assigned to\&.
+.IP "wait job\^ \&.\!\&.\!\&." 10
+Wait for the specified
+\fIjob\fP and
+report its termination status\&.
+If
+\fIjob\^\fP is not given then all currently active child processes are waited for\&.
+The exit status from this command is that of
+the last process waited for\&.
+See
+\fIJobs\fP for a description of the format of
+\fIjob\fP\&.
+.IP "whence -apv name\^ \&.\!\&.\!\&." 10
+For each
+\fIname\fP, indicate how it
+would be interpreted if used as a command name\&.
+.IP "" 10
+The
+\fB-v\fP option
+produces a more verbose report\&.
+.IP "" 10
+The
+\fB-p\fP option
+does a path search for
+\fIname\^\fP even if name is an alias, a function, or a reserved word\&.
+The
+\fB-a\fP is similar to the
+\fB-v\fP option but causes
+all interpretations of the given name to be reported\&.
+.SS "Invocation\&."
+.PP
+If the shell is invoked by
+\fIexec\fP(2), and the first character of argument zero
+(\fB$0\fP) is
+\fB-\fP, then the shell is assumed to be a
+\fIlogin\fP shell and
+commands are read from
+\fB/etc/profile\fP and then from either
+\fB\&.profile\fP in the current directory or
+\fB$HOME/\&.profile\fP, if either file exists\&.
+Next, commands are read from
+the file named by
+performing parameter expansion, command substitution,
+and arithmetic substitution on
+the value of the environment variable
+\fBENV\fP if the file exists\&.
+If the
+\fB-s\fP option is not present and
+\fIarg\^\fP is, then a path search is performed on the first
+\fIarg\^\fP to determine the name of the script to execute\&.
+The script
+\fIarg\^\fP must have read permission and any
+\fIsetuid\fP and
+\fIgetgid\fP settings will be ignored\&.
+If the script is not found on the path,
+\fIarg\^\fP is processed as if it named a built-in command or function\&.
+Commands are then read as described below;
+the following option are interpreted by the shell
+when it is invoked:
+.IP "-c" 10
+If the
+\fB-c\fP option is present then
+commands are read from the first
+\fIarg\fP\&. Any remaining arguments become
+position parameters starting at
+\fB0\fP\&.
+.IP "-s" 10
+If the
+\fB-s\fP option is present or if no
+arguments remain
+then commands are read from the standard input\&.
+Shell output,
+except for the output of the
+\fISpecial\fP \fICommands\^\fP listed above,
+is written to
+file descriptor 2\&.
+.IP "-i" 10
+If the
+\fB-i\fP option is present or
+if the shell input and output are attached to a terminal (as told by
+\fIioctl\fP(2)) then this shell is
+\fIinteractive\fP\&. In this case TERM is ignored (so that \fBkill 0\fP
+does not kill an interactive shell) and INTR is caught and ignored
+(so that
+\fBwait\fP is interruptible)\&.
+In all cases, QUIT is ignored by the shell\&.
+.IP "-r" 10
+If the
+\fB-r\fP option is present the shell is a restricted shell\&.
+.PP
+The
+\fB-I\fP \fIfilename\^\fP option is used
+to generate a cross reference database
+that can be used by a separate utility
+to find definitions and references for variables and commands\&.
+.PP
+The remaining options and arguments are described under the
+\fBset\fP command above\&.
+An optional
+\fB-\fP as the first argument is ignored\&.
+.SS "Rksh Only"
+.PP
+\fIRksh\fP is used to set up login names and execution environments whose
+capabilities are more controlled than those of the standard shell\&.
+The actions of
+\fBrksh\fP are identical to those of
+\fBksh\fP, except that the following are disallowed:
+.IP "" 10
+changing directory (see
+\fIcd\fP(1))
+.IP "" 10
+setting or unsetting the value or attributes of
+\fBSHELL\fP, \fBENV\fP, or
+\fBPATH\fP
+.IP "" 10
+specifying path or
+command names containing
+\fB/\fP
+.IP "" 10
+redirecting output
+(\fB>\fP, \fB>|\fP, \fB<>\fP, and
+\fB>>\fP)
+.PP
+The restrictions above are enforced
+after \fB\&.profile\fP and the
+\fBENV\fP files are interpreted\&.
+.PP
+When a command to be executed is found to be a shell procedure,
+invokes
+\fIsh\^}\fP {\&.B rksh\^
+invokes
+\fIksh\^}\fP to execute it\&.
+Thus, it is possible to provide to the end-user shell procedures
+that have access to the full power of
+the standard shell,
+while imposing a limited menu of commands;
+this scheme assumes that the end-user does not have write and
+execute permissions in the same directory\&.
+.PP
+The net effect of these rules is that the writer of the
+\fB\&.profile\fP has complete control over user actions,
+by performing guaranteed setup actions
+and leaving the user in an appropriate directory
+(probably
+\fInot\^\fP the login directory)\&.
+.PP
+The system administrator often sets up a directory
+of commands
+(i\&.e\&.,
+\fB/usr/rbin\fP) that can be safely invoked by
+\fBrksh\fP\&.
+.SH "EXIT"
+.PP
+Errors detected by the shell, such as syntax errors,
+cause the shell
+to return a non-zero exit status\&.
+Otherwise, the shell returns the exit status of
+the last command executed (see also the
+\fBexit\fP command above)\&.
+If the shell is being used non-interactively
+then execution of the shell file is abandoned\&.
+Run time errors detected by the shell are reported by
+printing the command or function name and the error condition\&.
+If the line number that the error occurred on is greater than one,
+then the line number is also printed in square brackets
+(\fB[]\fP) after the command or function name\&.
+.SH "FILES"
+.IP "" 10
+/etc/passwd
+.IP "" 10
+/etc/profile
+.IP "" 10
+/etc/suid_profile
+.IP "" 10
+$HOME/\&.profile
+.IP "" 10
+/tmp/sh*
+.IP "" 10
+/dev/null
+.SH "SEE"
+.PP
+cat(1),
+cd(1),
+chmod(1),
+cut(1),
+echo(1),
+emacs(1),
+env(1),
+gmacs(1),
+newgrp(1),
+stty(1),
+test(1),
+umask(1),
+vi(1),
+dup(2),
+exec(2),
+fork(2),
+ioctl(2),
+lseek(2),
+paste(1),
+pipe(2),
+umask(2),
+ulimit(2),
+wait(2),
+rand(3),
+a\&.out(5),
+profile(5),
+environ(7)\&.
+.PP
+Morris I\&. Bolsky and David G\&. Korn,
+\fIThe KornShell Command and Programming Language\fP, Prentice Hall, 1989, ISBN 0-13-516972-0\&.
+.SH "CAVEATS"
+.PP
+If a command
+is executed, and then a command with the same name is
+installed in a directory in the search path before the directory where the
+original command was found, the shell will continue to
+\fIexec\^\fP the original command\&.
+Use the
+\fB-t\fP option of the
+\fBalias\^\fP command to correct this situation\&.
+.PP
+Some very old shell scripts contain a
+\fB^\fP as a synonym for the pipe character
+\fB\(or\fP\&.
+.PP
+Using the
+\fBhist\^\fP built-in command within a compound command will cause the whole
+command to disappear from the history file\&.
+.PP
+The built-in command \fB\!\&.\fP \fIfile\^\fP
+reads the whole file before any commands are executed\&.
+Therefore,
+\fBalias\fP and
+\fBunalias\fP commands in the file
+will not apply to any commands defined in the file\&.
+.PP
+Traps are not processed while a job is waiting for a foreground process\&.
+Thus, a trap on
+\fBCHLD\fP won\&'t be executed until the foreground job terminates\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

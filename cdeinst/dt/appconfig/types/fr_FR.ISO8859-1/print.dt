@@ -1,0 +1,223 @@
+# ##########################################################################
+# 
+#      print.dt
+# 
+#      Action and DataType Definitions for the printing
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: print.dt.src /main/4 1996/04/23 17:36:13 drk $
+# 
+
+#  Le modèle d'imprimante du Bureau CDE est basé sur l'action Imprimer.
+#
+#  Vous pouvez définir plusieurs actions Imprimer, une pour chaque type de données.
+#  Si vous n'indiquez pas d'arguments pour l'action Imprimer, la commande
+#  dtprintinfo est appelée pour afficher l'état de l'imprimante et du travail.
+#
+#  'dtprintinfo -populate' est un outil de gestion permettant de créer les
+#  actions d'impression par défaut de la forme <nom_imprimante>_Print'.  
+#
+#  Lors de la création d'un fichier, une action Imprimer associée au type
+#  de données peut être créée ; elle sera utilisée à la place de l'action
+#  par défaut. Elle utilise dtlp ou ses propres fonctions d'impression
+#  pour identifier les arguments spécifiques de l'application.
+# 
+# ##########################################################################
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVERTISSEMENT: Il est possible que ce fichier soit écrasé lors des 
+#     installations suivantes du Bureau CDE. Il est donc conseillé d'effectuer
+#     les modifications devant s'appliquer sur tout le système dans un
+#     fichier de base de données équivalent du répertoire /etc/dt/types.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Attributs de données
+# 
+# ##################################################################
+DATA_ATTRIBUTES PRINTER_UNKNOWN
+{
+        ACTIONS         PrinterUnconfigured
+        ICON		DtPrtun
+        IS_EXECUTABLE   true
+        DESCRIPTION     Cette icône représente une imprimante qui \
+                        n'est plus définie sur le Bureau.
+        TYPE_LABEL      PRINTER_UNKNOWN
+}
+DATA_CRITERIA PRINTER_UNKNOWN1
+{
+	DATA_ATTRIBUTES_NAME PRINTER_UNKNOWN
+	MODE		f&x
+        NAME_PATTERN    *_Print
+}
+
+# 
+# Action d'impression par défaut, appelée pour les ARG_TYPE génériques
+# (les fichiers pour lesquels aucune autre action d'impression n'est définie).
+# 
+ACTION Print
+{
+	LABEL		Imprimer
+	ARG_TYPE	*
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     /usr/dt/bin/dtlp "%(File)Arg_1%"
+	DESCRIPTION	Il s'agit de l'action d'impression par défaut. Lorsqu'un \
+                        fichier est indiqué, elle identifie les options \
+                        spécifiques de l'imprimante avant d'imprimer le \
+                        fichier. Sans arguments, elle affiche la fenêtre \
+                        NOM DE LA FENETRE ?
+}
+ACTION PrintRaw
+{
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     /usr/dt/bin/dtlp -w "%(File)Arg_1%"
+}
+
+# 
+#   Si aucun argument de fichier n'est indiqué, appel de
+#   l'action Dtprintinfo.
+# 
+ACTION Print
+{
+	LABEL			Imprimer
+	ARG_COUNT		0
+	TYPE			MAP
+	MAP_ACTION		Dtprintinfo
+}
+
+# 
+#   L'action Gestionnaire d'impression (DtPrintManager) appelle
+#  la commande dtprintinfo -all.
+# 
+ACTION DtPrintManager
+{
+	LABEL		Gestionnaire d'impression
+        ICON            FpPrtmg
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo -all
+	DESCRIPTION	L'action Gestionnaire d'impression (DtPrintManager) permet de \
+                        connaître l'état de plusieurs imprimantes, et d'afficher \
+			les travaux en cours. Elle permet également de faire glisser \
+                        des imprimantes sur les commandes d'installation d'icônes \
+			des tableaux secondaires.
+}
+
+# 
+#  L'action Travaux d'impression (Dtprintinfo) appelle la commande 
+#  dtprintinfo ou dtprintinfo -p imprimante.
+# 
+ACTION Dtprintinfo
+{
+	LABEL		Travaux d'impression
+        ICON            Fpprnt
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo -p "%(String)Arg_1%"
+	DESCRIPTION	L'action Travaux d'impression (Dtprintinfo) permet \
+                        de connaître l'état d'une imprimante et les \
+                        travaux en cours.
+}
+
+ACTION Dtprintinfo
+{
+	LABEL		Travaux d'impression
+	ARG_COUNT	0
+        ICON            Fpprnt
+        TYPE            COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtprintinfo
+	DESCRIPTION	L'action Travaux d'impression (Dtprintinfo) permet \
+                        de connaître l'état d'une imprimante et les \
+                        travaux en cours.
+}
+
+# ###############################################################
+#  
+#   Actions associées à l'imprimante par défaut.
+#  
+# ###############################################################
+ 
+# 
+#   Si un argument de fichier est indiqué, appelle
+#   l'action Imprimer.
+# 
+ACTION DtPrint
+{
+	LABEL		Imprimante par défaut
+	ARG_TYPE	*
+        ICON		Fpprnt
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	/usr/dt/bin/dtaction Print "%(File)Arg_1%"
+	DESCRIPTION	Il s'agit de l'action d'impression par défaut. Lorsqu'un \
+                        fichier est indiqué, elle identifie les options \
+                        spécifiques de l'imprimante avant d'imprimer le \
+                        fichier. Sans arguments, elle affiche la fenêtre \
+                        NOM DE LA FENETRE ?
+}
+
+# 
+#   Si aucun argument de fichier n'est indiqué, appelle
+#   l'action Dtprintinfo.
+# 
+ACTION DtPrint
+{
+	LABEL		Imprimante par défaut
+	ARG_COUNT	0
+        ICON		Fpprnt
+	TYPE		MAP
+	MAP_ACTION	Dtprintinfo
+	DESCRIPTION	L'action Travaux d'impression (Dtprintinfo) permet \
+                        de connaître l'état d'une imprimante et les \
+                        travaux en cours.
+}
+
+
+# 
+#   Il s'agit des actions et des attributs de données associés aux
+#   objets imprimantes inconnus et non configurés.
+# 
+ACTION PrinterUnconfigured
+{
+	LABEL		Imprimante_non_configurée
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                         "Ce contrôle d'imprimante n'est pas configuré. \\nPour le configurer, \
+                        sélectionnez Aide et suivez\\nles instructions."                         "Imprimante non configurée"                         "OK"                         "HELP"
+
+
+
+
+	DESCRIPTION	L'action Imprimante_non_configurée affiche \
+                        une boîte de dialogue indiquant que l'imprimante \
+                        n'a pas été configurée.
+}
+
+ACTION Printer_Trash
+{
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dterror.ds                         "Lorsque vous placez une imprimante dans \\n\
+                        la corbeille, elle n'est pas supprimée du système.\\n\
+                        Pour supprimer une imprimante, consultez la documentation\\n\
+                        relative à la gestion du système."                         "Supprimer imprimante"                         "OK"
+
+
+
+        DESCRIPTION     L'action Imprimante_corbeille affiche une \
+                        boîte de dialogue indiquant que le fait de placer \
+                        une imprimante dans la corbeille n'entraîne pas sa \
+                        suppression du système.
+}
+# ######################## EOF ############################################

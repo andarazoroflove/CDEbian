@@ -1,0 +1,179 @@
+'\" t
+...\" icon.sgm /main/7 1996/09/08 19:53:31 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dticon" "user cmd"
+.SH "NAME"
+\fBdticon\fP \(em the Common Desktop Environment Icon Editor
+.SH "SYNOPSIS"
+.PP
+\fBdticon\fP [options] 
+.SH "DESCRIPTION"
+.PP
+The Icon Editor provides the facilities that enable the user to create
+new icons or modify existing ones\&.
+.PP
+The Icon Editor uses lines and geometric shape drawing tools in order
+to create new icons or modify existing ones\&. It support XPM and XBM
+formats\&. The Icon Editor, also is capable of grabbing images from the
+display and use them as bases for new icons\&.
+.PP
+The Icon Editor, also, supports drag and drop, allowing the user to
+drag an icon file from the file manager onto the Icon Editor window or
+icon\&.
+.SS "Key Supported Tasks"
+.PP
+- Modify size of window\&.
+.PP
+- Modify location of window\&.
+.PP
+- Iconify window\&.
+.PP
+- Edit a new or existing icon\&.
+.PP
+- Save the current icon
+.PP
+- Undo the last operation\&.
+.PP
+- Cut, copy, and paste areas within the Icon Editor drawing tablet\&.
+.PP
+- Grab images from the display\&.
+.PP
+- Rotate selected area\&.
+.PP
+- Scale selected area\&.
+.PP
+- Flip selected area right or left\&.
+.PP
+- Resize icon\&.
+.PP
+- Add a hot spot to the icon\&.
+.PP
+- Delete a hot spot from icon\&.
+.PP
+- Clear icon\&.
+.PP
+- Overlay the icon drawing area with a visible grid\&.
+.PP
+- Select icon format, XPM or XBM\&.
+.PP
+- Alter the magnification factor for the drawing tablet\&.
+.PP
+The Icon Editor accepts all of the standard X Toolkit/Widget command
+line options\&. Additional application specific options are listed
+below\&.
+.SH "OPTIONS"
+.PP
+The following options are available from the command line:
+.PP
+\fB-f\fP \fIfile\fP
+.PP
+This option takes a bitmap or pixmap file name\&.
+If the file ends in \&.pm or \&.xpm suffix, it will try reading it as an XPM
+file first\&. If it fails, it will try reading it as an XBM file\&.
+If the file ends in \&.bm or \&.xbm suffix, it will try reading it as an XBM
+file first\&. If it fails, it will try reading it as an XPM file\&.
+If the file doesn\&'t match any of these suffixes, it will try reading it
+as an XPM file first\&. If it fails it will try reading it as an XBM file\&.
+.PP
+\fB-x\fP \fIwidthxheight\fP
+.PP
+This option specifies an initial geometry for the icon image\&. If a
+file is specified using the -f option, the size of that icon
+supersedes the geometry specified\&.
+.PP
+\fB-session\fP \fIfile\fP
+.PP
+This option takes the name of a session file as an additional
+parameter\&. The Icon Editor is invoked with the specified session file
+name\&. The session file is a file that was previously saved by the Icon
+Editor through a session shutdown\&. This option causes all other
+command line options to be ignored, as all settings are taken from the
+specified session file\&.
+.SH "RETURN"
+.PP
+Exit values are:
+.IP "0" 10
+Successful completion\&.
+.IP ">0" 10
+Error condition occurred\&.
+.SH "EXAMPLES"
+.IP "dticon -x 24x32" 10
+Starts the Icon Editor with an icon template
+of width 24 and height 32\&.
+.SH "dticon"
+.PP
+[Using Tooltalk to integrate dticon in your applications]
+Tooltalk makes it possible to use dticon from within your application\&.
+dticon supports the following Tooltalk messages: start, edit, quit\&.
+An application can construct a Tooltalk message, which will include a
+buffer containing the icon the application wishes to edit\&. The format
+of the message appears in dticon\&'s ptype file( dticon\&.ptype)\&. The buffer
+in the edit message is constructed to contain the icon contents of an XPM
+or an XBM icon file\&. In the case of an XBM icon containing transparent regions
+dticon generates two icon files, an XBM file containing the base icon(
+the icon without the transparent regions) and a mask file that indicates
+the transparent regions in the icon\&. The buffer in this case must include
+both icon files double buffered, the base icon first and then the mask, both
+in the same buffer\&.
+.IP "NOTE:" 10
+An application may pass a buffer to dticon containing an XPM icon and
+get back a double buffer containing an XBM icon and its mask, and vise versa\&.
+.SH "Suggested"
+.PP
+- The Common Desktop Environment: ToolTalk Messaging Overview
+- The Common Desktop Environment: Programmer\&'s Guide
+.SH "RESOURCES"
+.IP "-useFileFilter" 10
+This resource instructs the Icon Editor to use the file filter feature
+in OPEN and SAVE dialogs\&.
+.SH "FILES"
+.PP
+Files used by this component\&.
+.IP "\fB/\&.\&.\&./dt/app-defaults/C/Dticon\fP" 10
+App-defaults file\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

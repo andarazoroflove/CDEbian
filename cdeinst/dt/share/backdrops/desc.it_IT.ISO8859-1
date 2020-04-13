@@ -1,0 +1,51 @@
+! $XConsortium: Backdrops.src /main/3 1995/12/05 10:11:06 rswiston $
+!######################################################################
+!#
+!#     Backdrops
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Backdrop file used for localization of backdrop names
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary 
+!#	   of Novell, Inc.
+!#
+!#
+!######################################################################
+
+!###
+!#
+!#   C backdrop names followed by message tags for the translated names 
+!#   
+!###
+
+Backdrops*Ankh.desc: Geroglifico
+Backdrops*Background.desc: Vuoto
+Backdrops*BrickWall.desc: Muro
+Backdrops*Concave.desc: Concavo
+Backdrops*Convex.desc: Convesso
+Backdrops*Corduroy.desc: Jacquard
+Backdrops*Crochet.desc: Angora
+Backdrops*Foreground.desc: Primopiano
+Backdrops*InlayColor.desc: Intarsio colorato
+Backdrops*InlayPlain.desc: Intarsio
+Backdrops*KnitLight.desc: Sabbia
+Backdrops*Lattice.desc: Reticolo
+Backdrops*LatticeBig.desc: Reticolo chiaro
+Backdrops*Leaves.desc: Foglie
+Backdrops*NoBackdrop.desc: Nessuno sfondo
+Backdrops*OldChars.desc: Ricamo
+Backdrops*Paver.desc: Lastricato
+Backdrops*Pebbles.desc: Quarzo
+Backdrops*PinStripe.desc: Greca
+Backdrops*RakedSand.desc: Dune
+Backdrops*RicePaper.desc: Marmo
+Backdrops*SkyDark.desc: Notte
+Backdrops*SkyLight.desc: Mattino
+Backdrops*Sprinkles.desc: Scintille
+Backdrops*Toronto.desc: Toronto
+Backdrops*WaterDrops.desc: Gocce
+Backdrops*Wooly.desc: Lana

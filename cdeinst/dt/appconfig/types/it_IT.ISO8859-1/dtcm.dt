@@ -1,0 +1,141 @@
+###############################################################################
+#
+#     dtcm.dt
+#
+#     Action and DataType definitions for the Common Desktop Environment
+#     (CDE) Calendar Component.
+#
+#    (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#    (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#    (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#    (c) Copyright 1993, 1994, 1995 Novell, Inc.
+#
+#
+###############################################################################
+set DtDbVersion=1.0
+
+###############################################################################
+#
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+#
+###############################################################################
+
+###################################################################
+#
+# Attributi dei dati
+#
+###################################################################
+DATA_ATTRIBUTES DtcmAppointmentAttrs
+{
+	ACTIONS		Open,Insert,Print
+	ICON		DtCMapt
+	NAME_TEMPLATE	%s.appt
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      ae-file
+	MEDIA		DT_APPOINTMENT
+	DESCRIPTION	Questo file contiene informazioni relative agli appuntamenti \
+                        dell'Agenda. Il suo tipo di dati è denominato \
+                        CalendarAppointmentAttrs. I file CalendarAppointmentAttrs \
+                        terminano con l'estensione '.appt'.
+	TYPE_LABEL      DtcmAppointmentAttrs
+}
+DATA_CRITERIA DtcmAppointmentAttrs1
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	NAME_PATTERN	*.appt
+}
+DATA_CRITERIA DtcmAppointmentAttrs2
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	CONTENT		3 string ** Calendar Appointment **
+}
+DATA_CRITERIA DtcmAppointmentAttrs3
+{
+        DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+        MODE            fr
+        CONTENT         3 string ** Calendar To Do Item **
+}
+ACTION Open
+{
+        LABEL		Aprire
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmEdit
+}
+ACTION Insert
+{
+        LABEL		Inserire
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmInsert
+}
+ACTION Print
+{
+        LABEL		Stampare
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+
+###################################################################
+###################################################################
+#
+# Azioni
+#
+###################################################################
+ACTION Dtcm
+{
+        LABEL		Agenda
+        ICON            DtCM
+	TYPE		COMMAND
+	EXEC_STRING	/usr/dt/bin/dtcm
+	WINDOW_TYPE	NO_STDIO
+	DESCRIPTION	L'azione Agenda (Dtcm) avvia l'Agenda \
+                        del desktop.
+}
+
+######
+
+ACTION DtcmInsert
+{
+        LABEL		Inserire nell'Agenda
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     sh -c '/usr/dt/bin/dtcm_insert  -a "%(File)Arg_1%" ;\
+			if [ \$? -ne 0 ] ; then \
+			  /usr/dt/bin/dterror.ds \
+			    "L'appuntamento non è stato fissato nell'agenda \
+a causa di un errore.\\n\
+È possibile che il formato \
+dell'appuntamento non sia corretto\\n\
+o che l'agenda non sia accessibile." \
+			    "Agenda : Errore - Fissare l'appuntamento" \
+			    "OK" ; \
+			fi'
+	DESCRIPTION	L'azione Inserire nell'Agenda (DtcmInsert) \
+                        inserisce un appuntamento nell'agenda predefinita dell'utente.
+}
+
+######
+
+ACTION DtcmEdit
+{
+        LABEL		Editor dell'Agenda
+        TYPE            TT_MSG
+	TT_SCOPE	TT_SESSION
+	TT_CLASS	TT_REQUEST
+	TT_OPERATION	Edit
+	TT_ARG0_MODE	TT_INOUT
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_FILE		%Arg_1"Appointment File:"%
+	DESCRIPTION	L'azione Editor dell'Agenda (DtcmEdit) avvia \
+                        l'Editor degli appuntamenti standalone.
+}
+
+########################### EOF ##############################################

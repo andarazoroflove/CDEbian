@@ -1,0 +1,105 @@
+'\" t
+...\" MmdbSeGL.sgm /main/5 1996/09/08 20:08:59 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtMmdbSectionGetLoc" "library call"
+.SH "NAME"
+\fBDtMmdbSectionGetLoc\fP \(em obtains
+a section\&'s locator
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <DtMmdb\&.h>
+\fBconst char* \fBDtMmdbSectionGetLoc\fP\fR(
+\fBDtMmdbInfoRequest* \fBrequest\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtMmdbSectionGetLoc\fP function
+returns the logical identifier for the specified section\&. Do not use the
+\fBfree\fP function on the returned pointer\&. No table lookup is
+involved\&.
+.PP
+The space used by the returned locator pointer is likely to be
+reused by the database engine when any of the API functions
+are invoked again\&. You must make a copy of the content
+if you want to retain it across multiple API calls\&.
+This behavior holds true for all functions that return
+a \fBconst char*\fP pointer\&.
+.SH "ARGUMENTS"
+.IP "\fIrequest\fP" 10
+Specifies the bookcase in the bookcase descriptor field and
+the section\&'s Database Engine (object) identifier in the
+\fIprimary_oid\fP field\&.
+The DtInfo Database Engine identifier is assigned to
+the section when it is stored\&.
+.SH "RETURN VALUE"
+.PP
+If \fBDtMmdbSectionGetLoc\fP completes
+successfully, it returns a pointer to a NULL-terminated
+locator string\&. If it fails, it returns a NULL pointer\&.
+.SH "EXAMPLE"
+.PP
+The following shows how a \fBDtMmdbSectionGetLoc\fP call
+might be coded\&.
+.PP
+.nf
+\f(CWconst char* locator = 0;
+DtMmdbInfoRequest request;
+int bd  = DtMmdbGetBookCase(myInfoLibPtr, "myBase");
+if ( bd  >= 0) {
+   request\&.bookcase_descriptor = bd;
+   request\&.sequence_num = 1;
+   request\&.primary_oid = DtMmdbBookGetTocObjectId(&request);
+   locator = DtMmdbSectionGetLoc(&request);
+}\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+TO BE SUPPLIED
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

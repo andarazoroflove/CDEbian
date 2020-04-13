@@ -1,0 +1,97 @@
+'\" t
+...\" dtfilact.sgm /main/5 1996/08/30 13:53:24 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtfileaction" "file formats"
+.SH "NAME"
+\fBdtfileaction\fP \(em XCDE file management actions
+.SH "SYNOPSIS"
+.PP
+.nf
+Dtfile [\fIdirectory\fP]
+DtfileHome
+Open \fIdirectory\fP
+Open \fIfile\fP
+Print \fIdirectory\fP
+Print \fIfile\fP
+.fi
+.SH "DESCRIPTION"
+.PP
+The XCDE File Management Services support the following
+file management actions:
+.IP "\fBDtfile\fP" 10
+Prompt the user for the pathname of a directory
+and open a folder view of the directory specified by the user\&.
+.IP "\fBDtfile\fP\0\fIdirectory\fP" 10
+Open a folder view of the directory named by the pathname in the
+\fIdirectory\fP argument\&.
+.IP "\fBDtfileHome\fP" 10
+Open a folder view of the user\&'s home directory\&.
+.IP "\fBOpen\fP\0\fIdirectory\fP" 10
+Open a folder view of the directory named by the pathname in the
+\fIdirectory\fP argument\&.
+.IP "\fBOpen\fP\0\fIfile\fP" 10
+Open the file named by the pathname in the
+\fIfile\fP argument\&.
+(The nature of the Open action is dependent on
+the type of file\&.)
+.IP "\fBPrint\fP\0\fIdirectory\fP" 10
+Print a listing of the directory named by the pathname in the
+\fIdirectory\fP argument\&.
+.IP "\fBPrint\fP\0\fIfile\fP" 10
+Print the file named by the pathname in the
+\fIfile\fP argument\&.
+(The nature of the Print action is dependent on
+the type of file\&.)
+.PP
+These actions can be invoked from an application using the
+\fBDtActionInvoke\fP(3) function or invoked from a command line using the
+\fBdtaction\fP(1) utility\&.
+.SH "SEE ALSO"
+.PP
+\fBdtaction\fP(1), \fBDtActionInvoke\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

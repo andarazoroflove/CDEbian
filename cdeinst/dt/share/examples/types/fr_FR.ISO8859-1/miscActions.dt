@@ -1,0 +1,313 @@
+# ##########################################################################
+# 
+#     miscActions.dt
+# 
+#     Examples of miscellaneous Actions (mostly for X clients).
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: miscActions.dt.src /main/4 1996/04/23 17:36:05 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVERTISSEMENT: Il est possible que ce fichier soit écrasé lors des 
+#     installations suivantes du Bureau CDE. Il est donc conseillé d'effectuer
+#     les modifications devant s'appliquer sur tout le système dans un
+#     fichier de base de données équivalent du répertoire /etc/dt/types.
+# 
+# ##########################################################################
+# ##################################################################
+# 
+# Actions
+# 
+# ##################################################################
+ACTION Xcalc
+{
+        LABEL		Calculatrice X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcalc
+	DESCRIPTION	L'action Xcalc permet de lancer le client X xcalc. \
+                        Il s'agit d'une calculatrice scientifique disponible \
+                        sur le Bureau et pouvant émuler une TI-30 ou une HP-10C.
+}
+
+# #####
+
+ACTION Oclock
+{
+        LABEL		Horloge ovale
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     oclock
+	DESCRIPTION	L'action Horloge ovale (Oclock) permet de lancer \
+                        le client X oclock, qui affiche une horloge \
+                        analogique.
+}
+
+# #####
+
+ACTION Xlsatoms
+{
+        LABEL		Liste des atomes
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsatoms
+	DESCRIPTION	L'action Liste des atomes (Xlsatoms) permet \
+                        de lancer le client X xlsatoms, qui fait la liste des atomes internes.
+}
+
+# #####
+
+ACTION Xbiff
+{
+        LABEL		Xbiff
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xbiff
+	DESCRIPTION	L'action Xbiff permet de lancer le client X xbiff, \
+                        qui affiche une boîte aux lettres: lorsqu'elle \
+                        ne contient pas de courrier, le drapeau est baissé. \
+                        Lorsque l'utilisateur reçoit du courrier, le \
+                        drapeau se lève et un signal sonore est émis.
+}
+
+# #####
+
+ACTION Xcolor
+{
+        LABEL		Xcolor
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcolor
+	DESCRIPTION	L'action Xcolor permet de lancer le client X xcolor, \
+                        qui affiche les 256 couleurs disponibles dans une \
+                        fenêtre. Lorsque vous amenez le pointeur dans cette \
+                        fenêtre, une mappe de couleurs contenant une jauge \
+                        est installée (saturation et luminosité constantes, \
+                        noir et blanc conservés).
+}
+
+# #####
+
+ACTION Xcutsel
+{
+        LABEL		Couper et sélectionner
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcutsel
+	DESCRIPTION	L'action Couper et sélectionner (Xcutsel) lance \
+                        le client X xcutsel, qui permet de copier la sélection \
+                        en cours dans une mémoire tampon et de sélectionner le \
+                        contenu de cette mémoire tampon. Elle sert de passerelle \
+                        entre les applications dans lesquelles les sélections \
+                        sont possibles et les autres.
+}
+
+# #####
+
+ACTION Xditview
+{
+        LABEL		Xditview
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xditview
+	DESCRIPTION	L'action Xditview permet de lancer le client X xditview, \
+                        qui affiche la sortie ditroff sur un écran X.
+}
+
+# #####
+
+ACTION Xedit
+{
+        LABEL		Xedit
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xedit
+	DESCRIPTION	L'action Xedit permet de lancer le client X xedit, \
+                        qui se compose d'une fenêtre contenant les zones \
+                        suivantes: 1. Commandes (permettant de quitter \
+                        l'éditeur, de sauvegarder le fichier ou de charger \
+                        un nouveau fichier dans la fenêtre d'édition). \
+                        2. Messages (cette zone contient les messages xedit \
+                        xedit et peut être utilisée comme bloc-notes). \
+                        3. Nom de fichier (indique le nom du fichier en \
+                        cours d'édition et s'il est accessible en lecture- \
+                        écriture ou en lecture seule). 4. Fenêtre d'édition: \
+                        (contient le fichier en cours d'édition ou de création).
+}
+
+# #####
+
+ACTION Xlock
+{
+        LABEL		Xlock
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlock
+	DESCRIPTION	L'action Xlock permet de lancer le client X xlock, \
+                        qui verrouille l'écran X local jusqu'à ce \
+                        que le mot de passe approprié soit entré.
+}
+
+# #####
+
+ACTION Xlogo
+{
+        LABEL		Xlogo
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlogo
+	DESCRIPTION	L'action Xlogo permet de lancer le client X xlogo, \
+                        qui affiche le logo d'X Window System.
+}
+
+# #####
+
+ACTION Xmag
+{
+        LABEL		Agrandir
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmag
+	DESCRIPTION	L'action Agrandir (Xmag) lance le client \
+                        X xmag, qui permet d'agrandir certaines parties \
+                        d'un écran X. Si vous n'indiquez pas la zone \
+                        à agrandir, un cadre permettant de la sélectionner \
+                        s'affiche (le pointeur est situé dans l'angle \
+                        supérieur gauche). Pour redimensionner cette zone, \
+                        utilisez le bouton 2 de la souris. Une fois la \
+                        sélection effectuée, une fenêtre en incrustation \
+                        s'affiche, dans laquelle chaque pixel de l'image \
+                        source est représenté par un carré agrandi, \
+                        de la même couleur. 
+}
+
+# #####
+
+ACTION Xman
+{
+        LABEL		Xman
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xman
+	DESCRIPTION	L'action Xman permet lance le client X xman, \
+                        qui permet de visualiser les pages de manuel.
+}
+
+# #####
+
+ACTION Xmh
+{
+        LABEL		Gestionnaire de courrier X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmh
+	DESCRIPTION	L'action Gestionnaire de courrier X (Xmh) \
+                        lance le client X xmh, qui fournit une interface \
+                        graphique permettant de communiquer avec le système \
+                        de messagerie MH. Pour traiter le courrier, il fait \
+                        appel au programme MH. Les messages électroniques \
+                        peuvent être composés, envoyés, reçus, réacheminés, \
+                        triés et rangés dans des dossiers. xmh permet \
+                        également de personnaliser l'interface utilisateur.
+}
+
+# #####
+
+ACTION Xeyes
+{
+        LABEL		Yeux
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xeyes
+	DESCRIPTION	L'action Yeux (Xeyes) lance le client X xeyes, \
+                        qui affiche deux yeux qui suivent le déplacement \
+                        du pointeur de la souris.
+}
+
+# #####
+
+ACTION Xauth
+{
+        LABEL		Permissions X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xauth
+	DESCRIPTION	L'action Permissions X (Xauth) lance le \
+                        client X xauth, qui permet de modifier et d'afficher \
+                        les informations sur les droits d'accès utilisés \
+                        lors de la connexion au serveur X.
+}
+
+# #####
+
+ACTION Xlsclients
+{
+        LABEL		Liste des clients
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsclients
+	DESCRIPTION	L'action Liste des clients (Xlsclients) lance le \
+                        client X xlsclients, qui permet d'afficher les \
+                        informations sur les applications client s'exécutant \
+                        sur un écran. Il permet également de créer des \
+                        scripts représentant une image instantanée de \
+                        la session utilisateur en cours.
+}
+
+# #####
+
+ACTION Xpuzzle
+{
+        LABEL		X Puzzle 
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xpuzzle
+	DESCRIPTION	L'action X Puzzle (Xpuzzle) lance le client \
+                        X xpuzzle, qui affiche un puzzle \
+                        contenant 15 pièces.
+}
+
+# #####
+
+ACTION Passwd
+{
+        LABEL           Modifier le mot de passe
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     dtterm -geometry 60x8 -xrm "*menuBar: False" -e sh -c '                                echo "Modification en cours du mot de passe";                                echo "-------------------------------------";                                passwd'
+
+
+
+        DESCRIPTION     L'action Modifier le mot de passe (Passwd) \
+                        modifie le mot de passe de l'utilisateur, à \
+                        l'aide de la commande passwd.
+}
+
+# ######################## EOF ############################################

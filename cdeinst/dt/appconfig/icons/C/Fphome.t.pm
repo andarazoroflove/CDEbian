@@ -1,0 +1,1 @@
+/usr/dt/appconfig/icons/C/Dthome.t.pm

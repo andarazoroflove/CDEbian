@@ -1,0 +1,343 @@
+'\" t
+...\" ses_join.sgm /main/7 1996/09/08 20:22:12 rws $
+...\" ses_join.sgm /main/7 1996/09/08 20:22:12 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdt_session_join" "library call"
+.SH "NAME"
+\fBttdt_session_join\fP \(em join a ToolTalk session
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_pattern \fB*ttdt_session_join\fP\fR(
+\fBconst char *\fBsessid\fR\fR,
+\fBTtdt_contract_cb \fBcb\fR\fR,
+\fBWidget \fBshell\fR\fR,
+\fBvoid *\fBclientdata\fR\fR,
+\fBint \fBjoin\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttdt_session_join\fP function
+joins the session
+\fIsessid\fP, registering patterns and
+default callbacks for many standard Desktop message interfaces\&.
+If
+\fIsessid\fP is
+\fBNULL\fP, the default session is joined\&.
+.PP
+The
+\fBttdt_session_join\fP function
+registers for the following
+\fBTT_HANDLER\fP-addressed requests:
+.IP "   1." 6
+\fBGet_Environment\fP, \fBSet_Environment\fP, \fBGet_Locale\fP, \fBSet_Locale\fP, \fBGet_Situation\fP, \fBSet_Situation\fP, \fBSignal\fP, \fBGet_Sysinfo\fP
+.IP "   2." 6
+\fBGet_Geometry\fP, \fBSet_Geometry\fP, \fBGet_Iconified\fP, \fBSet_Iconified\fP, \fBGet_Mapped\fP, \fBSet_Mapped\fP, \fBRaise\fP, \fBLower\fP, \fBGet_XInfo\fP
+.IP "   3." 6
+\fBPause\fP, \fBResume\fP, \fBQuit\fP
+.IP "   4." 6
+\fBGet_Status\fP, \fIDo_Command\fP
+.PP
+If
+\fIjoin\fP is True,
+\fBttdt_session_join\fP actually joins the indicated session\&.
+.PP
+The ToolTalk service
+handles messages in (1) transparently\&.
+.PP
+If
+\fIshell\fP is non-
+\fBNULL\fP, then it is expected to be a realized
+\fImappedWhenManaged\fP \fIapplicationShellWidget\fP, and
+the ToolTalk service
+handles messages in (2) transparently\&.
+(If
+\fIshell\fP is merely a realized widget, then
+the ToolTalk service
+handles only the
+\fBGet_XInfo\fP request, and
+\fBttdt_session_join\fP fails the rest of (2) with
+\fBTT_DESKTOP_ENOTSUP\fP\&.) If
+\fIshell\fP is
+\fBNULL\fP, then
+the ToolTalk service
+treats messages in (2) equivalently to those in (4)\&.
+.PP
+If
+\fIshell\fP is non-
+\fBNULL\fP and
+\fIcb\fP is
+\fBNULL\fP, then
+the ToolTalk service
+handles messages in (3) transparently as follows;
+otherwise, it treats them as equivalent to those in (4)\&.
+The
+\fBQuit\fP request results in a
+\fBWM_DELETE_WINDOW\fP event on
+\fIshell\fP if the
+\fIsilent\fP and
+\fIforce\fP arguments of the
+\fBQuit\fP request are both False\&.
+In other words, if
+\fIshell\fP is supplied without a
+\fIcb\fP, then a
+\fBQuit\fP request may imply that the user
+quit the application\&'s top-level window using the window manager\&.
+\fBPause\fP and
+\fBResume\fP requests result in
+the ToolTalk service
+passing
+\fIshell\fP and the appropriate boolean value to
+\fBXtSetSensitive\fP(3)\&.
+.PP
+If
+\fIcb\fP is not
+\fBNULL\fP, the ToolTalk service passes
+messages in (4) to
+\fIcb\fP; otherwise,
+\fBttdt_session_join\fP fails with
+\fBTT_DESKTOP_ENOTSUP\fP\&.
+.PP
+The
+\fBTtdt_contract_cb\fR argument is a callback defined as:
+.PP
+.nf
+\f(CWTt_message (*Ttdt_contract_cb)(Tt_message \fImsg\fP,
+        void *\fIclientdata\fP,
+        Tt_message \fIcontract\fP);\fR
+.fi
+.PP
+.PP
+The
+\fImsg\fP argument is
+a message in
+\fBTt_state\fR \fBTT_SENT\fP\&. If
+\fImsg\fP is a
+\fBTT_REQUEST\fP, the client program becomes responsible for either failing,
+rejecting or replying to
+\fImsg\fP\&. After doing so, the client program may dispose of
+\fImsg\fP with
+\fBtttk_message_destroy\fP\&. The
+\fIclientdata\fP argument is the
+\fIclientdata\fP passed to
+\fBttdt_session_join\fP or
+\fBttdt_message_accept\fP(3)\&. The
+\fIcontract\fP argument is the
+\fIcontract\fP passed to
+\fBttdt_message_accept\fP\&. For callbacks installed by
+\fBttdt_session_join\fP, \fIcontract\fP is always zero\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttdt_session_join\fP function
+returns a null-terminated array of
+\fBTt_pattern\fR; otherwise, it returns an error pointer\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned handle:
+.IP "TT_ERR_NOMEM" 10
+There is insufficient memory available to perform the function\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_POINTER" 10
+The pointer passed does not point to an object
+of the correct type for this operation\&.
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.IP "TT_ERR_SESSION" 10
+The specified ToolTalk session is out of date or invalid\&.
+.SH "APPLICATION USAGE"
+.PP
+The null-terminated array of
+\fBTt_pattern\fR returned by
+\fBttdt_session_join\fP should be destroyed by passing the array to
+\fBttdt_file_quit\fP(3)\&.
+.PP
+The ToolTalk service will reply to the
+\fBQuit\fP request before generating the
+\fBWM_DELETE_WINDOW\fP event\&.
+If the application catches and cancels this event,
+then the sender of the
+\fBQuit\fP request will be misled
+into thinking the application actually quit\&.
+Applications that can cancel
+\fBWM_DELETE_WINDOW\fP should install a real
+\fBTtdt_contract_cb\fR\&.
+.PP
+The ToolTalk service handles the
+\fBPause\fP and
+\fBResume\fP requests by setting the sensitivity of
+\fIwidget\fP\&. If
+\fIwidget\fP is the parent of any top-level pop-up shells,
+\fBXtSetSensitive\fP(3) will not affect them\&.
+Applications that can have such pop-ups
+should install a real
+\fBTtdt_contract_cb\fR\&.
+.PP
+A
+\fBTtdt_contract_cb\fR should return zero if it processes
+\fImsg\fP successfully, or a
+\fBtt_error_pointer\fP cast to
+\fBTt_message\fR if processing results in an error\&.
+It should return the
+\fImsg\fP if it does not consume it\&.
+If
+\fImsg\fP is returned, then the ToolTalk service passes
+\fBTT_CALLBACK_CONTINUE\fP down the call stack, so that
+\fImsg\fP will be offered to other callbacks or (more likely) be returned from
+\fBtt_message_receive\fP(3)\&. Applications will rarely want
+\fImsg\fP to get processed by other callbacks or in the main event loop\&.
+.SH "EXAMPLES"
+.PP
+This is the typical algorithm of a
+\fBTtdt_contract_cb\fR for an application that handles
+\fBPause\fP, \fBResume\fP or
+\fBQuit\fP requests for itself, but lets the ToolTalk service
+handle the X11-related requests listed in (2)\&.
+Since this example callback deals with the case when
+\fIcontract\fP is not zero, it can also be used as the
+\fBTtdt_contract_cb\fR passed to
+\fBttdt_message_accept\fP\&.
+.PP
+.nf
+\f(CWTt_message myContractCB(Tt_message      msg,
+        void           *clientdata,
+        Tt_message      contract)
+{
+        char *opString = tt_message_op(msg);
+        Tttk_op op = tttk_string_op(opString);
+        tt_free(opString);
+        int silent = 0;
+        int force  = 0;
+        Boolean cancel = False;
+        Boolean sensitive = True;
+        char *status, command;
+        switch(op) {
+            case TTDT_QUIT:
+                tt_message_arg_ival(msg, 0, &silent);
+                tt_message_arg_ival(msg, 1, &force);
+                if (contract == 0) {
+                        /* Quit entire application */
+                        cancel = ! myQuitWholeApp(silent, force);
+                } else {
+                        /* Quit just the specified request being
+                           worked on */
+                        cancel = ! myCancelThisRequest(contract,
+                                silent, force);
+                }
+                if (cancel) {
+                        /* User canceled Quit; fail the Quit request */
+                        tttk_message_fail(msg, TT_DESKTOP_ECANCELED, 0, 1);
+                } else {
+                        tt_message_reply(msg);
+                        tttk_message_destroy(msg);
+                }
+                return 0;
+            case TTDT_PAUSE:
+                sensitive = False;
+            case TTDT_RESUME:
+                if (contract == 0) {
+                        int already = 1;
+                        if (XtIsSensitive(myTopShell) != sensitive) {
+                                already = 0;
+                                XtSetSensitive(myTopShell, sensitive);
+                        }
+                        if (already) {
+                                tt_message_status_set(msg,
+                                        TT_DESKTOP_EALREADY);
+                        }
+                } else {
+                        if (XtIsSensitive(thisShell) == sensitive) {
+                                tt_message_status_set(msg,
+                                        TT_DESKTOP_EALREADY);
+                        } else {
+                                XtSetSensitive(thisShell, sensitive);
+                        }
+                }
+                tt_message_reply(msg);
+                tttk_message_destroy(msg);
+                return 0;
+            case TTDT_GET_STATUS:
+                if (contract == 0) {
+                        status = "Message about status of entire app";
+                } else {
+                        status = "Message about status of this request";
+                }
+                tt_message_arg_val_set(msg, 0, status);
+                tt_message_reply(msg);
+                tttk_message_destroy(msg);
+                return 0;
+            case TTDT_DO_COMMAND:
+                if (! haveExtensionLanguage) {
+                        tttk_message_fail(msg, TT_DESKTOP_ENOTSUP, 0, 1);
+                        return 0;
+                }
+                command = tt_message_arg_val(msg, 0);
+                result = myEval(command);
+                tt_free(command);
+                tt_message_status_set(msg, result);
+                if (tt_is_err(result)) {
+                        tttk_message_fail(msg, result, 0, 1);
+                } else {
+                        tt_message_reply(msg);
+                        tttk_message_destroy(msg);
+                }
+                return 0;
+        }
+        /* Unrecognized message; do not consume it */
+        return msg;
+}\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttdt_session_quit\fP(3), \fBtt_session_join\fP(3), \fBXtSetSensitive\fP(3), 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

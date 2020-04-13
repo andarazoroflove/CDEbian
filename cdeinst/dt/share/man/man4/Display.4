@@ -1,0 +1,149 @@
+'\" t
+...\" Display.sgm /main/7 1996/09/08 20:13:45 rws $
+...\" Display.sgm /main/7 1996/09/08 20:13:45 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Display" "special file"
+.SH "NAME"
+\fBDisplay\fP \(em display a document
+.SH "SYNOPSIS"
+.PP
+.nf
+[\fIfile\fP] Display(in \fImediaType contents\fP
+        [in title \fIdocName\fP]);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDisplay\fP request causes the handler to display (present or manifest)
+a document to the user\&.
+For example, an audio manipulation utility would be said to
+``display\&'\&' audio documents when it plays them\&.
+.PP
+The handler must decide issues such as:
+.IP "   \(bu" 6
+When the display operation can be deemed completed
+.IP "   \(bu" 6
+What user gesture signals the completion of the display
+.IP "   \(bu" 6
+What the handling tool should do with itself after replying
+.PP
+The
+\fIcontents\fP argument
+is the contents of the document\&.
+If this argument is unset
+(in other words, has a value of
+\fB(char *)0\fP), then the contents of the document are in
+the file named in the message\&'s
+\fIfile\fP attribute\&.
+The data type
+(\fImediaType\fP) of the
+\fIcontents\fP argument should be
+\fBstring\fP, unless nulls are valid in the given media type,
+in which case the data type must be
+\fBbytes\fP\&.
+.PP
+The
+\fIdocName\fP argument contains the name of the document\&.
+If the
+\fIdocName\fP argument is absent and the
+\fIfile\fP attribute is set,
+the file name is considered to be the title of the document\&.
+This string would be suitable for display in a window title bar, for example\&.
+.SH "APPLICATION USAGE"
+.PP
+The
+\fBttmedia_ptype_declare\fP(3) function can be used to register for,
+and help process, this message\&.
+.PP
+This message can be sent with the
+\fBttmedia_load\fP(3) function\&.
+.PP
+When the document to be displayed
+is read-only or unlikely to be modified
+the
+\fBDisplay\fP message is frequently used instead of the
+\fBEdit\fP message\&.
+.SH "EXAMPLES"
+.PP
+To display a PostScript document, the application can send a
+\fBDisplay\fP request with a first argument whose vtype is
+\fBPostScript\fP, and whose value is a vector of bytes such as:
+.PP
+.nf
+\f(CW%!\en/inch {72 mul} def\&.\&.\&.\fR
+.fi
+.PP
+.PP
+The
+\fB\en\fP in the example represents the newline character\&.
+The notation is the same as in the ISO\ C standard\&.
+.PP
+To display a PostScript document contained in a file,
+the application can send a
+\fBDisplay\fP request with the
+\fIfile\fP attribute set to that file
+and with an unset first argument whose vtype is
+\fBPostScript\fP\&.
+.SH "ERRORS"
+.PP
+The ToolTalk service may return one of the following errors
+in processing the
+\fBDisplay\fP request:
+.IP "TT_DESKTOP_ENOENT" 10
+The file that was alleged to contain the document does not exist\&.
+.IP "TT_DESKTOP_ENODATA" 10
+The in-mode
+\fIcontents\fP argument had no value and the
+\fIfile\fP attribute
+of the message was not set\&.
+.IP "TT_MEDIA_ERR_FORMAT" 10
+The document is not a valid instance of the media type\&.
+.SH "SEE ALSO"
+.PP
+\fBttmedia_ptype_declare\fP(3), \fBttmedia_load\fP(3); \fIIntro\fP, \fBDeposit\fP, \fBEdit\fP, \fBStatus\fP requests\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

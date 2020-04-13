@@ -1,0 +1,1018 @@
+'\" t
+...\" Term.sgm /main/15 1996/10/08 20:02:47 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtTerm" "library call"
+.SH "NAME"
+\fBDtTerm\fP \(em DtTerm widget class
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Term\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The DtTerm widget provides
+the core set of functionality needed to emulate an \fBANSI X3\&.64-1979\fP - and \fBISO 6429:1992(E)\fP-style terminal, such as
+the DEC VT220\&. This functionality includes text rendering, scrolling, margin
+and tab support, escape sequence parsing and the low-level OS-specific interface
+required to allocate and configure a \fBpty\fP or STREAMS pseudo-terminal
+device and write the system\&'s \fButmp\fP device\&.
+.SS "Classes"
+.PP
+The DtTerm widget inherits behavior and resources from the \fBCore\fP and \fBXmPrimitive\fP classes\&.
+.PP
+The class pointer is \fBdtTermWidgetClass\fP\&.
+.PP
+The class name is \fBDtTerm\fP\&.
+.SS "New Resources"
+.PP
+The following table defines a set of widget resources used by the application
+to specify data\&. The application can also set the resource values for the
+inherited classes to set attributes for this widget\&. To reference a resource
+by name or by class in a \fB\&.Xdefaults\fP file, the application
+must remove the \fBDtN\fP or \fBDtC\fP prefix and
+use the remaining letters\&. To specify one of the defined values for a resource
+in a \fB\&.Xdefaults\fP file, the application must remove the \fBDt\fP prefix and use the remaining letters (in either lower case or
+upper case, but including any underscores between words)\&. The codes in the
+access column indicate if the given resource can be set at creation time (C),
+set by using \fBXtSetValues\fP (S), retrieved by using \fBXtGetValues\fP (G), or is not applicable (N/A)\&.
+.TS
+tab();
+lw(1.591415i) lw(1.757552i) lw(0.734499i) lw(0.664547i) lw(0.751987i).
+\fBDtTerm Resource
+Set, Part 1 of 2\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBDtNallowSendEvents\fP\fBDtCAllowSendEvents\fP\fBBoolean\fRFalseCSG
+\fBDtNappCursorDefault\fP\fBDtCAppCursorDefault\fP\fBBoolean\fRFalseCSG
+\fBDtNappKeypadDefault\fP\fBDtCAppKeypadDefault\fP\fBBoolean\fRFalseCSG
+\fBDtNautoWrap\fP\fBDtCAutoWrap\fP\fBBoolean\fRTrueCSG
+\fBDtNbackgroundIsSelect\fP\fBDtCBackgroundIsSelect\fP\fBBoolean\fRFalseCG
+\fBDtNbaseHeight\fP\fBDtCBaseHeight\fP\fBint\fR0G
+\fBDtNbaseWidth\fP\fBDtCBaseWidth\fP\fBint\fR0G
+\fBDtNblinkRate\fP\fBDtCBlinkRate\fP\fBint\fR250CSG
+\fBDtNc132\fP\fBDtCC132\fP\fBBoolean\fRFalseCSG
+\fBDtNcharCursorStyle\fP\fBDtCCharCursorStyle\fP\fBunsigned char\fR\fBDtTERM_CHAR_CURSOR_BOX\fPCSG
+.TE
+.TS
+tab();
+lw(2.29in) lw(2.45in) lw(0.96in) lw(1.11in) lw(0.84in).
+\fBDtTerm Resource
+Set, Part 2 of 2\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBDtNcolumns\fP\fBDtCColumns\fP\fBshort\fR80CSG
+\fBDtNconsoleMode\fP\fBDtCConsoleMode\fP\fBBoolean\fRFalseCG
+\fBDtNemulationID\fP\fBDtCEmulationID\fP\fBString\fR``DtTermWidget\&'\&'CSG
+\fBDtNheightInc\fP\fBDtCHeightInc\fP\fBint\fR0G
+\fBDtNinputVerifyCallback\fP\fBDtCCallback\fP\fBXtCallbackList\fRNULLC
+\fBDtNjumpScroll\fP\fBDtCJumpScroll\fP\fBBoolean\fRTrueCSG
+\fBDtNkshMode\fP\fBDtCKshMode\fP\fBBoolean\fRFalseCSG
+\fBDtNlogging\fP\fBDtCLogging\fP\fBBoolean\fRFalseCSG
+\fBDtNmapOnOutput\fP\fBDtCMapOnOutput\fP\fBBoolean\fRFalseCSG
+\fBDtNmapOnOutputDelay\fP\fBDtCMapOnOutputDelay\fP\fBint\fR0CSG
+\fBDtNmarginBell\fP\fBDtCMarginBell\fP\fBBoolean\fRFalseCSG
+\fBDtNmarginHeight\fP\fBDtCMarginHeight\fP\fBDimension\fR2CSG
+\fBDtNmarginWidth\fP\fBDtCMarginWidth\fP\fBDimension\fR2CSG
+\fBDtNnMarginBell\fP\fBDtCNMarginBell\fP\fBint\fR10CSG
+\fBDtNoutputLogCallback\fP\fBDtCCallback\fP\fBXtCallbackList\fRNULLC
+\fBDtNpointerBlank\fP\fBDtCPointerBlank\fP\fBBoolean\fRFalseCSG
+\fBDtNpointerBlankDelay\fP\fBDtCPointerBlankDelay\fP\fBint\fR2CSG
+\fBDtNpointerColor\fP\fBDtCForeground\fP\fBString\fRdynamicCSG
+\fBDtNpointerColorBackground\fP\fBDtCBackground\fP\fBString\fRdynamicCSG
+\fBDtNpointerShape\fP\fBDtCPointerShape\fP\fBString\fR\fBxterm\fPCSG
+\fBDtNreverseWrap\fP\fBDtCReverseWrap\fP\fBBoolean\fRFalseCSG
+\fBDtNrows\fP\fBDtCRows\fP\fBshort\fR24CSG
+\fBDtNsaveLines\fP\fBDtCSaveLines\fP\fBstring\fP4sCG
+\fBDtNshadowType\fP\fBDtCShadowType\fPunsigned charDtSHADOW_INCSG
+\fBDtNstatusChangeCallback\fP\fBDtCCallback\fP\fBXtCallbackList\fRNULLC
+\fBDtNsubprocessArgv\fP\fBDtCSubprocessArgv\fP\fBString *\fRNULLCG
+\fBDtNsubprocessCmd\fP\fBDtCSubprocessCmd\fP\fBString\fRNULLCG
+\fBDtNsubprocessExec\fP\fBDtCSubprocessExec\fP\fBBoolean\fRTrueCSG
+\fBDtNsubprocessLoginShell\fP\fBDtCSubprocessLoginShell\fP\fBBoolean\fRFalseCG
+\fBDtNsubprocessPid\fP\fBDtCSubprocessPid\fP\fBint\fR-1G
+\fBDtNsubprocessTerminationCallback\fP\fBDtCCallback\fP\fBXtCallbackList\fRNULLC
+\fBDtNsubprocessTerminationCatch\fP\fBDtCSubprocessTerminationCatch\fP\fBBoolean\fRTrueCSG
+\fBDtNsunFunctionKeys\fP\fBDtCSunFunctionKeys\fP\fBBoolean\fRFalseCSG
+\fBDtNtermDevice\fP\fBDtCTermDevice\fP\fBint\fR-1CG
+\fBDtNtermDeviceAllocate\fP\fBDtCTermDeviceAllocate\fP\fBBoolean\fRTrueCG
+\fBDtNtermId\fP\fBDtCTermId\fP\fBString\fR``vt220\&'\&'CSG
+\fBDtNtermName\fP\fBDtCTermName\fP\fBString\fR``dtterm\&'\&'CSG
+\fBDtNtermSlaveName\fP\fBDtCTermSlaveName\fP\fBString\fRNULLCG
+\fBDtNttyModes\fP\fBDtCTtyModes\fP\fBString\fRNULLCSG
+\fBDtNuserBoldFont\fP\fBDtCUserBoldFont\fP\fBXmFontList\fRdynamicCSG
+\fBDtNuserFont\fP\fBDtCUserFont\fP\fBXmFontList\fRdynamicCSG
+\fBDtNverticalScrollBar\fP\fBDtCVerticalScrollBar\fP\fBWidget\fRNULLCSG
+\fBDtNvisualBell\fP\fBDtCVisualBell\fP\fBBoolean\fRFalseCSG
+\fBDtNwidthInc\fP\fBDtCWidthInc\fP\fBint\fR0G
+.TE
+.IP "\fBallowSendEvents\fP" 10
+Specifies that the terminal emulator allow synthetic events (generated
+and sent by another application)\&. Enabling this resource opens up a possible
+security hole\&.
+.IP "\fBappCursorDefault\fP" 10
+Specifies the initial cursor mode\&. If True, the cursor keys are initially
+in application mode\&. If False, the cursor keys are initially in cursor mode\&.
+.IP "\fBappKeypadDefault\fP" 10
+Specifies the initial keypad mode\&. If True, the keypad keys are initially
+in application mode\&. If False, the keypad keys are initially in numeric mode\&.
+.IP "\fBc132\fP" 10
+Specifies whether or not the \fBDECCOLM\fP
+escape sequence that switches between a 132- and 80-column window is honored\&.
+.IP "\fBconsoleMode\fP" 10
+Specifies that output directed at \fB/dev/console\fP be
+directed instead to the terminal window\&. It is provided as a way to prevent
+output that would normally be displayed on the internal terminal emulator
+(ITE) from overwriting the X server\&'s display\&. It is not provided as a general
+mechanism to direct the output from an arbitrary system\&'s \fB/dev/console\fP to an arbitrary X server\&. Ownership of, and read-write permission
+for, \fB/dev/console\fP is required to redirect console output\&.
+.IP "\fBDtNautoWrap\fP" 10
+Specifies whether or not auto-wrap is initially enabled\&.
+.IP "\fBDtNbackgroundIsSelect\fP" 10
+Controls the background color\&. When False, the background color is the
+color specified\&. When True, the background color is the select color corresponding
+to the background and is constant with other Motif-based applications\&.
+.IP "\fBDtNbaseHeight\fP" 10
+Specifies the terminal window\&'s base height\&. With this resource the
+application computes its base height for the shell widget, which then allows
+the window manager to provide appropriate sizing feedback to the user\&. The
+height of the terminal window is:
+.PP
+.nf
+\f(CW\fBDtNbaseHeight\fP + \fBDtNrows\fP \(ti \fBDtNheightInc\fP\fR
+.fi
+.PP
+.IP "\fBDtNbaseWidth\fP" 10
+Specifies the terminal window\&'s base width\&. With this resource the application
+computes its base width for the shell widget, which then allows the window
+manager to provide appropriate sizing feedback to the user\&. The width of the
+terminal window is:
+.PP
+.nf
+\f(CW\fBDtNbaseWidth\fP + \fBDtNcolumns\fP \(ti \fBDtNwidthInc\fP\fR
+.fi
+.PP
+.IP "\fBDtNblinkRate\fP" 10
+Specifies the number of milliseconds the cursor is in the on and off
+states while blinking\&. A value of 250 blinks the cursor two times per second\&.
+A value of zero turns blinking off\&.
+.IP "\fBDtNc132\fP" 10
+This resource specifies whether or not the \fBDECCOLM\fP escape sequence should be honored\&.
+.IP "\fBDtNcharCursorStyle\fP" 10
+Specifies the text cursor shape\&. A \fBDtTERM_CHAR_CURSOR_BOX\fP value specifies a cursor the width and height of the base font\&'s
+bounding box\&. A \fBDtTERM_CHAR_CURSOR_BAR\fP
+value specifies a cursor the width of the base font\&'s bounding box, two pixels
+high, and drawn with its top on the baseline\&. The default is \fBDtTERM_CHAR_CURSOR_BOX\fP\&.
+.IP "\fBDtNcolumns\fP" 10
+Specifies the number of text columns in the terminal window\&. For additional
+information, see \fBDtNbaseWidth\fP\&.
+.IP "\fBDtNemulationID\fP" 10
+Specifies the string to which the \fITERMINAL_EMULATOR\fP
+environment variable is set\&.
+.IP "\fBDtNheightInc\fP" 10
+Specifies the character cell height used as the height increment when
+calculating the size of the terminal window\&. For additional information, see \fBDtNbaseHeight\fP\&.
+.IP "\fBDtNinputVerifyCallback\fP" 10
+Specifies the list of callbacks called before the DtTerm widget sends
+text to the child process\&. The text may be generated either in response to
+keyboard input, selection or drag and drop\&. The \fBDtTermInputVerifyCallbackStruct\fR structure\&'s address is passed
+to this callback\&. \fBDtCR_TERM_INPUT_VERIFY\fP
+is the \fIreason\fP set by the callback\&.
+.IP "\fBDtNjumpScroll\fP" 10
+Specifies that the DtTerm widget uses jump scrolling\&. Under
+jump scrolling, the screen may be scrolled more than one line at a time\&. This
+means faster screen updates when multiple lines of text are sent to the terminal\&. The
+maximum number of lines that may be jump scrolled is limited to the number
+of lines in the terminal window\&. The DtTerm widget guarantees that all lines
+are displayed\&.
+.IP "\fBDtNkshMode\fP" 10
+Enables \fBksh\fP mode\&. With \fBksh\fP mode,
+a key pressed with the extend modifier bit set generates an escape character
+followed by the character generated by the unextended keystroke\&. This option is provided for use with \fBemacs\fP(1)
+and the emacs command-line editor mode of \fBksh\fP(1)\&. It conflicts
+with the normal meta key use for generating extended single byte characters
+and for generating multi-byte Asian characters\&. 
+.IP "\fBDtNmapOnOutput\fP" 10
+Indicates that the terminal widget map (de-iconify) itself upon subprocess
+output if it is unmapped (iconified)\&. An initial period of time during which
+the terminal widget does not map itself upon subprocess output can be specified
+via the \fBDtNmapOnOutputDelay\fP resource\&.
+.IP "\fBDtNmapOnOutputDelay\fP" 10
+Specifies the number of seconds after start-up that the widget does
+not honor the \fBDtNmapOnOutput\fP resource\&.
+This allows for initial output (for example, shell prompts) to be sent to
+the terminal without auto-mapping the window\&. The default is zero (no delay)\&.
+.IP "\fBDtNmarginBell\fP" 10
+Specifies whether or not the bell rings when the user types near the
+right margin\&. The distance from the right margin is specified by the \fBnMarginBell\fP resource\&.
+.IP "\fBDtNmarginHeight\fP" 10
+Specifies the height of the margin between the text and the top and
+bottom of the DtTerm widget\&'s window\&.
+.IP "\fBDtNmarginWidth\fP" 10
+Specifies the width of the margin between the text and both sides of
+the DtTerm widget\&'s window\&.
+.IP "\fBDtNnMarginBell\fP" 10
+Specifies the number of characters from the right margin at which the
+margin bell rings when enabled via the \fBDtNmarginBell\fP resource\&.
+.IP "\fBDtNoutputLogCallback\fP" 10
+Specifies the list of callbacks called when the widget receives text
+from the child process\&. \fBDtTermOutputLogCallbackStruct\fR is the structure type whose address is passed to this callback\&. \fBDtCR_TERM_OUTPUT_LOG\fP is the \fIreason\fP set by the callback\&.
+.IP "\fBDtNpointerBlank\fP" 10
+Indicates that the pointer cursor is in blanking mode\&. In this mode,
+the cursor turns on when the pointer is moved, and is blanked either after
+a selectable number of seconds or after keyboard input\&. The delay is set via
+the \fBDtNpointerBlankDelay\fP resource\&.
+.IP "\fBDtNpointerBlankDelay\fP" 10
+Specifies the number of seconds to wait after the pointer has stopped
+moving before blanking the pointer (see \fBDtNpointerBlank\fP )\&. A value of zero prevents the pointer from blanking until a
+key is pressed\&.
+.IP "\fBDtNpointerColor\fP" 10
+Specifies the foreground color the DtTerm widget uses for the terminal
+window\&'s pointer (X11 cursor)\&. The default is the terminal window\&'s foreground
+color\&.
+.IP "\fBDtNpointerColorBackground\fP" 10
+Specifies the background color the DtTerm widget uses for the terminal
+window\&'s pointer (X11 cursor)\&. The default is the terminal window\&'s background
+color\&.
+.IP "\fBDtNpointerShape\fP" 10
+Specifies the X cursor font character the DtTerm widget uses as the
+pointer cursor\&. The font character should be specified as a string from the
+include file, \fBX11/cursorfont\&.h\fP, with the
+leading \fBXC_\fP removed\&. The default is \fBxterm\fP(1)\&. 
+.IP "\fBDtNreverseWrap\fP" 10
+Specifies whether or not reverse-wraparound is enabled\&.
+.IP "\fBDtNrows\fP" 10
+Specifies the number of rows of text in the terminal window\&. For additional
+information, see \fBDtNbaseHeight\fP\&.
+.IP "\fBDtNsaveLines\fP" 10
+Defines the number of lines in the terminal buffer beyond the length
+of the window\&. The resource value consists of a number followed by an optional
+suffix\&. If no suffix is included or the suffix is ``l\&'\&' (ell), the total length
+of the terminal buffer is the number plus the length of the terminal window\&.
+If the suffix is ``s,\&'\&' the total length of the terminal buffer is (the number
+plus one) times the length of the terminal window\&. The DtTerm widget tries
+to maintain the same buffer-to-window ratio when the window is resized larger\&.
+.IP "\fBDtNshadowType\fP" 10
+Specifies the type of shadow drawn around the terminal window\&. See the \fBXmFrame\fP(3) widget
+for supported shadow types\&.
+.IP "\fBDtNstatusChangeCallback\fP" 10
+Specifies the list of callbacks called when the DtTerm widget\&'s status
+changes\&. Status changes include changes such as cursor position, caps lock
+state and insert char state\&. The \fBDtTermStatusChangeCallbackStruct\fR structure\&'s address is passed to this callback\&. \fBDtCR_TERM_STATUS_CHANGE\fP is the \fIreason\fP the callback sends\&.
+.IP "\fBDtNsubprocessArgv\fP" 10
+Specifies the argument list passed to the subprocess if \fBDtNsubprocessExec\fP is True\&. If \fBDtNsubprocessCmd\fP is \fBNULL\fP,
+the first string of this argument is used as the name of the command to execute\&.
+.IP "\fBDtNsubprocessCmd\fP" 10
+Specifies the name of the command to run if \fBDtNsubprocessExec\fP is True\&. If \fBDtNsubprocessExec\fP is \fBNULL\fP, the first
+string of the \fBDtNsubprocessArgv\fP
+argument is used\&.
+.IP "\fBDtNsubprocessExec\fP" 10
+This resource specifies whether or not a subprocess is \fBfork\fP(2) and \fBexec\fP(2)\&. If True, a subprocess is launched
+as specified via the \fBDtNsubprocessArgv\fP
+resource, if set, or the \fBDtNsubprocessCmd\fP
+resource, if set, or the \fBSHELL\fP
+environment variable, if set, or the default system shell\&.
+.IP "\fBDtNsubprocessloginShell\fP" 10
+Indicates that the
+starting shell be a login shell (that is, the first character of \fIargv\fP[0] be a dash), that tells the shell to read the system\&'s \fBprofile\fP and the user\&'s \fB\&.profile\fP files (for \fBksh\fP(1) and \fBsh\fP(1)) or the system\&'s \fBcsh\&.login\fP and the user\&'s \fB\&.login\fP (for \fBcsh\fP(1)
+.IP "\fBDtNsubprocessPid\fP" 10
+Supplies the process ID of the subprocess running in the terminal widget
+when \fBDtNsubprocessExec\fP is True\&.
+.IP "\fBDtNsubprocessTerminationCallback\fP" 10
+Supplies the list of callbacks called when the subprocess associated
+with the DtTerm widget exits\&. The \fBDtTermSubprocessTerminationCallbackStruct\fR structure\&'s address is passed to this callback\&. \fBDtCR_TERM_SUBPROCESS_TERMINATION\fP is the
+\fIreason\fP the callback sends\&.
+.IP "\fBDtNsubprocessTerminationCatch\fP" 10
+Specifies whether or not the DtTerm widget installs a signal handler
+to catch the subprocess termination\&. If the application installs its own signal
+handler, the application must catch the subprocess termination and inform
+the DtTerm widget via the \fBDtTermSubprocReap\fP(3) function\&.
+.IP "\fBDtNsunFunctionKeys\fP" 10
+Specifies whether or not Sun Function Key escape sequences are generated
+for function keys instead of standard escape sequences\&. 
+.IP "\fBDtNtermDevice\fP" 10
+Supplies the file descriptor for the master side of the  \fBpty\fP or STREAMS pseudo-terminal device associated with the DtTerm
+widget\&.
+.IP "\fBDtNtermDeviceAllocate\fP" 10
+Specifies whether or not the DtTerm widget allocates a  \fBpty\fP or STREAMS pseudo-terminal device, or uses the pseudo-terminal
+device passed to it via the \fBDtNtermDevice\fP
+resource\&.
+.IP "\fBDtNtermId\fP" 10
+Supplies the name the DtTerm widget uses to select the correct response
+to terminal ID queries\&. Valid values are \fBvt100\fP, \fBvt101\fP, \fBvt102\fP and \fBvt220\fP\&.
+.IP "\fBDtNtermName\fP" 10
+Supplies the name the DtTerm widget uses in setting the \fITERM\fP environment variable\&. The default is \fBdtterm\fP(1)\&.
+.IP "\fBDtNtermSlaveName\fP" 10
+Supplies the name of the slave device of the  \fBpty\fP or STREAMS pseudo-terminal device associated with the DtTerm
+widget\&. The DtTerm widget uses this resource to update the system\&'s  \fButmp\fP entry associated with
+the subprocess\&.
+.IP "\fBDtNttyModes\fP" 10
+Specifies a string containing terminal-setting keywords and the characters
+to which they may be bound\&. Allowable keywords include: \fBintr\fP, \fBquit\fP, \fBerase\fP, \fBkill\fP, \fBeof\fP, \fBeol\fP, \fBswtch\fP, \fBstart\fP, \fBstop\fP, \fBbrk\fP, \fBsusp\fP, \fBdsusp\fP, \fBrprnt\fP, \fBflush\fP, \fBweras\fP and \fBlnext\fP\&. The
+terminal emulator correctly parses and silently ignores keywords that do not
+apply to a specific architecture\&. Control characters can be specified as \fB^char\fP (for example, \fB^c\fP or \fB^u\fP), and \fB^?\fP can be used to indicate
+delete\&. This is useful for overriding the default terminal settings without
+having to do an \fBstty\fP(1) every time a DtTerm widget is created\&.
+.IP "\fBDtNuserBoldFont\fP" 10
+Supplies the \fBXmFontList\fR the
+DtTerm widget uses to display bold terminal text\&. The terminal emulator supports
+only character or mono-spaced fonts\&. When using proportional fonts, the behavior
+is undefined\&. The terminal emulator generates a default bold font based on
+the XLFD name of the \fBuserFont\fP\&. If that font is not available,
+the terminal emulator generates bold text by overstriking (with a one pixel
+offset) the \fBuserFont\fP\&.
+.IP "\fBDtNuserFont\fP" 10
+Supplies the \fBXmFontList\fR the
+DtTerm widget uses to display terminal text\&. The terminal emulator supports
+only character or mono-spaced fonts\&. When using proportional fonts, the behavior
+is undefined\&. The terminal emulator gets a default font via the \fBXmNtextFontList\fP value of the parent bulletin
+board (see the \fBXmBulletinBoard\fP(3) widget)
+in the same manner as the \fBXmText\fP(3) widget\&.
+.IP "\fBDtNverticalScrollBar\fP" 10
+Specifies a an application-supplied vertical scroll bar widget to update
+as scrolling occurs\&. The DtTerm widget does not create the scroll bar\&.
+.IP "\fBDtNvisualBell\fP" 10
+Specifies whether the DtTerm widget uses a visible bell (that is, flashing)
+instead of an audible bell when <control>-G is received\&.
+.IP "\fBDtNwidthInc\fP" 10
+Specifies the character cell width the DtTerm widget uses as the width
+increment when calculating the size of the terminal window\&. For additional
+information, see \fBDtNbaseWidth\fP\&.
+.SS "Inherited Resources"
+.PP
+The DtTerm widget inherits behavior and resources from the following
+named superclasses\&. For a complete description of each resource, see the man
+page for that superclass\&.
+.TS
+tab();
+lw(1.575331i) lw(1.748344i) lw(0.801325i) lw(0.737583i) lw(0.637417i).
+\fBXmPrimitive Resource
+Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBXmNbottomShadowColor\fP\fBXmCBottomShadowColor\fP\fBPixel\fRdynamicCSG
+\fBXmNbottomShadowPixmap\fP\fBXmCBottomShadowPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNforeground\fP\fBXmCForeground\fP\fBPixel\fRdynamicCSG
+\fBXmNhelpCallback\fP\fBXmCCallback\fP\fBXtCallbackList\fRNULLC
+\fBXmNhighlightColor\fP\fBXmCHighlightColor\fP\fBPixel\fRdynamicCSG
+\fBXmNhighlightOnEnter\fP\fBXmCHighlightOnEnter\fP\fBBoolean\fRFalseCSG
+\fBXmNhighlightPixmap\fP\fBXmCHighlightPixmap\fP\fBPixmap\fRdynamicCSG
+\fBXmNhighlightThickness\fP\fBXmCHighlightThickness\fP\fBDimension\fR2CSG
+\fBXmNnavigationType\fP\fBXmCNavigationType\fP\fBXmNavigationType\fRXmNONEG
+\fBXmNshadowThickness\fP\fBXmCShadowThickness\fP\fBDimension\fR2CSG
+\fBXmNtopShadowColor\fP\fBXmCTopShadowColor\fP\fBPixel\fRdynamicCSG
+\fBXmNtopShadowPixmap\fP\fBXmCTopShadowPixmap\fP\fBPixmap\fRdynamicCSG
+\fBXmNtraversalOn\fP\fBXmCTraversalOn\fP\fBBoolean\fRTrueCSG
+\fBXmNunitType\fP\fBXmCUnitType\fP\fBunsigned char\fRdynamicCSG
+\fBXmNuserData\fP\fBXmCUserData\fP\fBPointer\fPNULLCSG
+.TE
+.TS
+tab();
+lw(1.566102i) lw(1.454237i) lw(0.922881i) lw(0.969492i) lw(0.587288i).
+\fBCore Resource Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP\fBAccess\fP
+\fBXmNaccelerators\fP\fBXmCAccelerators\fP\fBXtAccelerators\fRNULLCSG
+\fBXmNancestorSensitive\fP\fBXmCSensitive\fP\fBBoolean\fRdynamicG
+\fBXmNbackground\fP\fBXmCBackground\fP\fBPixel\fRdynamicCSG
+\fBXmNbackgroundPixmap\fP\fBXmCPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNborderColor\fP\fBXmCBorderColor\fP\fBPixel\fRXtDefaultForegroundCSG
+\fBXmNborderPixmap\fP\fBXmCPixmap\fP\fBPixmap\fR\fBXmUNSPECIFIED_PIXMAP\fPCSG
+\fBXmNborderWidth\fP\fBXmCBorderWidth\fP\fBDimension\fR0CSG
+\fBXmNcolormap\fP\fBXmCColormap\fP\fBColormap\fRdynamicCG
+\fBXmNdepth\fP\fBXmCDepth\fP\fBint\fRdynamicCG
+\fBXmNdestroyCallback\fP\fBXmCCallback\fP\fBXtCallbackList\fRNULLC
+\fBXmNheight\fP\fBXmCHeight\fP\fBDimension\fRdynamicCSG
+\fBXmNinitialResourcesPersistent\fP\fBXmCInitialResourcesPersistent\fP\fBBoolean\fRTrueCG
+\fBXmNmappedWhenManaged\fP\fBXmCMappedWhenManaged\fP\fBBoolean\fRTrueCSG
+\fBXmNscreen\fP\fBXmCScreen\fP\fBScreen *\fRdynamicCG
+\fBXmNsensitive\fP\fBXmCSensitive\fP\fBBoolean\fRTrueCSG
+\fBXmNtranslations\fP\fBXmCTranslations\fP\fBXtTranslations\fRNULLCSG
+\fBXmNwidth\fP\fBXmCWidth\fP\fBDimension\fRdynamicCSG
+\fBXmNx\fP\fBXmCPosition\fP\fBPosition\fR0CSG
+\fBXmNy\fP\fBXmCPosition\fP\fBPosition\fR0CSG
+.TE
+.SS "Callback Information"
+.PP
+A pointer to the \fBDtTermStatusChangeCallbackStruct\fR callback structure, which includes at least the following members,
+is passed to callbacks for \fBDtNstatusChangeCallback\fP\&.
+.TS
+tab();
+lw(1.189464i) lw(1.413124i) lw(2.897412i).
+\f(CWint\fP\f(CWreason\fPT{
+Indicates why the callback was invoked: \fBDtCR_TERM_STATUS_CHANGE\fP\&.
+T}
+\f(CWXEvent\fP\f(CW*event\fPT{
+Points to the \fBXEvent\fR, if any, that triggered the callback or \fBNULL\fP\&.
+T}
+\f(CWint\fP\f(CWcursorX\fPT{
+The current text cursor X (column) position\&.
+T}
+\f(CWint\fP\f(CWcursorY\fPT{
+The current text cursor Y (row) position\&.
+T}
+\f(CWBoolean\fP\f(CWcapsLock\fPT{
+The current state of the caps lock indicator\&.
+T}
+\f(CWBoolean\fP\f(CWstop\fPT{
+The current state subprocess output parsing\&.
+Processing output from the subprocess can be turned on and off via the \fBstop\fP action (similar to the \fBXON\fP/\fBXOFF\fP handshake invoked via <control>-S/<control>-Q)\&.
+T}
+\f(CWDtTermInsertCharMode\fP\f(CWinsertCharMode\fPNot used by the DtTerm widget\&.
+\f(CWBoolean\fP\f(CWlocked\fPT{
+The current state of the keyboard caps lock\&.
+T}
+.TE
+.PP
+A pointer to the \fBDtTermSubprocessTerminationCallbackStruct\fR callback structure, which includes at least the following members,
+is passed to callbacks for \fBDtNsubprocessTerminationCallback\fP\&.
+.TS
+tab();
+lw(0.903960i) lw(1.154455i) lw(3.441584i).
+\f(CWint\fP\f(CWreason\fPT{
+Indicates why the callback was invoked: \fBDtCR_TERM_SUBPROCESS_TERMINATION\fP\&.
+T}
+\f(CWXEvent\fP\f(CW*event\fPT{
+Points to the \fBXEvent\fR, if any, that triggered the callback or \fBNULL\fP\&.
+T}
+\f(CWpid_t\fP\f(CWpid\fPT{
+The process ID of the terminated subprocess\&.
+T}
+\f(CWint\fP\f(CWstatus\fPT{
+The exit status of the terminated subprocess\&.
+T}
+.TE
+.PP
+A pointer to the \fBDtTermInputVerifyCallbackStruct\fR callback structure, which includes at least the following members,
+is passed to callbacks for \fBDtNinputVerifyCallback\fP\&.
+.TS
+tab();
+lw(1.025050i) lw(1.124248i) lw(3.350701i).
+\f(CWint\fP\f(CWreason\fPT{
+Indicates why the callback was invoked: \fBDtCR_TERM_INPUT_VERIFY\fP\&.
+T}
+\f(CWXEvent\fP\f(CW*event\fPT{
+Points to the \fBXEvent\fR, if any, that triggered the callback or \fBNULL\fP\&.
+T}
+\f(CWBoolean\fP\f(CWdoit\fPT{
+Indicates whether the text should be sent
+to the child process\&. Setting \fIdoit\fP to False
+negates the action\&.
+T}
+\f(CWunsigned char\fP\f(CW*text\fPT{
+Points to the text (either single- or multi-byte
+depending on the locale) to be sent to the child process\&.
+T}
+\f(CWint\fP\f(CWlength\fPT{
+Specifies the number of bytes to be sent
+to the child process\&.
+T}
+.TE
+.PP
+A pointer to the \fBDtTermOutputlogVerifyCallbackStruct\fP
+callback structure, which includes at least the following members, is passed
+to callbacks for \fBDtNoutputLogCallback\fP\&.
+.TS
+tab();
+lw(1.009980i) lw(1.009980i) lw(3.480040i).
+\f(CWint\fP\f(CWreason\fPT{
+Indicates why the callback was invoked: \fBDtCR_TERM_OUTPUT_LOG\fP\&.
+T}
+\f(CWXEvent\fP\f(CW*event\fPT{
+Points to the \fBXEvent\fR, if any, that triggered the callback or \fBNULL\fP\&.
+T}
+\f(CWunsigned char\fP\f(CW*text\fPT{
+Points to the text (either single- or multi-byte
+depending on the locale) received from the child process\&.
+T}
+\f(CWint\fP\f(CWlength\fPT{
+Specifies the number of bytes received from
+the child process\&.
+T}
+.TE
+.SS "Translations"
+.PP
+The DtTerm widget includes translations from  \fBXmPrimitive\fP(3)\&. 
+.PP
+Altering translations in \fB#override\fP or \fB#augment\fP mode is undefined\&.
+.TS
+tab();
+cw(2.073625i) cw(3.426375i)
+lw(2.073625i) lw(3.426375i).
+\fBKey Pressed\fP\fBAction Routine\fP
+T{
+\f(CWShift ~Ctrl<Key>KP_Multiply:\fP
+T}T{
+\f(CWXtDisplayInstalledAccelerators(\!)\fP
+T}
+T{
+\f(CW~Shift Ctrl<Key>KP_Multiply:\fP
+T}\f(CWXtDisplayAccelerators(\!)\fP
+T{
+\f(CWShift Ctrl<Key>KP_Multiply:\fP
+T}\f(CWXtDisplayTranslations(\!)\fP
+\f(CW<Key>osfCancel:\fP\f(CWprocess-cancel(\!)\fP
+\f(CW<Key>osfCopy:\fP\f(CWcopy-clipboard(\!)\fP
+\f(CW<Key>osfCut:\fP\f(CWcopy-clipboard(\!)\fP
+\f(CW<Key>osfPaste:\fP\f(CWpaste-clipboard(\!)\fP
+\f(CW<Key>osfBeginLine:\fP\f(CWbeginning-of-buffer(\!)\fP
+\f(CW<Key>osfEndLine:\fP\f(CWend-of-buffer(\!)\fP
+\f(CWShift<Key>osfUp:\fP\f(CWscroll(1,line)\fP
+\f(CWShift<Key>osfDown:\fP\f(CWscroll(-1,line)\fP
+\f(CW<Key>osfUp:\fP\f(CWmove-cursor(up)\fP
+\f(CW<Key>osfDown:\fP\f(CWmove-cursor(down)\fP
+\f(CW<Key>osfLeft:\fP\f(CWmove-cursor(backward)\fP
+\f(CW<Key>osfRight:\fP\f(CWmove-cursor(forward)\fP
+\f(CW<Key>Do:\fP\f(CWvt-edit-key(do)\fP
+\f(CW<Key>Help:\fP\f(CWvt-edit-key(help)\fP
+\f(CW<Key>Menu:\fP\f(CWvt-edit-key(menu)\fP
+\f(CW<Key>Find:\fP\f(CWvt-edit-key(find)\fP
+\f(CW<Key>Insert:\fP\f(CWvt-edit-key(insert)\fP
+\f(CW<Key>Select:\fP\f(CWvt-edit-key(select)\fP
+\f(CW~Shift<Key>osfPageUp:\fP\f(CWvt-edit-key(prior)\fP
+\f(CW~Shift<Key>osfPageDown:\fP\f(CWvt-edit-key(next)\fP
+\f(CW<Key>osfPageUp:\fP\f(CWscroll(-1,page)\fP
+\f(CW<Key>osfPageDown:\fP\f(CWscroll(1,page)\fP
+\f(CWMod1<Key>Break:\fP\f(CWsoft-reset(\!)\fP
+\f(CWShift<Key>Break:\fP\f(CWhard-reset(\!)\fP
+\f(CW~Shift ~Mod1<Key>Break:\fP\f(CWvt-break(\!)\fP
+\f(CWCtrl<Key>Cancel:\fP\f(CWstop(long)\fP
+\f(CW~Ctrl<Key>Cancel:\fP\f(CWstop(\!)\fP
+\f(CW~Shift<Key>Tab:\fP\f(CWtab(\!)\fP
+\f(CW~Mod1<Key>KP_Space:\fP\f(CWkeypad-key-execute(space)\fP
+\f(CW~Mod1<Key>KP_Tab:\fP\f(CWkeypad-key-execute(tab)\fP
+\f(CW~Mod1<Key>KP_Enter:\fP\f(CWkeypad-key-execute(enter)\fP
+\f(CW~Mod1<Key>KP_F1:\fP\f(CWkeypad-key-execute(f1)\fP
+\f(CW~Mod1<Key>KP_F2:\fP\f(CWkeypad-key-execute(f2)\fP
+\f(CW~Mod1<Key>KP_F3:\fP\f(CWkeypad-key-execute(f3)\fP
+\f(CW~Mod1<Key>KP_F4:\fP\f(CWkeypad-key-execute(f4)\fP
+\f(CW~Mod1<Key>KP_Equal:\fP\f(CWkeypad-key-execute(equal)\fP
+\f(CW~Mod1<Key>KP_Multiply:\fP\f(CWkeypad-key-execute(multiply)\fP
+\f(CW~Mod1<Key>KP_Add:\fP\f(CWkeypad-key-execute(add)\fP
+\f(CW~Mod1<Key>KP_Separator:\fP\f(CWkeypad-key-execute(separator)\fP
+\f(CW~Mod1<Key>KP_Subtract:\fP\f(CWkeypad-key-execute(subtract)\fP
+\f(CW~Mod1<Key>KP_Decimal:\fP\f(CWkeypad-key-execute(decimal)\fP
+\f(CW~Mod1<Key>KP_Divide:\fP\f(CWkeypad-key-execute(divide)\fP
+\f(CW~Mod1<Key>KP_0:\fP\f(CWkeypad-key-execute(0)\fP
+\f(CW~Mod1<Key>KP_1:\fP\f(CWkeypad-key-execute(1)\fP
+\f(CW~Mod1<Key>KP_2:\fP\f(CWkeypad-key-execute(2)\fP
+\f(CW~Mod1<Key>KP_3:\fP\f(CWkeypad-key-execute(3)\fP
+\f(CW~Mod1<Key>KP_4:\fP\f(CWkeypad-key-execute(4)\fP
+\f(CW~Mod1<Key>KP_5:\fP\f(CWkeypad-key-execute(5)\fP
+\f(CW~Mod1<Key>KP_6:\fP\f(CWkeypad-key-execute(6)\fP
+\f(CW~Mod1<Key>KP_7:\fP\f(CWkeypad-key-execute(7)\fP
+\f(CW~Mod1<Key>KP_8:\fP\f(CWkeypad-key-execute(8)\fP
+\f(CW~Mod1<Key>KP_9:\fP\f(CWkeypad-key-execute(9)\fP
+\f(CWShift<Key>F1:\fP\f(CWvt-function-key-execute(1,
+UDK)\fP
+\f(CWShift<Key>F2:\fP\f(CWvt-function-key-execute(2,
+UDK)\fP
+\f(CWShift<Key>F3:\fP\f(CWvt-function-key-execute(3,
+UDK)\fP
+\f(CWShift<Key>F4:\fP\f(CWvt-function-key-execute(4,
+UDK)\fP
+\f(CWShift<Key>F5:\fP\f(CWvt-function-key-execute(5,
+UDK)\fP
+\f(CWShift<Key>F6:\fP\f(CWvt-function-key-execute(6,
+UDK)\fP
+\f(CWShift<Key>F7:\fP\f(CWvt-function-key-execute(7,
+UDK)\fP
+\f(CWShift<Key>F8:\fP\f(CWvt-function-key-execute(8,
+UDK)\fP
+\f(CWShift<Key>F9:\fP\f(CWvt-function-key-execute(9,
+UDK)\fP
+\f(CWShift<Key>F10:\fP\f(CWvt-function-key-execute(10,
+UDK)\fP
+\f(CWShift<Key>F11:\fP\f(CWvt-function-key-execute(11,
+UDK)\fP
+\f(CWShift<Key>F12:\fP\f(CWvt-function-key-execute(12,
+UDK)\fP
+\f(CWShift<Key>F13:\fP\f(CWvt-function-key-execute(13,
+UDK)\fP
+\f(CWShift<Key>F14:\fP\f(CWvt-function-key-execute(14,
+UDK)\fP
+\f(CWShift<Key>F15:\fP\f(CWvt-function-key-execute(15,
+UDK)\fP
+\f(CWShift<Key>F16:\fP\f(CWvt-function-key-execute(16,
+UDK)\fP
+\f(CWShift<Key>F17:\fP\f(CWvt-function-key-execute(17,
+UDK)\fP
+\f(CWShift<Key>F18:\fP\f(CWvt-function-key-execute(18,
+UDK)\fP
+\f(CWShift<Key>F19:\fP\f(CWvt-function-key-execute(19,
+UDK)\fP
+\f(CWShift<Key>F20:\fP\f(CWvt-function-key-execute(20,
+UDK)\fP
+\f(CWShift<Key>F21:\fP\f(CWvt-function-key-execute(21,
+UDK)\fP
+\f(CWShift<Key>F22:\fP\f(CWvt-function-key-execute(22,
+UDK)\fP
+\f(CWShift<Key>F23:\fP\f(CWvt-function-key-execute(23,
+UDK)\fP
+\f(CWShift<Key>F24:\fP\f(CWvt-function-key-execute(24,
+UDK)\fP
+\f(CWShift<Key>F25:\fP\f(CWvt-function-key-execute(25,
+UDK)\fP
+\f(CWShift<Key>F26:\fP\f(CWvt-function-key-execute(26,
+UDK)\fP
+\f(CWShift<Key>F27:\fP\f(CWvt-function-key-execute(27,
+UDK)\fP
+\f(CWShift<Key>F28:\fP\f(CWvt-function-key-execute(28,
+UDK)\fP
+\f(CWShift<Key>F29:\fP\f(CWvt-function-key-execute(29,
+UDK)\fP
+\f(CWShift<Key>F30:\fP\f(CWvt-function-key-execute(30,
+UDK)\fP
+\f(CWShift<Key>F31:\fP\f(CWvt-function-key-execute(31,
+UDK)\fP
+\f(CWShift<Key>F32:\fP\f(CWvt-function-key-execute(32,
+UDK)\fP
+\f(CWShift<Key>F33:\fP\f(CWvt-function-key-execute(33,
+UDK)\fP
+\f(CWShift<Key>F34:\fP\f(CWvt-function-key-execute(34,
+UDK)\fP
+\f(CWShift<Key>F35:\fP\f(CWvt-function-key-execute(35,
+UDK)\fP
+\f(CW~Shift<Key>F1:\fPT{
+\f(CWvt-function-key-execute(1,
+function)\fP
+T}
+\f(CW~Shift<Key>F2:\fPT{
+\f(CWvt-function-key-execute(2,
+function)\fP
+T}
+\f(CW~Shift<Key>F3:\fPT{
+\f(CWvt-function-key-execute(3,
+function)\fP
+T}
+\f(CW~Shift<Key>F4:\fPT{
+\f(CWvt-function-key-execute(4,
+function)\fP
+T}
+\f(CW~Shift<Key>F5:\fPT{
+\f(CWvt-function-key-execute(5,
+function)\fP
+T}
+\f(CW~Shift<Key>F6:\fPT{
+\f(CWvt-function-key-execute(6,
+function)\fP
+T}
+\f(CW~Shift<Key>F7:\fPT{
+\f(CWvt-function-key-execute(7,
+function)\fP
+T}
+\f(CW~Shift<Key>F8:\fPT{
+\f(CWvt-function-key-execute(8,
+function)\fP
+T}
+\f(CW~Shift<Key>F9:\fPT{
+\f(CWvt-function-key-execute(9,
+function)\fP
+T}
+\f(CW~Shift<Key>F10:\fPT{
+\f(CWvt-function-key-execute(10,
+function)\fP
+T}
+\f(CW~Shift<Key>F11:\fPT{
+\f(CWvt-function-key-execute(11,
+function)\fP
+T}
+\f(CW~Shift<Key>F12:\fPT{
+\f(CWvt-function-key-execute(12,
+function)\fP
+T}
+\f(CW~Shift<Key>F13:\fPT{
+\f(CWvt-function-key-execute(13,
+function)\fP
+T}
+\f(CW~Shift<Key>F14:\fPT{
+\f(CWvt-function-key-execute(14,
+function)\fP
+T}
+\f(CW~Shift<Key>F15:\fPT{
+\f(CWvt-function-key-execute(15,
+function)\fP
+T}
+\f(CW~Shift<Key>F16:\fPT{
+\f(CWvt-function-key-execute(16,
+function)\fP
+T}
+\f(CW~Shift<Key>F17:\fPT{
+\f(CWvt-function-key-execute(17,
+function)\fP
+T}
+\f(CW~Shift<Key>F18:\fPT{
+\f(CWvt-function-key-execute(18,
+function)\fP
+T}
+\f(CW~Shift<Key>F19:\fPT{
+\f(CWvt-function-key-execute(19,
+function)\fP
+T}
+\f(CW~Shift<Key>F20:\fPT{
+\f(CWvt-function-key-execute(20,
+function)\fP
+T}
+\f(CW~Shift<Key>F21:\fPT{
+\f(CWvt-function-key-execute(21,
+function)\fP
+T}
+\f(CW~Shift<Key>F22:\fPT{
+\f(CWvt-function-key-execute(22,
+function)\fP
+T}
+\f(CW~Shift<Key>F23:\fPT{
+\f(CWvt-function-key-execute(23,
+function)\fP
+T}
+\f(CW~Shift<Key>F24:\fPT{
+\f(CWvt-function-key-execute(24,
+function)\fP
+T}
+\f(CW~Shift<Key>F25:\fPT{
+\f(CWvt-function-key-execute(25,
+function)\fP
+T}
+\f(CW~Shift<Key>F26:\fPT{
+\f(CWvt-function-key-execute(26,
+function)\fP
+T}
+\f(CW~Shift<Key>F27:\fPT{
+\f(CWvt-function-key-execute(27,
+function)\fP
+T}
+\f(CW~Shift<Key>F28:\fPT{
+\f(CWvt-function-key-execute(28,
+function)\fP
+T}
+\f(CW~Shift<Key>F29:\fPT{
+\f(CWvt-function-key-execute(29,
+function)\fP
+T}
+\f(CW~Shift<Key>F30:\fPT{
+\f(CWvt-function-key-execute(30,
+function)\fP
+T}
+\f(CW~Shift<Key>F31:\fPT{
+\f(CWvt-function-key-execute(31,
+function)\fP
+T}
+\f(CW~Shift<Key>F32:\fPT{
+\f(CWvt-function-key-execute(32,
+function)\fP
+T}
+\f(CW~Shift<Key>F33:\fPT{
+\f(CWvt-function-key-execute(33,
+function)\fP
+T}
+\f(CW~Shift<Key>F34:\fPT{
+\f(CWvt-function-key-execute(34,
+function)\fP
+T}
+\f(CW~Shift<Key>F35:\fPT{
+\f(CWvt-function-key-execute(35,
+function)\fP
+T}
+\f(CW<KeyRelease>:\fP\f(CWkey-release(\!)\fP
+\f(CW<KeyPress>:\fP\f(CWinsert(\!)\fP
+\f(CW~Shift~Ctrl<Btn1Down>:\fP\f(CWgrab-focus(\!)\fP
+\f(CWShift~Ctrl<Btn1Down>:\fP\f(CWextend-start(\!)\fP
+\f(CW~Ctrl<Btn1Motion>:\fP\f(CWselect-adjust(\!)\fP
+\f(CW~Ctrl<Btn1Up>:\fP\f(CWextend-end(\!)\fP
+\f(CW~Shift<Btn2Down>:\fP\f(CWprocess-bdrag(\!)\fP
+\f(CW~Shift<Btn2Up>:\fP\f(CWcopy-to(\!)\fP
+\f(CW<EnterWindow>:\fP\f(CWenter(\!)\fP
+\f(CW<LeaveWindow>:\fP\f(CWleave(\!)\fP
+\f(CW<FocusIn>:\fP\f(CWfocus-in(\!)\fP
+\f(CW<FocusOut>:\fP\f(CWfocus-out(\!)\fP
+.TE
+.SS "Action Routines"
+.PP
+The DtTerm widget supports the following action routines: 
+.IP "\fIbell\^\fP(\fB[\fP\fIpercentage\fP\fB]\fP)" 10
+Rings the keyboard bell at the specified
+\fIpercentage\fP above or below the base volume\&.
+.IP "\fIbreak\^\fP(\!)" 10
+Sends an RS232 break signal to the child process\&.
+.IP "\fIcancel\^\fP(\!)" 10
+Sends a \fBCAN\fP (cancel) character to the child process\&.
+.IP "\fIcopy-clipboard\^\fP(\!)" 10
+Copies current selection to the clipboard\&.
+.IP "\fIcopy-to\^\fP(\!)" 10
+Sends the primary selection to the subprocess\&.
+.IP "\fIdo\^\fP(\!)" 10
+Sends the escape sequence (see \fBdtterm\fP(5)) associated with the \fBDo\fP key to the child process\&.
+.IP "\fIedit-key\^\fP( \fIstring\fP)" 10
+Sends the escape sequence (see \fBdtterm\fP(5)) associated with the corresponding
+edit key to the child process\&. The interpretation of these keys is application-specific\&.
+Valid values for \fIstring\fP are:
+.PP
+.nf
+\f(CWfind
+insert
+next
+prior
+remove
+select\fR
+.fi
+.PP
+.IP "\fIextend-start\^\fP(\!)" 10
+Starts the extension of the currently selected text\&. The amount of text
+selected depends on the number of mouse clicks (see \fBgrab-focus\fP)\&.
+.IP "\fIextend-end\^\fP(\!)" 10
+Extends the current selection\&. The amount of text selected depends on
+the number of mouse clicks (see \fBgrab-focus\fP)\&.
+.IP "\fIfunction-key-execute\^\fP( \fInum\fP\fB[,\fP \fItype\fP \fB]\fP)" 10
+Sends the escape sequence (see \fBdtterm\fP(5)) associated with the corresponding
+function key \fInum\fP to the child process\&. Valid values for \fInum\fP are 1 to 35, inclusive\&. If \fItype\fP
+is set to \fBfunction\fP (or not set at all), the escape sequence
+(see \fBdtterm\fP(5)) associated
+with function key \fInum\fP is sent to the child process\&. If
+\fItype\fP is set to \fBUDK\fP,
+then the string associated with user defined key \fInum\fP
+is sent to the child process\&.
+.IP "\fIgrab-focus\^\fP(\!)" 10
+Performs one of the following depending on the number of multiple mouse
+clicks\&. One click deselects any selected text and sets the selection anchor
+at the pointer position; two clicks selects a word; three clicks selects a
+line of text; and four clicks selects all text\&.
+.IP "\fIhard-reset\^\fP(\!)" 10
+Performs a hard reset on the terminal emulator\&. See \fBdtterm\fP(5) for a definition of hard reset\&. 
+.IP "\fIhelp\^\fP(\!)" 10
+Sends the escape sequence (see  \fBdtterm\fP(5)) associated
+with the DEC VT220 Help key to the child process\&.
+.IP "" 10
+The interpretation of this key is application-specific\&.
+.IP "\fIkeymap\^\fP(name)" 10
+Defines a new translation table whose resource name is named with the
+suffix \fBKeymap\fP (case is significant)\&. The name \fBNone\fP restores the original translation table\&.
+.IP "\fIkeypad-key-execute\^\fP(\fIstring\fP)" 10
+Sends the escape sequence (see \fBdtterm\fP(5)) associated with the corresponding
+keypad key to the child process\&. The interpretation of these keys is application-specific\&.
+Valid values for \fIstring\fP are:
+.PP
+.nf
+\f(CWf1 - f4
+space
+tab
+enter
+equal
+multiply
+add
+separator
+subtract
+decimal
+divide
+0 - 9\fR
+.fi
+.PP
+.IP "\fImove-cursor\^\fP( \fIdirection\fP)" 10
+Sends the escape sequence (see \fBdtterm\fP(5)) associated with the corresponding
+cursor motion to the child process\&. The interpretation of these keys is application-specific\&.
+Valid values for \fIdirection\fP are:
+.PP
+.nf
+\f(CWup
+down
+backward
+forward\fR
+.fi
+.PP
+.IP "\fIpaste-clipboard\^\fP(\!)" 10
+Sends the contents of the clipboard to the subprocess\&.
+.IP "\fIprocess-bdrag\^\fP(\!)" 10
+The result of this action is determined by several factors: position
+of the location cursor, motion of the location cursor and the interval between
+a \fBBTransfer\fP release\&.
+.IP "" 10
+This action sends the current selection to the subprocess if text is
+selected, the location cursor is disjoint from the current selection and no
+motion is detected within a given time interval\&.
+.IP "" 10
+The action drags the current selection if the location cursor is positioned
+on the selection, the time interval is exceeded and movement of the location
+cursor is detected\&. This action creates a \fBDragContext\fP object
+whose \fBXmNexportTargets\fP resource
+value includes target types of \fBCOMPOUND_TEXT\fP, \fBSTRING\fP and \fBTEXT\fP\&.
+.IP "\fIredraw-display\^\fP(\!)" 10
+Redraws the contents of the text window\&.
+.IP "\fIscroll\^\fP( \fIcount\fP\fB[,\fP \fIunits\fP \fB]\fP)" 10
+Scrolls the display memory down if \fIcount\fP
+is greater than zero, or up if \fIcount\fP is less
+than zero\&. The number of lines scrolled is based on count and units\&. The default
+for units is \fBline\fP\&. Valid values for \fIunits\fP are:
+.PP
+.nf
+\f(CWpage
+halfpage
+line\fR
+.fi
+.PP
+.IP "\fIselect-adjust\^\fP(\!)" 10
+Extends the selection\&. The amount of text selected depends on the number
+of mouse clicks\&. One click selects characters; two clicks selects words; three
+clicks selects lines; and four clicks selects the entire buffer\&.
+.IP "\fIselect-all\^\fP(\!)" 10
+Selects all text\&.
+.IP "\fIselect-page\^\fP(\!)" 10
+Selects all text currently displayed on the screen\&.
+.IP "\fIself-insert\^\fP(\!)" 10
+Sends the character associated with the key pressed to the child process\&.
+.IP "\fIsoft-reset\^\fP(\!)" 10
+Performs a soft reset of the terminal\&. For a definition
+of soft reset see the ``Reset\&'\&' section in \fBdtterm\fP(5)\&. 
+.IP "\fIstop\^\fP( \fIstate\fP)" 10
+Toggles, starts, or stops the process of reading data from the child
+process\&. Valid values for \fIstate\fP are:
+.PP
+.nf
+\f(CWtoggle
+on
+off\fR
+.fi
+.PP
+.IP "\fIstring\^\fP( \fIstring\fP)" 10
+Inserts the specified text string as if it had been typed\&. The string
+must be quoted if it contains white space or non-alphanumeric characters\&.
+The string is interpreted as a hexadecimal character constant if it begins
+with the characters \fB0x\fP\&.
+.IP "\fItab\^\fP(\!)" 10
+Sends a tab to the child process\&.
+.IP "\fIvisual-bell\^\fP(\!)" 10
+Flashes the window quickly\&.
+.SS "Virtual Bindings"
+.PP
+The bindings for virtual keys are vendor-specific\&. Virtual bindings
+do not apply when the DtTerm widget has input focus\&. For information about
+bindings for virtual buttons and keys, see \fBVirtualBindings\fP(3)\&.
+.SS "On-the-Spot Preedit Style and Behavior"
+.PP
+When the user selects the on-the-spot input method style, preedit
+strings are displayed in the \fBdtterm\fP window\&.
+To commit a preedit string,
+the user can choose from a number of generic actions, including
+\fBcut\fP, \fBpaste\fP,
+\fBcursor movement\fP, and \fBcommit key\fP\&.
+.PP
+In addition to the generic actions, several
+of the \fBDtTerm\fP action routines
+may cause committal\&. These action routines include
+\fBmove_cursor\fP, \fBprocess_bdrag\fP,
+and \fBstring\fP\&. The action routines correspond
+to the generic commit actions\&.
+.PP
+When the preedit buffer is active, it may be highlighted\&. This highlight
+value can be set by the input method server\&. Since there is only a
+single highlight mode available in \fBDtTerm\fP
+the following \fBXIMFeedbacks\fP will set the highlight:
+.IP "" 10
+ \fBXIMPrimary\fP
+.IP "" 10
+ \fBXIMSecondary\fP
+.IP "" 10
+ \fBXIMTertiary\fP
+.SH "SEE ALSO"
+.PP
+\fBdtterm\fP(1), \fBDt/Term\&.h - DtTerm\fP(5), \fBDtTermInitialize\fP(3), \fBDtTermDisplaySend\fP(3), \fBDtTermSubprocSend\fP(3), \fBDtTermSubprocReap\fP(3), \fBdtterm\fP(5), \fBpty\fP(7), \fBXtSetValues\fP(1), \fBXtGetValues\fP(1), \fBXmFrame\fP(3), \fBXmPrimitive\fP(3), \fBXmFontList\fP(3), \fBXmBulletinBoard\fP(3), \fBXmText\fP(3), \fBVirtualBindings\fP(3), \fBCore\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

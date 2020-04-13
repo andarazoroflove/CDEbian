@@ -1,0 +1,635 @@
+'\" t
+...\" helpprin.sgm /main/15 1996/11/15 15:31:25 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dthelpprint" "user cmd"
+.SH "NAME"
+\fBdthelpprint\fP \(em print utility for DtHelpDialog and DtHelpQuickDialog widgets
+.SH "SYNOPSIS"
+.PP
+\fBdthelpprint\fP [\fIoptions\!\fP] 
+.SS "Options"
+.PP
+Options controlling what to print:
+.TS
+tab();
+lw(1.399602i) lw(1.159046i) lw(2.941352i).
+\fB-helpType\fP\fItype\fPtype of Help data
+\fB-helpType\fP\fItype\fPT{
+type of Help data\&. type = 0 (help volume),
+1 (string), 2 (man page), 3 (help file)
+T}
+\fB-helpVolume\fP\fIvolume\fPfull path of Help volume file\&.
+\fB-locationId\fP\fIlocation\fPname of Help topic in the volume\&.
+\fB-allTopics\fPT{
+print all topics, toc, & index\&.
+T}
+\fB-subTopics\fPT{
+print topic locationId and all subtopics\&.
+T}
+\fB-oneTopic\fPprint topic locationId\&.
+\fB-toc\fPT{
+print Help volume table of contents\&.
+T}
+\fB-index\fPprint Help volume index\&.
+\fB-frontMatter\fPprint Help volume front matter\&.
+\fB-manPage\fP\fImanpagename\fPname of man page\&.
+\fB-stringData\fP\fIstring\fPHelp text to print\&.
+\fB-helpFile\fP\fIfilename\fPfile containing Help text\&.
+\fB-topicTitle\fP\fItitle\fPtitle string for Help text\&.
+.TE
+.PP
+Options controlling how to print:
+.TS
+tab();
+lw(1.358696i) lw(1.054348i) lw(3.086957i).
+\fB-printer\fP\fIprintername\fPprinter to use
+\fBcopies\fP\fInumber\fPnumber of copies to print\&.
+\fB-outputFile\fP\fIfilename\fPwrite output to this file\&.
+\fB-paperSize\fP\fIsize\fPformat content to this paper size\&.
+\fB-paperSize\fP\fIsize\fPT{
+format content to this paper size\&. size =
+{help_papersize_letter|help_papersize_legal| help_papersize_executive|help_papersize_a4|
+help_papersize_b5}
+T}
+\fB-display\fP\fIdisplayname\fPT{
+display from which to get resources\&.
+T}
+\fB-name\fP\fIname\fPT{
+program name used when getting resources\&.
+T}
+\fB-class\fP\fIname\fPT{
+class name used when getting resources\&.
+T}
+\fB-xrm\fP\fIresourcestring\fPadditional resources\&.
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBdthelpprint\fP utility is a private utility used
+by \fBDtHelpDialog\fP(3) and \fBDtHelpQuickDialog\fP(3)
+for printing Help information\&. It is not a public utility, and no effort to
+maintain backwards compatibility will be made across versions\&. That said,
+it is sometimes useful to use \fBdthelpprint\fP directly and
+to configure its operation\&.
+.PP
+The \fBdthelpprint\fP utility processes help topics and
+can send the output to a printer or to a specified output file\&.
+The \fBdthelpprint\fP utility is an integral part of the CDE Help System\&.
+Access to \fBdthelpprint\fP is provided by the \fBdthelpview\fP(1)
+client\&'s Print dialog, an application\&'s Help window, or through
+a utility line shell\&.
+.PP
+The \fBdthelpprint\fP utility can print plain text strings,
+plain text files, Unix man pages, and CDE Help volumes\&. CDE Help volumes are
+printed without any graphics, and there is no indication of missing graphics\&.
+The standard \fBman\fP(1) and \fBdthelpview\fP(1)
+search paths are used to find manual pages and CDE Help volumes; Help volumes
+and files may be specified with an absolute pathname\&.
+.SH "OPTIONS"
+.PP
+The \fBdthelpprint\fP utility has two sets of utility line
+options\&. The first set controls what should be printed\&. The second set controls
+how it should be printed\&. All option names must be used exactly as given\&.
+An alternative to specifying options on the utility line is to specify them
+using resources in an app-defaults file\&. This is useful for changing the default
+values from those given below\&. See the \fBRESOURCE OVERVIEW\fP
+heading in this manual page for more information\&.
+.PP
+Options controlling what to print:
+.IP "\fB-helpType\fP \fItype\fP" 10
+The type of Help data to print\&. This is a numeric value, as follows:
+0=help volume, 1=string, 2=man page, 3=help file\&. The default value is 0,
+a Help volume\&.
+.IP "\fB-helpVolume\fP \fIvolume\fP" 10
+The name of the volume holding the topics to be printed\&.
+If \fIvolume\fP is unqualified, the standard \fBdthelpview\fP(1)
+search paths are used to locate the volume; these are also covered in the
+\fBENVIRONMENT VARIABLES\fP heading in this manual page\&. The volume may
+also be specified relative to the current directory by beginning the volume
+name with "\&./" or "\&.\&./"\&. This option is useful only in conjunction with a
+\fB-helpType\fP of 0 (zero)\&.
+.IP "\fB-locationId\fP \fIlocation\fP" 10
+The starting topic for processing topics of a Help volume\&.
+The \fIlocation\fP must be a text string used by the
+author to mark a location
+in the volume\&. The default value is \fB_hometopic\fP, which is
+the top topic of a CDE Help volume\&. This option is useful only in conjunction
+with \fB-helpVolume\fP\&.
+.IP "\fB-allTopics\fP" 10
+Instructs \fBdthelpprint\fP to print the entire help volume,
+including front matter, table of contents, all topics, and an index\&. This
+option is useful only in conjunction with \fB-helpVolume\fP\&.
+.IP "\fB-subTopics\fP" 10
+Instructs \fBdthelpprint\fP to print the topic specified
+by \fB-locationId\fP and all the subtopics of that topic\&.
+This option is useful only in conjunction with \fB-helpVolume\fP\&.
+.IP "\fB-oneTopic\fP" 10
+Instructs \fBdthelpprint\fP to print the topic specified
+by \fB-locationId\fP\&. This option is useful only in conjunction
+with \fB-helpVolume\fP\&.
+.IP "\fB-toc\fP" 10
+Instructs \fBdthelpprint\fP to print the Table of Contents
+of the specified helpVolume\&. This option is useful only in conjunction with \fB-helpVolume\fP\&.
+.IP "\fB-index\fP" 10
+Instructs \fBdthelpprint\fP to print the Index of the specified
+helpVolume\&. This option is useful only in conjunction with \fB-helpVolume\fP\&.
+.IP "\fB-frontMatter\fP" 10
+Instructs \fBdthelpprint\fP to print the front matter of
+the specified helpVolume\&. Front matter includes the volume title, abstract,
+and copyright information\&. This option is useful only in conjunction with \fB-helpVolume\fP\&.
+.IP "\fB-stringData\fP \fIstring\fP" 10
+Specifies a string to print\&. This option is useful only in conjunction
+with a \fB-helpType\fP of 1\&.
+.IP "\fB-manPage\fP \fImanpagename\fP" 10
+Specifies the name of the Unix man page to print\&. This option is useful
+only in conjunction with a \fB-helpType\fP of 2\&.
+.IP "\fB-helpFile\fP \fIfilename\fP" 10
+Specifies a file to print\&. This option is useful only in conjunction
+with a \fB-helpType\fP of 3\&.
+.PP
+Options controlling how to print:
+.IP "\fB-printer\fP \fIprintername\fP" 10
+Specifies which printer to use\&. If this isn\&'t specified as a utility-line
+option or resource, the default value is taken from the environment variable
+\fBLPDEST\fP\&.
+.IP "\fB-copies\fP \fInumber\fP" 10
+Specifies how many copies to produce\&. The default value is 1\&. This option
+is only ignored when generating an output file\&.
+.IP "\fB-outputFile\fP \fIfilename\fP" 10
+Specifies a file to hold the print-ready output\&. If this option is specified,
+no output is sent to the printer\&.
+.IP "\fB-paperSize\fP \fIsize\fP" 10
+Specifies a size of paper to which the output should be formatted\&. There
+are five valid values for \fIsize\fP: \fBhelp_papersize_letter\fP, \fBhelp_papersize_legal\fP, \fBhelp_papersize_executive\fP, \fBhelp_papersize_a4\fP, \fBhelp_papersize_b5\fP\&. The default value is \fBhelp_papersize_letter\fP\&.
+.IP "\fB-display\fP \fIdisplayname\fP" 10
+Specifies the X display used to retrieve resource values\&. Typical format
+for \fIdisplayname\fP is \fBhostname:display_number\&.screen_number\fP\&. If no screen number is specified, the first screen (0) is used\&.
+See also \fBX\fP(1)
+.IP "\fB-name\fP \fIname\fP" 10
+Specifies the application name under which resources are to be obtained\&.
+The default is \fBdthelpprint\fP\&. The resource \fBapplication\&.name\fP way also be used to specify the name\&.
+.IP "\fB-class\fP \fIclassname\fP" 10
+Specifies the application class name under which resources are to be
+obtained\&. The default is \fBdthelpprint\fP\&. The resource
+\fBapplication\&.class\fP may also be used to
+specify the class name\&.
+.IP "\fB-xrm\fP \fIresourcestring\fP" 10
+Specifies an addition to the resource database used by this invocation
+of the program\&.
+.SH "RESOURCE OVERVIEW"
+.PP
+The \fBdthelpprint\fP utility uses resources in addition
+to utility-line options to configure its operation\&. There are many more resources
+available for this purpose than utility-line options\&. To set a resource on
+the utility line, use the \fB-xrm\fP option\&.
+.PP
+The application class is \fBdthelpprint\fP unless specified
+otherwise with the \fBapplication\&.class\fP or
+\fBApplication\&.Class\fP resource or the
+\fB-class\fP option\&. The application
+instance name is the name used to run the program (usually \fBdthelpprint\fP)
+unless specified otherwise with the \fBapplication\&.class\fP or
+\fBApplication\&.Class\fP resource
+or the \fB-name\fP option\&. In the following coverage of resource specifications,
+the application\&'s class name and instance name can be used interchangably;
+however, if the same resource is specified more than once, the instance-specific
+resource takes precedence over the class resource\&. In addition, when a value
+can be specified using either a resource or utility-line option, the utility-line
+option value takes precedence\&.
+.PP
+The \fBdthelpprint\fP utility has three types of resources\&.
+.IP "Help Content" 10
+These resoures specify what to print\&. Typically, these values are specified
+using utility-line options instead of resources\&.
+.IP "Content Processing" 10
+These resources specify in more detail the configuration of how to print\&.
+These resources include some values that can be specified with utility-line
+options, but also many others\&.
+.IP "Printer Configuration:" 10
+The \fBdthelpprint\fP utility allows printer-specific configurations
+to be specified\&. The configuration used is controlled by the value of the
+\fBprinter\fP resource or
+\fB-printer\fP option\&.
+.SH "HELP CONTENT RESOURCES"
+.PP
+These resources specify what to print\&. The syntax for specifying the
+resources is
+.PP
+.nf
+\f(CW\fBDthelpprint*\fP \fIresource\fP\fB:\fPresource value\fR
+.fi
+.PP
+.PP
+For example, \fBDthelpprint*helpVolume:\fP \fBaVolume\&.sdl\fP is used to specify the name of the Help volume\&.
+.SS "Basic Resource Set"
+.TS
+tab();
+lw(1.337838i) lw(1.474099i) lw(1.263514i) lw(1.424550i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBlocationId\fP\fBLocationId\fP\fBstring\fR\fB_HOMETOPIC\fP
+\fBhelpVolume\fP\fBHelpVolume\fP\fBstring\fR\fBNULL\fP
+\fBmanPage\fP\fBManPage\fP\fBstring\fR\fBNULL\fP
+\fBstringData\fP\fBStringData\fP\fBstring\fR\fBNULL\fP
+\fBhelpFile\fP\fBHelpFile\fP\fBstring\fR\fBNULL\fP
+\fBtopicTitle\fP\fBTopicTitle\fP\fBstring\fR\fBNULL\fP
+\fBhelpType\fP\fBHelpType\fP\fBstring\fR\fBNULL\fP
+.TE
+.PP
+These Help-content resources are defined in \fBDtHelpDialog\fP(3)\&.
+The following content options are specific to \fBdthelpprint\&.\fP
+Setting the resource to any value makes it \fBTrue\fP\&.
+.SS "Additional Resource Set"
+.TS
+tab();
+lw(1.459430i) lw(1.447368i) lw(1.085526i) lw(1.507675i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBallTopics\fP\fBAllTopics\fP\fBstring\fR\fBNULL\fP
+\fBsubTopics\fP\fBSubTopics\fP\fBstring\fR\fBNULL\fP
+\fBoneTopic\fP\fBOneTopic\fP\fBstring\fR\fBNULL\fP
+\fBtoc\fP\fBToc\fP\fBstring\fR\fBNULL\fP
+\fBindex\fP\fBIndex\fP\fBstring\fR\fBNULL\fP
+\fBfrontMatter\fP\fBFrontMatter\fP\fBstring\fR\fBNULL\fP
+.TE
+.PP
+These Help-content resources have the same meaning as the \fBdthelpprint\fP utility-line options of the same name\&.
+.SH "HELP PROCESSING RESOURCES"
+.PP
+These resources specify how to print\&. The syntax for specifying the
+resources is:
+.PP
+.nf
+\f(CW\fBDthelpprint*\fP \fIresource\fP\fB:\fPresource value\fR
+.fi
+.PP
+.PP
+For example, \fBDthelpprint*printer:\fP \fBaPrinter\fP is used to specify the name of the printer\&.
+.SS "Basic Resource Set"
+.TS
+tab();
+lw(1.338816i) lw(1.459430i) lw(1.194079i) lw(1.507675i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBprinter\fP\fBPrinter\fP\fBstring\fR\fBNULL\fP
+\fBcopies\fP\fBCopies\fP\fBstring\fR\fBNULL\fP
+\fBoutputFile\fP\fBOutputFile\fP\fBstring\fR\fBNULL\fP
+\fBpaperSize\fP\fBPaperSize\fP\fBstring\fR\fBNULL\fP
+\fBdisplay\fP\fBDisplay\fP\fBstring\fR\fBNULL\fP
+.TE
+.PP
+These Help-processing resources have the same meaning as the \fBdthelpprint\fP utility-line options of the same name\&. It is used to
+specify the name of the printer\&.
+.SS "Additional Resource Set"
+.TS
+tab();
+lw(1.805816i) lw(1.774859i) lw(0.856473i) lw(1.062852i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBevenTocHeader\fP\fBEvenTocHeader\fP\fBstring\fR\fBsee below\fP
+\fBoddTocHeader\fP\fBOddTocHeader\fP\fBstring\fR\fBsee below\fP
+\fBevenTocFooter\fP\fBEvenTocFooter\fP\fBstring\fR\fBsee below\fP
+\fBoddTocFooter\fP\fBOddTocFooter\fP\fBstring\fR\fBsee below\fP
+\fBevenBodyHeader\fP\fBEvenBodyHeader\fP\fBstring\fR\fBsee below\fP
+\fBoddBodyHeader\fP\fBOddBodyHeader\fP\fBstring\fR\fBsee below\fP
+\fBevenBodyFooter\fP\fBEvenBodyFooter\fP\fBstring\fR\fBsee below\fP
+\fBoddBodyFooter\fP\fBOddBodyFooter\fP\fBstring\fR\fBsee below\fP
+\fBevenIndexHeader\fP\fBEvenIndexHeader\fP\fBstring\fR\fBsee below\fP
+\fBoddIndexHeader\fP\fBOddIndexHeader\fP\fBstring\fR\fBsee below\fP
+\fBevenIndexFooter\fP\fBEvenIndexFooter\fP\fBstring\fR\fBsee below\fP
+\fBoddIndexFooter\fP\fBOddIndexFooter\fP\fBstring\fR\fBsee below\fP
+\fBechoCommand\fP\fBEchoCommand\fP\fBstring\fR\fBecho\fP
+\fBechoArgs\fP\fBEchoArgs\fP\fBstring\fR\fB"%s"\fP
+\fBfoldCommand\fP\fBFoldCommand\fP\fBstring\fR\fBfold\fP
+\fBfoldArgs\fP\fBFoldArgs\fP\fBstring\fR\fB-w %d %s\fP
+\fBprCommand\fP\fBPrCommand\fP\fBstring\fR\fBpr\fP
+\fBprArgs\fP\fBPrArgs\fP\fBstring\fR\fBsee below\fP
+\fBprOffsetArg\fP\fBPrOffsetArg\fP\fBstring\fR\fB-o%d\fP
+\fBmanCommand\fP\fBManCommand\fP\fBstring\fR\fBman\fP
+\fBmanArgs\fP\fBManArgs\fP\fBstring\fR\fB%s\fP
+\fBredirectCmdAndArgs\fP\fBRedirectCmdAndArgs\fP\fBstring\fR\fB> %s\fP
+\fBlpCommand\fP\fBLpCommand\fP\fBstring\fR\fBlp\fP
+\fBshCommand\fP\fBShCommand\fP\fBstring\fR\fBsee below\fP
+\fBiconvCmdAndArgs\fP\fBIconvCmdAndArgs\fP\fBstring\fR\fBsee below\fP
+.TE
+.TS
+tab();
+lw(1.382301i) lw(1.343363i) lw(1.430973i) lw(1.343363i).
+\fBevenTocHeader\fP\fBoddTocHeader\fP\fBevenTocFooter\fP\fBoddTocFooter\fP
+\fBevenBodyHeader\fP\fBoddBodyHeader\fP\fBevenBodyFooter\fP\fBoddBodyFooter\fP
+\fBevenIndexHeader\fP\fBoddIndexHeader\fP\fBevenIndexFooter\fP\fBoddIndexFooter\fP
+.TE
+.PP
+The values of these resources are used as the header and footer strings
+only when printing Help volumes\&. Header and footer strings are specified separately
+for odd and even pages to support double sided printing\&. The strings may contain
+symbolic names for dynamic values\&.
+.PP
+Dynamic values are updated each time the string is to be used\&. Valid
+dynamic values are as follows:
+.TS
+tab();
+lw(1.742798i) lw(3.757202i).
+\fBSymbol\fP\fBValue\fP
+\fB$LMARGIN\fPleft margin blanks\&.
+\fB$TODAY\fPtoday\&'s date\&.
+\fB$VOLDATE\fPdate on the help volume file\&.
+\fB$VOLUME\fPvolume name\&.
+\fB$VOLUMEFILL\fPT{
+filler for fixed sized 50 column volume name\&.
+T}
+\fB$TOPIC\fPsection topic title\&.
+\fB$TOPICFILL\fPT{
+filler for fixed sized 50 column section
+topic title\&.
+T}
+\fB$PAGENUM\fPpage number\&.
+\fB$PAGENUMFILL\fPT{
+filler for fixed sized 3 column page number\&.
+T}
+\fB$SECTNUM\fPsection number or name\&.
+\fB$SECTNUMFILL\fPT{
+filler for fixed sized 8 column section number
+or name\&.
+T}
+.TE
+.PP
+The default values for the resources are as follows (To improve understanding,
+the blank spaces have been replaced with \&'\&.\&'\&.):
+.IP "evenTocHeader and oddTocHeader:" 10
+$LMARGIN\&.\&.\&.\&.$VOLUME\n\n
+.IP "evenTocFooter and oddTocFooter:" 10
+\n$LMARGIN\&.\&.\&.$SECTNUM
+.IP "evenBodyHeader and oddBodyHeader:" 10
+$LMARGIN$VOLUME$VOLUMEFILL\&.\&.\&.\&.$PAGENUMFILLPage\&.$PAGENUMn
+.IP "evenBodyFooter and oddBodyFooter:" 10
+\n$LMARGIN$TOPIC$TOPICFILL\&.\&.\&.\&.\&.$SECTNUMFILLSection\&.$SECTNUM\n
+.IP "evenIndexHeader and oddIndexHeader:" 10
+$LMARGIN$VOLUME$VOLUMEFILL\&.\&.\&.\&.\&.$PAGENUMFILLPage\&.$PAGENUM\n\n
+.IP "evenIndexFooter and oddIndexFooter:" 10
+\n$LMARGIN\&.\&.\&.\&.\&.\&.\&.$SECTNUM\n
+.IP "echoCommand" 10
+The utility used to echo the \fBstringData\fP from stdin
+to stdout\&.
+.IP "echoArgs" 10
+The argument string to the \fBechoCommand\fP\&. The string
+must use \fBprintf\fP formatting and may reference this argument:
+STRING string\&.
+.IP "foldCommand" 10
+The utility used to fold a long string into a formatted string with
+a maxiumum column width\&.
+.IP "foldArgs" 10
+The argument string to the \fBfoldCommand\fP\&. The string
+must use \fBprintf\fP formatting and may reference these arguments:
+INT column width, STRING filename\&.
+.IP "prCommand" 10
+The utility used to format a file in preparation for printing\&.
+.IP "prArgs" 10
+The argument string to the \fBprCommand\&.\fP The string
+must use \fBprintf\fP formatting and may reference these arguments:
+STRING job title, INT page height, STRING filename\&. The default value is \fB-h\fP \fB%s\fP \fB-f\fP \fB-l%d\fP \fB%s"\fP
+.IP "prOffsetArg" 10
+Sometimes the prArgs is augmented with the option to offset the contents
+by \fIn\fP columns\&. The value contains the offset
+argument\&. The string must use \fBprintf\fP formatting and may
+reference this argument: INT column-offset\&.
+.IP "manCommand" 10
+The utility used to recover a formatted Unix man page\&.
+.IP "manArgs" 10
+The argument string to the \fBmanCommand\&.\fP The string
+must use \fBprintf\fP formatting and may reference these arguments:
+STRING man-page-name\&.
+.IP "redirectCmdAndArgs" 10
+When stdout is to be redirected to a file, this utility and arguments
+are used\&. The string must use \fBprintf\fP formatting and may
+reference these arguments: STRING filename
+.IP "lpCommand" 10
+The utility is used to print a file\&. The utility must accept the standard \fBlp\fP(1) utility-line arguments\&.
+.IP "shCommand" 10
+The shell script used by \fBdthelpprint\fP to actually invoke
+the \fBlpCommand\fP on the target file\&. The default value is \fB/usr/dt/bin/dthelpprint\&.sh\&.\fP
+.IP "iconvCmdAndArgs" 10
+The utility is used to translate a file from one character set to another\&.
+The argument string must use \fBprintf\fP formatting and may
+reference these arguments: STRING from-charset, STRING to-charset, STRING
+source-file, STRING dest-file\&. The default value is \fBiconv -f %s -t
+%s %s > %s\fP
+.SH "PRINTER CONFIGURATION RESOURCES"
+.PP
+These resources specify printer configuration\&. This includes a default
+configuration as well as printer-specific configurations\&. The syntax for specifying
+the resources is
+.PP
+.nf
+\f(CW\fBDthelpprint*printer\&.\fP \fIresource\fP\fB:\fPresource value
+\fBDthelpprint*printer\&.\fP\fIprinterName\&.resource\fP \fB:\fPresource value\fR
+.fi
+.PP
+.PP
+For example,
+.PP
+.nf
+\f(CWDthelpprint*printer\&.paperSize: help_papersize_legal
+Dthelpprint*printer\&.laser-c4\&.paperSize: help_papersize_executive\fR
+.fi
+.PP
+.PP
+set the default paper size to legal and the paper size on the printer
+named "laser-c4" to executive\&.
+.SS "Basic Resource Set"
+.TS
+tab();
+lw(1.86in) lw(1.98in) lw(0.77in) lw(1.71in).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBpaperSize\fP\fBPaperSize\fP\fBString\fR\fBhelp_papersize_letter\fP
+\fBcolsWidth\fP\fBColsWidth\fP\fBint\fR\fB0\fP
+\fBrowsHeight\fP\fBRowsHeight\fP\fBint\fR\fB0\fP
+\fBcolsLeftMargin\fP\fBColsLeftMargin\fP\fBint\fR\fB10\fP
+\fBcolsRightMargin\fP\fBColsRightMargin\fP\fBint\fR\fB10\fP
+\fBrowsTopMargin\fP\fBRowsTopMargin\fP\fBint\fR\fB6\fP
+\fBrowsBottomMargin\fP\fBRowsBottomMargin\fP\fBint\fR\fB6\fP
+.TE
+.PP
+These resources are used to specify the printer configuration, specifically
+with respect to the paper used for printing\&. Paper size can be specified either
+by using the \fBpaperSize\fP resource or by setting an explicit
+size with the \fBcolsWidth\fP and \fBrowsHeight\fP
+resources\&. The margin values specify the amount of white space retained around
+the page\&.
+.IP "paperSize" 10
+This resource can be used to set the paper size to predefined dimensions\&.
+Valid values are \fBhelp_papersize_letter,\fP (8\&.5 x 11 in; 69
+rows x 91 cols) \fBhelp_papersize_legal,\fP (8\&.5 x 14 in; 88
+rows x 91 cols) \fBhelp_papersize_executive,\fP (7\&.25 x 10\&.5
+in, 66 rows x 77 cols) \fBhelp_papersize_a4,\fP (210 x 297 mm,
+73 rows x 88 cols) and \fBhelp_papersize_b5\fP (182 x 257 mm,
+63 rows x 76 cols)\&. If these dimensions are insufficient, the 
+\fBcolsWidth\fP and \fBrowsHeight\fP resources can be used to provide
+explicit dimensions\&. All dimensions are given in columns and rows of text
+in the default printer font\&.
+.IP "colsWidth" 10
+Width of the paper in columns of characters in the default printer font\&.
+The value may not be 0 (zero)\&.
+.IP "rowsHeight" 10
+Height of the paper in rows of text in the default printer font\&. The
+value may not be 0 (zero)\&.
+.IP "colsLeftMargin" 10
+Width of the left margin in columns of characters in the default printer
+font\&.
+.IP "colsRightMargin" 10
+Width of the right margin in columns of characters in the default printer
+font\&.
+.IP "rowsTopMargin" 10
+Height of the top margin in rows of text in the default printer font\&.
+.IP "rowsBottomMargin" 10
+Height of the bottom margin in rows of text in the default printer font\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The CDE Help system uses two environment variables for locating Help
+volumes files within the desktop environment:
+.IP "\fIDTHELPSEARCHPATH\fP" 10
+\fISystem\fP search path environment variable for locating
+Help volumes on local and/or remote nfs mounted systems\&.
+.IP "\fIDTHELPUSERSEARCHPATH\fP" 10
+\fIUsers\fP search path environment variable for locating
+user specific Help volumes on local and/or remote nfs mounted systems\&.
+.PP
+Refer to \fBDtHelpDialog\fP(3) or \fBDtHelpQuickDialog\fP(3) for information of setting the \fIDTHELP\fP environment
+variables\&.
+.SH "INPUT FILES"
+.PP
+The following are input files and resource databases are merged by \fBdthelpprint\fP to construct the complete resource database used by
+the program\&. Resource collisions are resolved by having the last value take
+precedence\&.
+.IP "   \(bu" 6
+\fB/usr/dt/app-defaults/C/Dthelpprint\fP
+.IP "   \(bu" 6
+\fB/usr/lib/X11/app-defaults/Dthelpprint\fP
+.IP "   \(bu" 6
+\fB$HOME/Dthelpprint\fP
+.IP "   \(bu" 6
+display resources or \fB$HOME/\&.Xdefaults\fP
+.IP "   \(bu" 6
+screen resources
+.IP "   \(bu" 6
+$XENVIRONMENT or \fB$HOME/\&.Xdefaults-<hostname>\fP
+.IP "   \(bu" 6
+utility-line resources
+.SH "OUTPUT FILES"
+.PP
+The \fBdthelpprint\fP utility always generates an output
+file, either for sending to the printer or to place in a user-specified file\&.
+.IP "\fB$HOME/\&.dt/tmp/phlp<process id>_<cnt>\&.txt\fP" 10
+These are the temporary files generated by the \fBdthelpprint\fP utility\&. These files are placed under the user\&'s directory so that
+remote systems can reach the file via NFS\&.
+.IP "\fB$PWD/db\&.dthelpprint\fP" 10
+This file is generated in the current directory when the \fBdebugHelpPrint\fP resource is defined\&. The file constains the complete set of resources
+used by \fBdthelpprint\fP to configure its operation\&.
+.SS "Warning Messages"
+.IP "\fBWarning: Illegal or missing paper size\&. help_papersize_letter
+used\&.\fP" 10
+Indicates an invalid or missing value of the \fBpaperSize\fP
+resource or \fB-paperSize\fP option\&. Specify the option
+on the utility line or set a default resource value\&.
+.IP "\fBWarning: Missing paper size and height and/or
+width\&. help_papersize_letter used\&.\fP" 10
+Indicates that the \fBprinter\&.colsWidth\fP or \fBprinter\&.rowsHeight\fP resource was used to override the \fBpaperSize\fP resource and at least one is set to 0 (zero) or has an invalid
+value\&.
+.IP "\fBWarning: Unable to open display <display>\fP" 10
+Indicates that the display specified by the \fBdisplay\fP
+resource or \fB-display\fP option could not be opened\&.
+This means that the display\&'s resources cannot be used to configure \fBdthelpprint\fP\&.
+.SS "Error Messages"
+.IP "\fBError: helpType is topic, but no helpVolume specified\&.\fP" 10
+Indicates that the \fBhelpType\fP resource or \fB-helpType\fP option was 0 (zero) or unspecified and defaulted
+to 0 (zero) and no helpVolume was specified\&.
+.IP "\fBError: unable to locate help volume <volume>\fP" 10
+Indicates that the Help volume could not be found\&. This occurs when
+the volume isn\&'t correctly specified by a full or relative path or doesn\&'t
+exist in any directory listed by the DtHelp environment variables\&.
+.IP "\fBError: problem processing help volume <volume>\fP" 10
+A problem occurred while processing some part of the Help volume\&.
+.IP "\fBError: memory allocation failed\fP" 10
+The program was unable to allocate necessary memory\&.
+.IP "\fBError: unable to get topic information:volume
+<vol>, locationId <loc>\fP" 10
+Information about the specified location in the specified volume was
+unavailable or an error occurred while retrieving it from the volume\&.
+.IP "\fBError: helpType is string, but no stringData
+specified\&.\fP" 10
+The \fBhelpType\fP resource or \fB-helpType\fP option is 1 (string) but no \fBstringData\fP resource
+or \fB-stringData\fP option was specified\&.
+.IP "\fBError: helpType is dynamic string, but no stringData
+specified\&.\fP" 10
+The \fBhelpType\fP resource or 
+\fB-helpType\fP option is 1 (dynamic string) but no 
+\fBstringData\fP
+resource or \fB-stringData\fP option was specified\&.
+.IP "\fBError: helpType is man page, but no manPage specified\&.\fP" 10
+The \fBhelpType\fP resource or \fB-helpType\fP option is 2 (manual page) but no \fBmanPage\fP resource
+or \fB-manPage\fP option was specified\&.
+.IP "\fBError: helpType is file, but no helpFile specified\&.\fP" 10
+The \fBhelpType\fP resource or \fB-helpType\fP option is 3 (plain text file) but no \fBhelpFile\fP
+resource or \fB-helpFile\fP option was specified\&.
+.IP "\fBError: Illegal helpType <number>\&.\fP" 10
+The \fBhelpType\fP resource or \fB-helpType\fP option is not in the range 0 to 3\&.
+.IP "\fBError: unable to allocate memory for temporary
+file\fP" 10
+The memory needed to create the temporary file name couldn\&'t be allocated\&.
+.IP "\fBError: unable to open temporary file\fP" 10
+The temporary file couldn\&'t be opened for writing\&.
+.SH "EXAMPLES"
+.PP
+.nf
+\f(CW\fBdthelpprint -helpVolume Help4Help -allTopics -outputFile Help4Help\&.asc\fP
+dthelpprint -helpVolume Help4Help -toc -index -printer hplj3
+dthelpprint -helpType 1 -stringData \&'test string\&' -printer hplj3
+dthelpprint -helpType 2 -manPage grep -outputFile grep\&.man
+dthelpprint -helpType 3 -helpFile aFile -printer hplj3\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBDtHelpDialog\fP(3), \fBDtHelpQuickDialog\fP(3), \fBdthelpview\fP(1), \fBman\fP(1), \fICDE Help System
+Author\&'s and Programmer\&'s Guide\&.\fP
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

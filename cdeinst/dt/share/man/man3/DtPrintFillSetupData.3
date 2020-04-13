@@ -1,0 +1,253 @@
+'\" t
+...\" PrintFil.sgm /main/8 1996/08/31 14:58:50 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtPrintFillSetupData" "library call"
+.SH "NAME"
+\fBDtPrintFillSetupData\fP \(em obtains X printer connection information
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Print\&.h>
+\fBXtEnum \fBDtPrintFillSetupData\fP\fR(
+\fBWidget \fBwid\fR\fR,
+\fBDtPrintSetupData* \fBprint_data\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtPrintFillSetupData\fP function
+obtains an X printer connection in order
+to initiate an X printing job in situations other than direct
+interaction with a \fBDtPrintSetupBox\fP\&. Examples
+of such situations include a "quick print" button on a
+toolbar and "GUI-less" printing\&. This X printer connection information
+can be obtained from an existing \fBDtPrintSetupBox\fP
+widget instance, or if a
+\fBDtPrintSetupBox\fP widget instance is
+unavailable, \fBDtPrintFillSetupData\fP
+will provide a new X printer connection\&.
+.PP
+A print job is typically initiated when the user selects the "Print"
+button from within a \fBDtPrintSetupBox\fP widget instance\&.
+Applications may
+wish to provide additional avenues for the user to initiate a print job,
+namely a "Quick Print" toolbar button, or a command line parameter to
+allow "GUI-less" printing, such as from within a desktop action\&.
+\fBDtPrintFillSetupData\fP is designed to provide
+an X printer connection in a
+manner consistent with \fBDtPrintSetupBox\fP\&.
+.PP
+For both the "Quick Print" and "GUI-less" cases, the caller may set the
+\fIprinter_name\fP element of the passed
+\fIprint_data\fP
+in order to specify the destination X printer\&.
+\fBDtPrintFillSetupData\fP will treat the passed
+\fIprinter_name\fP as if the user had
+typed the printer name into the Printer
+Name text field of the \fBDtPrintSetupBox\fP\&.
+The \fIprinter_name\fP will be
+verified, and an X printer connection will be established\&. The returned
+\fIprinter_name\fP may be a fully qualified
+version of the passed \fIprinter_name\fP
+as a result of the printer verification process\&. For a description of
+this process, see the \fBDtNverifyPrinterProc\fP
+resource description in \fBDtPrintSetupBox\fP(3)\&.
+If \fBDtPrintFillSetupData\fP returns a
+new printer_name, it will free the passed
+\fIprinter_name\fP by calling
+\fBXtFree\fP\&.
+.PP
+For the "Quick Print" button case,
+\fBDtPrintFillSetupData\fP is intended to
+be used with an existing
+\fBDtPrintSetupBox\fP instance, so that the "Quick
+Print" button behaves as if the user had brought up a
+\fBDtPrintSetupBox\fP, selected a printer as
+indicated by \fIprinter_name\fP,
+and activated the "Print" button\&. The following conditions
+apply to this case:
+.IP "   \(bu" 6
+The \fIwid\fP
+parameter should be set to the widget ID of the
+\fBDtPrintSetupBox\fP instance\&.
+\fBDtPrintFillSetupData\fP will fill the passed
+\fIprint_data\fP structure
+similarly to how
+\fBDtPrintSetupBox\fP fills out the
+\fIprint_data\fP element of the
+\fBDtPrintSetupCallbackStruct\fR
+passed as call data to the
+\fBDtNprintCallback\fP list\&. The only exception is that when using
+\fBDtPrintFillSetupData\fP it is the caller\&'s
+responsibility to free the
+allocated memory locations pointed to by the
+\fIprint_data\fP structure
+by calling \fBDtPrintFreeSetupData\fP\&.
+.IP "   \(bu" 6
+The X printer connection returned is managed by the
+\fBDtPrintSetupBox\fP\&. The caller should
+not destroy the print context, nor
+close the print display connection\&.
+.IP "   \(bu" 6
+The \fBDtPrintSetupBox\fP widget
+instance passed via \fIwid\fP
+does not have to have been managed prior to calling
+\fBDtPrintFillSetupData\fP\&.
+.IP "   \(bu" 6
+If the passed \fIprinter_name\fP
+is NULL, the current printer as indicated by
+the \fBDtNprinterName\fP
+resource will be used, and returned in
+\fIprinter_name\fP\&.
+If the passed \fIprinter_name\fP
+is a different printer than indicated by the
+current value of
+the \fBDtNprinterName\fP
+resource, the resource will be
+updated\&.
+.IP "   \(bu" 6
+The
+\fIdestination\fP and
+\fIdest_info\fP
+elements of the passed
+\fIprint_data\fP
+will be set according to the current state of the
+passed \fBDtPrintSetupBox\fP\&.
+If \fIdest_info\fP
+is set when passed to
+\fBDtPrintFillSetupData\fP,
+\fBDtPrintFillSetupData\fP will free the memory
+by calling \fBXtFree\fP if it decides to update
+If \fIdest_info\fP\&.
+.IP "   \(bu" 6
+If a connection cannot be established, the
+\fBDtPrintSetupBox\fP will
+automatically be managed, displaying an error message box\&. After
+dismissing the message box, the user can select a new printer and
+restart the print operation, if desired\&.
+.PP
+For the "GUI-less" case,
+\fBDtPrintFillSetupData\fP is intended to provide an
+X printer connection, in a manner consistent with an X printer
+connection established by \fBDtPrintSetupBox\fP,
+without actually creating a \fBDtPrintSetupBox\fP\&.
+The following conditions apply to this case:
+.IP "   \(bu" 6
+The passed \fIwid\fP must be set to NULL\&.
+.IP "   \(bu" 6
+The X printer connection returned is managed by the caller,
+which means that the caller must destroy the print context
+(via \fBXpDestroyContext\fP) and close the
+print display connection (via \fBXCloseDisplay\fP)\&.
+.IP "   \(bu" 6
+If \fIprinter_name\fP is
+set to NULL, \fBDtPrintFillSetupData\fP
+will determine a default printer, using the same procedure
+as \fBDtPrintSetupBox\fP, and set
+the \fIprinter_name\fP field
+to this default printer name upon return\&.
+.IP "   \(bu" 6
+The \fIdestination\fP and
+\fIdest_info\fP elements of
+the passed \fBprint_data\fR
+structure will be ignored by
+\fBDtPrintFillSetupData\fP\&.
+.IP "   \(bu" 6
+The caller can free the allocated memory locations pointed to by the
+returned \fBprint_data\fR structure
+by calling \fBDtPrintFreeSetupData\fP\&.
+.SH "ARGUMENTS"
+.IP "\fIwid\fP" 10
+The widget ID of a \fBDtPrintSetupBox\fP
+or NULL, if no \fBDtPrintSetupBox\fP is available\&.
+.IP "\fIprint_data\fP" 10
+A pointer to an existing \fBDtPrintSetupData\fR
+structure that \fBDtPrintFillSetupData\fP
+will update with valid X printer connection
+information\&. See \fBDtPrintSetupBox\fP(3)
+for the definition of the
+\fBDtPrintSetupData\fR structure\&.
+.SH "RETURN VALUE"
+.IP "\fBDtPRINT_SUCCESS\fP" 10
+The X printer connection was successfully obtained\&.
+.IP "\fBDtPRINT_INVALID_DISPLAY\fP" 10
+The indicated X print server could not be found\&.
+.IP "\fBDtPRINT_NOT_XP_DISPLAY\fP" 10
+The indicated X server does not support the X Printing Extension\&.
+.IP "\fBDtPRINT_NO_PRINTER\fP" 10
+The indicated printer could not be found on the X print server, or a
+default printer could not be determined\&.
+.IP "\fBDtPRINT_BAD_PARM\fP" 10
+The value passed for \fIprint_data\fP
+is NULL, or the value of the
+\fBDtNprintSetupMode\fP
+resource for \fIwid\fP is not
+\fBDtPRINT_SETUP_XP\fP\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+None\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "FILES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBDtPrintCopySetupData\fP(3),
+\fBDtPrintSetupBox\fP(3),
+\fBDtPrintFreeSetupData\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

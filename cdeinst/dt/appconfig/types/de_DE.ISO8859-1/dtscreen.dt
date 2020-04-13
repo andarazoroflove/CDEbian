@@ -1,0 +1,121 @@
+# ##########################################################################
+# 
+#      dtscreen.dt
+# 
+#      Actions for defining screen savers to the Common Desktop Environment.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dtscreen.dt.src /main/4 1996/04/23 17:35:39 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Aktionen
+# 
+# ##################################################################
+ACTION StartDtscreenHop
+{
+        LABEL           StartDtScreenHop
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode hop
+        DESCRIPTION     Fraktale
+}
+
+ACTION StartDtscreenQix
+{
+        LABEL           StartDtscreenQix
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode qix
+        DESCRIPTION     Liniennetze
+}
+
+ACTION StartDtscreenImage
+{
+        LABEL           StartDtscreenImage
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode image
+        DESCRIPTION     Zufällig angeordnetes Bild
+}
+
+ACTION StartDtscreenLife
+{
+        LABEL           StartDtscreenLife
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode life
+        DESCRIPTION     Spiel des Lebens
+}
+
+ACTION StartDtscreenSwarm
+{
+        LABEL           StartDtscreenSwarm
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode swarm
+        DESCRIPTION     Bienenschwarm
+}
+
+ACTION StartDtscreenRotor
+{
+        LABEL           StartDtscreenRotor
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode rotor
+        DESCRIPTION     Rotor
+}
+
+ACTION StartDtscreenPyro
+{
+        LABEL           StartDtscreenPyro
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode pyro
+        DESCRIPTION     Feuerwerk
+}
+
+ACTION StartDtscreenFlame
+{
+        LABEL           StartDtscreenFlame
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode flame
+        DESCRIPTION     Kosmische Fraktale
+}
+
+ACTION StartDtscreenWorm
+{
+        LABEL           StartDtscreenWorm
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode worm
+        DESCRIPTION     Schlangenlinien
+}
+
+ACTION StartDtscreenBlank
+{
+        LABEL           StartDtscreenBlank
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtscreen -mode blank
+        DESCRIPTION     Leere Anzeige
+}
+# ######################## EOF ############################################

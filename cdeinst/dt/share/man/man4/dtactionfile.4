@@ -1,0 +1,661 @@
+'\" t
+...\" dtaction.sgm /main/13 1996/09/08 20:17:02 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtactionfile" "special file"
+.SH "NAME"
+\fBdtactionfile\fP \(em define the content of desktop action definition records
+.SH "SYNOPSIS"
+.PP
+.nf
+set DtDbVersion=\fIversion_number\fP
+set \fIVariableName\fP=\fIvariable_value\fP
+ACTION  \fIaction_name\fP
+{
+        # \fIComment\fP
+        \fIFieldName\fP \fIfield_value\fP
+        \fIFieldName\fP \fIfield_value\fP
+        \&.\&.\&.
+}
+.fi
+.SH "DESCRIPTION"
+.PP
+XCDE actions define the behavior of icons, front panel controls
+and operations on data objects\&. Actions are defined in a set of text files
+with the \fB\&.dt\fP suffix\&. Each action definition consists of
+the word \fBACTION\fP followed by an action
+name and a list of Field and Value pairs (one per line) on lines by themselves
+and enclosed in brackets\&.
+.PP
+These text files may also contain data typing information as described
+in \fBdtdtsfile\fP(4)\&. (See \fBdtdtfile\fP(4) for
+the general syntax and location of the actions and data types database\&.)
+.PP
+Actions are of one of the following classes: command actions, ToolTalk
+message actions or map actions\&. These action classes are described in the
+following sections\&.
+.SS "Command Actions"
+.PP
+Command actions are identified by a \fBTYPE\fP \fBCOMMAND\fP field\&. This
+field defines an execution string to invoke and a set of related information,
+such as the current working directory for the command and the host where the
+command should be executed\&. The following field names are unique to command
+actions: \fBEXEC_STRING\fP, \fBEXEC_HOST\fP, \fBCWD\fP, \fBWINDOW_TYPE\fP and \fBTERM_OPTS\fP\&.
+.SS "ToolTalk Message Actions"
+.PP
+ToolTalk message actions are identified by a \fBTYPE\fP \fBTT_MSG\fP field\&.
+This field defines a ToolTalk message to be sent\&. The following fields are
+unique to ToolTalk message actions: \fBTT_CLASS\fP, \fBTT_SCOPE\fP, \fBTT_OPERATION\fP, \fBTT_FILE\fP, \fBTT_ARGn_MODE\fP, \fBTT_ARGn_VTYPE\fP, \fBTT_ARGn_REP_TYPE\fP and \fBTT_ARGn_VALUE\fP\&.
+.SS "Map Actions"
+.PP
+Map actions are identified by a \fBTYPE\fP \fBMAP\fP field\&. This field does not define any specific
+behavior; instead, this field specifies a different action name that should
+be invoked in place of the original action\&. Multiple map actions can be chained
+together, but the chain must ultimately terminate in a non-map action\&. The
+following field is unique to map actions: \fBMAP_ACTION\fP\&.
+.SS "Common Fields"
+.PP
+In addition to the unique action fields listed above, all actions support
+the following fields: \fBLABEL\fP, \fBICON\fP, \fBDESCRIPTION\fP, \fBARG_CLASS\fP, \fBARG_MODE\fP, \fBARG_TYPE\fP, \fBARG_COUNT\fP and \fBTYPE\fP\&.
+.SS "Keywords"
+.PP
+The value string for certain action fields may reference special keywords
+enclosed within percentage character (%) delimiters\&. These keywords are evaluated
+when the action is invoked and replaced with the appropriate value\&. In fields
+that do not evaluate keywords, the keyword is taken literally\&. The valid keywords
+are:
+.IP "%DatabaseHost%" 10
+The name of the host where the action definition file is located\&. This
+hostname is specified by the host portion of the \fIhost:/\fP \fIpath\fP searchpath used to find the action\&.
+.IP "%DisplayHost%" 10
+The name of the host where the X server displaying the XCDE session
+is running\&.
+.IP "%LocalHost%" 10
+The name of the host where the application invoking the action is executing\&.
+.IP "%SessionHost%" 10
+The name of the host where the controlling login manager ( \fBdtlogin\fP(1)) runs\&.
+.SS "Argument References"
+.PP
+Arguments passed to actions can be referenced in certain action fields
+using special argument keywords enclosed within percent character (%) delimiters\&.
+These argument keywords are evaluated when the action is invoked and replaced
+with the appropriate value\&. In fields that do not evaluate keywords, the keyword
+is taken literally\&. The valid argument keywords are:
+.IP "%Arg_\fIn%\fP" 10
+The \fIn\fPth (starting with 1) argument
+of the action\&. If the action was invoked with fewer than \fIn\fP arguments, the value of the keyword is \fBNULL\fP\&.
+.IP "%Args%" 10
+All remaining arguments of the action\&. If any arguments of the action
+have already been referenced within this field by an %Arg_ \fIn\fP% keyword, those arguments are not referenced a second time by %Args%\&.
+.IP "%"\fIprompt\fP"%" 10
+Prompt the user for a value, using \fIprompt\fP as the
+label of a text field\&.
+.IP "%Arg_\fIn\fP"\fIprompt\fP "%" 10
+The \fIn\fPth (starting with 1) argument
+of the action\&. If the action was invoked with fewer than \fIn\fP arguments, prompt the user for a value using \fIprompt\fP
+as the label of a text field\&.
+.PP
+If a keyword references the name of a file argument, the value of the
+keyword is expanded to an absolute pathname prior to substitution\&. In addition,
+if the file name is to be passed to a remote system, the file name is first
+mapped appropriately (see \fBtt_file_netfile\fP(3) and \fBtt_netfile_file\fP(3))\&.
+.PP
+If the keyword references a buffer argument, the buffer data is placed
+in a temporary file and the name of the temporary file is substituted, as
+described above\&. Some action fields provide direct support for data buffers
+and do not require use of a temporary file\&. This behavior is noted in the
+description of the appropriate fields\&.
+.PP
+If the keyword references a string obtained from the user, it is treated
+as a simple string and the value substituted without any transformation\&.
+.PP
+Argument references can be forced to be treated as file names or simple
+strings by using the \fB(File)\fP or \fB(String)\fP
+qualifier immediately after the opening % of the keyword\&. For example:
+.PP
+.nf
+\f(CW%(String)Arg_\fIn\fP%
+%(File)"\fIprompt\fP"%\fR
+.fi
+.PP
+.PP
+If an action is invoked with more than one argument, and the action
+definition only references one or zero arguments, the action is iteratively
+invoked with each of the supplied arguments\&. If the action definition references
+more than one argument, any extra arguments are ignored\&.
+.SS "Action Selection"
+.PP
+Multiple actions can be defined with the same name\&. When the action
+is invoked, the appropriate action definition is chosen based on the number
+and class of arguments supplied\&. For example, the \fBOpen\fP
+action may invoke \fBdtpad\fP(1) if a text file is supplied as
+an argument, or it may invoke \fBdticon\fP(1) if a bitmap file
+argument is supplied\&. The \fBARG_COUNT\fP, \fBARG_CLASS\fP, \fBARG_MODE\fP and \fBARG_TYPE\fP fields
+specify the number, mode and types of arguments that are accepted by a particular
+action\&. Because these fields can have shell pattern-matching values such as
+*, it is possible that the action database contains multiple actions that
+have the same name and are all capable of accepting the arguments that are
+supplied\&. In this case, the following precedence rules are used to choose
+a single action definition to invoke:
+.IP "   \(bu" 6
+Actions with more specific attribute values take precedence
+over more general attribute values\&.
+.IP "   \(bu" 6
+For the \fBARG_COUNT\fP field, an exact numerical value (\fIN\fP) is
+more specific than a less-than range (\fI<N\fP)\&. A less-than
+range (\fI<N\fP) is more specific than a greater-than range
+(\fI>N\fP)\&. And a greater-than range (\fI>N\fP)
+is more specific than a shell pattern-matching character (*)\&.
+.IP "   \(bu" 6
+For the \fBARG_CLASS\fP and \fBARG_TYPE\fP fields,
+a single item is more specific than a list of items and a list of items is
+more specific than a shell pattern-matching *\&.
+.IP "   \(bu" 6
+For the \fBARG_MODE\fP
+field, \fBw\fP (writable) and \fB!w\fP (not writable)
+are more specific than a shell pattern-matching *\&.
+.IP "   \(bu" 6
+The fields have the following precedence, from
+high to low: \fBARG_CLASS\fP, \fBARG_TYPE\fP, \fBARG_MODE\fP, \fBARG_COUNT\fP\&.
+.IP "   \(bu" 6
+If two action definitions have equal specificity,
+the action definition appearing first in the database load order takes precedence\&.
+Database directories are loaded in the order specified by the \fBDTDATABASESEARCHPATH\fP environment variable,
+and are loaded in the collation order of their file names\&.
+.SS "ARG_CLASS Field"
+.PP
+The \fBARG_CLASS\fP field is optional
+for all types of actions\&. This field specifies the class of arguments the
+action accepts\&. If an action is invoked with more than one argument, the class
+of only the first argument is checked against the value of the \fBARG_CLASS\fP field\&. The valid values for this field
+are:
+.IP "BUFFER" 10
+The action accepts arguments that are blocks of data held in memory\&.
+.IP "FILE" 10
+The action accepts arguments that are file names\&.
+.IP "*" 10
+The action is defined for all classes of arguments\&.
+.PP
+A comma-separated list of valid values is also allowed and specifies
+that the action accepts arguments of any of the listed classes\&.
+.PP
+If an action is defined to accept a buffer argument, yet the implementation
+of the action requires a file name, the buffer is automatically converted
+into a temporary file for the action to use\&. See the description of the \fBDtTmpDir\fP resource for information on configuring the location of
+these temporary files\&.
+.PP
+Keywords are not evaluated in the \fBARG_CLASS\fP field\&. The default value of the \fBARG_CLASS\fP field is \fB*\fP\&.
+.SS "ARG_COUNT Field"
+.PP
+The \fBARG_COUNT\fP field is optional
+for all types of actions\&. The \fBARG_COUNT\fP
+field specifies the number of arguments that the action accepts\&. The valid
+values for this field (where \fIN\fP denotes any non-negative
+integer) are:
+.IP "\fIN\fP" 10
+The action accepts exactly \fIN\fP arguments\&.
+.IP "\fI<N\fP" 10
+The action accepts any number of arguments less than \fIN\fP\&.
+.IP "\fI>N\fP" 10
+The action accepts any number of arguments greater than \fIN\fP\&.
+.IP "*" 10
+The action accepts any number of arguments\&.
+.PP
+Keywords are not evaluated in the \fBARG_COUNT\fP field\&. The default value of the \fBARG_COUNT\fP field is \fB*\fP\&.
+.SS "ARG_MODE Field"
+.PP
+The \fBARG_MODE\fP field is optional
+for all types of actions\&. This field specifies the mode of arguments the action
+accepts\&. If an action is invoked with more than one argument, the mode of
+only the first argument is checked against the value of the \fBARG_MODE\fP field\&. The valid values for this field are:
+.IP "\fBw\fP" 10
+The action accepts arguments that writable by the user\&.
+.IP "\fB!w\fP" 10
+The action accepts arguments that are not writable by the user\&.
+.IP "\fB*\fP" 10
+The action is defined for all classes of arguments\&.
+.PP
+Keywords are not evaluated in the \fBARG_MODE\fP field\&. The default value of the \fBARG_MODE\fP field is \fB*\fP\&.
+.SS "ARG_TYPE Field"
+.PP
+The \fBARG_TYPE\fP field is optional
+for all types of actions\&. This field specifies the types of arguments the
+action accepts\&. If the action is invoked with more than one argument, the
+type of only the first argument is checked against the value of this field\&.
+Valid values for this field are * (all data types are accepted), a single
+data type name or a comma-separated list of data types\&. The set of valid data
+types are those defined by \fBDATA_ATTRIBUTE\fP
+records in the data typing database\&. (See \fBdtdtsfile\fP(4)
+for more information\&.)
+.PP
+Keywords are not evaluated in the \fBARG_TYPE\fP field\&. The default value of the \fBARG_TYPE\fP field is \fB*\fP\&.
+.SS "CWD Field"
+.PP
+The \fBCWD\fP field is optional
+for all types of actions\&. This field specifies the current working directory
+to be used when the execution string is invoked\&. Valid values include any
+absolute pathname\&. If this field is not specified, the current working directory
+for the execution string is determined by the following:
+.IP "   \(bu" 6
+If the application invoking the action specifies a current
+working directory, that directory is used\&.
+.IP "   \(bu" 6
+If arguments are supplied to the action and the
+first argument is a directory, that directory is used\&.
+.IP "   \(bu" 6
+If arguments are supplied to the action and the
+first argument is a file, the directory where the file is located is used\&.
+.IP "   \(bu" 6
+The current working directory of the application
+invoking the action is used\&.
+.PP
+Keywords are not evaluated in the \fBCWD\fP
+field\&.
+.SS "DESCRIPTION Field"
+.PP
+The \fBDESCRIPTION\fP field is optional
+for \fBCOMMAND\fP actions\&. This field
+specifies a textual description of the action that is suitable for presentation
+to a user requesting information about the action\&. The description should
+contain no formatting information such as tab or newline characters\&. The application
+that presents the information to the user formats the information\&.
+.PP
+Keywords are not evaluated in the \fBDESCRIPTION\fP field\&. There is no default value for the \fBDESCRIPTION\fP field\&.
+.SS "EXEC_HOST Field"
+.PP
+The \fBEXEC_HOST\fP field is optional
+for \fBCOMMAND\fP actions\&. This field
+specifies the host where the execution string should be invoked\&. Valid values
+for this field include actual hostnames, as well as any of the hostname keywords\&.
+If a comma-separated list of hostnames is provided, execution is attempted
+on each of the hosts in the order specified until execution succeeds\&.
+.PP
+Keywords are evaluated in the \fBEXEC_HOST\fP field\&. The default value of the \fBEXEC_HOST\fP field is \fB%DatabaseHost%,%LocalHost%\fP\&.
+(See the description of the \fBExecutionHosts\fP resource for
+information on how to change this default value\&.)
+.SS "EXEC_STRING Field"
+.PP
+The \fBEXEC_STRING\fP field is required
+for \fBCOMMAND\fP actions\&. This field
+specifies an execution string to be invoked\&. The string is parsed using the
+same quoting rules as defined by \fBsh\fP(1); however, the execution
+string is not automatically passed to any shell\&. Therefore, if the execution
+string requires shell features such as redirection of standard input, redirection
+of standard output, or pipes, the appropriate shell must be specified explicitly
+in the execution string\&. For example:
+.PP
+.nf
+\f(CWEXEC_STRING       sh -c \&'ls -l | more\&'\fR
+.fi
+.PP
+.PP
+Keywords are evaluated in the \fBEXEC_STRING\fP field\&. There is no default value for the \fBEXEC_STRING\fP field\&.
+.SS "ICON Field"
+.PP
+The \fBICON\fP field is optional
+for all types of actions\&. This field specifies the name of an icon that represents
+the action\&. 
+.PP
+Icons are found by using the standard XCDE icon search path, so
+the value can be either an absolute pathname (for example, \fB/foo/icons/myicon\&.bm\fP), a relative pathname (for example, \fBicons/myicon\&.bm\fP)
+or a partial filename (for example, \fBmyicon\fP)\&. Partial filenames
+are preferred because they allow the XCDE icon search path to find the
+icon with the optimum size and depth for the current environment\&.
+.PP
+Keywords are not evaluated in the \fBICON\fP field\&. The default value of the \fBICON\fP field is \fBDtactn\fP\&. (See the description
+of the \fBActionIcon\fP resource for information on how to change
+this default value\&.)
+.SS "LABEL Field"
+.PP
+The \fBLABEL\fP field is optional
+for all types of actions\&. This field specifies a user-visible label for the
+action\&. When actions are presented to the user, the localized \fBLABEL\fP field is used to identify the action instead
+of the non-localized action name\&.
+.PP
+Keywords are not evaluated in the \fBLABEL\fP field\&. The default value of the \fBLABEL\fP field is the name of the action\&.
+.SS "MAP_ACTION Field"
+.PP
+The \fBMAP_ACTION\fP field is required
+for \fBMAP\fP actions\&. This field specifies
+the name of an action that should be invoked in place of the current action\&.
+The specified action is invoked with the same set of arguments that were passed
+to the original action\&.
+.PP
+Keywords are not evaluated in the \fBMAP_ACTION\fP field\&. There is no default value for the \fBMAP_ACTION\fP field\&.
+.SS "TERM_OPTS Field"
+.PP
+The \fBTERM_OPTS\fP field is optional
+for \fBCOMMAND\fP actions\&. This field
+specifies command-line options that are passed to the terminal emulator for
+all \fBCOMMAND\fP actions that are terminal
+based\&. (That is, any \fBCOMMAND\fP action
+other than those that specify \fBWINDOW_TYPE\fP \fBNO_STDIO\fP\&.) These command-line options are typically
+used to specify a unique terminal-window geometry, font, color or title\&.
+.PP
+The value of the \fBTERM_OPTS\fP
+field must be an option string in a form the terminal emulator supports and
+it must only affect the appearance of the terminal window\&. For example, options
+such as \fB-e\fP, which affect the behavior of the terminal
+window, must not be used\&.
+.PP
+Keywords are evaluated in the \fBTERM_OPTS\fP field\&. The default value of the \fBTERM_OPTS\fP field is
+.PP
+.nf
+\f(CW-title action_label\fR
+.fi
+.PP
+.PP
+where \fIaction_label\fP is the \fBLABEL\fP field for the action\&. See \fBdtterm\fP(1) (or \fBxterm\fP(1)) for the meaning of \fB-title\fP\&.
+.SS "TT_ARGn_MODE Field"
+.PP
+The \fBTT_ARGn_MODE\fP field is
+optional for \fBTT_MSG\fP actions\&. This
+field specifies the value of the ToolTalk mode attribute for the \fIn\fPth message argument, where \fIn\fP is
+zero for the first message argument\&. The valid values for this field are: \fBTT_IN\fP, \fBTT_INOUT\fP and \fBTT_OUT\fP\&.
+.PP
+(See \fBTt/tt_c\&.h\fP for a description
+of these values\&.)
+.PP
+Keywords are not evaluated in the \fBTT_ARGn_MODE\fP field\&. There is no default value for the \fBTT_ARGn_MODE\fP field\&.
+.SS "TT_ARGn_REP_TYPE Field"
+.PP
+The \fBTT_ARGn_REP_TYPE\fP field
+is optional for \fBTT_MSG\fP actions\&.
+This field specifies the representation type of the \fIn\fPth ToolTalk message argument, where \fIn\fP
+is zero for the first message argument\&. The valid values for this field are:
+.IP "TT_REP_UNDEFINED" 10
+If \fBTT_ARGn_VALUE\fP references
+a buffer argument, the representation type is a buffer; otherwise, it is a
+string\&.
+.IP "TT_REP_INTEGER" 10
+The representation type is an integer\&.
+.IP "TT_REP_BUFFER" 10
+The representation type is a buffer\&.
+.IP "TT_REP_STRING" 10
+The representation type is string\&.
+.PP
+Keywords are not evaluated in the \fBTT_ARGn_REP_TYPE\fP field\&. The default value of the \fBTT_ARGn_REP_TYPE\fP field is \fBTT_REP_UNDEFINED\fP\&.
+.SS "TT_ARGn_VALUE Field"
+.PP
+The \fBTT_ARGn_VALUE\fP field is
+optional for \fBTT_MSG\fP actions\&. If
+there is no corresponding \fBTT_ARGn_MODE\fP
+field, the \fBTT_ARGn_VALUE\fP field is
+ignored\&. If there is a \fBTT_ARGn_MODE\fP
+field, the \fBTT_ARGn_VALUE\fP field specifies
+the value of the \fIn\fPth ToolTalk message argument,
+where \fIn\fP is zero for the first message argument\&.
+If there is a \fBTT_ARGn_MODE\fP field
+with no corresponding \fBTT_ARGn_VALUE\fP
+field, the value of the \fIn\fPth ToolTalk message
+argument is set to \fBNULL\fP\&.
+.PP
+The value of the \fBTT_ARGn_VALUE\fP
+field must be a single string or action argument\&. Keywords that reference
+a single action argument are evaluated in the \fBTT_ARGn_VALUE\fP field, however %Args% is not allowed as it references
+multiple action arguments\&. There is no default value for the \fBTT_ARGn_VALUE\fP field\&.
+.SS "TT_ARGn_VTYPE Field"
+.PP
+The \fBTT_ARGn_VTYPE\fP field is
+required to accompany any \fBTT_ARGn_MODE\fP
+fields in \fBTT_MSG\fP actions\&. This field
+specifies the value of the ToolTalk vtype attribute of the \fIn\fPth message argument, where \fIn\fP is
+zero for the first message argument\&. If this field references an argument
+keyword, the \fIMEDIA\fP attribute of the specified argument
+is used\&. If the \fIMEDIA\fP attribute is not defined, the \fBDATA_ATTRIBUTE\fP name of the data type is used\&.
+.PP
+Keywords are evaluated in the \fBTT_ARGn_VTYPE\fP field\&. There is no default value for the \fBTT_ARGn_VTYPE\fP field\&.
+.SS "TT_CLASS Field"
+.PP
+The \fBTT_CLASS\fP field is required
+for \fBTT_MSG\fP actions\&. This field specifies
+the value of the ToolTalk class message field\&. The valid values for this field
+are:
+.IP "TT_NOTICE" 10
+The action defines a ToolTalk notification message\&.
+.IP "TT_REQUEST" 10
+The action defines a ToolTalk request message\&.
+.PP
+Keywords are not evaluated in the \fBTT_CLASS\fP field\&. There is no default value for the \fBTT_CLASS\fP field\&.
+.SS "TT_FILE Field"
+.PP
+The \fBTT_FILE\fP field is optional
+for \fBTT_MSG\fP actions\&. This field specifies
+the value of the ToolTalk file message field\&. The value of this field must
+be a single file name and can either be a specific file name (for example, \fB/tmp/foo\fP) or an argument keyword (for example, %Arg_\fI1\fP%)\&. %Args% is not allowed because it references multiple action
+arguments\&. If an argument keyword is specified and the corresponding argument
+is not a file (that is, it is a buffer), the action invocation fails\&.
+.PP
+Keywords are evaluated in the \fBTT_FILE\fP
+field\&. There is no default value for the \fBTT_FILE\fP field; if it is not set, the file attribute of the ToolTalk
+message is set to \fBNULL\fP\&.
+.SS "TT_OPERATION Field"
+.PP
+The \fBTT_OPERATION\fP field is
+required for \fBTT_MSG\fP actions\&. This
+field specifies the value of the ToolTalk operation message field\&. Typical
+values are operations such as \fBDisplay\fP or
+\fBEdit\fP that are defined by the Media Exchange Message
+Set\&.
+.PP
+Keywords are not evaluated in the \fBTT_OPERATION\fP field\&. There is no default value for the \fBTT_OPERATION\fP field\&.
+.SS "TT_SCOPE Field"
+.PP
+The \fBTT_SCOPE\fP field is required
+for \fBTT_MSG\fP actions\&. This field specifies
+the value of the ToolTalk scope message field\&. (See \fBTt/tt_c\&.h\fP for a description of these values\&.) The valid values
+for this field are: \fBTT_BOTH\fP, \fBTT_FILE\fP, \fBTT_FILE_IN_SESSION\fP and \fBTT_SESSION\fP\&.
+.PP
+Keywords are not evaluated in the \fBTT_SCOPE\fP field\&. There is no default value for the \fBTT_SCOPE\fP field\&.
+.SS "TYPE Field"
+.PP
+The \fBTYPE\fP field is optional
+for \fBCOMMAND\fP actions and required
+for \fBMAP\fP or \fBTT_MSG\fP actions\&. This field specifies the type of behavior defined
+by the action\&. Valid values for this field are:
+.IP "COMMAND" 10
+The action invokes a command\&.
+.IP "MAP" 10
+The action specifies a different action name to invoke in place of the
+current action\&.
+.IP "TT_MSG" 10
+The action defines a ToolTalk message to be sent\&.
+.PP
+Keywords are not evaluated in the \fBTYPE\fP field\&. The default value of the \fBTYPE\fP field is \fBCOMMAND\fP\&.
+.SS "WINDOW_TYPE Field"
+.PP
+The \fBWINDOW_TYPE\fP field is optional
+for \fBCOMMAND\fP actions\&. This field
+specifies the type of windowing support the execution string requires\&. Valid
+values for this field are:
+.IP "NO_STDIO" 10
+No windowing support is required\&. This value is appropriate for execution
+strings that have no output or are X Windows applications\&.
+.IP "PERM_TERMINAL" 10
+The execution string requires a terminal window\&. When the execution
+string exits, the terminal window is left open until the user explicitly closes
+it\&. This value is appropriate for applications that write their output to
+standard output and then terminate, such as \fBls\fP(1)\&.
+.IP "TERMINAL" 10
+The execution string requires a terminal window\&. When the execution
+string exits, the terminal window is closed\&. If the execution string exits
+``quickly\&'\&' (see the description of the \fBwaitTime\fP resource),
+the terminal window is left open to allow the user to view any error messages
+that were written to standard output or standard error\&. This value is appropriate
+for full-screen terminal applications such as the \fBvi\fP(1) editor\&.
+.PP
+Keywords are not evaluated in the \fBWINDOW_TYPE\fP field\&. The default value of the \fBWINDOW_TYPE\fP field is \fBPERM_TERMINAL\fP\&.
+.SH "RESOURCES"
+.PP
+The following resources are available to control the behavior of actions\&.
+These resources must be set for the application that is invoking the action\&.
+They can be set for all applications that invoke actions by omitting the application
+name or class name\&.
+.TS
+tab();
+lw(2.00in) lw(2.01in) lw(0.94in) lw(2.80in).
+T{
+\fBX11 Resources That
+Modify Action Behavior\fP
+T}
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBactionIcon\fP\fBActionIcon\fP\fBstring\fP``Dtactn\&'\&'
+\fBdtEnvMapForRemote\fP\fBDtEnvMapForRemote\fP\fBstring\fPT{
+``DTAPPSEARCHPATH:DTHELPSEARCHPATH:DTDATABASESEARCHPATH:XMICONSEARCHPATH:XMICONBMSEARCHPATH\&'\&'
+T}
+\fBdtexecPath\fP\fBDtexecPath\fP\fBstring\fP``/usr/dt/bin/dtexec\&'\&'
+\fBdtTmpDir\fP\fBDtTempDir\fP\fBstring\fP``$HOME/\&.dt/tmp\&'\&'
+\fBexecutionHostLogging\fP\fBExecutionHostLogging\fP\fBstring\fP``False\&'\&'
+\fBexecutionHosts\fP\fBExecutionHosts\fP\fBstring\fP``%DatabaseHost%, %LocalHost%\&'\&'
+\fBlocalTerminal\fP\fBLocalTerminal\fP\fBstring\fP``dtterm\&'\&'
+\fBremoteTerminals\fP\fBRemoteTerminals\fP\fBstring\fPNone
+\fBwaitTime\fP\fBWaitTime\fP\fBnumber\fP3
+.TE
+.IP "\fBactionIcon\fP" 10
+Specifies the default value of the \fBICON\fP field for actions that do not define the field\&. The default
+value of this resource is \fBDtactn\fP\&.
+.IP "\fBdtEnvMapForRemote\fP" 10
+Specifies a colon-separated list of environment variables names\&. Each
+variable contains a colon-separated list of pathnames to be mapped for remote
+actions (see \fBtt_file_netfile\fP(3) and \fBtt_netfile_file\fP(3)
+.IP "" 10
+Only environment variables in the user\&'s current environment (see \fIenviron\fP(5)) are mapped\&. Supplemental environment variables such
+as those added by \fBdtspcdenv\fP(4), for example, are not
+mapped\&.
+.IP "" 10
+If a pathname contains substitution characters, only the portion of
+the path up to the first percent character is mapped, with the remaining portion
+appended to the resulting mapped portion\&. For example, if \fBNLSPATH\fP is set to \fB/system/nlslib/%L/%N\&.cat\fP,
+it maps to \fB/net/host/system/nlslib/%L/%N\&.cat\fP\&.
+.IP "\fBdtexecPath\fP" 10
+Specifies the location of the \fBdtexec\fP(1) command that
+is used for terminal-based actions\&. The default value is \fB/usr/dt/bin/dtexec\fP\&.
+.IP "\fBdtTmpDir\fP" 10
+Specifies the full pathname of the directory to be used for holding
+temporary files created during action invocation\&. The directory must be visible
+to remote hosts used for action execution\&.
+.IP "\fBexecutionHostLogging\fP" 10
+Turns on and off detailed logging to the user\&'s \fB$HOME/\&.dt/errorlog\fP of action invocation events\&. The default value is False, which
+disables logging\&. Logging is enabled if this resource is set to True\&.
+.IP "\fBexecutionHosts\fP" 10
+Specifies the default value of the \fBEXEC_HOST\fP field for \fBCOMMAND\fP
+actions that do not define the field\&. The default value is \fB%DatabaseHost%,%LocalHost%\fP\&.
+.IP "\fBlocalTerminal\fP" 10
+Specifies an alternative terminal emulator for terminal-based actions
+that execute locally\&. Any terminal emulator specified by this resource must
+support the \fB-title\fP and \fB-e\fP
+options as described in \fBdtterm\fP(1)\&. The default value is \fBdtterm\fP(1)\&.
+.IP "\fBremoteTerminals\fP" 10
+Specifies the terminal emulator to use for terminal-based actions that
+execute on the named system\&. The value of this resource is a comma-separated
+list of the form \fIhost\fP:\fIterminal-path\fP where \fIterminal-path\fP is the terminal emulator
+used when invoking terminal-based actions on \fIhost\fP
+host\&. The default terminal emulator used for any host not specified
+by this resource is the emulator specified by the \fBlocalTerminal\fP resource\&.
+.IP "\fBwaitTime\fP" 10
+Specifies the time threshold used for \fBCOMMAND\fP actions that specify \fBWINDOW_TYPE\fP \fBTERMINAL\fP\&. If the command
+exits in less than \fIwaitTime\fP seconds, the terminal window
+is left open\&. The default value is 3\&.
+.SH "EXAMPLES"
+.PP
+The following action is defined to pipe its argument through the \fBpr\fP(1) and \fBlp\fP(1) commands:
+.PP
+.nf
+\f(CWACTION PrintText
+{
+        ICON            printer
+        DESCRIPTION     Paginate and print a text file to the \
+                        default printer\&.
+        ARG_TYPE        Text
+        TYPE            COMMAND
+        EXEC_STRING     sh -c \&'pr %Arg_1"File to print:"% | lp\&'
+        WINDOW_TYPE     NO_STDIO
+}\fR
+.fi
+.PP
+.PP
+The following action defines that \fIOpen\fP on Text
+files use the EditText action:
+.PP
+.nf
+\f(CWACTION Open
+{
+        ARG_TYPE        Text
+        TYPE            MAP
+        MAP_ACTION      EditText
+}\fR
+.fi
+.PP
+.PP
+The following action is defined to send the ToolTalk Display request
+message for non-writable objects:
+.PP
+.nf
+\f(CWACTION Display
+{
+        ARG_CLASS               BUFFER
+        ARG_MODE                !w
+        TYPE                    TT_MSG
+        TT_CLASS                TT_REQUEST
+        TT_SCOPE                TT_SESSION
+        TT_OPERATION            Display
+        TT_ARG0_MODE            TT_IN
+        TT_ARG0_VTYPE           %Arg_1%
+        TT_ARG0_VALUE           %Arg_1%
+}\fR
+.fi
+.PP
+.SH "APPLICATION USAGE"
+.PP
+Errors encountered when loading database files are written to the user\&'s \fB$HOME/\&.dt/errorlog\fP\&. Errors encountered in the value of an action
+field cause the field to be rejected\&. If the field is a required field, the
+entire action definition is rejected\&. Errors encountered when an action is
+invoked cause an error dialog to be displayed to the user\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h,\fP \fBdtdtfile\fP(4), \fBdtdtsfile\fP(4), \fBDtActionInvoke\fP(3), \fBtt_file_netfile\fP(3), \fBtt_netfile_file\fP(3), \fBdtterm\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

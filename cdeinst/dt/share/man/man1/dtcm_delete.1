@@ -1,0 +1,275 @@
+'\" t
+...\" cm_delet.sgm /main/10 1996/09/08 19:50:22 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcm_delete" "user cmd"
+.SH "NAME"
+\fBdtcm_delete\fP \(em delete appointments from the calendar database
+.SH "SYNOPSIS"
+.PP
+\fBdtcm_delete\fP [-c\0\fIcalendar\fP]  [-d\0\fIdate\fP]  [-v\0\fIview\fP] 
+.SH "DESCRIPTION"
+.PP
+The
+\fBdtcm_delete\fP utility is non-GUI interface to the XCDE calendar and appointment services,
+used to delete appointments from the calendar
+database via the RPC daemon
+\fBrpc\&.cmsd\fP(1m)\&. Appointments are deleted one at a time\&.
+Each of the components of an
+appointment is specified using one of the command-line options\&.
+The current list of appointments for the specified date
+(see the
+\fB-d\fP and
+\fB-v\fP options) is displayed,
+numbered sequentially starting with 1\&.
+The user is prompted for the number to delete\&.
+Once an appointment
+is deleted, the list of remaining appointments is redisplayed\&.
+At this point
+the user can specify another number, or just
+\fB<carriage-return>\fP to quit\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-c\0\fP\fIcalendar\fP" 10
+Specify the name of the target calendar\&.
+Calendar names
+typically take the form
+\fIuser\fP@ \fIhostname\fP, where
+\fIuser\fP is a user\&'s login name and
+\fIhostname\fP is the host machine name\&.
+An example is
+\fBfelix@cat\fP\&. If no target calendar is specified,
+the calendar defaults to
+the current user at the current host machine\&.
+.IP "\fB-d\0\fP\fIdate\fP" 10
+Specify the date for the appointment(s) to be deleted\&.
+The
+\fIdate\fP is specified using the form
+\fImm\fP/ \fIdd\fP/ \fIyy\fP, where
+\fImm\fP, \fIdd\fP and
+\fIyy\fP are the two-digit month, day and year modulo 100, respectively\&.
+Certain other references such as
+``today,\&'\&' ``Tuesday,\&'\&' ``tomorrow,\&'\&' etc\&.
+are correctly calculated\&.
+If no date is specified,
+\fIdate\fP defaults to today\&'s date\&.
+.IP "\fB-v\0\fP\fIview\fP" 10
+Specify the view span of appointments to display\&.
+The
+\fIview\fP option-argument can be:
+.RS
+.IP "\fBday\fP" 10
+Display all appointments for the given date (see
+\fB-d\fP option)\&.
+.IP "\fBweek\fP" 10
+Display the full week that contains the given date,
+starting with Sunday\&.
+.IP "\fBmonth\fP" 10
+Display the entire month that contains the given date\&.
+.RE
+.SH "OPERANDS"
+.PP
+None\&.
+.SH "STDIN"
+.PP
+The standard input is used to receive user
+replies to the list of appointments to be deleted\&.
+.SH "INPUT FILES"
+.PP
+None\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of
+\fBdtcm_delete\fP:
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables
+that are unset or null\&.
+If
+\fBLANG\fP is unset or null, the corresponding value from the
+implementation-specific default locale will be used\&.
+If any of the internationalization variables contains an invalid setting, the
+utility behaves as if none of the variables had been defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value,
+override the values of all the other internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect
+the format and contents of diagnostic
+messages written to standard error
+and informative messages written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues
+for the processing of
+\fILC_MESSAGES\fP\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The
+\fBdtcm_delete\fP utility takes the standard action for all signals\&.
+.SH "STDOUT"
+.PP
+The standard output contains the list of appointments to be
+deleted\&.
+.SH "STDERR"
+.PP
+Used only for diagnostic messages\&.
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+Successful completion\&.
+.IP ">0" 10
+An error occurred\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "FILES"
+.PP
+\fB/usr/spool/calendar/callog\&.username\fP,
+\fB/usr/dt/bin/rpc\&.cmsd\fP
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+The simplest form of
+\fBdtcm_delete\fP has no arguments:
+.PP
+.nf
+\f(CWdtcm_delete
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:30am-10:45am Morning Tea
+        3) 2:00pm-3:00pm Staff meeting
+        4) 4:30pm-5:30pm Phone home
+Item to delete (number)? 2
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 2:00pm-3:00pm Staff meeting
+        3) 4:30pm-5:30pm Phone home
+Item to delete (number)?\fR
+.fi
+.PP
+.PP
+To delete at a specific date:
+.PP
+.nf
+\f(CWdtcm_delete -d 09/26/90
+Appointments for Wednesday September 26, 1990:
+        1) 11:00am-12:00pm Appointment
+        2) 11:30am-12:30pm Group Lunch
+        3) 4:00pm-5:00pm Tech Interview
+Item to delete (number)? 1
+Appointments for Wednesday September 26, 1990:
+        1) 11:30am-12:30pm Group Lunch
+        2) 4:00pm-5:00pm Tech Interview
+Item to delete (number)?\fR
+.fi
+.PP
+.PP
+To delete from a specific target calendar:
+.PP
+.nf
+\f(CWdtcm_delete -c felix@cat
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:15am-10:30am Coffee
+        3) 11:15am-11:30am Doughnuts
+        4) 2:00pm-2:15pm Coffee
+        5) 3:30pm-3:45pm Snack
+        6) 4:30pm-4:45pm Coffee
+Item to delete (number)? 5
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:15am-10:30am Coffee
+        3) 11:15am-11:30am Doughnuts
+        4) 2:00pm-2:15pm Coffee
+        5) 4:30pm-4:45pm Coffee
+Item to delete (number)?\fR
+.fi
+.PP
+.PP
+To delete multiple appointments:
+.PP
+.nf
+\f(CWdtcm_delete
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:15am-10:30am Coffee
+        3) 11:15am-11:30am Doughnuts
+        4) 2:00pm-2:15pm Coffee
+        5) 3:30pm-3:45pm Snack
+        6) 4:30pm-4:45pm Coffee
+Item to delete (number)? 5
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:15am-10:30am Coffee
+        3) 11:15am-11:30am Doughnuts
+        4) 2:00pm-2:15pm Coffee
+        5) 4:30pm-4:45pm Coffee
+Item to delete (number)? 3
+Appointments for Tuesday September 25, 1990:
+        1) Appointment
+        2) 10:15am-10:30am Coffee
+        3) 2:00pm-2:15pm Coffee
+        4) 4:30pm-4:45pm Coffee
+Item to delete (number)?\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBrpc\&.cmsd\fP(1m), \fBdtcm\fP(1), \fBdtcm_insert\fP(1), \fBdtcm_lookup\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

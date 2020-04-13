@@ -1,0 +1,85 @@
+# ##########################################################################
+# 
+#      user-prefs.dt
+# 
+#      Actions which define user preferences.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: user-prefs.dt.src /main/4 1996/04/23 17:36:30 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# Definiciones de base de datos de acciones del Common Desktop Environment (CDE)
+#
+# Las acciones definidas en este establecimiento de correspondencias de archivos 
+# solicita acciones generales como, por ejemplo, "Editortextos" para aplicaciones
+# específicas como, por ejemplo "Vi". Para efectuar personalizaciones en estos
+# establecimientos de correspondencia, copie este archivo en 
+# $HOME/.dt/types/user-prefs.dt y cambie cualquier MAP_ACTION por la acción
+# que desee que se ejecute.
+#
+# Para determinar las acciones que están disponibles en el sistema, abra el
+# Gestor de aplicaciones desde el panel frontal y examine.
+# 
+# ##########################################################################
+
+
+# Para utilizar 'vi' como el editor de textos, sustituya 'Dtpad' (el editor
+# de textos basado en Motif CDE) por 'Vi'.
+
+ACTION TextEditor
+{
+        LABEL		Editor de textos
+        ICON            Dtpenpd
+	TYPE		MAP
+	MAP_ACTION	Dtpad
+        DESCRIPTION	La acción Editor de textos ejecuta el editor de textos \
+                        preferido del usuario.
+}
+
+# #####
+
+# La terminal predeterminada para el Common Desktop Environment (CDE) es Dtterm.
+
+ACTION Terminal
+{
+        LABEL		Terminal
+        ICON            Dtterm
+	TYPE		MAP
+	MAP_ACTION	Dtterm
+        DESCRIPTION	La acción Terminal ejecuta el emulador de terminal \
+                        preferido del usuario.
+}
+
+# #####
+
+# La papelera predeterminada para el Common Desktop Environment (CDE) es Dttrash.
+
+ACTION Trash
+{
+        LABEL		Papelera
+        ICON		Dttrsh
+	TYPE		MAP
+	MAP_ACTION	Dttrash
+        DESCRIPTION	La acción Papelera ejecuta el cliente Papelera \
+                        preferido del usuario.
+}
+
+# ###################### EOF ############################################

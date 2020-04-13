@@ -1,0 +1,115 @@
+'\" t
+...\" free.sgm /main/4 1996/08/30 15:34:31 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "csa_free" "library call"
+.SH "NAME"
+\fBcsa_free\fP \(em free memory allocated by the calendaring service
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <xcsa\&.h>
+\fBCSA_return_code \fBcsa_free\fP\fR(
+\fBCSA_buffer \fBmemory\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBcsa_free\fP function frees memory allocated by the calendaring
+service\&.
+After the call, the pointer memory will be
+invalid and should not be referenced again\&.
+When any CSA
+function allocates and returns a buffer to the application,
+the application will free that memory with this call when
+it is finished with the memory\&.
+When a CSA function
+returns a base pointer to a complex structure containing
+several levels of pointers, all the application will do to
+free the entire structure or array of structures is call
+this routine with the base pointer returned by the CSA
+function\&.
+The CSA functions that return structures of
+this form are
+\fBcsa_list_calendars\fP(3), \fBcsa_look_up\fP(3), \fBcsa_query_configuration\fP(3), \fBcsa_list_calendar_attributes\fP(3), \fBcsa_read_calendar_attributes\fP(3), \fBcsa_free_time_search\fP(3), \fBcsa_add_entry\fP(3), \fBcsa_list_entries\fP(3), \fBcsa_list_entry_attributes\fP(3), \fBcsa_list_entry_sequence\fP(3), \fBcsa_read_entry_attributes\fP(3), and
+\fBcsa_read_next_reminder\fP(3), \fBcsa_update_entry_attributes\fP(3)\&. The behavior of
+\fBcsa_free\fP(3) is undefined when called with a pointer to a memory block
+not allocated by the calendaring service, a pointer to a
+memory block that has already been freed, or a pointer
+contained in a structure returned by the CSA
+implementation\&.
+In some situations, the extensions
+specified for a function may be a combination of input and
+output extensions\&.
+In this case, the memory returned in
+the output extensions must be freed one at a time using
+\fBcsa_free\fP(3)\&.
+.SH "ARGUMENTS"
+.SS "Memory (Buffer)"
+.PP
+A pointer to memory allocated by the calendaring service\&.
+A value of
+\fBNULL\fP will be ignored, but will return the return code
+\fBCSA_SUCCESS\fP\&.
+.SH "RETURN VALUE"
+.PP
+Whether the function succeeded or not, and, if not, why\&.
+It may be success or one of the values listed under ERRORS
+below\&.
+.SH "ERRORS"
+.PP
+The
+\fBcsa_free\fP function returns the following error values:
+.IP "CSA_E_FAILURE" 10
+There was a general failure that does not
+fit the description of any other error code\&.
+.IP "CSA_E_INVALID_MEMORY" 10
+A function parameter was invalid\&.
+.SH "SEE ALSO"
+.PP
+\fBcsa/csa\&.h - csacsa\fP(5), \fBcsa_add_calendar\fP(3), \fBcsa_add_entry\fP(3), \fBcsa_call_callbacks\fP(3), \fBcsa_delete_calendar\fP(3), \fBcsa_delete_entry\fP(3), \fBcsa_free_time_search\fP(3), \fBcsa_list_calendar_attributes\fP(3), \fBcsa_list_calendars\fP(3), \fBcsa_list_entries\fP(3), \fBcsa_list_entry_attributes\fP(3), \fBcsa_list_entry_sequence\fP(3), \fBcsa_logoff\fP(3), \fBcsa_logon\fP(3), \fBcsa_look_up\fP(3), \fBcsa_query_configuration\fP(3), \fBcsa_read_calendar_attributes\fP(3), \fBcsa_read_entry_attributes\fP(3), \fBcsa_read_next_reminder\fP(3), \fBcsa_register_callback\fP(3), \fBcsa_unregister_callback\fP(3), \fBcsa_update_calendar_attributes\fP(3), \fBcsa_update_entry_attributes\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

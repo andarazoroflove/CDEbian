@@ -1,0 +1,94 @@
+'\" t
+...\" MmdbGBBI.sgm /main/6 1996/09/08 20:06:23 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtMmdbGetBookCaseByIndex" "library call"
+.SH "NAME"
+\fBDtMmdbGetBookCaseByIndex\fP \(em obtains
+a descriptor for a bookcase based on an infolib index
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <DtMmdb\&.h>
+\fBint \fBDtMmdbGetBookCaseByIndex\fP\fR(
+\fBint \fBinfolib_descriptor\fR\fR,
+\fBint \fBindex\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtMmdbGetBookCaseByIndex\fP function
+makes the database engine ready to provide access service for
+a bookcase\&. It allows you to access all bookcases in an infolib
+without knowing their names\&.
+.SH "ARGUMENTS"
+.IP "\fIinfolib_descriptor\fP" 10
+Specifies the infolib that contains the bookcase\&.
+.IP "\fIindex\fP" 10
+Specifies the index of the bookcase within the infolib\&.
+The value must be an integer in the
+range 0 to \fIn\fP-1, where
+\fIn\fP is the number of bookcases in the infolib\&.
+.SH "RETURN VALUE"
+.PP
+If \fBDtMmdbGetBookCaseByIndex\fP completes
+successfully, it returns the descriptor for the bookcase\&.
+If it fails, it returns -1\&.
+.SH "EXAMPLE"
+.PP
+The following shows how a \fBDtMmdbGetBookCaseByIndex\fP call
+might be coded\&.
+.PP
+.nf
+\f(CWDtMmdbGetBookCaseByIndex(myInfoLibDescriptor, i);\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBDtMmdbGetBookCaseByLoc\fP(3),
+\fBDtMmdbGetBookCaseByLocs\fP(3),
+\fBDtMmdbGetBookCaseByName\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

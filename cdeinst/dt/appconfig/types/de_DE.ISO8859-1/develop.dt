@@ -1,0 +1,433 @@
+# ##########################################################################
+# 
+#      develop.dt
+# 
+#      Action and DataType definitions for the Common Desktop Environment
+#      (CDE) components.  This file contains common datatypes for developers.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#     $XConsortium: develop.dt.src /main/5 1996/04/23 17:35:01 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES CORE
+{
+        ACTIONS         (None)
+        ICON		Dtcore
+        MIME_TYPE	application/octet-stream
+        SUNV3_TYPE      corefile
+	DESCRIPTION	Diese Datei enthält ein Kernabbild für einen Prozeß, \
+                        der abnormal beendet wurde. Der Datentyp dieser Datei ist \
+                        CORE.
+        TYPE_LABEL      CORE
+}
+DATA_CRITERIA CORE1
+{
+	DATA_ATTRIBUTES_NAME CORE
+        MODE            f
+	NAME_PATTERN	core
+}
+DATA_CRITERIA CORE2
+{
+	DATA_ATTRIBUTES_NAME CORE
+        MODE            f
+	NAME_PATTERN	core*
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        CORE
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES OBJECT
+{
+        ACTIONS         Open,Print
+        ICON		Dtbin
+        NAME_TEMPLATE	%s.o
+        MIME_TYPE	application/octet-stream
+        SUNV3_TYPE      o-file
+	DESCRIPTION	Diese Datei enthält binäre Daten, die ein Compiler \
+                        anhand einer Quellendatei erstellt hat. Der Datentyp \
+                        dieser Datei ist OBJECT. Die Namen von OBJECT-Dateien \
+                        haben die Erweiterung '.o'.
+        TYPE_LABEL      OBJECT
+}
+DATA_CRITERIA OBJECT1
+{
+	DATA_ATTRIBUTES_NAME OBJECT
+        MODE            f
+	NAME_PATTERN	*.o
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        OBJECT
+        TYPE            MAP
+        MAP_ACTION      Nm
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        OBJECT
+        TYPE            MAP
+        MAP_ACTION      PrintNm
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES ASSEMBLER
+{
+        ACTIONS         Open,Print
+        ICON            Dtbin
+        IS_TEXT		true
+        NAME_TEMPLATE	%s.s
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      text
+	DESCRIPTION	Diese Datei enthält Assemblercode für eine bestimmte \
+                        Architektur. Der Datentyp dieser Datei ist ASSEMBLER. \
+                        Die Namen von ASSEMBLER-Dateien haben die Erweiterung '.s'. 
+        TYPE_LABEL      ASSEMBLER
+}
+DATA_CRITERIA ASSEMBLER1
+{
+        DATA_ATTRIBUTES_NAME ASSEMBLER
+        MODE            f
+        NAME_PATTERN    *.s
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES ARCH_LIB
+{
+        ACTIONS         Open,Print
+        ICON		Dtbinml
+        MIME_TYPE	application/octet-stream
+	DESCRIPTION	Diese Datei enthält eine archivierte Bibliothek mit \
+                        Objektdateien. Der Datentyp dieser Datei ist ARCH_LIB. \
+                        Die Namen von Dateien des Typs ARCH_LIB haben die \
+                        Erweiterung '.a'.
+        TYPE_LABEL      ARCH_LIB
+}
+DATA_CRITERIA ARCH_LIB1
+{
+	DATA_ATTRIBUTES_NAME ARCH_LIB
+        MODE            f
+	NAME_PATTERN	*.a
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        ARCH_LIB
+        TYPE            MAP
+        MAP_ACTION      Nm
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        ARCH_LIB
+        TYPE            MAP
+        MAP_ACTION      PrintNm
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES SHARED_LIB
+{
+        ACTIONS         Open,Print
+        ICON		Dtbinml
+        MIME_TYPE	application/octet-stream
+	DESCRIPTION	Diese Datei enthält die gemeinsam benutzte Bibliothek \
+                        einer Objektdatei. Der Datentyp dieser Datei ist SHARED_LIB. \
+                        Die Namen von Dateien des Typs SHARED_LIB haben die \
+                        Erweiterung '.sl' oder '.so'.
+        TYPE_LABEL      SHARED_LIB
+}
+DATA_CRITERIA SHARED_LIB1
+{
+	DATA_ATTRIBUTES_NAME SHARED_LIB
+        MODE            f
+	NAME_PATTERN	*.sl
+}
+DATA_CRITERIA SHARED_LIB2
+{
+	DATA_ATTRIBUTES_NAME SHARED_LIB
+        MODE            f
+	NAME_PATTERN	*.so
+}
+DATA_CRITERIA SHARED_LIB3
+{
+	DATA_ATTRIBUTES_NAME SHARED_LIB
+        MODE            f
+	NAME_PATTERN	*.so*
+}
+ACTION Open
+{
+        LABEL           Öffnen
+        ARG_TYPE        SHARED_LIB
+        TYPE            MAP
+        MAP_ACTION      Nm
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        SHARED_LIB
+        TYPE            MAP
+        MAP_ACTION      PrintNm
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES C_SRC
+{
+        ACTIONS         Open,Make,Print
+        ICON		DtdotC
+        IS_TEXT		true
+        NAME_TEMPLATE	%s.c
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      c-file
+	DESCRIPTION	Diese Datei ist eine Quellendatei in der \
+                        Programmiersprache C. Der Datentyp dieser Datei ist \
+                        C_SRC. Die Namen von Dateien des Typs C_SRC haben die \
+                        Erweiterung '.c'.
+        TYPE_LABEL      C_SRC
+}
+DATA_CRITERIA C_SRC1
+{
+	DATA_ATTRIBUTES_NAME C_SRC
+        MODE            f
+	NAME_PATTERN	*.c
+}
+ACTION Make
+{
+        LABEL           Make
+        TYPE            COMMAND
+        ARG_TYPE        C_SRC
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             make `basename "%(File)Arg_1%" .c`.o 2>&1 | \${PAGER:-more};             echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+        DESCRIPTION     Der Befehl 'Make' für Dateien des Typs C_SRC erstellt die \
+                        zugehörige Objektdatei mit Hilfe des UNIX-Befehls 'make'.
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES CPLUSPLUS_SRC
+{
+        ACTIONS         Open,Make,Print
+        ICON            DtC++
+        IS_TEXT         true
+        NAME_TEMPLATE	%s.C
+        MIME_TYPE	text/plain
+        DESCRIPTION     Dies ist eine Quellendatei in der Programmiersprache \
+                        C++. Der Datentyp dieser Datei ist CPLUSPLUS_SRC. \
+                        Die Namen von Dateien des Typs CPLUSPLUS_SRC haben die \
+                        Erweiterung '.C' oder '.cc'.
+        TYPE_LABEL      CPLUSPLUS_SRC
+}
+DATA_CRITERIA C_PLUSPLUS1
+{
+        DATA_ATTRIBUTES_NAME CPLUSPLUS_SRC
+        MODE            f
+        NAME_PATTERN    *.C
+}
+DATA_CRITERIA C_PLUSPLUS2
+{
+        DATA_ATTRIBUTES_NAME CPLUSPLUS_SRC
+        MODE            f
+        NAME_PATTERN    *.cc
+}
+ACTION Make
+{
+        LABEL           Make
+        TYPE            COMMAND
+        ARG_TYPE        CPLUSPLUS_SRC
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             if [ -r "%(File)Arg_1%.C" ]; then                make `basename "%(File)Arg_1%" .C`.o 2>&1 | \${PAGER:-more};             else                make `basename "%(File)Arg_1%" .cc`.o 2>&1 | \${PAGER:-more};             echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+
+
+
+        DESCRIPTION     Der Befehl 'Make' für Dateien des Typs CPLUSPLUS_SRC \
+                        erstellt die zugehlörige Objektdatei mit Hilfe des \
+                        UNIX-Befehls 'make'.
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES H_SRC
+{
+        ACTIONS         Open,Print
+        ICON		DtdotH
+        IS_TEXT		true
+        NAME_TEMPLATE	%s.h
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      h-file
+	DESCRIPTION	Dies ist eine Programmkopfdatei der Programmiersprache C. Der \
+                        Datentyp dieser Datei ist H_SRC. Die Namen von Dateien des \
+                        Typs H_SRC haben die Erweiterung *.h.
+        TYPE_LABEL      H_SRC
+}
+DATA_CRITERIA H_SRC1
+{
+	DATA_ATTRIBUTES_NAME H_SRC
+        MODE            f
+	NAME_PATTERN	*.h
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES MAKEFILE
+{
+        ACTIONS         Open,Make,Print
+        ICON		DtbigM
+        IS_TEXT		true
+        NAME_TEMPLATE	Makefile
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      Makefile
+	DESCRIPTION	Dies ist ein Makefile. Ein Makefile beschreibt, \
+                        wie aus einer Reihe von Quellendateien eine ausführbare \
+                        Datei generiert wird. Sie wird vom Befehl 'Make' verwendet. \
+                        Der Datentyp dieser Datei ist MAKEFILE. Dateien des Typs \
+                        MAKEFILE müssen mit Makefile bzw. makefile benannt sein oder \
+                        Namen haben, die mit Makefile bzw. makefile beginnen \
+                        oder die Erweiterung '.mk' aufweisen.
+        TYPE_LABEL      MAKEFILE
+}
+DATA_CRITERIA MAKEFILE1
+{
+	DATA_ATTRIBUTES_NAME MAKEFILE
+        MODE            f
+        NAME_PATTERN    [Mm]akefile*
+}
+DATA_CRITERIA MAKEFILE2
+{
+	DATA_ATTRIBUTES_NAME MAKEFILE
+        MODE            f
+        NAME_PATTERN    *.mk
+}
+ACTION Make
+{
+        LABEL           Make
+        TYPE            COMMAND
+        ARG_TYPE        MAKEFILE
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             make -f "%(File)Arg_1%" %"Zielname für Make:"% 2>&1 | \${PAGER:-more};             echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+        DESCRIPTION     Die Aktion 'Make' für Makefiles fordert den Benutzer \
+                        zur Eingabe eines Ziels auf und \
+                        verwendet dann den Unix-Befehl 'make' zum \
+                        Erstellen. Wenn kein Ziel angegeben wird, \
+                        erfolgt die Erstellung im aktuellen Ordner.
+}
+
+
+# ###########################################################
+
+DATA_ATTRIBUTES IMAKEFILE
+{
+        ACTIONS         Open,Make,Print
+        ICON            Dtimake
+        IS_TEXT         true
+        NAME_TEMPLATE	Imakefile
+        MIME_TYPE	text/plain
+        DESCRIPTION     Dies ist ein Imakefile. Ein Imakefile beschreibt, \
+                        wie aus einer Reihe von Quellendateien eine ausführbare \
+                        Datei generiert wird. Sie wird vom Befehl 'Make' verwendet. \
+                        Der Datentyp dieser Datei ist IMAKEFILE. IMAKEFILE-Dateien \
+                        werden mit imakefile bzw. Imakefile benannt oder haben Namen, \
+                        die mit imakefile bzw. Imakefile beginnen.
+        TYPE_LABEL      IMAKEFILE
+}
+DATA_CRITERIA IMAKEFILE1
+{
+        DATA_ATTRIBUTES_NAME IMAKEFILE
+        MODE            f
+        NAME_PATTERN    [Ii]makefile*
+}
+ACTION Make
+{
+        LABEL           Make
+        TYPE            COMMAND
+        ARG_TYPE        IMAKEFILE
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             make Makefile 2>&1 | \${PAGER:-more};             echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+        DESCRIPTION     Der Befehl 'Make' erstellt das zugehörige Makefile \
+                        mit Hilfe des UNIX-Befehls 'make'.
+}
+
+# ##########################################################################
+# ##########################################################################
+# 
+# Aktionen
+# 
+# ##########################################################################
+
+ACTION Nm
+{
+        LABEL           Symbolliste
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                  nm "%(File)Arg_1"Dateiname:"%" 2>&1 | \${PAGER:-more};                  echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+        DESCRIPTION     Mit der Aktion 'Symbolliste' (Nm) wird die Symboltabelle \
+                        für eine Objekt- oder Bibliotheksdatei angezeigt. Die Aktion \
+                        verwendet den Befehl 'nm'.
+}
+ACTION PrintNm
+{
+        LABEL           Symbolliste drucken
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /bin/sh -c ' nm "%(File)Arg_1%" |                         /usr/dt/bin/dtlp -u "Symbolliste"'
+
+        DESCRIPTION     Mit der Aktion 'Symbolliste drucken' (PrintNm) wird \
+                        die Ausgabe des Befehls 'nm' auf dem Standarddrucker gedruckt.
+}
+
+
+ACTION Make
+{
+        LABEL           Make
+        TYPE            COMMAND
+        ARG_COUNT       0
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING               sh -c '             make -f "%(File)Arg_1"Makefile:"%" %"Zielname für Make:"% 2>&1 |               \${PAGER:-more};             echo "\\n*** Zum Schließen dieses Fensters im Fenstermenü 'Schließen' auswählen. ***"'
+
+
+
+
+        DESCRIPTION     Die Aktion 'Make' ohne Argumente fordert zur \
+                        Eingabe eines Makefile und eines Zielnamens auf \
+                        und führt anschließend den UNIX-Befehl 'make' aus.
+}
+# ######################## EOF ############################################

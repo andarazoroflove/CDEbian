@@ -1,0 +1,218 @@
+# #######################################################################
+# 
+#      dthelp.dt
+# 
+#      Actions and filetypes for Help files.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dthelp.dt.src /main/4 1996/04/23 17:35:19 drk $
+# 
+# #####################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVERTISSEMENT: Il est possible que ce fichier soit écrasé lors des 
+#     installations suivantes du Bureau CDE. Il est donc conseillé d'effectuer
+#     les modifications devant s'appliquer sur tout le système dans un
+#     fichier de base de données équivalent du répertoire /etc/dt/types.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Attributs de données
+# 
+# ##################################################################
+DATA_ATTRIBUTES DTHELP_VOL
+{
+        ACTIONS         Open,Print
+        ICON		Dthvol
+        NAME_TEMPLATE   %s.sdl
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Il s'agit d'un élément principal d'un volume d'aide. \
+                        Son type de données est DTHELP_VOL et son suffixe, \
+                        .sdl ou .hv.
+        TYPE_LABEL      DTHELP_VOL
+}
+DATA_CRITERIA DTHELP_VOL1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.sdl
+}
+DATA_CRITERIA DTHELP_VOL2
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.hv
+}
+ACTION Open
+{
+        LABEL           Ouvrir
+	ARG_TYPE 	DTHELP_VOL
+	TYPE		MAP
+        MAP_ACTION	Dthelpview
+}
+ACTION Print
+{
+        LABEL           Imprimer
+        ARG_TYPE        DTHELP_VOL
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HT
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.ht
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Il s'agit d'un fichier d'aide faisant partie d'un \
+                        volume d'aide. Pour visualiser le sujet correspondant, \
+                        ouvrez le fichier volume principal. Son type de données \
+                        est DTHELP_HT et son suffixe, .ht.
+        TYPE_LABEL      DTHELP_HT
+}
+DATA_CRITERIA DTHELP_HT1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HT
+        NAME_PATTERN    *.ht
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HVK
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.hvk
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Il s'agit d'un fichier associé à un volume d'aide compilé. \
+                        Pour visualiser le volume, ouvrez le fichier volume \
+                        principal. Son type de données est DTHELP_HVK et son \
+                        suffixe, .hvk.
+        TYPE_LABEL      DTHELP_HVK
+}
+DATA_CRITERIA DTHELP_HVK1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HVK
+        NAME_PATTERN    *.hvk
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_XRH
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.xrh
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Il s'agit d'un fichier associé à un volume d'aide. \
+                        compilé. Pour visualiser le volume, ouvrez \
+                        le fichier volume principal. Le type de données \
+                        de ce fichier est DTHELP_XRH et son suffixe, .xrh.
+        TYPE_LABEL      DTHELP_XRH
+}
+DATA_CRITERIA DTHELP_XRH
+{
+        DATA_ATTRIBUTES_NAME DTHELP_XRH
+        NAME_PATTERN    *.xrh
+        MODE            f
+}
+
+# ##################################################################
+# ##################################################################
+# 
+# Actions
+# 
+# ##################################################################
+ACTION Dthelpview
+{
+        LABEL           Afficheur d'aide
+	ARG_COUNT	0
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir $HOME/.dt/help/$DTUSERSESSION;                            /usr/dt/bin/dthelpview -helpVolume browser '
+
+	DESCRIPTION	Lorsque vous cliquez deux fois sur l'icône de l'action \
+                        Afficheur d'aide (Dthelpview), l'aide de premier \
+                        niveau s'affiche. Pour afficher un volume d'aide, \
+                        amenez-le sur cette icône.
+}
+ACTION Dthelpview
+{
+        LABEL           Afficheur d'aide
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen 				    -dir $HOME/.dt/help/$DTUSERSESSION;                             /usr/dt/bin/dthelpview -helpVolume "%(File)Arg_1%" '
+
+
+	DESCRIPTION	Lorsque vous cliquez deux fois sur l'icône de l'action \
+                        Afficheur d'aide (Dthelpview), l'aide de premier \
+                        niveau s'affiche. Pour afficher un volume d'aide, \
+                        amenez-le sur cette icône.
+}
+
+# #######
+
+ACTION Dthelpgen
+{
+        LABEL           Générateur d'aide
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir                          "%(File)Arg_1"Emplacement des fichiers d'aide créés:"%"'
+
+	DESCRIPTION	L'action Générateur d'aide (Dthelpgen) lance \
+                        le programme dthelpgen, qui génère l'aide en \
+                        ligne pour les utilisateurs. Elle affiche le \
+                        message "Création en cours des informations de \
+                        l'afficheur. Veuillez patienter." Cette action \
+                        est exécutée lors de la première connexion d'un \
+                        utilisateur au Bureau CDE.
+}
+ACTION Dthelpgen_delay
+{
+        LABEL           Générateur d'aide
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c 'sleep 15; /usr/dt/bin/dthelpgen -dir                          $HOME/.dt/help/$DTUSERSESSION'
+
+	DESCRIPTION	L'action Générateur d'aide (Dthelpgen) lance \
+                        le programme dthelpgen, qui génère l'aide en \
+                        ligne pour les utilisateurs. Elle affiche le \
+                        message "Création en cours des informations de \
+                        l'afficheur. Veuillez patienter." Cette action \
+                        est exécutée lors de la première connexion d'un \
+                        utilisateur au Bureau CDE.
+}
+
+# #######
+
+ACTION Dtmanpageview 
+{
+        LABEL           Afficheur de pages de manuel
+        ICON		Dthover
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     sh -c ' /usr/dt/bin/dthelpview -manPage               `basename "%(File)Arg_1"Page de manuel:"%" | sed /[.].*/s///`               -xrm "Dthelpview*manBox*columns: 100"'
+
+
+	DESCRIPTION	L'action Afficheur de pages de manuel (Dtmanpageview) \
+                        permet d'afficher une commande man dans \
+                        une fenêtre de l'afficheur d'aide instantanée.
+}
+# ######################## EOF ############################################

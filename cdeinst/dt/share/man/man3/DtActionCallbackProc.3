@@ -1,0 +1,255 @@
+'\" t
+...\" ActionCa.sgm /main/10 1996/09/08 20:02:03 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtActionCallbackProc" "library call"
+.SH "NAME"
+\fBDtActionCallbackProc\fR \(em notify application that the status of an application has changed
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Action\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDt/Action\&.h\fP header defines the
+\fBDtActionCallbackProc\fP callback prototype as follows:
+.PP
+.nf
+typedef void (*DtActionCallbackProc)(DtActionInvocationID \fIid\fP,
+        XtPointer \fIclient_data\fP,
+        DtActionArg *\fIargs\fP,
+        int \fIargCount\fP,
+        DtActionStatus \fIstatus\fP);
+.fi
+.PP
+If registered when invoking an action with
+\fBDtActionInvoke\fP(3), a
+\fBDtActionCallbackProc\fP procedure is called
+whenever an action has a status update, such as action termination\&.
+Depending on
+\fIstatus\fP, modified action arguments may be returned using
+\fIargs\fP\&.
+.PP
+The
+\fIid\fP argument specifies an invocation ID as returned by
+\fBDtActionInvoke\fP(3)\&.
+.PP
+The
+\fIclient_data\fP argument specifies the client data that was
+registered with
+\fBDtActionInvoke\fP(3)\&.
+.PP
+The
+\fIargs\fP argument is an array of updated action argument structures, if there are any\&.
+Individual arguments have their
+\fIargClass\fP set to one of the standard argument classes, or
+\fBDtACTION_NULLARG\fP, to indicate that the current
+status update is not providing an update for the given argument\&.
+If the object has been removed (for example, dropped on the trash), the
+return
+\fIargClass\fP is set to
+\fBDtACTION_NULLARG\fP to indicate that it no longer exists\&.
+.PP
+The
+\fIargs\fP array has been allocated by
+\fBXtMalloc\fP(3), as have any of the
+\fBchar*\fR or
+\fBvoid*\fR elements contained in each of the
+\fIargs\fP\&. The application is responsible for calling
+\fBXtFree\fP(3) on all elements contained in each of the
+\fIargs\fP, and then calling
+\fBXtFree\fP(3) on
+\fIargs\fP\&.
+.PP
+The
+\fIargCount\fP argument specifies the total number of arguments
+in
+\fIargs\fP\&. This number equals the number of arguments originally provided to
+\fBDtActionInvoke\fP(3)
+.PP
+The
+\fIn\fPth argument in the original action
+argument array corresponds to the
+\fIn\fPth argument in an updated action argument array\&.
+.PP
+The
+\fIstatus\fP argument specifies the purpose of the status update\&.
+The status codes listed here and in
+\fBDt/Action\&.h - DtAction\fP(5), may be returned in a
+\fBDtActionCallbackProc\fP:
+.IP "DtACTION_INVOKED" 10
+The corresponding
+\fBDtActionInvoke\fP(3) which is asynchronous and does not block when starting actions,
+has finished starting the requested actions\&.
+For all
+\fBDtActionInvoke\fP(3) calls that include a
+\fBDtactionCallbackProc\fP, this status code is guaranteed to be returned\&.
+When returned, no additional prompts for data will appear
+from the action service\&.
+.IP "DtACTION_DONE" 10
+The actions that were the result of the original
+\fBDtActionInvoke\fP(3) call have terminated normally\&.
+Once this status value is returned, all registered callbacks are invalidated,
+and
+\fIid\fP can no longer be used in subsequent action service calls\&.
+Returned
+\fIargs\fP data may accompany the
+\fBDtACTION_DONE\fP status code\&.
+For all
+\fBDtActionInvoke\fP(3) calls that include a
+\fBDtActionCallbackProc\fP, this status code or an equivalent status code (for example,
+\fBDtACTION_CANCELED\fP or
+\fBDtACTION_FAILED\fP) is guaranteed to be returned\&.
+.IP "DtACTION_CANCELED" 10
+The actions that were the result of the original
+\fBDtActionInvoke\fP(3) call were canceled and have terminated normally\&.
+Once this status value is returned, all registered callbacks are
+invalidated, and
+\fIid\fP can no longer be used in subsequent
+action service calls\&.
+No
+\fIargs\fP data will accompany the
+\fBDtACTION_CANCELED\fP status code\&.
+.IP "DtACTION_FAILED" 10
+An error occured and a normal termination is no longer possible\&.
+The action service may have failed to start the
+action or lost contact with and abandoned the action\&.
+Once this status value is returned, an error dialog may be
+posted by the action service, all registered callbacks are
+invalidated, and
+\fIid\fP can no longer be used in subsequent action service calls\&.
+No
+\fIargs\fP data will accompany the
+\fBDtACTION_FAILED\fP status code\&.
+.IP "DtACTION_STATUS_UPDATE" 10
+The actions associated with
+\fIid\fP have generated a status update, such as returning modified
+\fIargs\fP\&. Updates occur in several ways\&.
+.IP "" 10
+If several actions were started from a single
+\fBDtActionInvoke\fP(3), then as each individual action terminates, a
+\fBDtACTION_STATUS_UPDATE\fP with return
+\fIargs\fP is returned, and when the final action
+terminates, a
+\fBDtACTION_DONE\fP or equivalent status code is returned, possibly with return arguments\&.
+.IP "" 10
+Other actions may have the capability to generate updates
+(for example, Tooltalk-based actions doing a Media Exchange
+Deposit (Request))\&.
+.IP "" 10
+In most cases, a
+\fBDtActionArg\fR argument array accompanying a
+\fBDtACTION_STATUS_UPDATE\fP only has updated data for a few of the arguments; the remaining arguments
+are set to
+\fBDtACTION_NULLARG\fP\&.
+.SH "EXAMPLES"
+.PP
+The following shows how a
+\fBDtActionCallbackProc\fP might be coded\&.
+.PP
+.nf
+\f(CWDtActionCallbackProc myCallback(
+     DtActionInvocationID id,
+     XtPointer client_data,
+     DtActionArg *actionArgPtr,
+     int actionArgCount,
+     DtActionStatus status);
+{
+     extern DtActionArg *myUpdatedArgs; /* global hook for new data */
+     extern int myDoneFlag; /* global done flag */
+     switch (status) {
+          case DtACTION_INVOKED:
+               /*
+                * All the arguments to the original DtActionInvoke
+                * have been consumed by actions, and the actions have
+                * been started\&.  Among other things, we will not see
+                * any more prompts for user input\&.
+                */
+               break;
+          case DtACTION_DONE:
+               myUpdatedArgs = (DtActionArg *) actionArgPtr;
+               myDoneFlag = TRUE;
+               break;
+          case DtACTION_CANCELED:
+          case DtACTION_FAILED:
+               if ((actionArgCount != 0) && actionArgPtr) {
+                    /*
+                     * If not a normal shutdown, throw away returned
+                     * information\&.
+                     */
+                    for (i=0; i < actionArgCount; i++) {
+                         if (actionArgPtr[i]\&.argClass == DtACTION_FILE) {
+                              XtFree(actionArgPtr[i]\&.u\&.file\&.name);
+                         } else if (actionArgPtr[i]\&.argClass ==
+                                    DtACTION_BUFFER) {
+                              XtFree(actionArgPtr[i]\&.u\&.buffer\&.bp);
+                              XtFree(actionArgPtr[i]\&.u\&.buffer\&.type);
+                              XtFree(actionArgPtr[i]\&.u\&.buffer\&.name);
+                         }
+                    }
+                    XtFree(actionArgPtr);
+               }
+               myUpdatedArgs = (DtActionArg *) NULL;
+               myDoneFlag = FALSE;
+               break;
+          case DtACTION_STATUS_UPDATE:
+               myUpdatedArgs = (DtActionArg *) actionArgPtr;
+               myDoneFlag = FALSE;
+               break;
+          default:
+               /* ignore */
+               break;
+     }
+}\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBDt/Action\&.h - DtAction\fP(5), \fBDtDbLoad\fP(3), \fBDtActionLabel\fP(3), \fBDtActionDescription\fP(3), \fBDtActionExists\fP(3), \fBDtActionInvoke\fP(3), \fBXtMalloc\fP(3), \fBXtFree\fP(3), \fBdtdtfile\fP(4)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

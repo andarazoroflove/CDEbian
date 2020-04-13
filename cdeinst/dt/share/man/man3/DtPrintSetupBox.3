@@ -1,0 +1,605 @@
+'\" t
+...\" PrintSet.sgm /main/10 1996/09/08 20:10:10 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtPrintSetupBox" "library call"
+.SH "NAME"
+\fBDtPrintSetupBox\fP \(em application
+print setup widget
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Print\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+\fBDtPrintSetupBox\fP is a widget that is typically the
+initial window used to set various options prior to printing from an application\&.
+This widget is designed primarily for use by applications that utilize the
+X Print Service\&. However, it can also be used by applications employing other
+printing methods\&.
+.PP
+\fBDtPrintSetupBox\fP is organized based on generic print
+options and application specific print options\&. The sections are clearly
+demarcated with separators to set off the generic section from the application
+specific section(s)\&. By utilizing the \fBDtNworkAreaLocation\fP
+resource, the application developer can choose to utilize an area above the
+generic section, below the generic section, or both above and below the generic
+section\&.
+.PP
+The four default buttons (\fBPrint\fP, \fBSetup\fP, \fBCancel\fP, and \fBHelp\fP) are considered generic buttons\&.
+Applications can create additional pushbuttons as children of \fBDtPrintSetupBox\fP\&. These buttons will be laid out following the \fBPrint\fP
+button\&.
+.PP
+The \fBPrinter Name\fP combo box contains the X printer
+specifier of the printer to be used for the print job\&. The X printer specifier
+is an identifier that uniquely identifies an X printer\&. The format of this
+specifier is \fIprinterName\fP@\fIhost\fP: \fIdisplay\fP\&.
+.SS "Descendants"
+.PP
+\fBDtPrintSetupBox\fP creates the descendants shown in
+the following table\&. An application can use \fBXtNameToWidget\fP
+to gain access to the named descendent\&. In addition, a user or an application
+can use the descendant name when specifying resource values\&.
+.TS
+tab();
+lw(2.16in) lw(1.95in) lw(2.53in).
+Named DescendantClassIdentity
+BottomWorkAreaSeparatorXmSeparatorGadgetT{
+Separator above the bottom work area
+T}
+ButtonSeparatorXmSeparatorGadgetSeparator above the pushbuttons
+CancelXmPushButtonGadgetCancel button
+CopiesXmSimpleSpinBoxT{
+SpinBox containing the number of copies
+T}
+CopiesLabelXmLabelGadgetLabel for the Copies SpinBox
+DescriptionLabelXmLabelGadgetLabel for the printer description
+FileNameXmTextFieldFile name field
+FileNameCheckBoxXmRowColumnT{
+Check box (includes label) for file
+name field
+T}
+HelpXmPushButtonGadgetHelp button
+InfoXmPushButtonGadgetPrinter information button
+NameXmComboBoxPrinter name
+NameLabelXmLabelGadgetLabel for the printer name field
+PrintXmPushButtonGadgetPrint button
+SelectFileXmPushButtonGadgetSelect File button
+SelectPrinterXmPushButtonGadgetSelect Printer button
+SetupXmPushButtonGadgetSetup button
+TopWorkAreaSeparatorXmSeparatorGadgetSeparator below the top work area
+.TE
+.SS "Classes"
+.PP
+\fBDtPrintSetupBox\fP inherits behavior and resources
+from the Core, Composite, Constraint, XmManager, and XmBulletinBoard superclasses\&.
+.PP
+The class pointer is \fBdtPrintSetupBoxWidgetClass\fP\&.
+.PP
+The class name is \fBDtPrintSetupBox\fP\&.
+.SS "Resources"
+.PP
+The following table lists the \fBDtPrintSetupBox\fP resources\&.
+.TS
+tab();
+lw(2.27in) lw(2.92in) lw(0.86in) lw(1.24in).
+NameClass/TypeAccessDefault Value
+DtNcancelCallbackDtCCancelCallback/XtCallbackListCNULL
+DtNclosePrintDisplayCallbackT{
+DtCCloseDisplayCallback/XtCallbackList
+T}CNULL
+DtNcopiesDtCCopies/intCSG1
+DtNdescriptionDtCDescription/XmStringCSGdynamic
+DtNfileNameDtCPrintToFileName/StringCSGNULL
+DtNgetAttributesCallbackT{
+DtCGetAttributesCallback/XtCallbackList
+T}CNULL
+DtNminimizeButtonsDtCminimizeButtons/BooleanCSGFalse
+DtNprintCallbackDtCPrintCallback/XtCallbackListCNULL
+DtNprintDestinationDtCPrintDestination/XtEnumCSGDtPRINT_TO_PRINTER
+DtNprinterInfoProcDtCPrinterInfoProc/DtPrintSetupProcCSGdynamic
+DtNprinterNameDtCPrinter/StringCSGdynamic
+DtNprintSetupModeDtCPrintSetupMode/XtEnumCGDtPRINT_SETUP_XP
+DtNselectFileProcDtCSelectFileProc/DtPrintSetupProcCSGdefault procedure
+DtNselectPrinterProcT{
+DtCSelectPrinterProc/DtPrintSetupProc
+T}CSGdynamic
+DtNsetAttributesCallbackT{
+DtCSetAttributesCallback/XtCallbackList
+T}CNULL
+DtNsetupProcDtCSetupProc/DtPrintSetupProcCSGdynamic
+DtNsetupProcDtCSetupProc/DtPrintSetupProcCSGdynamic
+DtNverifyPrinterProcT{
+DtCVerifyPrinterProc/DtPrintSetupProc
+T}CSGdynamic
+DtNworkAreaLocationDtCworkAreaLocation/XtEnumCSGDtWORK_AREA_BOTTOM
+.TE
+.PP
+The \fBDtPrintSetupBox\fP resources are defined as follows:
+.IP "\fBDtNcancelCallback\fP" 10
+Specifies the list of callbacks that is called when the Cancel button
+is activated\&. The callback reason is \fBDtPRINT_CR_CANCEL\fP\&.
+.IP "\fBDtNclosePrintDisplayCallback\fP" 10
+When the value of the \fBDtNprintSetupMode\fP resource
+is \fBDtPRINT_SETUP_XP\fP, \fBDtPrintSetupBox\fP
+will manage the X printing display connection and print context\&. As such, \fBDtNclosePrintDisplayCallback\fP is provided to allow an application
+to perform any desired processing (such as destroying windows created on the
+print display) before \fBDtPrintSetupBox\fP destroys the current
+print context and closes the current print display connection\&.
+.IP "" 10
+This callback list will not be called if the value of the \fBDtNprintSetupMode\fP resource is anything other than \fBDtPRINT_SETUP_XP\fP\&.
+.IP "" 10
+The callback reason is \fBDtPRINT_CR_CLOSE_PRINT_DISPLAY\fP\&.
+.IP "\fBDtNcopies\fP" 10
+The number of copies of the document to print\&. This is a spin box into
+which the user may enter a positive integer\&.
+.IP "\fBDtNdescription\fP" 10
+A description of the printer as provided by the system administrator\&.
+.IP "\fBDtNfileName\fP" 10
+Specifies the name of the destination file\&. Setting this resource will
+update the value of the File Name text field\&.
+.IP "\fBDtNgetAttributesCallback\fP" 10
+Specifies the list of callbacks that is called whenever \fBDtPrintSetupBox\fP receives an \fBXPAttributeNotify\fP event, or immediately
+after a new X printer connection is established\&. This callback list will only
+be called if the value of the \fBDtNprintSetupMode\fP resource
+is \fBDtPRINT_SETUP_XP\fP\&.
+.IP "" 10
+This callback is intended to be used by applications that utilize X
+Print Service attributes directly\&. These applications will be interested in
+changes made to the printing attributes by \fBDtPrintSetupBox\fP
+or by other processes, such as the Print Dialog Manager (PDM)\&.
+.IP "" 10
+One of two callback reason codes will be set for this callback\&. The
+two reasons are of particular interest to applications that elect to present
+information in their GUI based on X Print Service attributes\&. The following
+indicates how such applications should respond to each code:
+.RS
+.IP "\fBDtPRINT_CR_GET_STATIC_ATTRIBUTES\fP" 10
+The application should update only those controls that cannot be modified
+by the user\&. This reason is set in response to encountering a new set of attributes
+as the result of \fBDtPrintSetupBox\fP\&'s establishing a new
+X printer connection\&. Additionally, subsequent immediate action to be taken
+by \fBDtPrintSetupBox\fP\&'s will result in the \fBDtNsetAttributesCallback\fP list being called followed by either the \fBDtNprintCallback\fP list or the \fBDtNsetupProc\fP\&. If the application
+were to update dynamic GUI controls within this \fBDtNgetAttributesCallback\fP, any input the user provided would be overridden by the printer
+defaults in the resulting print job or setup dialog\&.
+.IP "\fBDtPRINT_CR_GET_ATTRIBUTES\fP" 10
+The application should update all static and dynamic controls\&. This
+reason is set in response to \fBDtPrintSetupBox\fP\&'s receiving
+an \fBXpAttributeNotify\fP event, or if a new X printer connection
+was established as the result of the user activating the Printer Info button\&.
+.RE
+.IP "\fBDtNminimizeButtons\fP" 10
+If false, sets the dimensions of all of the buttons at the bottom of
+the widget to the width of the widest button and the height of the tallest
+button\&. If true, the dimensions of the buttons are not altered\&.
+.IP "\fBDtNprintCallback\fP" 10
+Specifies the list of callbacks that is called when the Print button
+is activated\&. The callback reason is \fBDtPRINT_CR_PRINT\fP\&.
+This callback is used to initiate the print job\&.
+.IP "\fBDtNprintDestination\fP" 10
+Indicates where the print output should be directed\&. Valid values for
+this resource are:
+.RS
+.IP "\fBDtPRINT_TO_FILE\fP" 10
+Direct print output to a file\&. The destination file name is indicated
+by the \fBDtNfileName\fP resource\&. Setting this value will cause
+the Print To File checkbox to be selected, enable the File Name text field,
+and enable the Select File button\&.
+.IP "\fBDtPRINT_TO_PRINTER\fP" 10
+Direct print output to a printer\&. The destination printer is indicated
+by the \fBDtNprinterName\fP resource\&. Setting this value will
+cause the Print To File checkbox to be deselected, disable the File Name text
+field, and disable the Select File button\&.
+.RE
+.IP "\fBDtNprinterInfoProc\fP" 10
+This resource specifies the procedure that will be used to present printer
+information in response to activation of the Printer Information button\&. The
+printer selection dialog presented by the default \fBDtNselectPrinterProc\fP will also call this procedure in response to activation of its
+Printer Information button\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP, a default procedure that presents a printer information
+dialog is used\&. For other values of \fBDtNprintSetupMode\fP,
+the default value of \fBDtNprinterInfoProc\fP is NULL\&.
+.IP "" 10
+Typically, this procedure does not update \fBDtPrintSetupBox\fP
+resources nor X Print Service attributes\&. The return value of this procedure
+is ignored by \fBDtPrintSetupBox\fP\&. However, it is recommended
+that the procedure follow the conventions presented in the "DtPrintSetupProc"
+section to ensure future compatibility\&.
+.IP "\fBDtNprinterName\fP" 10
+The name of the printer to send the print job to\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP, setting this resource will update the Printer
+Name field based on the value of the \fBXpPrinterNameMode\fP
+XRM resource\&. See the "EXTERNAL INFLUENCES" section in this man page for more
+information\&. If the value of the \fBDtNprintSetupMode\fP resource
+is \fBDtPRINT_SETUP_PLAIN\fP, setting this resource will update
+the value of the Printer Name text field with the value of this resource\&.
+.IP "\fBDtNprintSetupMode\fP" 10
+Instructs the widget as to whether or not it is being used in an application
+that utilizes the X Print Service\&. If so, then the widget will manage the
+X printing display connection and print context, and provide defaults for
+a number of X printing operations, such as printer selection and information
+dialogs, and printer verification\&. Refer to individual resource descriptions
+to determine if and how they are affected by the value of this resource\&. Valid
+values for this resource are:
+.RS
+.IP "\fBDtPRINT_SETUP_PLAIN\fP" 10
+This widget will be used by an application that performs its own print
+document format generation and print job submission\&.
+.IP "\fBDtPRINT_SETUP_XP\fP" 10
+This widget will be used by an application that utilizes the X Print
+Service to perform print document format generation and print job submission\&.
+.RE
+.IP "\fBDtNselectFileProc\fP" 10
+This resource specifies the procedure that will be used in response
+to activation of the Select File button\&. The default value for this resource
+is a pointer to a procedure which will invoke an \fBXmFileSelectionBox\fP dialog to select a file name\&.
+.IP "" 10
+If the user cancels the file selection dialog, no \fBDtPrintSetupBox\fP components will be updated\&. If the user selects a file name, the
+file name will be set as the value for the \fBDtNfileName\fP
+resource\&. This procedure communicates the newly selected file name to \fBDtPrintSetupBox\fP by setting the \fBDtNfileName\fP resource\&.
+.IP "" 10
+Since the default procedure presents a File Selection Dialog, the resource
+is actually set after the procedure returns, due to the asynchronous nature
+of widgets and callbacks\&. The return value of this procedure is ignored by \fBDtPrintSetupBox\fP\&. However, it is recommended that the procedure
+follow the conventions presented in the "DtPrintSetupProc" section to ensure
+future compatibility\&.
+.IP "\fBDtNselectPrinterProc\fP" 10
+This resource specifies the procedure that will be used in response
+to activation of the Select Printer button\&. If the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP,
+a default procedure that invokes a \fBDtPrinterSelectionDialog\fP
+is used\&. If the user cancels the printer selection dialog no \fBDtPrintSetupBox\fP components will be updated\&. If the user selects a printer, the
+printer will be set as the value for the \fBDtNprinterName\fP
+resource\&.
+.IP "" 10
+This procedure communicates the newly selected printer name to \fBDtPrintSetupBox\fP by setting the \fBDtNprinterName\fP
+resource\&. Since the default procedure presents a Printer Selection Dialog,
+the resource is actually set after the procedure returns, due to the asynchronous
+nature of widgets and callbacks\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is
+anything other than \fBDtPRINT_SETUP_XP\fP, the default value
+of \fBDtNselectPrinterProc\fP is NULL\&.
+.IP "" 10
+The return value of this procedure is ignored by \fBDtPrintSetupBox\fP\&. However, it is recommended that the procedure follow the conventions
+presented in the "DtPrintSetupProc" section to ensure future compatibility\&.
+.IP "\fBDtNsetAttributesCallback\fP" 10
+Specifies the list of callbacks that is called whenever \fBDtPrintSetupBox\fP is about to perform an operation that will utilize X Print Service
+attributes\&. This callback list will only be called if the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP\&.
+.IP "" 10
+This callback is intended to be used by applications that utilize X
+Print Service attributes directly\&. This callback provides these applications
+with a chance to set attributes whenever a subsequent \fBDtPrintSetupBox\fP operation will utilize the current set of attributes (for example,
+prior to calling the \fBDtNprintCallback\fP list)\&.
+.IP "" 10
+The callback reason is \fBDtPRINT_CR_SET_ATTRIBUTES\fP\&.
+.IP "\fBDtNsetupProc\fP" 10
+This resource specifies the procedure that will be used in response
+to activation of the Setup button\&. If the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP, a default procedure
+is provided that will call \fBXpNotifyPDM\fP in order to present
+the setup dialog provided by the Print Dialog Manager\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is
+anything other than \fBDtPRINT_SETUP_XP\fP, the default value
+of \fBDtNsetupProc\fP is NULL\&.
+.IP "" 10
+This procedure typically updates X Print Service attributes, and does
+not set any \fBDtPrintSetupBox\fP resources\&.
+.IP "" 10
+The return value of this procedure is ignored by \fBDtPrintSetupBox\fP\&. However, it is recommended that the procedure follow the conventions
+presented in the "DtPrintSetupProc" section to ensure future compatibility\&.
+.IP "\fBDtNverifyPrinterProc\fP" 10
+This resource specifies the procedure that will be used to verify the
+current value of the \fBDtNprinterName\fP resource before any
+operation requiring a valid printer is performed\&. If the current value of
+the \fBDtNprinterName\fP resource is NULL, this procedure will
+set a default printer as the value of the \fBDtNprinterName\fP
+resource\&.
+.IP "" 10
+If this procedure provides a default printer name, or a fully qualified
+X printer name, it should communicate the new name to \fBDtPrintSetupBox\fP by setting the \fBDtNprinterName\fP resource before
+returning\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is \fBDtPRINT_SETUP_XP\fP, a default procedure will be set as the value of
+the \fBDtNverifyPrinterProc\fP resource\&. This default procedure
+will verify the X printer, and establish a print display connection and print
+context for the printer\&. The procedure communicates the new print display
+and context to \fBDtPrintSetupBox\fP by updating the \fBprint_data->print_display\fP and \fBprint_data->print_context\fP elements of the callback structure prior to returning\&.
+.IP "" 10
+If the value of the \fBDtNprintSetupMode\fP resource is
+anything other than \fBDtPRINT_SETUP_XP\fP, the default value
+of \fBDtNverifyPrinterProc\fP is NULL\&.
+.IP "" 10
+If the value of the \fBDtNverifyPrinterProc\fP resource
+is NULL, the printer name is always considered valid\&.
+.IP "" 10
+If this procedure determines the printer name is valid or sets a valid
+printer name (and X printer connection information), it should return \fBDtPRINT_SUCCESS\fP\&. If the printer name is invalid or no valid default
+can be determined, this procedure should return \fBDtPRINT_FAILURE\fP\&.
+.IP "\fBDtNworkAreaLocation\fP" 10
+Indicates how to position work area children within the \fBDtPrintSetupBox\fP\&. Possible values are:
+.RS
+.IP "\fBDtWORK_AREA_BOTTOM\fP" 10
+A single work area child may be added, and will be placed below the
+generic controls and above the pushbuttons at the bottom of the window\&. A
+managed separator will be placed between the work area and the generic controls\&.
+This is the default\&.
+.IP "\fBDtWORK_AREA_TOP\fP" 10
+A single work area child may be added, and will be placed above the
+generic controls and below the top of the window\&. A managed separator will
+be placed between the work area and the generic controls\&.
+.IP "\fBDtWORK_AREA_TOP_AND_BOTTOM\fP" 10
+Two work area children may be added\&. The first work area created will
+become the top work area, positioned with a separator as for \fBDtWORK_AREA_TOP\fP, and the second will become the bottom work area, positioned with
+a separator as for \fBDtWORK_AREA_BOTTOM\fP\&.
+.RE
+.IP "" 10
+The effect of adding more work area children than indicated by the value
+of \fBDtNworkAreaLocation\fP is undefined\&.
+.SS "Inherited Resources"
+.PP
+\fBDtPrintSetupBox\fP inherits resources from the \fBXmBulletinBoard\fP, \fBXmManager\fP, \fBConstraint\fP, \fBComposite\fP, and \fBCore\fP superclasses\&.
+Refer to the reference pages for these superclasses for inherited resources
+and their descriptions\&.
+.SS "Callback And Procedure Resource Information"
+.PP
+\fBDtPrintSetupBox\fP defines a new structure, \fBDtPrintSetupData\fR, that is passed to callbacks
+and procedure resource values\&. For callbacks only, \fBDtPrintSetupBox\fP defines a new callback structure, \fBDtPrintSetupCallbackStruct\fR\&. Not all fields in these structures
+are valid for all callbacks and procedures\&. For callbacks, the application
+must first look at the \fIreason\fP field, and
+use only the structure members that are valid for that particular reason\&.
+For each procedure, the application should only reference structure members
+that are defined as valid for that particular procedure\&. The \fBDtPrintSetupData\fR and \fBDtPrintSetupCallbackStruct\fR structures are defined as follows:
+.PP
+.nf
+\f(CWtypedef struct
+{
+    String              \fIprinter_name\fP;
+    Display             *\fIprint_display\fP;
+    XPContext           \fIprint_context\fP;
+    XtEnum              \fIdestination\fP;
+    String              \fIdest_info\fP;
+} DtPrintSetupData;\fR
+.fi
+.PP
+.IP "\fIprinter_name\fP" 10
+Contains the current value of the \fBDtNprinterName\fP
+resource\&.
+.IP "\fIprint_display\fP" 10
+If \fBDtNprintSetupMode\fP is \fBDtPRINT_SETUP_XP\fP, \fIprint_display\fP contains a pointer
+to the Display structure for the current X Printer\&. For other values of \fBDtNprintSetupMode\fP, this field is NULL\&.
+.IP "\fIprint_context\fP" 10
+If \fBDtNprintSetupMode\fP is \fBDtPRINT_SETUP_XP\fP, \fIprint_context\fP contains the print
+context handle for the current X Printer\&. For other values of \fBDtNprintSetupMode\fP, this field is NULL\&.
+.IP "\fIdestination\fP" 10
+Contains the current value of the \fBDtNprintDestination\fP
+resource\&.
+.IP "\fIdest_info\fP" 10
+Additional information about the print destination as indicated by the
+destination field\&.
+.IP "" 10
+If destination is \fBDtPRINT_TO_FILE\fP, this field contains
+the name of the file to print to\&.
+.IP "" 10
+If destination is \fBDtPRINT_TO_PRINTER\fP, this field
+contains the name of the currently selected printer as determined by the current
+value of the \fBXpPrinterNameMode\fP resource\&. This is useful
+for display within dialogs displaying print status, etc\&. because it is the
+printer name as presented to the user in \fBDtPrintSetupBox\fP\&.
+.PP
+.nf
+\f(CWtypedef struct
+{
+    int                 \fIreason\fP;
+    XEvent              *\fIevent\fP;
+    DtPrintSetupData    *\fIprint_data\fP;
+} DtPrintSetupCallbackStruct;\fR
+.fi
+.PP
+.IP "\fIreason\fP" 10
+Indicates why the callback was invoked\&.
+.IP "\fIevent\fP" 10
+Points to the XEvent that triggered the callback\&. It can be NULL\&.
+.IP "\fIprint_data\fP" 10
+Points to a \fBDtPrintSetupData\fR
+structure containing additional callback information\&.
+.PP
+The following table indicates for each callback reason which \fBDtPrintSetupCallbackStruct\fR and \fBDtPrintSetupData\fR members are valid\&.
+.TS
+tab();
+lw(3.66in) lw(2.88in).
+ReasonValid Fields
+DtPRINT_CR_CANCELreason, event
+DtPRINT_CR_CLOSE_PRINT_DISPLAYT{
+reason, printer_name, print_display,
+print_context
+T}
+DtPRINT_CR_GET_ATTRIBUTEST{
+reason, event, printer_name, print_display,
+print_context
+T}
+DtPRINT_CR_GET_STATIC_ATTRIBUTEST{
+reason, event, printer_name, print_display,
+print_context
+T}
+DtPRINT_CR_PRINTT{
+reason, event, printer_name, print_display,
+print_context, destination, dest_info
+T}
+DtPRINT_CR_SET_ATTRIBUTEST{
+reason, event, printer_name, print_display,
+print_context
+T}
+.TE
+.PP
+The following table indicates for each procedure resource which \fBDtPrintSetupData\fR members are valid:
+.TS
+tab();
+lw(1.905702i) lw(3.594298i).
+ProcedureValid Fields
+DtNprinterInfoProcT{
+printer_name, print_display, print_context
+T}
+DtNselectFileProcdestination, dest_info
+DtNsetupProcT{
+printer_name, print_display, print_context
+T}
+DtNverifyPrinterProcT{
+printer_name, print_display, print_context
+T}
+.TE
+.SS "Translations"
+.PP
+\fBDtPrintSetupBox\fP inherits translations from \fBXmBulletinBoard\fP\&.
+.SS "Virtual Bindings"
+.PP
+The bindings for virtual keys are implementation-dependent\&. For information
+about bindings for virtual buttons and keys, see \fBVirtualBindings\fP(3)\&.
+.SH "EXTERNAL INFLUENCES"
+.PP
+This section specifies application resources and environment variables
+that will influence the behavior of \fBDtPrintSetupBox\fP\&.
+If a given resource is defined, it will have precedence over the corresponding
+environment variable\&. There is no corresponding environment variable for the \fBXpPrinterNameMode\fP resource\&.
+.SS "XRM Application Resources"
+.IP "\fBXpPrinter\fP" 10
+This variable defines the default destination X Printer Specifier for \fBDtPrintSetupBox\fP\&. If the specifier is just a \fIprinterName\fP, the \fIhost:display\fP portion of the specifier
+is obtained by checking if the X Server to which the client application is
+connected is an X Print Server managing \fIprinterName\fP\&.
+Otherwise, the first server in the \fBXpServerList\fP or \fBXPSERVERLIST\fP
+that manages the printer will be used\&. If the \fI:display\fP
+number is omitted, \fB:0\fP is assumed\&.
+.IP "" 10
+Example:
+.PP
+.nf
+\f(CWDtmail*XpPrinter: laser_1@callisto:6\fR
+.fi
+.PP
+.IP "\fBXpPrinterNameMode\fP" 10
+This resource indicates how an X Printer Specifier shall be shown in
+the Printer Name combo box text\&. Valid values for this resource are:
+.RS
+.IP "\fBDtSHORT_NAME\fP" 10
+Display only the \fIprinterName\fP portion of the X Printer
+Specifier\&.
+.IP "\fBDtMEDIUM_NAME\fP" 10
+Display the printer name as a combination of the \fIprinterName\fP and the host portions of the X Printer Specifier with an intervening
+"at" (@) symbol\&. For example:
+.PP
+.nf
+\f(CWprinter@host\fR
+.fi
+.PP
+.IP "\fBDtLONG_NAME\fP" 10
+Display the fully qualified X Printer Specifier\&. For example:
+.PP
+.nf
+\f(CWprinter@host:6\fR
+.fi
+.PP
+.RE
+.IP "" 10
+If this resource is not specified, \fBDtPrintSetupBox\fP
+will assume a default of \fBDtSHORT_NAME\fP\&.
+.IP "\fBXpPrinterList\fP" 10
+This resource defines the initial set of X Printer Specifiers shown
+in the Printer Name combo box list\&.
+.IP "" 10
+The resource value is a whitespace-delimited list of partially or fully
+specified X Printer Specifiers\&. When the user selects a specifier from this
+list, if the specifier is just a \fIprinterName\fP, the \fIhost:display\fP portion of the specifier is obtained by checking if
+the X Server to which the client application is connected is an X Print Server
+managing \fIprinterName\fP\&. Otherwise the first server in the \fBXpServerList\fP or \fBXPSERVERLIST\fP that manages the printer will be used\&. If the: \fIdisplay\fP number is omitted, \fB:0\fP is assumed\&.
+.IP "" 10
+Example:
+.PP
+.nf
+\f(CW*xpPrinterList: laser laser2@argon:3 laser7@xenon\fR
+.fi
+.PP
+.IP "\fBXpServerList\fP" 10
+This resource contains a list of X Print Server specifiers\&. Each entry
+in the list is of the form \fIhost:display\fP, and is separated
+from other entries by whitespace\&. \fBDtPrintSetupBox\fP uses
+this list to fully qualify partial X Printer Specifiers consisting of just
+the \fIprinterName\fP\&.
+.IP "" 10
+Example:
+.PP
+.nf
+\f(CW*\&.XpServerList: hanz:6 franz:6 ahnold:6\fR
+.fi
+.PP
+.SS "Environment Variables"
+.IP "\fBPDPRINTER\fP, \fBLPDEST\fP, \fBPRINTER\fP" 10
+If the \fBXPRINTER\fP, environment
+variable and the \fBXpPrinter\fP resource
+are not specified, \fBDtPrintSetupBox\fP will check the environment
+variables (in order) \fBPDPRINTER\fP, \fBLPDEST\fP, and \fBPRINTER\fP to obtain\&' a \fIprinterName\fP that can
+be used to generate an X Printer Specifier to use for the default X Printer
+shown in the Printer Name combo box text field\&. The \fIhost:display\fP portion of the specifier is obtained by checking if the X Server
+to which the client application is connected is an X Print Server managing \fIprinterName\fP\&. If not, the list of X Print Servers specified in
+the \fBXpServerList\fP or \fBXPSERVERLIST\fP is queried, until the first X
+Printer with a matching \fIprinterName\fP is found\&.
+.IP "\fBXPRINTER\fP" 10
+The specification of the \fBXPRINTER\fP
+environment variable is the same as the \fBXpPrinter\fP resource\&.
+.IP "\fBXPRINTERLIST\fP" 10
+The specification of the \fBXPRINTERLIST\fP environment variable is the same as the the \fBXpPrinterList\fP resource\&.
+.IP "\fBXPSERVERLIST\fP" 10
+The specification of the \fBXPSERVERLIST\fP environment variable is the same as the the \fBXpServerList\fP resource\&.
+.SH "EXAMPLES"
+.PP
+Sample code can be found in the
+\fB/proj/cde/examples/dtprint\fP directory\&.
+.SH "SEE ALSO"
+.PP
+\fBDtPrintSetupProc\fP(3), \fBDtCreatePrintSetupDialog\fP(3), \fBDtPrintSetupProc\fP(3), \fBDtPrinterSelectionDialog\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

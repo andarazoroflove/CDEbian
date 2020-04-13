@@ -1,0 +1,85 @@
+'\" t
+...\" cm_edito.sgm /main/6 1996/11/15 15:26:18 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtcm_editor" "user cmd"
+.SH "NAME"
+\fBdtcm_editor\fP \(em The CDE Environment standalone appointment editor
+.SH "SYNOPSIS"
+.PP
+\fBdtcm_editor\fP [filename] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtcm_editor\fP program a stand alone editor for files that
+represent \fBdtcm\fP appointments\&. These files are created by either
+mailing appointments from within \fBdtcm\fP, or by dragging and dropping
+appointments from a \fBdtcm\fP editor dialog into some kind of
+permanent store (a \fBdtmail\fP attachment pane, or \fBdtfile\fP)\&.
+The \fBdtcm_editor\fP allows modifying these appointment files,
+and writing them back out\&.
+.SH "OPTIONS"
+.PP
+The only available option is to start the \fBdtcm_editor\fP with
+a filename\&. This will cause the editor to operate on that file,
+and write out to that file\&. If the \fBdtcm_editor\fP is started
+without a file name, it is assumed to have been invoked thru
+tooltalk, and acts as a media alliance editor\&.
+.SH "RESOURCES"
+.PP
+\fBdtcm_editor\fP supports a number of application resources to
+allow you to configure
+its behaviour\&. The application class name for \fBdtcm_editor\fP
+is \fBDtcm\fP\&.
+To set application resources, you can copy the system default version of
+this file from \fB/usr/dt/app-defaults/<LANG>/Dtcm\fP to a personal version,
+typically \fB~/app-defaults/Dtcm\fP, and edit it with your changes\&.
+.SH "FILES"
+.IP "\fB/usr/dt/bin/dtcm_editor\fP" 10
+This is the executable for \fBdtcm_editor\fP\&.
+.IP "\fB/usr/dt/app-defaults/<LANG>/Dtcm\fP" 10
+This is the system-default application defaults file for \fBdtcm_editor\fP\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

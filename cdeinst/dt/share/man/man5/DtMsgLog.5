@@ -1,0 +1,109 @@
+'\" t
+...\" DtMsgLog.sgm /main/4 1996/10/28 14:50:45 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Dt/MsgLog\&.h" "file formats"
+.SH "NAME"
+\fBDt/MsgLog\&.h\fP \(em message logging definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/MsgLog\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDt/MsgLog\&.h\fP header defines data types and function prototypes for
+the Message Logging Service\&.
+.PP
+The \fBDt/MsgLog\&.h\fP header provides
+the following data type declarations:
+.PP
+.nf
+typedef enum {
+		DtMsgLogInformation,
+		DtMsgLogStderr,
+		DtMsgLogDebug,
+		DtMsgLogWarning,
+		DtMsgLogError
+	} DtMsgLogType;
+.fi
+.PP
+.nf
+typedef void (*DtMsgLogHandler) (
+				 const char 	*\fIprogram_name\fP,
+				 DtMsgLogType	\fImsg_type\fP,
+				 const char 	*\fIformat\fP,
+				 va_list	\fIargs\fP );
+.fi
+.PP
+The \fBDt/MsgLog\&.h\fP header defines the following functions:
+.PP
+.nf
+void DtMsgLogMesssage(
+		      const char   *\fIprogram_name\fP,
+		      DtMsgLogType \fImsg_type\fP,
+		      const char   *\fIformat\fP,
+		      \&...);
+.fi
+.PP
+.nf
+DtMsgLogHandler DtMsgLogSetHandler(
+				   DtMsgLogHandler   \fIhandler\fP;
+.fi
+.PP
+.nf
+FILE *DtMsgLogOpenFile(
+		       const char   *\fItype\fP,
+		       char	    **\fIfilename_return\fP);
+.fi
+.SH "SEE ALSO"
+.PP
+\fBDtMsgLogMessage\fP(3),
+\fBDtMsgLogSetHandler\fP(3), and
+\fBDtMsgLogOpenFile\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

@@ -1,0 +1,203 @@
+'\" t
+...\" DtDnd.sgm /main/6 1996/09/08 19:58:46 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Dt/Dnd\&.h" "file formats"
+.SH "NAME"
+\fBDt/Dnd\&.h\fP \(em Drag and drop definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Dnd\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDt/Dnd\&.h\fP header defines the following enumeration types:
+.PP
+.nf
+\f(CWDtCR_DND_CONVERT_DATA
+DtCR_DND_CONVERT_DELETE
+DtCR_DND_DRAG_FINISH
+DtCR_DND_TRANSFER_DATA
+DtCR_DND_DROP_ANIMATE\fR
+.fi
+.PP
+.PP
+The header defines the following enumeration data types,
+with at least the following members:
+.IP "\fBDtDndStatus\fR" 10
+\fBDtDND_SUCCESS\fP, \fBDtDND_FAILURE\fP
+.IP "\fBDtDndProtocol\fR" 10
+.PP
+.nf
+\f(CWDtDND_TEXT_TRANSFER     = (1L << 0)
+DtDND_FILENAME_TRANSFER = (1L << 1)
+DtDND_BUFFER_TRANSFER   = (1L << 2)\fR
+.fi
+.PP
+.PP
+The header declares the following structures:
+.PP
+.nf
+\f(CWtypedef struct _DtDndBuffer {
+        void *\fIbp\fP;
+        int \fIsize\fP;
+        string \fIname\fP;
+} DtDndBuffer;\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWtypedef struct _DtDndContext {
+        DtDndProtocol \fIprotocol\fP;
+        int \fInumItems\fP;
+        union {
+                XmString *\fIstrings\fP;
+                String *\fIfiles\fP;
+                DtDndBuffer *\fIbuffers\fP;
+        } \fIdata\fP;
+} DtDndContext;\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWtypedef struct _DtDndConvertCallbackStruct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        DtDndContext *\fIdragData\fP;
+        DtDndStatus \fIstatus\fP;
+} DtDndConvertCallbackStruct, *DtDndConvertCallback;\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWtypedef struct _DtDndDragFinishCallbackStruct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        DtDndContext *\fIdragData\fP;
+        Widget \fIsourceIcon\fP;
+} DtDndDragFinishCallbackStruct, *DtDndDragFinishCallback;\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWtypedef struct _DtDndTransferCallbackStruct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        Position \fIx\fP, \fIy\fP;
+        unsigned char \fIoperation\fP;
+        DtDndContext *\fIdropData\fP;
+        Boolean \fIcompleteMove\fP;
+        DtDndStatus \fIstatus\fP;
+} DtDndTransferCallbackStruct, *DtDndTransferCallback;\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWtypedef struct _DtDndDropAnimateCallbackStruct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        Position \fIx\fP, \fIy\fP;
+        unsigned char \fIoperation\fP;
+        DtDndContext *\fIdropData\fP;
+} DtDndDropAnimateCallbackStruct, *DtDndDropAnimateCallback;\fR
+.fi
+.PP
+.PP
+The header declares the following as functions:
+.PP
+.nf
+Widget DtDndCreateSourceIcon(Widget \fIparent\fP,
+        Pixmap \fIpixmap\fP,
+        Pixmap \fImask\fP);
+.fi
+.PP
+.nf
+Widget DtDndDragStart(Widget \fIdragSource\fP,
+        XEvent *\fIevent\fP,
+        DtDndProtocol \fIprotocol\fP,
+        Cardinal \fInumItems\fP,
+        unsigned char \fIoperations\fP,
+        XtCallbackList \fIconvertCallback\fP,
+        XtCallbackList \fIdragFinishCallback\fP,
+        ArgList \fIargList\fP,
+        Cardinal \fIargCount\fP);
+.fi
+.PP
+.nf
+Widget DtDndVaDragStart(Widget \fIdragSource\fP,
+        XEvent *\fIevent\fP,
+        DtDndProtocol \fIprotocol\fP,
+        Cardinal \fInumItems\fP,
+        unsigned char \fIoperations\fP,
+        XtCallbackList \fIconvertCallback\fP,
+        XtCallbackList \fIdragFinishCallback\fP,
+        \&.\&.\&.);
+.fi
+.PP
+.nf
+void DtDndDropRegister(Widget \fIdropSite\fP,
+        DtDndProtocol \fIprotocols\fP,
+        unsigned char \fIoperations\fP,
+        XtCallbackList \fItransferCallback\fP,
+        ArgList \fIargList\fP,
+        Cardinal \fIargCount\fP);
+.fi
+.PP
+.nf
+void DtDndVaDropRegister(Widget \fIdropSite\fP,
+        DtDndProtocol \fIprotocols\fP,
+        unsigned char \fIoperations\fP,
+        XtCallbackList \fItransferCallback\fP,
+        \&.\&.\&.);
+.fi
+.PP
+.nf
+void DtDndDropUnregister(Widget \fIdropSite\fP);
+.fi
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

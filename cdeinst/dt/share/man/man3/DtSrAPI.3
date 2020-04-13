@@ -1,0 +1,359 @@
+'\" t
+...\" dtsrapi.sgm 1996
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtSrAPI" "library call"
+.SH "NAME"
+DtSrAPI \(em Describes overview, constants, and structures
+for DtSearch online API
+.SH "DESCRIPTION"
+.PP
+The DtSearch API provides programmatic access to the DtSearch search and
+retrieval engine\&. The API functions are located in the library
+\fBlibDtSr\fP, and are directly linked into user written
+search programs\&.
+.PP
+Search and retrieval of DtSearch databases is available through three
+essential API functions:
+.IP "\fBDtSearchInit\fP" 10
+Opens databases and other files, and generally initializes the search
+engine for subsequent requests\&.
+.IP "\fBDtSearchQuery\fP" 10
+Is passed a user query and some
+search options, performs the requested search, and returns a linked list of
+structures, called a results list, representing the objects satisfying the
+search\&. The results list contains abstracted information about the documents
+suitable for display to an end user, as well as private information used for
+subsequent retrievals\&.
+.IP "\fBDtSearchRetrieve\fP" 10
+Retrieves an object given data from a results list node\&. When a results
+list contains all the information an application needs, retrieval by
+DtSearch may not be required\&. For example when the documents themselves
+are not stored in DtSearch databases and the document references are
+available from the results list, the calling program may access the
+objects directly\&.
+.SS "DtSearch MessageList"
+.PP
+All functions can potentially return multiple messages on a global linked
+list of messages called the MessageList\&. Most unsuccessful return codes append
+at least one message to the MessageList, but even successful returns may append
+messages, and multiple messages are always possible\&.
+.PP
+Messages are standard C text strings terminated by a zero byte, and
+were designed to be displayed directly to users\&.
+.PP
+Several API utility functions are available for manipulating the MessageList\&.
+.SS "Fatal API Errors"
+.PP
+Certain fatal errors will require an immediate abort from the engine\&.
+By default fatal error messages will be written to the
+\fBstderr\fP, but can be written to a text file specified
+in \fBDtSearchInit\fP\&.
+.PP
+All API aborts are implemented through a call to
+\fBDtSearchExit\fP\&. \fBDtSearchExit()\fP
+ensures cleanup of a number of system resources before the final call to
+\fBexit\fP\&. Developers can add an additional user exit
+to \fBDtSearchExit\fP to specify additional emergency
+clean up before process exit\&.
+.SH "CONSTANTS"
+.SS "Function Return Code Constants"
+.PP
+Most API functions return one of a set of standard integer return codes\&.
+The return code \fBDtSrOK\fP means complete
+success, other return codes indicate various levels of negative results or
+failure\&.
+.TS
+tab();
+lw(1.635417i) lw(3.864583i).
+\fBDtSrOK\fPT{
+Normal, affirmative, successful
+response\&.
+T}
+\fBDtSrNOTAVAIL\fPT{
+Generic negative response\&. For
+example, no hits on search, no such record, etc\&.
+T}
+\fBDtSrFAIL\fPT{
+Miscellaneous unsuccessful engine
+returns\&.
+T}
+\fBDtSrREINIT\fPT{
+Engine reinitialized, request canceled\&.
+Often returned when invalid database name detected\&. Caller should clean up
+and call \fBDtSearchReinit()\fP\&.
+T}
+\fBDtSrERROR\fPFatal caller programming error\&.
+\fBDtSrABORT\fPT{
+Fatal engine failure, caller must
+abort\&.
+T}
+.TE
+.SS "Language Numbers"
+.PP
+Each DtSearch database is associated with an integer representing among
+other things the natural language of its documents\&. These constants are used
+throughout the API to identify the supported languages\&.
+.TS
+tab();
+lw(1.222222i) lw(0.611111i) lw(3.666667i).
+\fBDtSrLaENG\fP0English, ASCII char set (default)
+\fBDtSrLaENG2\fP1English, ISO Latin-1 char set
+\fBDtSrLaESP\fP2Spanish, ISO Latin-1 char set
+\fBDtSrLaFRA\fP3French, ISO Latin-1 char set
+\fBDtSrLaITA\fP4Italian, ISO Latin-1 char set
+\fBDtSrLaDEU\fP5German, ISO Latin-1 char set
+\fBDtSrLaJPN\fP6Japanese, EUC, auto kanji compounds
+\fBDtSrLaJPN2\fP7T{
+Japanese, EUC, listed kanji compounds
+T}
+\fBDtSrLaLAST\fP7Last supported \fBDtSrLa\fP constant
+.TE
+.SS "Other General Constants"
+.TS
+tab();
+lw(2.218750i) lw(3.281250i).
+\fBDtSrVERSION\fPDtSearch version number string\&.
+\fBDtSrMAX_KTNAME\fPT{
+Maximum string length of a keytype
+name\&.
+T}
+\fBDtSrMAX_DB_KEYSIZE\fPT{
+Maximum size of the unique document
+key\&.
+T}
+\fBDtSrMAXWIDTH_HWORD\fPLargest possible word or stem size\&.
+\fBDtSrMAX_STEMCOUNT\fPT{
+Maximum number of boolean search
+terms\&.
+T}
+.TE
+.SS "DtSrObjdate Type"
+.PP
+\fBDtSrObjdate\fR is a typdef for
+an unsigned integer used as a date/time stamp for documents\&.
+.PP
+DtSearch queries may be qualified by document date ranges\&. The data
+type packs certain standard \fBstruct tm\fR fields into
+bitmap fields to minimize space\&.
+.PP
+\fBDtSrObjdate\fR are based on the
+western Gregorian calendar and are not guaranteed to map to other time locales\&.
+.PP
+DtSearch \fBobjdates\fR have a range
+from 1900 to 5995 inclusive and a resolution of 1 minute\&. From hi order bits
+to low:
+.TS
+tab();
+lw(1.635417i) lw(3.864583i).
+12 bits = \fBtm_year\fPT{
+(0 - 4095, years since 1900 (1900
+- 5995))
+T}
+4 bits = \fBtm_mon\fP(0 - 11, month name index)
+5 bits = \fBtm_mday\fP(1 - 31, day of month)
+5 bits = \fBtm_hour\fP(0 - 23, hours since midnight)
+6 bits = \fBtm_min\fP(0 - 59, minutes since top of hour)
+.TE
+.SH "STRUCTURES"
+.SS "DtSrKeytype Type"
+.PP
+.nf
+\f(CWtypedef struct {
+    char        \fBis_selected\fP;
+    char        \fBktchar\fP;
+    char        \fBname\fP   [ \fBDtSrMAX_KTNAME\fP+1];
+}       \fBDtSrKeytype\fR;\fR
+.fi
+.PP
+.PP
+A DtSearch keytype references a logical subset of the database\&.
+.PP
+The primary identifier for a keytype is the keytype character
+\fBktchar\fP\&. The \fBktchar\fP
+identifies the subset of the database that has that character as the first
+character of its document keys\&.
+.PP
+The \fBDtSrKeytype\fR structure associates
+the \fBktchar\fP with a short \fBname\fP string for use in user GUI labels identifying the keytype, and
+provides a boolean selection toggle for the keytype\&.
+.PP
+An array of \fBDtSrKeytype\fR structures
+is maintained by the API for each database after API initialization\&. The API
+function \fBDgSearchGetKeytypes()\fP is used to access the
+array\&.
+.PP
+The \fBis_selected\fP boolean in each array
+node indicates whether the user has selected that keytype to be returned in
+the current search\&. The application must ensure that the boolean reflects
+the current state of the user\&'s desires prior to any search\&. Typically this
+is done by having the \fBkeytypes array\fR track user interface
+toggle buttons for the database\&.
+.SS "DtSrResult Structure"
+.PP
+.nf
+\f(CWtypedef struct _DtSrResult {
+    struct _DtSrResult \fB*link\fP;
+    long        \fBflags\fP;
+    long        \fBobjflags\fP;
+    long        \fBobjuflags\fP;
+    long        \fBobjsize\fP;
+    \fBDtSrObjdates\fR         \fBobjdate\fP;
+    short       \fBobjtype\fP;
+    short       \fBobjcost\fP;
+    int         \fBdbn\fP;
+    DB_ADDR     \fBdba\fP;
+    short       \fBlanguage\fP;
+    char        \fBreckey\fP [\fBDtSrMAX_DB_KEYSIZE\fP];
+    int         \fBproximity\fP;
+    char        \fB*abstractp\fP;
+}       \fBDtSrResult\fR;\fR
+.fi
+.PP
+.PP
+The API function \fBDtSearchQuery\fP returns a results
+list upon successful completion of a search\&. A results list is a linked list
+of \fBDtSrResult\fR structures, where each node represents
+a database document that satisfied the query\&.
+.IP "\fIlink\fP" 10
+Pointer to the next results list node\&.
+.IP "\fIflags\fP" 10
+(reserved)
+.IP "\fIobjflags\fP" 10
+The constant \fBDtSrFlNOTAVAIL\fP
+means that the object is not retrievable from the search engine\&.
+.IP "\fIobjuflags\fP" 10
+User flags from database record\&. These are not used by DtSearch and
+are available for application definition\&.
+.IP "\fIobjsize\fP" 10
+In uncompressed bytes\&.
+.IP "\fIobjdate\fP" 10
+Zero is the null date; document is \&'undated\&'\&.
+.IP "\fIobjtype\fP" 10
+Document type from database header record\&. \fIObjtype\fP is typically used
+by application code to identify and launch browsers\&.
+.IP "" 10
+Values above x1000 (4096) are set aside for application
+definition\&. The following constants identify defined values:
+.TS
+tab();
+lw(2.208333i) lw(3.291667i).
+\fBDtSrObjUNKNOWN\fPT{
+Document type unknown or not applicable
+T}
+\fBDtSrObjTEXT\fPGeneric, unformatted flat text
+\fBDtSrObjBINARY\fPGeneric binary object
+\fBDtSrObjSGML\fPGeneric SGML formatted document
+\fBDtSrObjHTML\fPHTML formatted document
+\fBDtSrObjPOSTSCR\fPPostscript document
+\fBDtSrObjINTERLF\fPInterleaf document
+\fBDtSrObjDTINFO\fPDtInfo document
+.TE
+.IP "\fIobjcost\fP" 10
+(reserved)
+.IP "\fIdbn\fP" 10
+Database number; index into \fBdbnames\fR array
+from \fBDtSearchInit\fP and \fBDtSearchReinit\fP\&.
+.IP "\fIdba\fP" 10
+Atomic document identifier within a database\&.
+.IP "\fIlanguage\fP" 10
+Language number of the database \fBDtSrLa\&.\&.\&.\fP constant)\&.
+.IP "\fIreckey\fP" 10
+Document\&'s unique database key\&. The first character of reckey is the
+keytype character\&.
+.IP "\fIproximity\fP" 10
+Sort field for ranking results lists\&. Derived from frequency of occurrence
+statistics for the query words in the document\&. Often displayed to users
+as the subjective \&'distance\&' between the document and the query, in other
+words a measure of the likelihood that the document will satisfy the user\&'s
+needs\&.
+.IP "\fIabstractp\fP" 10
+Document\&'s abstract string from the database\&.
+.SS "DtSrHitword Structure"
+.PP
+.nf
+\f(CWtypedef struct {
+    long        \fIoffset\fP; /* word location in cleartext */
+    long        \fIlength\fP; /* length of word */
+}       \fBDtSrHitword\fR;\fR
+.fi
+.PP
+.PP
+Given a text string and the array of search terms returned from
+\fBDtSearchQuery\fP,
+\fBDtSearchHighlight\fP will generate a table of offsets
+and lengths where the search terms are located in the text\&. The table is
+typically used to highlight the search terms in the text is a manner
+appropriate to the application\&'s user interface\&.
+.PP
+The \fBDtSrHitword\fR structure is one element in the
+table\&. For each search term to be highlighted,
+\fIoffset\fP specifies the beginning byte for the
+term, and \fIlength\fP specifies the extent
+of the term in bytes\&.
+.SH "SEE ALSO"
+.PP
+\fBDtSrAPI\fP(3),
+\fBDtSearchInit\fP(3),
+\fBDtSearchReinit\fP(3),
+\fBDtSearchExit\fP(3),
+\fBDtSearchGetKeytypes\fP(3),
+\fBDtSearchSetMaxResults\fP(3),
+\fBDtSearchGetMaxResults\fP(3),
+\fBDtSearchQuery\fP(3),
+\fBDtSearchRetrieve\fP(3),
+\fBDtSearchHighlight\fP(3),
+\fBDtSearchValidDateString\fP(3),
+\fBDtSearchMergeResults\fP(3),
+\fBDtSearchSortResults\fP(3),
+\fBDtSearchFreeResults\fP(3),
+\fBDtSearchHasMessages\fP(3),
+\fBDtSearchAddMessages\fP(3),
+\fBDtSearchGetMessages\fP(3),
+\fBDtSearchFreeMessages\fP(3),
+\fBDtSearch\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,283 @@
+'\" t
+...\" infogen.sgm /main/8 1996/11/15 15:37:49 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtinfogen" "user cmd"
+.SH "NAME"
+\fBdtinfogen\fP \(em access DtInfo Toolkit functions
+.SH "SYNOPSIS"
+.PP
+\fBdtinfogen\fP [-h] 
+.PP
+\fBdtinfogen admin\fP [-h] 
+.PP
+\fBdtinfogen build\fP [-h]  [-T \fITmpDir\fP]  [-m \fICatalogFile\fP] -l \fILibrary\fP -d \fILibraryDescription\fP -n \fILibraryShortName\fP \fIBookcase\fP \&.\&.\&. 
+.PP
+\fBdtinfogen tocgen\fP [-h]  [-T \fITmpDir\fP]  [-m \fICatalogFile\fP]  [-id \fITOCid\fP]  [-title \fITOCtitle\fP] \fIdocument\fP \&.\&.\&. -f \fITOCfile\fP 
+.PP
+\fBdtinfogen update\fP [-h]  [-T \fITmpDir\fP]  [-m \fICatalogFile\fP] -b \fIBookcaseName\fP -l \fIlibrary\fP \fIstylesheet\fP 
+.PP
+\fBdtinfogen validate\fP [-h]  [-T \fITmpDir\fP]  [-m \fICatalogFile\fP] \fISGMLdocument\fP 
+.SH "DESCRIPTION"
+.PP
+The DtInfo Toolkit command, \fBdtinfogen\fP, is used to create and modify
+hypertext information libraries\&.
+\fBdtinfogen\fP implements its functions
+through a set of subcommands:
+.IP "\fBadmin\fP" 10
+Modify the contents of an information library by copying, renaming,
+rearranging, or removing bookcases\&. You can also list the contents of a
+library\&.
+.IP "\fBbuild\fP" 10
+Build a DtInfo information library from bookcase
+specifications\&.
+.IP "\fBtocgen\fP" 10
+Generate a hypertext table of contents for a book\&.
+.IP "\fBupdate\fP" 10
+Replace existing style sheet information in a bookcase\&.
+.IP "\fBvalidate\fP" 10
+Verify that a document conforms to SGML and to the
+DocBook\&.DTD\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-h\fP" 10
+Displays a help message for each available option\&.
+.IP "\fB-T\fP \fITmpDir\fP" 10
+Specifies the directory in which temporary files are placed during the
+build process\&. The default is to use the environment variable
+\fBTMPDIR\fP\&. If variable
+\fBTMPDIR\fP is not set,
+\fB/usr/tmp\fP is used\&.
+.IP "\fB-m\fP \fICatalogFile\fP" 10
+Specifies a catalog file conforming to the SGML Open specification for
+resolving SGML entities\&. You can use multiple
+\fB-m\fP options to specify as many
+\fICatalogFile\fPs as you wish\&.
+.IP "\fB-l\fP \fILibrary\fP" 10
+Specifies the location of the information library to build\&.
+\fILibrary\fP is the name of the directory that
+contains the built bookcase(s)\&.
+.IP "\fB-d\fP \fILibraryDescription\fP" 10
+\fILibraryDescription\fP is a brief description of
+the information library to be built\&.
+.IP "\fB-n\fP \fILibraryShortName\fP" 10
+\fILibraryShortName\fP specifies an abbreviated name for
+the information library to be built\&.
+.IP "\fIbookcase\fP" 10
+The SGML bookcase instance conforming to the
+dtinfoBook\&.dtd\&.
+.IP "\fB-f\fP \fITOCfile\fP" 10
+Specifies the SGML instance of a hypertext table of contents conforming
+to the dtinfoTOC\&.dtd\&.
+.IP "\fIdocument\fP" 10
+A DocBook SGML source file\&.
+.IP "\fB-b\fP \fIBookcaseName\fP" 10
+The name of the bookcase whose style sheet information will be updated\&.
+The content of the \fBBOOKCASENAME\fP element in the
+dtinfoBook\&.dtd\&.
+.IP "\fIstylesheet\fP" 10
+The style sheet that is to be updated in the bookcase\&.
+.IP "\fISGMLdocument\fP" 10
+Any SGML document to be validated\&.
+.IP "\fB-id\fP \fITOCid\fP" 10
+The unique identifier of the hypertext table of contents
+document\&.
+.IP "\fB-title\fP \fITOCtitle\fP" 10
+The title of the table of contents\&. This title will be
+displayed in the DtInfo Browser\&.
+.SH "admin"
+.PP
+The \fBadmin\fP subcommand is an interactive script for
+modifying an existing information library without rebuilding it\&. It
+displays a command line menu from which you select one of the following
+administration functions to perform on a specified information library:
+.IP "   \(bu" 6
+Copy a bookcase from another library\&.
+.IP "   \(bu" 6
+Remove a bookcase from a library\&.
+.IP "   \(bu" 6
+List the bookcases in a library\&.
+.IP "   \(bu" 6
+Rename a bookcase\&.
+.IP "   \(bu" 6
+Rearrange bookcases within a library\&.
+.SS "Example"
+.PP
+Enter the \fBdtinfogen admin\fP command in a shell window:
+.PP
+.nf
+\f(CW\fBdtinfogen admin\fP\fR
+.fi
+.PP
+.PP
+The following menu appears:
+.PP
+.nf
+\f(CW1) Copy a bookcase from another library
+2) Remove a bookcase
+3) List bookcases in a library
+4) Rename a bookcase
+5) Rearrange bookcases in a library
+6) Exit
+Please enter your choice [1-6]\fR
+.fi
+.PP
+.PP
+Enter the number associated with the administrative task you
+want to perform\&.
+\fBdtinfogen admin\fP prompts for additional input as
+required\&.
+.SH "build"
+.PP
+The \fBbuild\fP subcommand compiles a bookcase specification into a
+hypertext database\&. It validates the hypertext links, the identifier
+uniqueness, and the hierarchical structure of the bookcase elements\&.
+It also creates a full-text search index\&.
+.SS "Example"
+.PP
+Enter the \fBdtinfogen\ build\fP command in a shell
+window\&.
+.PP
+To build an information library containing multiple bookcases,
+an example command might be:
+.PP
+.nf
+\f(CW\fBbuild -l\fP \fIUNIXLib\fP\fB -T\fP \fB/usr/pers\fP\fB\fP \fIProgBooks\fP\fB\fP \fIRefBooks\fP\fB\fP \fIUAdminBooks\fP\fR
+.fi
+.PP
+.PP
+This \fBbuild\fP command creates a document database from
+three bookcases (\fIProgBooks\fP,
+\fIRefBooks\fP, and
+\fIUAdminBooks\fP) and reports any errors\&. It uses
+\fB/usr/pers\fP to store temporary intermediate files,
+and it deposits the database in a directory (library) called
+\fIUNIXLib\fP\&.
+.SH "tocgen"
+.PP
+The \fBtocgen\fP subcommand reads the SGML-conforming
+source file(s) for a book and generates a hypertext table of contents\&.
+.SS "Example"
+.PP
+Enter the \fBdtinfogen tocgen\fP command in a shell
+window\&.
+.PP
+To generate a hypertext table of contents for a book containing six SGML
+book source files, each of which contains a separate chapter, an example
+command might be:
+.PP
+.nf
+\f(CW\fBdtinfogen tocgen -T\fP \fB/usr/pers\fP\fB -f\fP \fIPerl\&.TOC\fP\fB -id\fP \fIPerl0594\fP
+\fB-title\fP \fI"Perl Table of Contents" Perl\&.01 Perl\&.02 Perl\&.03 Perl\&.04 Perl\&.05 Perl\&.06\fP\fR
+.fi
+.PP
+.PP
+This \fBtocgen\fP command generates a table of contents file named
+\fIPerl\&.TOC\fP with the unique identifier
+\fIPerl0594\fP and the title
+\fIPerlTable of Contents\fP\&.
+\fBtocgen\fP parses the files
+\fIPerl\&.01\fP,
+\fIPerl\&.02\fP,
+\fIPerl\&.03\fP,
+\fIPerl\&.04\fP,
+\fIPerl\&.05\fP, and
+\fIPerl\&.06\fP to produce the TOC\&.
+.PP
+The \fBtocgen\fP process uses
+\fB/usr/pers\fP to store temporary intermediate files
+during processing\&.
+.SH "update"
+.PP
+The \fBdtinfogen update\fP command dynamically replaces
+existing style sheets in the DtInfo document database\&.
+.SS "Example"
+.PP
+Enter the \fBdtinfogen update\fP command in a shell window\&.
+.PP
+Here is an example of a \fBdtinfogen update\fP command used
+to reformat the documents and/or document sections that use the
+specified style sheet:
+.PP
+.nf
+\f(CW\fBdtinfogen update -T\fP \fB/usr/pers\fP\fB -b\fP \fIICE9\fP\fB -l\fP \fIBrunn style\fP\fR
+.fi
+.PP
+.PP
+This \fBupdate\fP command reformats the documents or
+document sections in the \fIBrunn\fP information
+library that use the style sheet named \fIstyle\fP,
+that is specified in the bookcase named \fIICE9\fP\&.
+.SH "validate"
+.PP
+The \fBdtinfogen validate\fP command performs SGML
+validation on bookcase specifications, on individual book source files,
+or any SGML document\&.
+.SS "Examples"
+.PP
+Enter the \fBdtinfogen validate\fP in a shell window\&.
+.PP
+Here is an example of a \fBdtinfogen validate\fP command
+that performs validation on three SGML book source files:
+.PP
+.nf
+\f(CW\fBdtinfogen validate\fP \fI03\&.Structure\&.N\fP\fB\fP \fI04\&.Process\&.N\fP\fB\fP \fI05\&.BookArea\&.N\fP\fR
+.fi
+.PP
+.PP
+This \fBvalidate\fP command verifies the SGML compliance of
+the three files, \fI03\&.Structure\&.N\fP,
+\fI04\&.Process\&.N\fP, and \fI05\&.BookArea\&.N\fP,
+based on their DTD(s)\&.
+.SH "SEE ALSO"
+.PP
+\fBdtinfo\fP(1),
+\fBdtinfoBook\&.dtd - dtinfoBookdtd\fP(5),
+\fBdtinfoStyle\&.dtd - dtinfoStyledtd\fP(5),
+\fBdtinfoTOC\&.dtd - dtinfoTOCdtd\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

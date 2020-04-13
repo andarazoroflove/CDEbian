@@ -1,0 +1,144 @@
+'\" t
+...\" exec.sgm /main/7 1996/09/08 19:51:42 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtexec" "user cmd"
+.SH "NAME"
+\fBdtexec\fP \(em execute command-based action
+.iX "dtexec"
+.SH "SYNOPSIS"
+.PP
+\fBdtexec\fP [-open\fIopen_option\fP]  [-ttprocid\fIprocid\fP]  [-tmp\fItmpfile\fP]  [\fIcmd\fP]  [\fIcmd_arg \&.\&.\&.\fP] 
+.SH "DESCRIPTION"
+.PP
+XCDE uses the
+\fBdtexec\fP utility to execute
+\fBCOMMAND\fP actions\&.
+In normal
+usage, XCDE automatically invokes
+\fBdtexec\fP when it is needed\&.
+XCDE users
+and administrators do not need to interact directly with
+\fBdtexec\fP\&.
+.PP
+The primary argument for
+\fBdtexec\fP is the name of a command to execute and
+any command-line options or arguments for that command\&.
+There are
+several important services that
+\fBdtexec\fP provides for the commands that it executes\&.
+These services are controlled via the options specified in the ``OPTIONS\&'\&'
+section in this document\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-open\fP \fIopen_option\fP" 10
+The \fB-open\fP option tells
+\fBdtexec\fP whether it should continue to run or
+exit after the command terminates\&.
+.IP "" 10
+The valid values for
+\fIopen_option\fP are:
+.RS
+.IP "\fB-1\fP" 10
+(default) continue to execute after \fIcmd\fP terminates\&.
+.IP "\fB0\fP" 10
+exit as soon as \fIcmd\fP terminates\&.
+.IP "\fBn\fP" 10
+continue to execute if \fIcmd\fP terminates
+within \fBn\fP seconds of starting\&.
+.RE
+.IP "" 10
+The values \fB-1\fP and \fBn\fP are typically used when
+\fBCOMMAND\fP actions are executed in a terminal emulator to control
+the lifetime of the terminal window\&.
+.IP "\fB-ttprocid\fP \fIprocid\fP" 10
+The
+\fBdtexec\fP command uses the \fB-ttprocid\fP option
+to send ToolTalk messages
+back to the application that invoked the
+\fBCOMMAND\fP action\&.
+These
+messages are used to convey status information (for example, the command
+has terminated)\&.
+.IP "\fB-tmp\fP \fItmpfile\fP" 10
+The \fB-tmp\fP option names a temporary file that
+\fBdtexec\fP removes after \fIcmd\fP terminates if either no \fI-ttprocid\fP option is
+supplied or contact is lost with the specified \fIprocid\fP\&.
+In normal usage, the parent process that starts
+\fBdtexec\fP, performs this cleanup\&.
+This option can be issued multiple times, once for each tmp file present\&.
+Typically, \fItmpfile\fP also appears as a \fIcmd_arg\fP\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "\fB0\fP" 10
+Implies all system resources were available to fork and exec the requested
+command, not that the requested command executed successfully\&.
+.IP "\fB1\fP" 10
+An error occurred\&.
+.SH "APPLICATION USAGE"
+.PP
+Normally, application programs do not directly invoke this program\&.
+Normally, an application program links with the
+action service, which then invokes
+\fBdtexec\fP as needed\&.
+Applications should use the
+\fBwaitTime\fP resource to configure the value of the
+\fI-open_option\fP and the \fBDtexecPath\fP resource to configure
+the location of
+\fBdtexec\fP\&.
+.PP
+If \fIcmd\fP writes to stderr, the error messages are time stamped
+and redirected to the user\&'s errorlog file (\fB$HOME/\&.dt/errorlog\fP)
+when \fIopen_option\fP is \fB0\fP\&. If \fIopen_option\fP is set
+otherwise, the error messages are typically displayed in the
+terminal window\&.
+.SH "SEE ALSO"
+.PP
+\fBdtaction\fP(1), \fBdtactionfile\fP(4)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

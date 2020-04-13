@@ -1,0 +1,2808 @@
+'\" t
+...\" ksh.sgm /main/11 1996/09/08 19:54:20 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtksh" "user cmd"
+.SH "NAME"
+\fBdtksh\fP \(em shell command language interpreter with access to many X, Xt,
+Xm and XCDE functions
+.SH "SYNOPSIS"
+.PP
+\fBdtksh\fP [-abCefimnuvx]  [-o\0\fIoption\fP]  [+abCefmnuvx]  [+o\0\fIoption\fP]  [\fIcommand_file\fP  [\fIargument\fP  | \&.\&.\&. ] ] 
+.PP
+\fBdtksh\fP [-abCefimnuvx]  [-o\0\fIoption\fP]  [+abCefmnuvx]  [+o\0\fIoption\fP]  [\fIcommand_string\fP]  [\fIcommand_name\fP  [\fIargument\fP  | \&.\&.\&. ] ] 
+.PP
+\fBdtksh\fP [-s]  [-abCefimnuvx]  [-o\0\fIoption\fP]  [+abeCefmnuvx]  [+o\0 \fIoption\fP]  [\fIargument\fP  | \&.\&.\&. ] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtksh\fP utility is a version of the KornShell extended
+to support:
+.IP "   \(bu" 6
+Access to many X, Xt and Motif facilities from within a shell script
+.IP "   \(bu" 6
+Fully localized shell scripts
+.IP "   \(bu" 6
+Access to the XCDE application help system
+.IP "   \(bu" 6
+Customization of script-based GUI attributes (such as font and colors)
+using the XCDE customization tool
+.IP "   \(bu" 6
+Response to session-management \fBSave state\fP directives
+.IP "   \(bu" 6
+Response to window-management \fBClose\fP directives
+.IP "   \(bu" 6
+Access to most of the XCDE Desktop Services Message Set
+.IP "   \(bu" 6
+Access to many of the XCDE Data Typing API functions
+.IP "   \(bu" 6
+Access to the XCDE Action API functions
+.SH "OPTIONS"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "OPERANDS"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "RESOURCES"
+.PP
+The \fBdtksh\fP interpreter has no relevant resources outside
+of those that affect the various widgets that can be instantiated from within
+a \fBdtksh\fP script\&. Refer to the manual page of the relevant
+widget for information on the resources that apply to that widget\&.
+.SH "STDIN"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "INPUT FILES"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following information describes the environment variables that \fBdtksh\fP uses that are in addition to those documented in the manual
+page for the \fBsh\fP command language interpreter\&.
+.SS "Immediate Return Value (\^-\^)"
+.PP
+Many of the category 3 commands (as described in the \fBReturn Values From Built-in Commands\fP section) return a single value using an environment
+variable specified as the first argument to the command (in the synopses for
+these special commands, the first argument has the name \fIvariable\fP)\&. If this return value is immediately used in an expression,
+the special environment variable ``-\&'\&' can be used in place of a variable
+name\&. When \fBdtksh\fP encounters ``-\&'\&' as the name of
+the environment variable in which the return value is to be returned, it returns
+the result as the value of the command\&. This allows the shell script to embed
+the command call in another command call\&. (This feature works only for commands
+that return a single value; the value is the first argument and the argument
+has the name \fIvariable\fP)\&. For example:
+.PP
+.nf
+\f(CWXtDisplay DISPLAY $FORM
+XSync $DISPLAY true\fR
+.fi
+.PP
+.PP
+can be replaced by the equivalent:
+.PP
+.nf
+\f(CWXSync $(XtDisplay "-" $FORM) true\fR
+.fi
+.PP
+.PP
+The reference to \fI$DISPLAY\fP is replaced with the
+value returned by the call to \fBXtDisplay\fP\&. This capability
+is available for all category 3 commands except those that create a widget,
+those that return more than a single value and those whose first argument
+is not named \fIvariable\fP\&. Commands that do not
+accept ``-\&'\&' as the environment variable name include: \fBXtInitialize\fP, \fBXtCreateApplicationShell\fP, \fBXtCreatePopupShell\fP, \fBXtCreateManagedWidget\fP and \fBXtCreateWidget\fP; all commands of the form:
+.PP
+.nf
+\f(CWXmCreate\&.\&.\&.()\fR
+.fi
+.PP
+.PP
+and most commands of the form:
+.PP
+.nf
+\f(CWtt_\&.\&.\&.()\fR
+.fi
+.PP
+.SS "Variables Set By XtInitialize"
+.PP
+The \fBXtInitialize\fP command sets the following variables:
+.PP
+.nf
+\f(CW\fIDTKSH_APPNAME\fP \fIDTKSH_ARGV\fP \fIDTKSH_TOPLEVEL\fP\fR
+.fi
+.PP
+.SS "Callback Context Variables"
+.PP
+An application registers a callback with a widget to specify which condition
+it is interested in, and what action should occur when that condition occurs\&.
+The action can be any arbitrary \fBdtksh\fP command line\&. For
+example:
+.PP
+.nf
+\f(CWXtAddCallback $WIDGET activateCallback "ActivateProc"
+XtAddCallback $WIDGET activateCallback "XtSetSensitive $BUTTON false"\fR
+.fi
+.PP
+.PP
+A callback needs to be passed some context so it can determine what
+condition led to its call\&. For a C procedure, this information is typically
+passed in a \fIcall_data\fP structure\&. For example,
+a Scale widget invoking a \fBvalueChangedCallback\fP passes in
+\fIcall_data\fP an instance of the following structure:
+.PP
+.nf
+\f(CWtypedef struct {
+        int     reason;
+        XEvent  *event;
+        int     value;
+} XmScaleCallbackStruct;\fR
+.fi
+.PP
+.PP
+The C application\&'s callback does something like:
+.PP
+.nf
+\f(CWif (scaleCallData->reason == XmCR_VALUE_CHANGED) {
+        eventType = scaleCallData->event->type;
+        display = scaleCallData->event->xany\&.display;
+}\fR
+.fi
+.PP
+.PP
+Similarly in \fBdtksh\fP, when a callback is invoked, the
+following special environment variables are set up before the callback command
+executes:
+.IP "\fICB_WIDGET\fP" 10
+Set to the widget handle for the widget invoking the callback\&.
+.IP "\fICB_CALL_DATA\fP" 10
+Set to the address of the \fIcall_data\fP
+structure passed by the widget to the callback, but its usefulness lies in
+the nested sub-variables associated with it\&.
+.PP
+The \fICB_CALL_DATA\fP environment variable represents
+a pointer to a structure; access to its fields uses a syntax similar to the
+C code\&. Nested environment variables are defined, named the same as the fields
+of the structure (but folded to all upper case), and use a dot to indicate
+containment of an element in a structure\&. Thus, the preceding C code, to access
+the \fIcall_data\fP provided by the Scale widget,
+translates to:
+.PP
+.nf
+\f(CWif [${CB_CALL_DATA\&.REASON} = "CR_VALUE_CHANGED"]; then
+        eventType=${CB_CALL_DATA\&.EVENT\&.TYPE}
+        display=${CB_CALL_DATA\&.EVENT\&.XANY\&.DISPLAY}
+fi\fR
+.fi
+.PP
+.PP
+The same is true of the event structure within the \fIcall_data\fP structure\&.
+.PP
+For most callback structures, the shell script is able to reference
+any of the fields defined for the particular callback structure, using the
+technique previously described in this manual page\&. In
+most cases, the shell script is not able to alter the values of the fields
+within these structures\&. The exception to this is the \fBXmTextVerifyCallbackStruct\fR, available during the \fIlosingFocusCallback\fP, the \fImodifyVerifyCallback\fP and the \fImotionVerifyCallback\fP for the text widget\&. The \fBdtksh\fP
+utility supports the modification of certain fields within this structure,
+to the extent that it is supported by Motif\&. The following fields within the
+callback structure can be modified:
+.PP
+.nf
+\f(CWCB_CALL_DATA\&.DOIT
+CB_CALL_DATA\&.STARTPOS
+CB_CALL_DATA\&.ENDPOS
+CB_CALL_DATA\&.TEXT\&.PTR
+CB_CALL_DATA\&.TEXT\&.LENGTH
+CB_CALL_DATA\&.TEXT\&.FORMAT\fR
+.fi
+.PP
+.PP
+An example of how these fields can be modified:
+.PP
+.nf
+\f(CWCB_CALL_DATA\&.DOIT="false"
+CB_CALL_DATA\&.TEXT\&.PTR="*"
+CB_CALL_DATA\&.TEXT\&.LENGTH=1\fR
+.fi
+.PP
+.SS "Event Handler Context Variables"
+.PP
+As with callbacks, an application registers event handlers with a widget
+to specify what action should occur when one of the specified events occurs\&.
+Again, the action can be any arbitrary \fBdtksh\fP command line\&.
+For example:
+.PP
+.nf
+\f(CWXtAddEventHandler $W "Button2MotionMask" false "ActivateProc"
+XtAddEventHandler $W "ButtonPressMask|ButtonReleaseMask" \
+        false "echo action"\fR
+.fi
+.PP
+.PP
+Just as with callbacks, two environment variables are defined to provide
+context to the event handler:
+.IP "\fIEH_WIDGET\fP" 10
+Set to the widget handle for the widget for which the event handler
+is registered\&.
+.IP "\fIEH_EVENT\fP" 10
+Set to the address of the \fBXEvent\fR
+that triggered the event handler\&.
+.PP
+Access to the fields within the \fBXEvent\fR
+structure is the same as for the \fICB_CALL_DATA\fP environment
+variable previously described in this manual page\&. For
+example:
+.PP
+.nf
+\f(CWif [${EH_EVENT\&.TYPE} = "ButtonPress"]; then
+        echo X = ${EH_EVENT\&.XBUTTON\&.X}
+        echo Y = ${EH_EVENT\&.XBUTTON\&.Y}
+elif [${EH_EVENT\&.TYPE} = "KeyPress"]; then
+        echo X = ${EH_EVENT\&.XKEY\&.X}
+        echo Y = ${EH_EVENT\&.XKEY\&.Y}
+fi\fR
+.fi
+.PP
+.SS "Translation Context Variables"
+.PP
+Xt provides for event translations to be registered for a widget; their
+context is provided in the same way as with event handlers\&. The two variables
+defined for translation commands are:
+.IP "\fITRANSLATION_WIDGET\fP" 10
+Set to the widget handle for the widget for which the translation is
+registered\&.
+.IP "\fITRANSLATION_EVENT\fP" 10
+Set to the address of the \fBXEvent\fR
+that triggered the translation\&.
+.PP
+Dot-notation provides access to the fields of the event:
+.PP
+.nf
+\f(CWecho Event type = ${TRANSLATION_EVENT\&.TYPE}
+echo Display = ${TRANSLATION_EVENT\&.XANY\&.DISPLAY}\fR
+.fi
+.PP
+.SS "Workspace Callback Context Variables"
+.PP
+An application can register a callback function that is invoked any
+time the user changes to a new workspace\&. When the callback is invoked, the
+following two special environment variables are set, and can be accessed by
+the shell callback code:
+.IP "\fICB_WIDGET\fP" 10
+Set to the widget handle for the widget invoking the callback\&.
+.IP "\fICB_CALL_DATA\fP" 10
+Set to the X atom that uniquely identifies the new workspace\&. This can
+be converted to its string representation using the \fBXmGetAtomName\fP command\&.
+.SS "Accessing Event Subfields"
+.PP
+The \fBXEvent\fR structure has many
+different configurations based on the event\&'s type\&. The \fBdtksh\fP
+utility provides access only to the most frequently used \fBXEvent\fRs\&. Any of the other standard \fBXEvent\fRs are accessed using the event type \fBXANY\fP, followed by any of the subfields defined by the \fBXANY\fP event structure, which includes the following subfields:
+.PP
+.nf
+\f(CW${TRANSLATION_EVENT\&.XANY\&.TYPE}
+${TRANSLATION_EVENT\&.XANY\&.SERIAL}
+${TRANSLATION_EVENT\&.XANY\&.SEND_EVENT}
+${TRANSLATION_EVENT\&.XANY\&.DISPLAY}
+${TRANSLATION_EVENT\&.XANY\&.WINDOW}\fR
+.fi
+.PP
+.PP
+The \fBdtksh\fP utility supports full access to all of
+the event fields for the following event types:##
+.PP
+.nf
+\f(CW\fBXANY\fP
+\fBXBUTTON\fP
+\fBXEXPOSE\fP
+\fBXNOEXPOSE\fP
+\fBXGRAPHICSEXPOSE\fP
+\fBXKEY\fP
+\fBXMOTION\fP\fR
+.fi
+.PP
+.PP
+The following examples show how the subfields for the previously listed
+event types are accessed:
+.PP
+.nf
+\f(CW${TRANSLATION_EVENT\&.XBUTTON\&.X}
+$(CB_CALL_DATA\&.EVENT\&.XKEY\&.STATE}
+${EH_EVENT\&.XGRAPHICSEXPOSE\&.WIDTH}\fR
+.fi
+.PP
+.SS "Input Context Variables"
+.PP
+Xt provides the \fBXtAddInput\fP(3) facility that allows
+an application to register interest in activity on a particular file descriptor\&.
+This generally includes data available for reading, the file descriptor being
+ready for writing, and exceptions on the file descriptor\&. If programming in
+C, the application provides a handler function that is invoked when the activity
+occurs\&. When reading data from the file descriptor, it is up to the handler
+to read the data from the input source and handle character escaping and line
+continuations\&.
+.PP
+The \fBdtksh\fP utility also supports the \fBXtAddInput\fP(3) facility, but has limited its functionality to reading data,
+and has taken the reading function a step further to make it easier for shell
+programmers to use\&. By default, when a shell script registers interest in
+a file descriptor, \fBdtksh\fP invokes the shell script\&'s input
+handler only when a complete line of text has been received\&. A complete line
+of text is defined to be a line terminated either by an unescaped \fB<newline>\fP character, or by end-of-file\&. The input handler is also called
+if no data is available and end-of-file is reached\&. This gives the handler
+the opportunity to use \fBXtRemoveInput\fP(3) to remove the
+input source, and to close the file descriptor\&.
+.PP
+The advantage of this default behavior is that input handlers do not
+need to do escape processing or handle line continuations\&. The disadvantage
+is that it assumes that all of the input is line-oriented and contains no
+binary information\&. If the input source does contain binary information, or
+if the input handler wants to read the data from the input source directly, \fBdtksh\fP also supports a raw input mode\&. In raw mode, \fBdtksh\fP does not read any of the data from the input source\&. Any time \fBdtksh\fP is notified that input is available on the input source, it
+invokes the shell script\&'s input handler\&. It then becomes the handler\&'s responsibility
+to read the incoming data, to perform any required buffering and escape processing,
+and to detect when end-of-file is reached (so that the input source can be
+removed and the file descriptor closed)\&.
+.PP
+Whether the input handler is configured to operate in the default mode
+or in raw mode, \fBdtksh\fP sets up several environment variables
+before calling the shell script\&'s input handler\&. These environment variables
+provide the input handler with everything needed to handle the incoming data:
+.IP "\fIINPUT_LINE\fP" 10
+If operating in the default mode, this variable contains the next complete
+line of input available from the input source\&. If \fIINPUT_EOF\fP
+is set to True, there is no data in this buffer\&. If operating in raw mode,
+this environment variable always contains an empty string\&.
+.IP "\fIINPUT_EOF\fP" 10
+If operating in the default mode, this variable is set to False any
+time \fIINPUT_LINE\fP contains data, and is set to True when
+end-of-file is reached\&. When end-of-file is reached, the input handler for
+the shell script should unregister the input source and close the file descriptor\&.
+If operating in raw mode, \fIINPUT_EOF\fP is always set to
+False\&.
+.IP "\fIINPUT_SOURCE\fP" 10
+Indicates the file descriptor for which input is available\&. If operating
+in raw mode, this file descriptor is used to obtain the pending input\&. The
+file descriptor is also used to close the input source when it is no longer
+needed\&.
+.IP "\fIINPUT_ID\fP" 10
+Indicates the ID returned by \fBXtAddInput\fP when the
+input source was originally registered\&. This information is needed in order
+to remove the input source using \fBXtRemoveInput\fP\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+Default\&.
+.SH "STDOUT"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "STDERR"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+The capabilities described here are extensions to those of the \fBsh\fP command language interpreter\&. See  \fBsh\fP(1)\&. The
+following subsections give a synopsis of each of the built-in commands added
+by \fBdtksh\fP to \fBsh\fP\&. In general, argument
+ordering and types are the same as for corresponding C procedures, with exceptions
+noted\&. For more detail on the functionality and arguments of a command, see
+the standard documentation for the corresponding X11, Xt, Motif or Desktop
+Services procedure\&.
+.PP
+In definitions listed in this document, arguments named \fIvariable\fP, \fIvariable2\fP, \fIvariable3\fP
+and so on, indicate that the shell script must supply the name of an environment
+variable, into which some value is returned\&.
+.PP
+All of the Xt commands used to create a new widget require that the
+widget class for the new widget be specified\&. The widget (or gadget) class
+name is the standard class name provided by Motif\&. For example, the class
+name for a Motif pushbutton widget is \fBXmPushButton\fP,
+while the class name for the Motif label gadget is \fBXmLabelGadget\fP\&. Commands that use their exit status to return a Boolean value
+(which can be used directly as part of an \fIif\fP statement)
+are noted as such\&.
+.PP
+Arguments enclosed within [] are optional\&.
+.SS "Dtksh Built-in Xlib Commands"
+.PP
+\fBXBell\fP [\fIdisplay volume\fP] 
+.PP
+\fBXClearArea\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y width height exposures\fP] 
+.PP
+\fBXClearWindow\fP [\fIdisplay drawable\fP] 
+.PP
+\fBXCopyArea\fP [\fIdisplay src dest srcX srcY width
+height destX destY\fP]  [\fIoptional
+GC arguments\fP] 
+.PP
+\fBXDefineCursor\fP [\fIdisplay window cursor\fP] 
+.PP
+\fBXDrawArc\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y width height angle1 angle2\fP] 
+.PP
+\fBXDrawLine\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx1 y1 x2 y2\fP] 
+.PP
+\fBXDrawLines\fP [\fIdisplay drawable\fP]  [\fI-coordinateMode\fP]  [\fIoptional GC arguments\fP]  [\fIx1 y1 x2 y2\fP]  [\fIx3 y3\0\&.\&.\&.\fP] 
+.PP
+The \fIcoordinateMode\fP operand is either \fBCoordModeOrigin\fP or \fBCoordModePrevious\fP\&. 
+.PP
+\fBXDrawPoint\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y\fP] 
+.PP
+\fBXDrawPoints\fP [\fIdisplay drawable\fP]  [\fI-coordinateMode\fP]  [\fIoptional GC arguments\fP]  [\fIx1 y1\fP]  [\fIx2 y2 x3 y3\0\&.\&.\&.\fP] 
+.PP
+The \fIcoordinateMode\fP operand is either \fBCoordModeOrigin\fP or \fBCoordModePrevious\fP\&. 
+.PP
+\fBXDrawRectangle\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y width height\fP] 
+.PP
+\fBXDrawSegments\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx1 y1 x2 y2\fP]  [\fIx3 y3 x4 y4\0\&.\&.\&.\fP] 
+.PP
+\fBXDrawString\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y string\fP] 
+.PP
+\fBXDrawImageString\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y string\fP] 
+.PP
+\fBXFillArc\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y width height angle1 angle2\fP] 
+.PP
+\fBXFillPolygon\fP [\fIdisplay drawable\fP]  [\fI-shape\fP]  [\fI-coordinateMode\fP]  [\fIoptional
+GC arguments\fP]  [\fIx1 y1 x2 y2\0\&.\&.\&.\fP] 
+.PP
+The \fIshape\fP operand is one of \fBComplex\fP, \fBConvex\fP or \fBNonconvex\fP, and
+where \fIcoordinateMode\fP is either \fBCoordModeOrigin\fP or \fBCoordModePrevious\fP\&. 
+.PP
+\fBXFillRectangle\fP [\fIdisplay drawable\fP]  [\fIoptional GC arguments\fP]  [\fIx y width height\fP] 
+.PP
+\fBXFlush\fP [\fIdisplay\fP] 
+.PP
+\fBXHeightOfScreen\fP [\fIvariable screen\fP] 
+.PP
+\fBXRaiseWindow\fP [\fIdisplay window\fP] 
+.PP
+\fBXRootWindowOfScreen\fP [\fIvariable screen\fP] 
+.PP
+\fBXSync\fP [\fIdisplay discard\fP] 
+.PP
+The \fIdiscard\fP operand is either True
+or False\&. 
+.PP
+\fBXTextWidth\fP [\fIvariable fontName string\fP] 
+.PP
+The \fBXTextWidth\fP command differs from the
+C procedure; it takes the name of a font instead of a pointer to a font structure\&. 
+.PP
+\fBXUndefineCursor\fP [\fIdisplay window\fP] 
+.PP
+\fBXWidthOfScreen\fP [\fIvariable screen\fP] 
+.SS "Built-in XtIntrinsic Commands"
+.PP
+\fBXtAddCallback\fP [\fIwidgetHandle callbackName
+dtksh-command\fP] 
+.PP
+The \fIcallbackName\fP operand is one of
+the standard Motif or Xt callback names, with the Xt or Xm prefix omitted;
+for example, \fIactivateCallback\fP\&. 
+.PP
+\fBXtAddEventHandler\fP [\fIwidgetHandle eventMask
+nonMaskableFlag dtksh-command\fP] 
+.PP
+The \fIeventMask\fP operand is of the form
+\fImask\fP| \fImask\fP| \fImask\fP and the \fImask\fP
+component is any of the standard set of \fBXEvent\fR masks; for example, \fBButtonPressMask\fP, where \fInonMaskableFlag\fP is either True or
+False\&. 
+.PP
+\fBXtAddInput\fP [\fIvariable\fP]  [\fI-r\fP]  [\fIfileDescriptor
+dtksh-command\fP] 
+.PP
+The \fBXtAddInput\fP command registers the
+indicated file descriptor with the X Toolkit as an alternative input source
+(that is, for reading)\&. The input handler for the shell script is responsible
+for unregistering the input source when it is no longer needed, and also to
+close the file descriptor\&. If the \fB-r\fP option is specified
+(raw mode), \fBdtksh\fP does not automatically read any of the
+data available from the input source; it is up to the specified \fBdtksh\fP command to read all data\&. If the \fB-r\fP
+option is not specified, the specified \fBdtksh\fP command is
+invoked only when a full line has been read (that is, a line terminated by
+either an unescaped \fB<newline>\fP character, or end-of-file) and
+when end-of-file is reached\&. The raw mode is useful for handlers expecting
+to process non-textual data, or for handlers not wanting \fBdtksh\fP
+to automatically read in a line of data\&. When end-of-file is detected, it
+is the responsibility of the input handler for the shell script to use \fBXtRemoveInput\fP to remove the input source, and to close the file
+descriptor, if necessary\&. In all cases, several environment variables are
+set up for the handler to use\&. These include the following:
+.IP "\fIINPUT_LINE\fP" 10
+Empty if raw mode; otherwise, contains next line to be processed\&.
+.IP "\fIINPUT_EOF\fP" 10
+Set to True if end-of-file reached; otherwise, set to False\&.
+.IP "\fIINPUT_SOURCE\fP" 10
+File descriptor associated with this input source\&.
+.IP "\fIINPUT_ID\fP" 10
+ID associated with this input handler; returned by \fBXtAddInput\fP\&.
+.PP
+\fBXtAddTimeout\fP [\fIvariable interval dtksh-command\fP] 
+.PP
+\fBXtAddWorkProc\fP [\fIvariable dtksh-command\fP] 
+.PP
+In \fBdtksh\fP, the \fIdtksh-command\fP is typically a \fBdtksh\fP function name\&. Like regular
+work procedures, this function is expected to return a value indicating whether
+the work procedure wants to be called again, or whether it has completed its
+work and can be automatically unregistered\&. If the \fBdtksh\fP
+function returns zero, the work procedure remains registered; any other value
+causes the work procedure to be automatically unregistered\&. 
+.PP
+\fBXtAugmentTranslations\fP [\fIwidgetHandle translations\fP] 
+.PP
+\fBXtCreateApplicationShell\fP [\fIvariable applicationName
+widgetClass\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXtCallCallbacks\fP [\fIwidgetHandle callbackName\fP] 
+.PP
+The \fIcallbackName\fP operand is one of
+the standard Motif or Xt callback names, with the Xt or Xm prefix omitted;
+for example, \fIactivateCallback\fP\&. 
+.PP
+\fBXtClass\fP [\fIvariable widgetHandle\fP] 
+.PP
+The command returns the name of the widget class associated
+with the passed-in widget handle\&. 
+.PP
+\fBXtCreateManagedWidget\fP [\fIvariable widgetName
+widgetClass parentWidgetHandle\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXtCreatePopupShell\fP [\fIvariable widgetName
+widgetClass parentWidgetHandle\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXtCreateWidget\fP [\fIvariable widgetName widgetClass
+parentWidgetHandle\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXtDestroyWidget\fP [\fIwidgetHandle\fP]  [\fIwidgetHandle\0\&.\&.\&.\fP] 
+.PP
+\fBXtDisplay\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXtDisplayOfObject\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXtGetValues\fP [\fIwidgetHandle resource:variable1\fP]  [\fIresource:variable2\0\&.\&.\&.\fP] 
+.PP
+\fBXtHasCallbacks\fP [\fIvariable widgetHandle callbackName\fP] 
+.PP
+The \fIcallbackName\fP operand is one of
+the standard Motif or Xt callback names, with the Xt or Xm prefix omitted:
+for example, \fIactivateCallback\fP variable is set to one
+of the strings \fBCallbackNoList\fP, \fBCallbackHasNone\fP or \fBCallbackHasSome\fP\&. 
+.PP
+\fBXtInitialize\fP [\fIvariable shellName applicationClassName
+applicationName arguments\fP] 
+.PP
+Similar to a typical Motif-based program, the \fIarguments\fP argument is used to reference any command-line arguments
+that might have been specified by the shell script user; these are typically
+referred using the shell syntax of \fI$@\fP\&. The \fIapplicationName\fP argument is listed because \fI$@\fP
+does not include \fI$0\fP\&. The \fIapplicationName\fP
+and \fIarguments\fP are used to build the argument
+list passed to the \fBXtInitialize\fP command\&. Upon completion,
+the environment variable \fIDTKSH_ARGV\fP is set to the argument
+list as returned by the \fBXtInitialize\fP command; the \fIDTKSH_TOPLEVEL\fP environment variable is set to the widget handle
+of the widget created by \fBXtInitialize\fP, and the \fIDTKSH_APPNAME\fP environment variable is set to the value of the \fIapplicationName\fP argument\&. The command returns a value that can
+be used in a conditional\&. 
+.PP
+\fBXtIsManaged\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXtIsSubclass\fP [\fIwidgetHandle widgetClass\fP] 
+.PP
+The \fBwidgetClass\fP operand
+is the name of a widget class\&. The command returns a value that can be used
+in a conditional\&. 
+.PP
+\fBXtNameToWidget\fP [\fIvariable referenceWidget
+name\fP] 
+.PP
+\fBXtIsRealized\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXtIsSensitive\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXtIsShell\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXtLastTimestampProcessed\fP [\fIvariable display\fP] 
+.PP
+\fBXtMainLoop\fP
+.PP
+\fBXtManageChild\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtManageChildren\fP [\fIwidgetHandle\fP]  [\fIwidgetHandle\0\&.\&.\&.\fP] 
+.PP
+\fBXtMapWidget\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtOverrideTranslations\fP [\fIwidgetHandle translations\fP] 
+.PP
+\fBXtParent\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXtPopdown\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtPopup\fP [\fIwidgetHandle grabType\fP] 
+.PP
+The \fIgrabType\fP operand is one of the
+strings \fBGrabNone\fP, \fBGrabNonexclusive\fP or \fBGrabExclusive\fP\&. 
+.PP
+\fBXtRealizeWidget\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtRemoveAllCallbacks\fP [\fIwidgetHandle callbackName\fP] 
+.PP
+The \fIcallbackName\fP operand is one of
+the standard Motif or Xt callback names, with the Xt or Xm prefix omitted;
+for example, \fIactivateCallback\fP\&. 
+.PP
+\fBXtRemoveCallback\fP [\fIwidgetHandle callbackName
+dtksh-command\fP] 
+.PP
+The \fIcallbackName\fP operand is one of
+the standard Motif or Xt callback names, with the Xt or Xm prefix omitted;
+for example, \fIactivateCallback\fP\&. As with traditional Xt
+callbacks, when a callback is removed, the same \fBdtksh\fP command
+string must be specified as was specified when the callback was originally
+registered\&. 
+.PP
+\fBXtRemoveEventHandler\fP [\fIwidgetHandle eventMask
+nonMaskableFlag dtksh-command\fP] 
+.PP
+The \fIeventMask\fP operand is of the form
+\fImask\fP| \fImask\fP| \fImask\fP and the \fImask\fP
+component is any of the standard set of \fBXEvent\fR masks; for example, \fBButtonPressMask\fP, where \fInonMaskableFlag\fP is either True or
+False\&. As with traditional Xt event handlers, when an event handler is removed,
+the same \fIeventMask\fP, \fInonMaskableFlag\fP
+setting and \fBdtksh\fP command string must be specified as was
+specified when the event handler was originally registered\&. 
+.PP
+\fBXtRemoveInput\fP [\fIinputId\fP] 
+.PP
+The \fIinputId\fP operand is the handle returned
+in the specified environment variable when the alternative input source was
+registered using the \fBXtAddInput\fP command\&. 
+.PP
+\fBXtRemoveTimeOut\fP [\fItimeoutId\fP] 
+.PP
+The \fItimeoutId\fP operand is the handle
+returned in the specified environment variable when the timeout was registered
+using the \fBXtAddTimeOut\fP command\&. 
+.PP
+\fBXtRemoveWorkProc\fP [\fIworkprocId\fP] 
+.PP
+The \fIworkprocId\fP operand is the handle
+returned in the specified environment variable when the work procedure was
+registered using the \fBXtAddWorkProc\fP command\&. 
+.PP
+\fBXtScreen\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXtSetSensitive\fP [\fIwidgetHandle state\fP] 
+.PP
+The \fIstate\fP operand is either
+True or False\&. 
+.PP
+\fBXtSetValues\fP [\fIwidgetHandle resource:value\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXtUninstallTranslations\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtUnmanageChild\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtUnmanageChildren\fP [\fIwidgetHandle\fP]  [\fIwidgetHandle\0\&.\&.\&.\fP] 
+.PP
+\fBXtUnmapWidget\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtUnrealizeWidget\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXtWindow\fP [\fIvariable widgetHandle\fP] 
+.SS "Built-in Motif Commands"
+.PP
+\fBXmAddWMProtocolCallback\fP [\fIwidgetHandle protocolAtom
+dtksh-command\fP] 
+.PP
+The \fIprotocolAtom\fP operand is typically
+obtained using the \fBXmInternAtom\fP command\&. 
+.PP
+\fBXmAddWMProtocols\fP [\fIwidgetHandle protocolAtom\fP]  [\fIprotocolAtom\0\&.\&.\&.\fP] 
+.PP
+The \fIprotocolAtom\fP operand is typically
+obtained using the \fBXmInternAtom\fP command\&. 
+.PP
+\fBXmCommandAppendValue\fP [\fIwidgetHandle string\fP]  [\fIXmCommandError widgetHandle errorString\fP] 
+.PP
+\fBXmCommandGetChild\fP [\fIvariable widgetHandle
+childType\fP] 
+.PP
+The \fIchildType\fP operand is one of the
+strings:
+.PP
+.nf
+\f(CW\fBDIALOG_COMMAND_TEXT\fP
+\fBDIALOG_PROMPT_LABEL\fP
+\fBDIALOG_HISTORY_LIST\fP
+\fBDIALOG_WORK_AREA\fP\fR
+.fi
+.PP
+.PP
+\fBXmCommandSetValue\fP [\fIwidgetHandle commandString\fP] 
+.PP
+\fBXmCreateArrowButton\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateArrowButtonGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateBulletinBoard\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateBulletinBoardDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateCascadeButton\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateCascadeButtonGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateCommand\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateDialogShell\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateDrawingArea\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateDrawnButton\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateErrorDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateFileSelectionBox\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateFileSelectionDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateForm\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateFormDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateFrame\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateInformationDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateLabel\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateLabelGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateList\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateMainWindow\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateMenuBar\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateMenuShell\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateMessageBox\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateMessageDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateOptionMenu\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePanedWindow\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePopupMenu\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePromptDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePulldownMenu\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePushButton\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreatePushButtonGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateQuestionDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateRadioBox\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateRowColumn\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateScale\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateScrollBar\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateScrolledList\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateScrolledText\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateScrolledWindow\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateSelectionBox\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateSelectionDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateSeparator\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateSeparatorGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateText\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateTextField\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateToggleButton\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateToggleButtonGadget\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateWarningDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateWorkArea\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmCreateWorkingDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBXmFileSelectionDoSearch\fP [\fIwidgetHandle directoryMask\fP] 
+.PP
+\fBXmFileSelectionBoxGetChild\fP [\fIvariable widgetHandle
+childType\fP] 
+.PP
+The \fIchildType\fP operand is one of the
+strings:
+.PP
+.nf
+\f(CW\fBDIALOG_APPLY_BUTTON\fP
+\fBDIALOG_CANCEL_BUTTON\fP
+\fBDIALOG_DEFAULT_BUTTON\fP
+\fBDIALOG_DIR_LIST\fP
+\fBDIALOG_DIR_LIST_LABEL\fP
+\fBDIALOG_FILTER_LABEL\fP
+\fBDIALOG_FILTER_TEXT\fP
+\fBDIALOG_HELP_BUTTON\fP
+\fBDIALOG_LIST\fP
+\fBDIALOG_LIST_LABEL\fP
+\fBDIALOG_OK_BUTTON\fP
+\fBDIALOG_SEPARATOR\fP
+\fBDIALOG_SELECTION_LABEL\fP
+\fBDIALOG_TEXT\fP
+\fBDIALOG_WORK_AREA\fP\fR
+.fi
+.PP
+.PP
+\fBXmGetAtomName\fP [\fIvariable display atom\fP] 
+.PP
+\fBXmGetColors\fP [\fIwidgetHandle background variable
+variable2 variable3 variable4\fP] 
+.PP
+The \fBXmGetColors\fP command differs from
+the C procedure in that it takes a \fIwidgetHandle\fP instead
+of a screen pointer and a colormap\&. 
+.PP
+\fBXmGetFocusWidget\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmGetPostedFromWidget\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmGetTabGroup\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmGetTearOffControl\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmGetVisibility\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmInternAtom\fP [\fIvariable display atomString
+onlyIfExistsFlag\fP] 
+.PP
+The \fIonlyIfExistsFlag\fP operand can be
+set to either True or False\&. 
+.PP
+\fBXmIsTraversable\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmListAddItem\fP [\fIwidgetHandle position itemString\fP] 
+.PP
+The ordering of the arguments to the \fBXmListAddItem\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListAddItems\fP [\fIwidgetHandle position itemString\fP]  [\fIitemString\0\&.\&.\&.\fP] 
+.PP
+The ordering of the arguments to the \fBXmListAddItems\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListAddItemsUnselected\fP [\fIwidgetHandle
+position itemString\fP]  [\fIitemString\0\&.\&.\&.\fP] 
+.PP
+The ordering of the arguments to the \fBXmListAddItemsUnselected\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListAddItemUnselected\fP [\fIwidgetHandle position
+itemString\fP] 
+.PP
+The ordering of the arguments to the \fBXmListAddItemUnselected\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListDeleteAllItems\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXmListDeleteItem\fP [\fIwidgetHandle itemString\fP] 
+.PP
+\fBXmListDeleteItems\fP [\fIwidgetHandle itemString\fP]  [\fIitemString\0\&.\&.\&.\fP] 
+.PP
+\fBXmListDeleteItemsPos\fP [\fIwidgetHandle itemCount
+position\fP] 
+.PP
+\fBXmListDeletePos\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmListDeletePositions\fP [\fIwidgetHandle position\fP]  [\fIposition\0\&.\&.\&.\fP] 
+.PP
+\fBXmListDeselectAllItems\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXmListDeselectItem\fP [\fIwidgetHandle itemString\fP] 
+.PP
+\fBXmListDeselectPos\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmListGetSelectedPos\fP [\fIvariable widgetHandle\fP] 
+.PP
+The command returns in \fIvariable\fP
+a comma-separated list of indices\&. The command returns a value that
+can be used in a conditional\&. 
+.PP
+\fBXmListGetKbdItemPos\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmListGetMatchPos\fP [\fIvariable widgetHandle
+itemString\fP] 
+.PP
+The command returns in \fIvariable\fP
+a comma-separated list of indices\&. The command returns a value that
+can be used in a conditional\&. 
+.PP
+\fBXmListItemExists\fP [\fIwidgetHandle itemString\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmListItemPos\fP [\fIvariable widgetHandle itemString\fP] 
+.PP
+\fBXmListPosSelected\fP [\fIwidgetHandle position\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmListPosToBounds\fP [\fIwidgetHandle position
+variable variable2 variable3 variable4\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmListReplaceItemsPos\fP [\fIwidgetHandle position
+itemString\fP]  [\fIitemString\0\&.\&.\&.\fP] 
+.PP
+The ordering of the arguments to the \fBXmListReplaceItemsPos\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListReplaceItemsPosUnselected\fP [\fIwidgetHandle
+position itemString\fP]  [\fIitemString\0\&.\&.\&.\fP] 
+.PP
+The ordering of the arguments to the \fBXmListReplaceItemsPosUnselected\fP command differs from the corresponding C function\&. 
+.PP
+\fBXmListSelectItem\fP [\fIwidgetHandle itemString
+notifyFlag\fP] 
+.PP
+The \fInotifyFlag\fP operand can be set to
+either True or False\&. 
+.PP
+\fBXmListSelectPos\fP [\fIwidgetHandle position
+notifyFlag\fP] 
+.PP
+The \fInotifyFlag\fP operand can be set to
+either True or False\&. 
+.PP
+\fBXmListSetAddMode\fP [\fIwidgetHandle state\fP] 
+.PP
+The \fIstate\fP operand can be
+set to either True or False\&. 
+.PP
+\fBXmListSetBottomItem\fP [\fIwidgetHandle itemString\fP] 
+.PP
+\fBXmListSetBottomPos\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmListSetHorizPos\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmListSetItem\fP [\fIwidgetHandle itemString\fP] 
+.PP
+\fBXmListSetKbdItemPos\fP [\fIwidgetHandle position\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmListSetPos\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmListUpdateSelectedList\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXmMainWindowSep1\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmMainWindowSep2\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmMainWindowSep3\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmMainWindowSetAreas\fP [\fIwidgetHandle menuWidgetHandle
+commandWidgetHandle horizontalScrollbarWidgetHandle verticalScrollbarWidgetHandle
+workRegionWidgetHandle\fP] 
+.PP
+\fBXmMenuPosition\fP [\fIwidgetHandle eventHandle\fP] 
+.PP
+The \fIeventHandle\fP operand refers to an \fBXEvent\fR that has typically been obtained by accessing
+the \fICB_CALL_DATA\&.EVENT\fP, \fIEH_EVENT\fP
+or \fITRANSLATION_EVENT\fP environment variables\&. 
+.PP
+\fBXmMessageBoxGetChild\fP [\fIvariable widgetHandle
+childType\fP] 
+.PP
+The \fIchildType\fP operand is one of the
+strings:
+.PP
+.nf
+\f(CW\fBDIALOG_CANCEL_BUTTON\fP
+\fBDIALOG_DEFAULT_BUTTON\fP
+\fBDIALOG_HELP_BUTTON\fP
+\fBDIALOG_MESSAGE_LABEL\fP
+\fBDIALOG_OK_BUTTON\fP
+\fBDIALOG_SEPARATOR\fP
+\fBDIALOG_SYMBOL_LABEL\fP\fR
+.fi
+.PP
+.PP
+\fBXmOptionButtonGadget\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmOptionLabelGadget\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmProcessTraversal\fP [\fIwidgetHandle direction\fP] 
+.PP
+The \fIdirection\fP operand is
+one of the strings:
+.PP
+.nf
+\f(CW\fBTRAVERSE_CURRENT\fP
+\fBTRAVERSE_DOWN\fP
+\fBTRAVERSE_HOME\fP
+\fBTRAVERSE_LEFT\fP
+\fBTRAVERSE_NEXT\fP
+\fBTRAVERSE_NEXT_TAB_GROUP\fP
+\fBTRAVERSE_PREV\fP
+\fBTRAVERSE_PREV_TAB_GROUP\fP
+\fBTRAVERSE_RIGHT\fP
+\fBTRAVERSE_UP\fP\fR
+.fi
+.PP
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmRemoveWMProtocolCallback\fP [\fIwidgetHandle
+protocolAtom dtksh-command\fP] 
+.PP
+The \fIprotocolAtom\fP operand is typically
+obtained using the \fBXmInternAtom\fP command\&. As with traditional
+WM callbacks, when a callback is removed, the same \fBdtksh\fP
+command string must be specified as was specified when the callback was originally
+registered\&. 
+.PP
+\fBXmRemoveWMProtocols\fP [\fIwidgetHandle protocolAtom\fP]  [\fIprotocolAtom\0\&.\&.\&.\fP] 
+.PP
+The \fIprotocolAtom\fP operand is typically
+obtained using the \fBXmInternAtom\fP command\&. 
+.PP
+\fBXmScaleGetValue\fP [\fIwidgetHandle variable\fP] 
+.PP
+\fBXmScaleSetValue\fP [\fIwidgetHandle value\fP] 
+.PP
+\fBXmScrollBarGetValues\fP [\fIwidgetHandle variable
+variable2 variable3 variable4\fP] 
+.PP
+\fBXmScrollBarSetValues\fP [\fIwidgetHandle value
+sliderSize increment pageIncrement notifyFlag\fP] 
+.PP
+The \fInotifyFlag\fP operand can be set to
+either True or False\&. 
+.PP
+\fBXmScrollVisible\fP [\fIwidgetHandle widgetHandle
+leftRightMargin topBottomMargin\fP] 
+.PP
+\fBXmSelectionBoxGetChild\fP [\fIvariable widgetHandle
+childType\fP] 
+.PP
+The \fIchildType\fP operand is one of the
+strings:
+.PP
+.nf
+\f(CW\fBDIALOG_CANCEL_BUTTON\fP
+\fBDIALOG_DEFAULT_BUTTON\fP
+\fBDIALOG_HELP_BUTTON\fP
+\fBDIALOG_APPLY_BUTTON\fP
+\fBDIALOG_LIST\fP
+\fBDIALOG_LIST_LABEL\fP
+\fBDIALOG_OK_BUTTON\fP
+\fBDIALOG_SELECTION_LABEL\fP
+\fBDIALOG_SEPARATOR\fP
+\fBDIALOG_TEXT\fP
+\fBDIALOG_WORK_AREA\fP\fR
+.fi
+.PP
+.PP
+\fBXmTextClearSelection\fP [\fIwidgetHandle time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&. 
+.PP
+\fBXmTextCopy\fP [\fIwidgetHandle time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&.
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextCut\fP [\fIwidgetHandle time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&.
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextDisableRedisplay\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXmTextEnableDisplay\fP [\fIwidgetHandle\fP] 
+.PP
+\fBXmTextFindString\fP [\fIwidgetHandle startPosition
+string direction variable\fP] 
+.PP
+The \fIdirection\fP operand is
+one of the strings \fBTEXT_FORWARD\fP
+or \fBTEXT_BACKWARD\fP\&. The command returns
+a value that can be used in a conditional\&. 
+.PP
+\fBXmTextGetBaseline\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetEditable\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextGetInsertionPosition\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetLastPosition\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetMaxLength\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetSelection\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetSelectionPosition\fP [\fIwidgetHandle
+variable variable2\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextGetString\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextGetTopCharacter\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextInsert\fP [\fIwidgetHandle position string\fP] 
+.PP
+\fBXmTextPaste\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextPosToXY\fP [\fIwidgetHandle position variable
+variable2\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextRemove\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextReplace\fP [\fIwidgetHandle fromPosition
+toPosition string\fP] 
+.PP
+\fBXmTextScroll\fP [\fIwidgetHandle lines\fP] 
+.PP
+\fBXmTextSetAddMode\fP [\fIwidgetHandle state\fP] 
+.PP
+The \fIstate\fP operand can be
+set to either True or False\&. 
+.PP
+\fBXmTextSetEditable\fP [\fIwidgetHandle editableFlag\fP] 
+.PP
+The \fIeditableFlag\fP operand can be set
+to either True or False\&. 
+.PP
+\fBXmTextSetHighlight\fP [\fIwidgetHandle leftPosition
+rightPosition mode\fP] 
+.PP
+The \fImode\fP operand is one
+of the strings:
+.PP
+.nf
+\f(CW\fBHIGHLIGHT_NORMAL\fP
+\fBHIGHLIGHT_SELECTED\fP
+\fBHIGHLIGHT_SECONDARY_SELECTED\fP\fR
+.fi
+.PP
+.PP
+\fBXmTextSetInsertionPosition\fP [\fIwidgetHandle
+position\fP] 
+.PP
+\fBXmTextSetMaxLength\fP [\fIwidgetHandle maxLength\fP] 
+.PP
+\fBXmTextSetSelection\fP [\fIwidgetHandle firstPosition
+lastPosition time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&. 
+.PP
+\fBXmTextSetString\fP [\fIwidgetHandle string\fP] 
+.PP
+\fBXmTextSetTopCharacter\fP [\fIwidgetHandle topCharacterPosition\fP] 
+.PP
+\fBXmTextShowPosition\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmTextXYToPos\fP [\fIvariable widgetHandle x
+y\fP] 
+.PP
+\fBXmTextFieldClearSelection\fP [\fIwidgetHandle
+time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&. 
+.PP
+\fBXmTextFieldGetBaseline\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextFieldGetEditable\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldGetInsertionPosition\fP [\fIvariable
+widgetHandle\fP] 
+.PP
+\fBXmTextFieldGetLastPosition\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextFieldGetMaxLength\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextFieldGetSelection\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextFieldGetSelectionPosition\fP [\fIwidgetHandle
+variable variable2\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldGetString\fP [\fIvariable widgetHandle\fP] 
+.PP
+\fBXmTextFieldInsert\fP [\fIwidgetHandle position
+string\fP] 
+.PP
+\fBXmTextFieldPosToXY\fP [\fIwidgetHandle position
+variable variable2\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldRemove\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldReplace\fP [\fIwidgetHandle fromPosition
+toPosition string\fP] 
+.PP
+\fBXmTextFieldSetEditable\fP [\fIwidgetHandle editableFlag\fP] 
+.PP
+The \fIeditableFlag\fP operand can be set
+to either True or False\&. 
+.PP
+\fBXmTextFieldSetHighlight\fP [\fIwidgetHandle leftPosition
+rightPosition mode\fP] 
+.PP
+The \fImode\fP operand is one
+of the strings:
+.PP
+.nf
+\f(CW\fBHIGHLIGHT_NORMAL\fP \fBHIGHLIGHT_SELECTED\fP \fBHIGHLIGHT_SECONDARY_SELECTED\fP\fR
+.fi
+.PP
+.PP
+\fBXmTextFieldSetInsertionPosition\fP [\fIwidgetHandle
+position\fP] 
+.PP
+\fBXmTextFieldSetMaxLength\fP [\fIwidgetHandle maxLength\fP] 
+.PP
+\fBXmTextFieldSetSelection\fP [\fIwidgetHandle firstPosition
+lastPosition time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&. 
+.PP
+\fBXmTextFieldSetString\fP [\fIwidgetHandle string\fP] 
+.PP
+\fBXmTextFieldShowPosition\fP [\fIwidgetHandle position\fP] 
+.PP
+\fBXmTextFieldXYToPos\fP [\fIvariable widgetHandle
+x y\fP] 
+.PP
+\fBXmTextFieldCopy\fP [\fIwidgetHandle time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR,
+or from a call to the \fBXtLastTimestampProcessed\fP command\&.
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldCut\fP [\fIwidgetHandle time\fP] 
+.PP
+The \fItime\fP operand is typically
+either obtained from within an \fBXEvent\fR
+or from a call to the \fBXtLastTimestampProcessed\fP command\&.
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldPaste\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmTextFieldSetAddMode\fP [\fIwidgetHandle state\fP] 
+.PP
+The \fIstate\fP operand can be
+set to either True or False\&. 
+.PP
+\fBXmToggleButtonGadgetGetState\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmToggleButtonGadgetSetState\fP [\fIwidgetHandle
+state notifyFlag\fP] 
+.PP
+The \fIstate\fP operand can be
+set to either True or False\&. The \fInotifyFlag\fP operand can
+be set to either True or False\&. 
+.PP
+\fBXmToggleButtonGetState\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBXmToggleButtonSetState\fP [\fIwidgetHandle state
+notifyFlag\fP] 
+.PP
+The \fIstate\fP operand can be
+set to either True or False\&. The \fInotifyFlag\fP operand can
+be set to either True or False\&. 
+.PP
+\fBXmUpdateDisplay\fP [\fIwidgetHandle\fP] 
+.SS "Built-in XCDE Application Help Commands"
+.PP
+\fBDtCreateHelpQuickDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBDtCreateHelpDialog\fP [\fIvariable parentWidgetHandle
+name\fP]  [\fIresource:value\0\&.\&.\&.\fP] 
+.PP
+\fBDtHelpQuickDialogGetChild\fP [\fIvariable widgetHandle
+childType\fP] 
+.PP
+The \fIchildType\fP operand is one of the
+strings:
+.PP
+.nf
+\f(CW\fBHELP_QUICK_OK_BUTTON\fP
+\fBHELP_QUICK_PRINT_BUTTON\fP
+\fBHELP_QUICK_HELP_BUTTON\fP
+\fBHELP_QUICK_SEPARATOR\fP
+\fBHELP_QUICK_MORE_BUTTON\fP
+\fBHELP_QUICK_BACK_BUTTON\fP\fR
+.fi
+.PP
+.PP
+\fBDtHelpReturnSelectedWidgetId\fP [\fIvariable
+widgetHandle variable2\fP] 
+.PP
+The \fIvariable\fP operand is
+set to one of the strings:
+.PP
+.nf
+\f(CW\fBHELP_SELECT_VALID\fP
+\fBHELP_SELECT_INVALID\fP
+\fBHELP_SELECT_ABORT\fP
+\fBHELP_SELECT_ERROR\fP\fR
+.fi
+.PP
+.PP
+and \fIvariable2\fP is set to the \fIwidgetHandle\fP for the selected widget\&. 
+.PP
+\fBDtHelpSetCatalogName\fP [\fIcatalogName\fP] 
+.SS "Built-in Localization Commands"
+.PP
+\fBcatopen\fP [\fIvariable catalogName\fP] 
+.PP
+Opens the indicated message catalog, and returns the catalog
+ID in the environment variable specified by \fIvariable\fP\&.
+If a shell script needs to close the file descriptor associated
+with a message catalog, the catalog ID must be closed using the \fBcatclose\fP command\&. 
+.PP
+\fBcatgets\fP [\fIvariable catalogId setNumber messageNumber
+defaultMessageString\fP] 
+.PP
+Attempts to extract the requested message string from the
+message catalog associated with the \fIcatalogId\fP argument\&.
+If the message string cannot be located, the default message string is returned\&.
+In either case, the returned message string is placed into the environment
+variable indicated by \fIvariable\fP\&. 
+.PP
+\fBcatclose\fP [\fIcatalogId\fP] 
+.PP
+Closes the message catalog associated with the indicated \fIcatalogId\fP\&. 
+.SS "Built-in Session Management Commands"
+.PP
+\fBDtSessionRestorePath\fP [\fIwidgetHandle variable
+sessionFile\fP] 
+.PP
+Given the filename for the session file (excluding any path
+information), this command returns the full pathname for the session file
+in the environment variable indicated by \fIvariable\fP\&.
+The command returns a value that can be used in a conditional,
+indicating whether the command succeeded\&. 
+.PP
+\fBDtSessionSavePath\fP [\fIwidgetHandle variable
+variable2\fP] 
+.PP
+The full pathname for the session file is returned in environment
+variable indicated by \fIvariable\fP\&. The filename
+portion of the session file (excluding any path information) is returned in
+the environment variable indicated by \fIvariable2\fP\&. The
+command returns a value that can be used in a conditional, indicating whether
+the command succeeded\&. 
+.PP
+\fBDtShellIsIconified\fP [\fIwidgetHandle\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBDtSetStartupCommand\fP [\fIwidgetHandle commandString\fP] 
+.PP
+Part of the session management process is telling the session
+manager how to restart the application the next time the user reopens the
+session\&. This command passes along the specified command string to the session
+manager\&. The widget handle should refer to an application shell\&. 
+.PP
+\fBDtSetIconifyHint\fP [\fIwidgetHandle iconifyHint\fP] 
+.PP
+The \fIiconifyHint\fP operand can be set
+to either True or False\&. This command sets the initial iconified state for
+a shell window\&. This command only works if the window associated with the
+widget has not yet been realized\&. 
+.SS "Built-in Workspace Management Commands"
+.PP
+\fBDtWsmAddCurrentWorkspaceCallback\fP [\fIvariable
+widgetHandle dtksh-command\fP] 
+.PP
+This command evaluates the specified \fBdtksh\fP
+command whenever the user changes workspaces\&. The handle associated with this
+callback is returned in the environment variable indicated by \fIvariable\fP\&. The widget indicated by \fIwidgetHandle\fP
+should be a shell widget\&. 
+.PP
+\fBDtWsmRemoveWorkspaceCallback\fP [\fIcallback-handle\fP] 
+.PP
+The \fIcallback-handle\fP must be a handle
+that was returned by \fBDtWsmAddCurrentWorkspaceCallback\fP\&.
+.PP
+\fBDtWsmGetCurrentWorkspace\fP [\fIdisplay rootWindow
+variable\fP] 
+.PP
+This command returns the X atom representing the user\&'s
+current workspace in the environment variable indicated by \fIvariable\fP\&. The \fBXmGetAtomName\fP command maps the X
+atom into its string representation\&. 
+.PP
+\fBDtWsmSetCurrentWorkspace\fP [\fIwidgetHandle
+workspaceNameAtom\fP] 
+.PP
+This command changes the user\&'s current workspace to the
+workspace indicated by \fIworkspaceNameAtom\fP\&. The command
+returns a value that can be used in a conditional, indicating whether the
+command succeeded\&. 
+.PP
+\fBDtWsmGetWorkspaceList\fP [\fIdisplay rootWindow
+variable\fP] 
+.PP
+This command returns in \fIvariable\fP
+a string of comma-separated X atoms, representing the current set
+of workspaces defined for the user\&. The command returns a value that can be
+used in a conditional, indicating whether the command succeeded\&. 
+.PP
+\fBDtWsmGetWorkspacesOccupied\fP [\fIdisplay window
+variable\fP] 
+.PP
+This command returns a string of comma-separated X atoms,
+representing the current set of workspaces occupied by the indicated shell
+window in the environment variable indicated by \fIvariable\fP\&.
+The command returns a value that can be used in a conditional,
+indicating whether the command succeeded\&. 
+.PP
+\fBDtWsmSetWorkspacesOccupied\fP [\fIdisplay window
+workspaceList\fP] 
+.PP
+This command moves the indicated shell window to the set
+of workspaces indicated by the string \fIworkspaceList\fP,
+which must be a comma-separated list of X atoms\&. 
+.PP
+\fBDtWsmAddWorkspaceFunctions\fP [\fIdisplay window\fP] 
+.PP
+\fBDtWsmRemoveWorkspaceFunctions\fP [\fIdisplay
+window\fP] 
+.PP
+\fBDtWsmOccupyAllWorkspaces\fP [\fIdisplay window\fP] 
+.PP
+\fBDtWsmGetCurrentBackdropWindows\fP [\fIdisplay
+rootWindow variable\fP] 
+.PP
+This command returns in \fIvariable\fP
+a string of comma-separated window IDs representing the set of root
+backdrop windows\&. 
+.SS "Built-in Action Commands"
+.PP
+The set of commands in this section provides the programmer with the
+tools for loading the action databases, querying information about actions
+defined in the databases, and requesting that an action be initiated\&.
+.PP
+\fBDtDbLoad\fP
+.PP
+This command reads in the action and data types databases\&.
+It must be called before any of the other Action or Data Typing Commands\&.
+The shell script should also use the \fBDtDbReloadNotify\fP command
+so that the shell script can be notified if new databases must be loaded\&. 
+.PP
+\fBDtDbReloadNotify\fP [\fIdtksh-command\fP] 
+.PP
+The specified \fBdtksh\fP command is executed
+when the notification is received\&. Typically, the \fBdtksh\fP
+command includes a call to the \fBDtDbLoad\fP command\&. 
+.PP
+\fBDtActionExists\fP [\fIactionName\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.PP
+\fBDtActionLabel\fP [\fIvariable actionName\fP] 
+.PP
+If the action does not exist, then an empty string is returned\&. 
+.PP
+\fBDtActionDescription\fP [\fIvariable actionName\fP] 
+.PP
+This command returns an empty string if the action is not
+defined, or if the \fBDESCRIPTION\fP attribute
+is not specified\&. 
+.PP
+\fBDtActionInvoke\fP [\fIwidgetHandle actionName
+termOpts execHost contextDir useIndicator\fP]  [\fIdtksh-command\fP]  [FILE  | \fIfileName\fP ]  [\0\&.\&.\&.] 
+.PP
+The [FILE \fIfileName\fP] couplets can be
+used to specify file arguments to be used by \fBDtActionInvoke\fP
+when invoking the specified action\&. The \fIdtksh-command\fP
+argument is not supported in XCDE 1\&.0, and should be specified as a null ("\!") value\&. 
+.SS "Built-in Data Typing Commands"
+.PP
+\fBDtDtsLoadDataTypes\fP
+.PP
+This command should be invoked before any of the other data
+typing commands\&. 
+.PP
+\fBDtDtsFileToDataType\fP [\fIvariable filePath\fP] 
+.PP
+This command returns the name of the data type associated
+with the file indicated by the \fIfilePath\fP argument in the
+\fIvariable\fP argument\&. The
+\fIvariable\fP argument is set to an empty string if the file cannot be typed\&. 
+.PP
+\fBDtDtsFileToAttributeValue\fP [\fIvariable filePath
+attrName\fP] 
+.PP
+This command returns the string representing the value of
+the specified attribute for the data type associated with the indicated file
+in the \fIvariable\fP argument\&. If the attribute
+is not defined, or if the file cannot be typed, the \fIvariable\fP argument is set to an empty string\&. 
+.PP
+\fBDtDtsFileToAttributeList\fP [\fIvariable filePath\fP] 
+.PP
+This command returns the space-separated list of attribute
+names defined for the data type associated with the indicated file in the
+\fIvariable\fP argument\&. A shell script queries the individual
+values for the attributes using the \fBDtDtsFileToAttributeValue\fP
+command\&. The \fIvariable\fP argument is set to
+an empty string if the file cannot be typed\&. This command differs from the
+corresponding C function in that it only returns the names of the defined
+attributes and not their values\&. 
+.PP
+\fBDtDtsDataTypeToAttributeValue\fP [\fIvariable
+dataType attrName optName\fP] 
+.PP
+This command returns the string representing the value of
+the specified attribute for the indicated data type in \fIvariable\fP\&. If the attribute is not defined, or if the indicated data
+type does not exist, the \fIvariable\fP argument
+is set to an empty string\&. 
+.PP
+\fBDtDtsDataTypeToAttributeList\fP [\fIvariable
+dataType optName\fP] 
+.PP
+This command returns the space-separated list of attribute
+names defined for the indicated data type in \fIvariable\fP\&.
+A shell script queries the individual values for the attributes
+using the \fBDtDtsDataTypeToAttributeValue\fP command\&. The
+\fIvariable\fP argument is set to an empty string if the
+data type is not defined\&. This command differs from the corresponding C function
+in that it only returns the names of the defined attributes, and not their
+values\&. 
+.PP
+\fBDtDtsFindAttribute\fP [\fIvariable name value\fP] 
+.PP
+This command returns a space-separated list of data type
+names whose attribute, indicated by the \fIname\fP
+argument, has the value indicated by the \fIvalue\fP
+argument\&. If an error occurs, the \fIvariable\fP
+argument is set to an empty string\&. 
+.PP
+\fBDtDtsDataTypeNames\fP [\fIvariable\fP] 
+.PP
+This command returns a space-separated list representing
+all of the data types currently defined in the data types database\&. If an
+error occurs, the \fIvariable\fP argument is set
+to an empty string\&. 
+.PP
+\fBDtDtsSetDataType\fP [\fIvariable filePath dataType
+override\fP] 
+.PP
+The \fIvariable\fP argument is
+set to the resultant saved data type for the directory\&. 
+.PP
+\fBDtDtsDataTypeIsAction\fP [\fIdataType\fP] 
+.PP
+The command returns a value that can be used in a conditional\&. 
+.SS "Built-in XCDE Desktop Services Message Set Commands"
+.PP
+The following set of commands implement a subset of the Desktop Services
+Message Set, allowing shell script participation in the Desktop Services protocol\&.
+Many of the ToolTalk commands differ slightly from their associated C programming
+call\&. For ToolTalk commands that typically return a pointer, a C application
+can validate that pointer by calling the \fBtt_ptr_error\fP
+function; this C function call returns a \fBTt_status\fR value, which indicates whether the pointer was valid, and if
+not, why it was not\&. In \fBdtksh\fP, all of the Desktop Services
+Message Set Commands that return a pointer also return the associated \fBTt_status\fR value for the pointer automatically;
+this saves the shell script from needing to make an additional call to check
+the validity of the original pointer\&. In the case of a pointer error occurring, \fBdtksh\fP returns an empty string for the pointer value, and sets the \fBTt_status\fR code accordingly\&. The \fBTt_status\fR value is returned in the \fIstatus\fP
+argument\&. The \fBTt_status\fR
+value is a string representing the error, and can assume any of the values
+shown in the manual page for  \fBTt/tt_c\&.h - Tttt_c\fP(5)\&.
+.PP
+Some of the commands take a message scope as an argument\&. For these
+commands, the \fIscope\fP argument can be set to a string representing
+any of the constants documented for \fBtt_message_scope\fP(3),
+and in the manual pages for the individual ToolTalk functions\&.
+.PP
+\fBtt_file_netfile\fP [\fIvariable status file name\fP] 
+.PP
+\fBtt_netfile_file\fP [\fIvariable status netfile
+name\fP] 
+.PP
+\fBtt_host_file_netfile\fP [\fIvariable status host
+file name\fP] 
+.PP
+\fBtt_host_netfile_file\fP [\fIvariable status host
+netfile name\fP] 
+.PP
+\fBttdt_open\fP [\fIvariable status variable2 toolname
+vendor version sendStarted\fP] 
+.PP
+This command returns in the \fIvariable\fP
+argument the \fIprocId\fP associated with the connection\&.
+It returns the file descriptor associated with the connection in \fIvariable2\fP; this file descriptor can be used in registering an alternative
+Xt input handler via the \fBXtAddInput\fP command\&. The \fIsendStarted\fP argument is True or False\&. Any \fIprocIds\fP
+returned by \fBttdt_open\fP contain embedded spaces\&. To prevent \fBdtksh\fP from interpreting the \fIprocId\fP as multiple
+arguments (versus a single argument with embedded spaces), references to the
+environment variable containing the \fIprocId\fP must be within
+double quotes, as shown:
+.PP
+.nf
+\f(CWttdt_close STATUS "$PROC_ID" "" True\fR
+.fi
+.PP
+.PP
+\fBtttk_Xt_input_handler\fP [\fIprocId source id\fP] 
+.PP
+In order for the ToolTalk messages to be received and processed,
+the shell script must register an Xt input handler for the file descriptor
+returned by the call to \fBttdt_open\fP\&. The Xt input handler
+is registered using the \fBXtAddInput\fP command, and the handler
+must be registered as a raw input handler\&. The input handler that the shell
+script registers should invoke \fBtttk_Xt_input_handler\fP to
+get the message received and processed\&. The following code block demonstrates
+how this is done:
+.PP
+.nf
+\f(CWttdt_open PROC_ID STATUS FID "Tool" "HP" "1\&.0" True
+XtAddInput INPUT_ID -r $FID "ProcessTTInput \"$PROC_ID\""
+ProcessTTInput()
+{
+        tttk_Xt_input_handler $1 $INPUT_SOURCE $INPUT_ID
+}\fR
+.fi
+.PP
+.PP
+Refer to the description of the \fBXtAddInput\fP command
+for more details about alternative Xt input handlers\&. This command can be
+specified as an alternative Xt input handler, using the \fBXtAddInput\fP command\&. The \fIprocId\fP value should be that which
+was returned by the \fBttdt_open\fP command\&. When registering \fBtttk_Xt_input_handler\fP as an alternative Xt input handler, it must
+be registered as a raw handler to prevent \fBdtksh\fP from automatically
+breaking up the input into lines\&. This can be done as follows:
+.PP
+.nf
+\f(CWXtAddInput returnId -r $tt_fd \
+        "tttk_Xt_input_handler \"$procId\""\fR
+.fi
+.PP
+.PP
+The \" characters before and after the reference to the \fIprocId\fP environment variable are necessary to protect the embedded spaces
+in the \fIprocId\fP environment variable\&. 
+.PP
+\fBttdt_close\fP [\fIstatus procId newProcId sendStopped\fP] 
+.PP
+This command closes the indicated communications connection,
+and optionally sends a \fBStopped\fP notice, if
+the \fIsendStopped\fP argument is set to True\&. Because the \fIprocId\fP returned by the call to \fBttdt_open\fP contains
+embedded spaces, it must be enclosed within double quotes, as shown:
+.PP
+.nf
+\f(CWttdt_close STATUS "$PROC_ID" "$NEW_PROC_ID" False\fR
+.fi
+.PP
+.PP
+\fBttdt_session_join\fP [\fIvariable status sessId
+shellWidgetHandle join\fP] 
+.PP
+This command joins the session indicated by the \fIsessId\fP argument\&. If the \fIsessId\fP argument does
+not specify a value (that is, it is an empty string), then the default session
+is joined\&. If the \fIshellWidgetHandle\fP argument specifies
+a widget handle (that is, it is not an empty string), then it should refer
+to a mappedWhenManaged applicationShellWidget\&. The \fIjoin\fP
+argument is True or False\&. This command returns an opaque pattern handle in
+the \fIvariable\fP argument; this handle can be
+destroyed using the \fBttdt_session_quit\fP command when it is
+no longer needed\&. 
+.PP
+\fBttdt_session_quit\fP [\fIstatus sessId sessPatterns
+quit\fP] 
+.PP
+This command destroys the message patterns specified by
+the \fIsessPatterns\fP argument, and, if the \fIquit\fP argument is set to True, it quits the session indicated by the \fIsessId\fP argument, or it quits the default session if \fIsessId\fP is empty\&. 
+.PP
+\fBttdt_file_join\fP [\fIvariable status pathName
+scope join dtksh-command\fP] 
+.PP
+An opaque pattern handle is returned in the \fIvariable\fP argument; this should be destroyed by calling \fBttdt_file_quit\fP when there is no interest in monitoring messages
+for the indicated file\&. The requested \fIdtksh-command\fP is
+evaluated any time a message is received for the indicated file\&. When this \fIdtksh-command\fP is evaluated, the following environment variables
+are defined, and provide additional information about the received message:
+.IP "\fIDT_TT_MSG\fP" 10
+The opaque handle for the incoming message\&.
+.IP "\fIDT_TT_OP\fP" 10
+The string representing the operation to be performed; that is, \fBTTDT_DELETED\fP, \fBTTDT_MODIFIED\fP, \fBTTDT_REVERTED\fP, \fBTTDT_MOVED\fP or \fBTTDT_SAVED\fP\&.
+.IP "\fIDT_TT_PATHNAME\fP" 10
+The pathname for the file to which this message pertains\&.
+.IP "\fIDT_TT_SAME_EUID_EGID\fP" 10
+Set to True if the message was sent by an application operating with
+the same effective user ID and effective group ID as this process\&.
+.IP "\fIDT_TT_SAME_PROCID\fP" 10
+Set to True if the message was sent by an application with the same \fIprocId\fP (as returned by \fBttdt_open\fP)\&.
+.PP
+When the callback completes, it must indicate whether the passed-in
+message was consumed (replied-to, failed or rejected)\&. If the callback returns
+the message (as passed in the \fIDT_TT_MSG\fP environment variable),
+it is assumed that the message was not consumed\&. If the message was consumed,
+the callback should return zero, or one of the values returned by the \fBtt_error_pointer\fP command\&. The callback can return its value in the
+following fashion:
+.PP
+.nf
+\f(CWreturn $DT_TT_MSG (or) return 0\fR
+.fi
+.PP
+.PP
+\fBttdt_file_quit\fP [\fIstatus patterns quit\fP] 
+.PP
+This command destroys the message patterns specified by
+the \fIpatterns\fP argument, and also unregisters interest
+in the pathname that was passed to the \fBttdt_file_join\fP command
+if \fIquit\fP is set to True; the \fIpatterns\fP argument should be the value returned by a call to the \fBttdt_file_join\fP command\&. 
+.PP
+\fBttdt_file_event\fP [\fIstatus op patterns send\fP] 
+.PP
+This command creates, and optionally sends, a ToolTalk notice
+announcing an event pertaining to a file\&. The file is indicated by the pathname
+passed to the \fBttdt_file_join\fP command when \fIpatterns\fP was created\&. The \fIop\fP argument
+indicates what should be announced for the indicated file, and can be set
+to \fBTTDT_MODIFIED\fP, \fBTTDT_SAVED\fP or \fBTTDT_REVERTED\fP\&.
+If \fIop\fP is set to \fBTTDT_MODIFIED\fP, this command registers to handle \fBGet_Modified\fP, \fBSave\fP and \fBRevert\fP messages in the scope specified when the \fIpatterns\fP was created\&. If \fIop\fP is set to \fBTTDT_SAVED\fP or \fBTTDT_REVERTED\fP, this command unregisters from handling
+\fBGet_Modified\fP, \fBSave\fP
+and \fBRevert\fP messages for this file\&. If the \fIsend\fP argument is set to True, the indicated message is sent\&. 
+.PP
+\fBttdt_Get_Modified\fP [\fIpathName scope timeout\fP] 
+.PP
+This commands sends a \fBGet_Modified\fP
+request in the indicated scope, and waits for a reply, or for the
+specified \fItimeout\fP (in milliseconds) to elapse\&. It returns
+a value that can be used in a conditional\&. A value of True is returned if
+an affirmative reply is received within the specified \fItimeout\fP;
+otherwise, False is returned\&. 
+.PP
+\fBttdt_Save\fP [\fIstatus pathName scope timeout\fP] 
+.PP
+This command sends a \fBSave\fP
+request in the indicated scope, and waits for a reply, or for the indicated \fItimeout\fP (in milliseconds) to elapse\&. A status of \fBTT_OK\fP is returned if an affirmative reply is received before
+the \fItimeout\fP elapses; otherwise, a \fBTt_status\fR error value is returned\&. 
+.PP
+\fBttdt_Revert\fP [\fIstatus pathName scope timeout\fP] 
+.PP
+This command sends a \fBRevert\fP
+request in the indicated scope, and waits for a reply, or for the indicated \fItimeout\fP (in milliseconds) to elapse\&. A status of \fBTT_OK\fP is returned if an affirmative reply is received before
+the \fItimeout\fP elapses; otherwise, a \fBTt_status\fR error value is returned\&. 
+.PP
+The following commands are typically used by the callback registered
+with the \fBttdt_file_join\fP command\&. They serve as the mechanism
+for consuming and destroying a message\&. A message is consumed by either rejecting,
+failing or replying to it\&. The \fItt_error_pointer\fP is used
+by the callback to get a return pointer for indicating an error condition\&.
+.PP
+\fBtt_error_pointer\fP [\fIvariable ttStatus\fP] 
+.PP
+This command returns a magic value, which is used by ToolTalk
+to represent an invalid pointer\&. The magic value returned depends on the \fIttStatus\fP value passed in\&. Any of the valid \fBTt_status\fR values can be specified\&. 
+.PP
+\fBtttk_message_destroy\fP [\fIstatus msg\fP] 
+.PP
+This command destroys any patterns that may have been stored
+on the message indicated by the \fImsg\fP argument, and then
+it destroys the message\&. 
+.PP
+\fBtttk_message_reject\fP [\fIstatus msg msgStatus
+msgStatusString destroy\fP] 
+.PP
+This command sets the status and the status string for the
+indicated request message, and then rejects the message\&. It then destroys
+the passed-in message if the \fIdestroy\fP argument
+is set to True\&. This command is one way in which the callback specified with
+the \fBttdt_file_join\fP command consumes a message\&. After rejecting
+the message, it is typically safe to destroy the message using \fBtttk_message_destroy\fP\&. 
+.PP
+\fBtttk_message_fail\fP [\fIstatus msg msgStatus
+msgStatusString destroy\fP] 
+.PP
+This command sets the status and the status string for the
+indicated request message, and then it fails the message\&. It destroys the
+passed-in message if the \fIdestroy\fP argument
+is set to True\&. This command is one way in which the callback specified with
+the \fBttdt_file_join\fP command consumes a message\&. After failing
+the message, it is typically safe to destroy the message, using \fBtttk_message_destroy\fP\&. 
+.PP
+\fBtt_message_reply\fP [\fIstatus msg\fP] 
+.PP
+This command informs the ToolTalk service that the shell
+script has handled the message specified by the \fImsg\fP argument\&.
+After replying to a message, it is typically safe to destroy the message using
+the \fBtttk_message_destroy\fP command\&. 
+.SS "Listing Widget Information"
+.PP
+The \fIDtWidgetInfo\fP command provides the shell programmer
+a mechanism for obtaining information about the current set of instantiated
+widgets and their resources; the information is written to the standard output\&.
+This provides useful debugging information by including:
+.IP "   \(bu" 6
+The list of instantiated widgets, including: the name, class and parent
+of the widget; a handle for the widget; the name of the environment variable
+supplied when the widget was created; the state of the widget\&.
+.IP "   \(bu" 6
+The list of resources supported by a particular widget class\&.
+.IP "   \(bu" 6
+The list of constraint resources supported by a particular widget class\&.
+.PP
+\fIDtWidgetInfo\fP is called by using any of the following
+syntaxes; all of the arguments are optional:
+.PP
+\fBDtWidgetInfo\fP [\fIwidgetHandle\fP  | \fIwidgetName\fP ] 
+.PP
+If no arguments are supplied, information about all existing
+widgets is written to standard output; the information includes the name,
+the handle, the environment variable, the parent, the widget class and the
+state\&. If arguments are supplied, they should be either widget handles, or
+the names of existing widgets; in this case, the information is written only
+for the requested set of widgets\&. 
+.PP
+\fBDtWidgetInfo\fP [-r]  [\fIwidgetHandle\fP  | \fIwidgetClass\fP ] 
+.PP
+If no arguments are supplied, the list of supported resources
+is written to standard output for all available widget classes\&. If arguments
+are supplied, they should be either widget handles, or the widget class names;
+in this case, the information is written only for the requested set of widgets
+or widget classes\&. 
+.PP
+\fBDtWidgetInfo\fP [-R]  [\fIwidgetHandle\fP  | \fIwidgetClass\fP ] 
+.PP
+If no arguments are supplied, the list of supported constraint
+resources, if any, is written to standard output for all available widget
+classes\&. If arguments are supplied, they should be either widget handles,
+or the widget class names; in this case, the information is written only for
+the requested set of widgets or widget classes\&. 
+.PP
+\fBDtWidgetInfo\fP [-c]  [\fIwidgetClass\fP] 
+.PP
+If no arguments are supplied, the list of supported widget
+class names is written to standard output\&. If arguments are supplied, \fBdtksh\fP writes the widget class name (if it is defined); otherwise,
+it writes an error message to standard error\&. 
+.PP
+\fBDtWidgetInfo\fP [-h]  [\fIwidgetHandle\fP] 
+.PP
+If no arguments are supplied, the list of active widget
+handles is written to standard output\&. If arguments are supplied, they should
+represent widget handles, in which case the name of the associated widget
+is written to standard output\&. 
+.SS "Convenience Functions"
+.PP
+The XCDE system includes a file of \fBdtksh\fP convenience
+functions\&. This file is itself a shell script containing shell functions that
+may be useful to a shell programmer\&. The shell functions
+perform frequently used operations\&. These include functions for quickly creating
+certain kinds of dialogs (help, error, warning and so on), and a function
+for easily creating a collection of buttons and functions that make it easier
+to configure the constraint resources for a child of a form widget\&. It is
+not a requirement that shell script writers use these convenience functions;
+they are supplied to make it easier for developers to write shorter and more
+readable shell scripts\&. 
+.PP
+Before a shell script can access these functions, the shell script must
+first include the file containing the convenience functions\&. The convenience
+functions are located in the file \fB/usr/dt/lib/dtksh/DtFuncs\&.dtsh\fP, and are included in a shell script using the following notation:
+.PP
+.nf
+\f(CW\&. /usr/dt/lib/dtksh/DtFuncs\&.dtsh\fR
+.fi
+.PP
+.SS "DtkshAddButtons"
+.PP
+This convenience function adds one or more buttons of the same kind
+into a composite widget\&. Most frequently, it is used to add a collection of
+buttons into a menupane or menubar\&.
+.PP
+\fBDtkshAddButtons\fP [\fIparent widgetClass label1
+callback1\fP]  [\fIlabel2 callback2\0\&.\&.\&.\fP] 
+.PP
+\fBDtkshAddButtons\fP [\fI-w\fP]  [\fIparent widgetClass variable1 label1
+callback1\fP]  [\fIvariable2 label2
+callback2\0\&.\&.\&.\fP] 
+.PP
+The \fB-w\fP option indicates that the convenience
+function should return the widget handle for each of the buttons it creates\&.
+The widget handle is returned in the specified environment variable\&. The
+\fBwidgetClass\fP argument can be set to any one of the
+following, and defaults to \fBXmPushButtonGadget\fP, if not specified:
+.PP
+.nf
+\f(CW\fBXmPushButton\fP \fBXmPushButtonGadget\fP \fBXmToggleButton\fP \fBXmToggleButtonGadget\fP \fBXmCascadeButton\fP \fBXmCascadeButtonGadget\fP\fR
+.fi
+.PP
+.PP
+Examples:
+.PP
+.nf
+\f(CWDtkshAddButtons $MENU XmPushButtonGadget Open do_Open Save \
+        do_Save Quit exit
+DtkshAddButtons -w $MENU XmPushButtonGadget B1 Open \
+        do_Open B2 Save do_Save\fR
+.fi
+.PP
+.SS "DtkshSetReturnKeyControls"
+.PP
+This convenience function configures a text widget (within a form widget),
+so the \fB<carriage-return>\fP key does not activate the default
+button within the form\&. Instead, the \fB<carriage-return>\fP key
+moves the focus to the next text widget within the form\&. This is useful if
+a window, containing a series of text widgets and the default button, should
+not be activated until the user presses the \fB<carriage-return>\fP
+key while the focus is in the last text widget\&.
+.PP
+\fBDtkshSetReturnKeyControls\fP [\fItextWidget nextTextWidget
+formWidget defaultButton\fP] 
+.PP
+The \fItextWidget\fP argument specifies the widget to
+be configured so it catches the \fB<carriage-return>\fP key, and
+forces the focus to move to the next text widget (as indicated by the \fInextTextWidget\fP argument)\&. The \fIformWidget\fP argument
+specifies the form containing the default button, and must be the parent of
+the two text widgets\&. The \fIdefaultButton\fP argument indicates
+which component to treat as the default button within the form widget\&.
+.PP
+Examples:
+.PP
+.nf
+\f(CWDtkshSetReturnKeyControls $TEXT1 $TEXT2 $FORM $OK
+DtkshSetReturnKeyControls $TEXT2 $TEXT3 $FORM $OK\fR
+.fi
+.PP
+.SS "DtkshUnder, DtkshOver, DtkshRightOf, DtkshLeftOf"
+.PP
+These convenience functions simplify the specification of certain classes
+of form constraints\&. They provide a convenient way of attaching a component
+to one edge of another component\&. They are used when constructing the resource
+list for a widget\&. This behavior is accomplished using the \fBATTACH_WIDGET\fP constraint\&.
+.PP
+\fBDtkshUnder\fP [\fIwidgetId\fP]  [\fIoffset\fP] 
+.PP
+\fBDtkshOver\fP [\fIwidgetId\fP]  [\fIoffset\fP] 
+.PP
+\fBDtkshRightOf\fP [\fIwidgetId\fP]  [\fIoffset\fP] 
+.PP
+\fBDtkshLeftOf\fP [\fIwidgetId\fP]  [\fIoffset\fP] 
+.PP
+The \fIwidgetId\fP argument specifies the widget to which
+the current component is to be attached\&. The \fIoffset\fP
+value is optional, and defaults to zero, if not specified\&.
+.PP
+Example:
+.PP
+.nf
+\f(CWXtCreateManagedWidget BUTTON4 button4 pushButton $FORM \
+        labelString:"Exit" $(DtkshUnder $BUTTON2) \
+        $(DtkshRightOf $BUTTON3)\fR
+.fi
+.PP
+.SS "DtkshFloatRight, DtkshFloatLeft, DtkshFloatTop, DtkshFloatBottom"
+.PP
+These convenience functions simplify the specification of certain classes
+of form constraints\&. They provide a convenient way of positioning a component,
+independent of the other components within the form\&. As the form grows or
+shrinks, the component maintains its relative position within the form\&. The
+component may still grow or shrink, depending on the other form constraints
+specified for the component\&. This behavior is accomplished using the \fBATTACH_POSITION\fP constraint\&.
+.PP
+\fBDtkshFloatRight\fP [\fIposition\fP] 
+.PP
+\fBDtkshFloatLeft\fP [\fIposition\fP] 
+.PP
+\fBDtkshFloatTop\fP [\fIposition\fP] 
+.PP
+\fBDtkshFloatBottom\fP [\fIposition\fP] 
+.PP
+The optional \fIposition\fP argument specifies
+the relative position to which the indicated edge of the component is positioned\&.
+A default position is used, if one is not specified\&.
+.PP
+Example:
+.PP
+.nf
+\f(CWXtCreateManagedWidgetBUTTON1 button1 pushButton \
+        $FORM labelString:"Ok" $(DtkshUnder $SEPARATOR) \
+        $(DtkshFloatLeft 10) $(DtkshFloatRight 40)\fR
+.fi
+.PP
+.SS "DtkshAnchorRight, DtkshAnchorLeft, DtkshAnchorTop, DtkshAnchorBottom"
+.PP
+These convenience functions simplify the specification of certain classes
+of form constraints\&. They provide a convenient way of attaching a component
+to one of the edges of a form widget in such a fashion that, as the form grows
+or shrinks, the component\&'s position does not change\&. However, depending on
+the other form constraints set on this component, the component may still
+grow or shrink in size\&. This behavior is accomplished using the \fBATTACH_FORM\fP constraint\&.
+.PP
+\fBDtkshAnchorRight\fP [\fIoffset\fP] 
+.PP
+\fBDtkshAnchorLeft\fP [\fIoffset\fP] 
+.PP
+\fBDtkshAnchorTop\fP [\fIoffset\fP] 
+.PP
+\fBDtkshAnchorBottom\fP [\fIoffset\fP] 
+.PP
+The optional \fIoffset\fP argument specifies
+how far from the edge of the form widget the component should be positioned\&.
+If an offset is not specified, zero is used\&.
+.PP
+Example:
+.PP
+.nf
+\f(CWXtCreateManagedWidget BUTTON1 button1 pushButton \
+        $FORM labelString:"Ok" $(DtkshUnder $SEPARATOR) \
+        $(DtkshAnchorLeft 10) $(DtkshAnchorBottom 10)\fR
+.fi
+.PP
+.SS "DtkshSpanWidth, DtkshSpanHeight"
+.PP
+These convenience functions simplify the specification of certain classes
+of form constraints\&. They provide a convenient way of configuring a component
+such that it spans either the full height or width of the form widget\&. This
+behavior is accomplished by attaching two edges of the component (top and
+bottom for \fBDtkshSpanHeight\fP, and left and right for \fBDtkshSpanWidth\fP) to the form widget\&. The component typically resizes
+whenever the form widget is resized\&. The \fBATTACH_FORM\fP constraint is used for all attachments\&.
+.PP
+\fBDtkshSpanWidth\fP [\fIleftOffset
+rightOffset\fP] 
+.PP
+\fBDtkshSpanHeight\fP [\fItopOffset
+bottomOffset\fP] 
+.PP
+The optional \fIoffset\fP arguments specify
+how far from the edges of the form widget the component should be positioned\&.
+If an offset is not specified, zero is used\&.
+.PP
+Example:
+.PP
+.nf
+\f(CWXtCreateManagedWidget SEP sep separator $FORM $(DtkshSpanWidth 1 1)\fR
+.fi
+.PP
+.SS "DtkshDisplayInformationDialog, DtkshDisplayQuestionDialog, DtkshDisplayWarningDialog,
+DtkshDisplayWorkingDialog, DtkshDisplayErrorDialog"
+.PP
+These convenience functions create a single instance of each of the
+Motif feedback dialogs\&. If an instance of the requested type of dialog already
+exists, it is reused\&. The parent of the dialog is obtained from the environment
+variable, \fITOPLEVEL\fP, which should be set by the calling
+shell script, and then should not be changed\&. The handle for the requested
+dialog is returned in one of the following environment variables:
+.PP
+.nf
+\f(CW\fIDTKSH_ERROR_DIALOG_HANDLE\fP
+\fIDTKSH_QUESTION_DIALOG_HANDLE\fP
+\fIDTKSH_WORKING_DIALOG_HANDLE\fP
+\fIDTKSH_WARNING_DIALOG_HANDLE\fP
+\fIDTKSH_INFORMATION_DIALOG_HANDLE\fP\fR
+.fi
+.PP
+.PP
+When attaching callbacks to the dialog buttons, the application should
+not destroy the dialog; it should simply unmanage the dialog so that it can
+be used again later\&. If it is necessary to destroy the dialog, the associated
+environment variable should also be cleared, so the convenience function does
+not attempt to reuse the dialog\&.
+.PP
+\fBDtkshDisplay*Dialog title message\fP [\fIokCallback closeCallback \   helpCallback dialogStyle\fP] 
+.PP
+The Ok button is always managed, and by default unmanages the dialog\&.
+The Cancel and Help buttons are only managed when a callback is supplied for
+them\&. The \fIdialogStyle\fP argument accepts any of the standard
+resource settings supported by the associated bulletin board resource\&.
+.PP
+Example:
+.PP
+.nf
+\f(CWDtkshDisplayErrorDialog "Read Error" "Unable to read the file" \
+        "OkCallback" "CancelCallback" "" DIALOG_PRIMARY_APPLICATION_MODAL\fR
+.fi
+.PP
+.SS "DtkshDisplayQuickHelpDialog, DtkshDisplayHelpDialog"
+.PP
+These convenience functions create a single instance of each of the
+help dialogs\&. If an instance of the requested type of help dialog already
+exists, it is reused\&. The parent of the dialog is obtained from the environment
+variable, \fITOPLEVEL\fP, which should be set by the calling
+shell script, and then should not be changed\&. The handle for the requested
+dialog is returned in one of the following environment variables:
+.PP
+.nf
+\f(CW\fIDTKSH_HELP_DIALOG_HANDLE\fP
+\fIDTKSH_QUICK_HELP_DIALOG_HANDLE\fP\fR
+.fi
+.PP
+.PP
+If it is necessary to destroy a help dialog, the application should
+also clear the associated environment variable, so that the convenience function
+does not attempt to reuse the dialog\&.
+.PP
+\fBDtkshDisplay*HelpDialog title helpType helpInformation\fP [\fIlocationId\fP] 
+.PP
+The meaning of the arguments depends on the value specified for the \fIhelpType\fP argument\&. The meanings are explained in the following
+table:
+.TS
+tab();
+lw(2.834430i) lw(1.507675i) lw(1.157895i).
+helpTypehelpInformationlocationId
+\fIHELP_TYPE_DYNAMIC_STRING\fPhelp string<not used>
+\fIHELP_TYPE_FILE\fPhelp file name<not used>
+\fIHELP_TYPE_MAN_PAGE\fPmanual page name<not used>
+\fIHELP_TYPE_STRING\fPhelp string<not used>
+\fIHELP_TYPE_TOPIC\fPhelp volume namehelp topic location ID
+.TE
+.PP
+Example:
+.PP
+.nf
+\f(CWDtkshDisplayHelpDialog "Help On Dtksh" HELP_TYPE_FILE "helpFileName"\fR
+.fi
+.PP
+.SS "Dtksh App-Defaults File"
+.PP
+The \fBdtksh\fP app-defaults file, named \fBdtksh\fP, is in a location based on the following path description:
+.PP
+.nf
+\f(CW/usr/dt/app-defaults/<LANG>\fR
+.fi
+.PP
+.PP
+The only information contained in this app-defaults file is the inclusion
+of the standard desktop base app-defaults file\&. The contents of the \fBdtksh\fP app-defaults file is as follows:
+.PP
+.nf
+\f(CW#include "Dt"\fR
+.fi
+.PP
+.SS "Non-String Values"
+.PP
+The C bindings of the interfaces to X, Xt and Motif include many non-string
+values defined in headers\&. For example, the constraint values for a child
+of a form widget are declared, such as \fBXmATTACH_FORM\fP, with an Xt or Xm prefix followed by a descriptive name\&. Equivalent
+values are specified in \fBdtksh\fP by omitting the prefix, just
+as in an app-defaults file\&. For example: \fBXmDIALOG_COMMAND_TEXT\fP becomes \fBDIALOG_COMMAND_TEXT\fP; \fBXtATTACH_FORM\fP becomes \fBATTACH_FORM\fP\&.
+.PP
+A Boolean value can be specified as an argument to a \fBdtksh\fP command using the words \fBTrue\fP
+or \fBFalse\fP; case is not significant\&.
+.SS "Return Values From Built-in Commands"
+.PP
+Graphical commands in \fBdtksh\fP fall into one of four
+categories, based on the definition of the corresponding C function in a windowing
+library:
+.IP "   1." 6
+The function returns no values\&. Example: \fBXtMapWidget\fP\&.
+.IP "   2." 6
+The function is void, but returns one or more values through reference
+arguments\&. Example: \fBXmGetColors\fP\&.
+.IP "   3." 6
+The function returns a non-Boolean value\&. Example: \fBXtCreateManagedWidget\fP\&.
+.IP "   4." 6
+The function returns a Boolean value\&. Example: \fBXtIsSensitive\fP\&.
+.PP
+A category 1 command follows the calling sequence of its corresponding
+C function exactly; the number and order of arguments can be determined by
+looking at the standard documentation for the function\&. Example:
+.PP
+.nf
+\f(CWXtMapWidget $FORM\fR
+.fi
+.PP
+.PP
+A category 2 command also generally follows the calling sequence as
+its corresponding C function\&. Where a C caller would pass in a pointer to
+a variable in which a value is returned, the \fBdtksh\fP command
+returns a value in an environment variable\&. Example:
+.PP
+.nf
+\f(CWXmGetColors $FORM $BG FOREGROUND TOPSHADOW BOTTOMSHADOW SELECT
+echo "Foreground color = " $FOREGROUND\fR
+.fi
+.PP
+.PP
+A category 3 command differs slightly from its corresponding C function\&.
+Where the C function returns its value as the value of the procedure call,
+a \fBdtksh\fP command requires an additional argument, which
+is always the first argument, and is the name of an environment variable into
+which the return value is placed\&. Example:
+.PP
+.nf
+\f(CWXmTextGetString TEXT_VALUE $TEXT_WIDGET
+echo "The value of the text field is "$TEXT_VALUE\fR
+.fi
+.PP
+.PP
+A category 4 command returns a Boolean value that can be used in a conditional
+expression, just as with the corresponding C function\&. If the C function also
+returns values through reference variables (as in category 2), the \fBdtksh\fP command also uses variable names for the corresponding arguments\&.
+Example:
+.PP
+.nf
+\f(CWif XmIsTraversable $PUSH_BUTTON; then
+        echo "The pushbutton is traversable"
+else
+        echo "The pushbutton is not traversable"
+fi\fR
+.fi
+.PP
+.PP
+Generally, the order and type of arguments passed to a command matches
+those passed to the corresponding C function, except as noted for category
+3 commands\&. Other exceptions are described in the applicable command descriptions\&.
+.SS "Widget Handles"
+.PP
+Where a C function returns a widget handle, the corresponding \fBdtksh\fP commands set an environment variable equal to the widget handle\&.
+These are category 3 commands; they take as one of their arguments the name
+of an environment variable in which to return the widget handle\&. (This
+is an ASCII string used by \fBdtksh\fP to access the actual widget
+pointer\&.) For example, either of the following commands could be used to
+create a new form widget; in both cases, the widget handle for the new form
+widget is returned in the environment variable \fIFORM\fP:
+.PP
+.nf
+\f(CWXtCreateManagedWidget FORM name XmForm $PARENT
+XmCreateForm FORM $PARENT name\fR
+.fi
+.PP
+.PP
+After either of the above commands, \fI$FORM\fP can be
+used to reference the form widget\&. For instance, to create a label widget
+within the form widget just created, the following command could be used:
+.PP
+.nf
+\f(CWXmCreateLabel LABEL $FORM namelabelString:"Hi Mom" \
+        topAttachment:ATTACH_FORM leftAttachment:ATTACH_FORM\fR
+.fi
+.PP
+.PP
+There is a special widget handle called \fBNULL\fP, provided for cases where a shell script may need to specify
+a \fBNULL\fP widget\&. For example, the
+following disables the \fBdefaultButton\fP resource for a form
+widget:
+.PP
+.nf
+\f(CWXtSetValues $FORM defaultButton:NULL\fR
+.fi
+.PP
+.SS "Widget Resources"
+.PP
+Some of the Xt and Motif commands allow the shell script to pass in
+a variable number of arguments, representing resource and value pairs\&. This
+is similar to the \fIarglist\fP passed in to the
+corresponding Xt or Motif C function\&. Examples of these commands include any
+of the commands used to create a widget, and the \fBXtSetValues\fP
+command\&. In \fBdtksh\fP, resources are specified by a string
+with the following syntax: \fIresource\fP: \fIvalue\fP\&.
+.PP
+The name of the resource is given in the resource portion of the string;
+it is constructed by taking the corresponding Xt or Motif resource name and
+omitting the Xt or Xm prefix\&. The value to be assigned to the resource is
+given in the value portion of the string\&. The \fBdtksh\fP utility
+automatically converts the value string to an appropriate internal representation\&.
+For example:
+.PP
+.nf
+\f(CWXtSetValues $WIDGET height:100 width:200 resizePolicy:RESIZE_ANY
+XmCreateLabel LABEL $PARENT myLabel labelString:"Close Dialog"\fR
+.fi
+.PP
+.PP
+When widget resources are retrieved using \fBXtGetValues\fP,
+the return value has the same syntax\&. For example:
+.PP
+.nf
+\f(CWXtGetValues $WIDGET height:HEIGHT resizePolicy:POLICY \
+        sensitive:SENSITIVE
+echo $HEIGHT
+echo $POLICY
+echo $SENSITIVE\fR
+.fi
+.PP
+.PP
+Certain types of resource values have special representation\&. These
+include string tables and bit masks\&. For instance, the XmList widget allows
+a string table to be specified both for the items and the \fBselectedItems\fP resources\&. In \fBdtksh\fP, a string table is represented
+as a comma-separated list of strings, which is compatible with how Motif handles
+them from a resource file\&. When a resource that returns a string table is
+queried using \fBXtGetValues\fP(3), the resulting value is again
+a comma-separated set of strings\&. A resource that expects a bit mask value
+to be passed in, expects the mask to be specified as a string composed of
+the various mask values separated by the ``|\&'\&' character\&. When a resource
+that returns a bit mask is queried, the return value also is a string representing
+the enabled bits, separated by the ``|\&'\&' character\&. For example, the following
+sets the \fBmwmFunctions\fP resource for the \fBVendorShell\fP widget class:
+.PP
+.nf
+\f(CWXtSetValues mwmFunctions MWM_FUNC_ALL|MWM_FUNC_RESIZE\fR
+.fi
+.PP
+.SS "Unsupported Resources"
+.PP
+The \fBdtksh\fP utility supports most of the resources
+provided by Motif; however, there are certain resources that \fBdtksh\fP does not support\&. The list of unsupported resources follows\&. Several
+of these resources can be specified at widget creation time by using \fBXtSetValues\fP, but cannot be retrieved using \fBXtGetValues\fP; these are indicated by the asterisk (\fB*\fP) following
+the resource name\&.
+.IP "All Widget And Gadget Classes:" 10
+Any font list resource (\fB*\fP) Any pixmap resource ( \fB*\fP)
+.IP "\fIComposite:\fP" 10
+\fIinsertPosition\fP children
+.IP "\fICore:\fP" 10
+accelerators translations (\fB*\fP) colormap
+.IP "\fIXmText:\fP" 10
+\fIselectionArray\fP \fIselectionArrayCount\fP
+.IP "\fIApplicationShell:\fP" 10
+\fIargv\fP
+.IP "\fIWMShell:\fP" 10
+\fIiconWindow\fP \fIwindowGroup\fP
+.IP "\fIShell:\fP" 10
+\fIcreatePopupChildrenProc\fP
+.IP "\fIXmSelectionBox:\fP" 10
+\fItextAccelerators\fP
+.IP "\fIManager, Primitive\fP and \fIGadget Subclasses:\fP" 10
+\fIuserData\fP
+.IP "\fIXmFileSelectionBox:\fP" 10
+\fIdirSearchProc\fP \fIfileSearchProc\fP \fIqualifySearchDataProc\fP
+.SH "EXIT STATUS"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+See \fBsh\fP(1)\&. 
+.SH "APPLICATION USAGE"
+.SS "Initializing The Toolkit Environment"
+.PP
+Before any of the Xlib, Xt or Motif commands can be invoked, the shell
+script must first initialize the Xt toolkit by invoking the \fBXtInitialize\fP command, which returns an application shell widget\&. \fBXtInitialize\fP, as with all of the commands that return a widget handle, returns
+the widget handle in the environment variable named in its first argument\&.
+For example:
+.PP
+.nf
+\f(CWXtInitialize TOPLEVEL myShellName Dtksh $0$@\fR
+.fi
+.PP
+.PP
+Shell script writers should invoke the \fBXtInitialize\fP
+command as one of the first commands within a \fBdtksh\fP shell
+script\&. This allows \fBdtksh\fP to locate its message catalog
+and the correct app-defaults file\&. If a shell error occurs before \fBXtInitialize\fP has been called, it is possible that unlocalized error
+messages may be displayed\&. The \fBdtksh\fP utility provides a
+default app-defaults file to use if the call to \fBXtInitialize\fP
+specifies an application class name of \fIDtksh\fP\&. This app-defaults
+file loads in the standard set of desktop application default values, so that
+these applications have a consistent look with other desktop applications\&.
+.SS "Responding to a Window Manager Close Notice"
+.PP
+When the user selects the Close item on the window manager menu for
+an application, the application is terminated unless it has arranged to catch
+the Close notification\&. Multiple windows managed by the application disappear,
+and application data may be left in an undesirable state\&. To avoid this, \fBdtksh\fP provides for catching and handling the Close notification\&.
+The application must:
+.IP "   \(bu" 6
+Define a procedure to handle the Close notification
+.IP "   \(bu" 6
+Request notification when Close is selected and override the response,
+so the application is not shut down
+.PP
+The following code illustrates this processing:
+.PP
+.nf
+\f(CW# This is the `callback\&' invoked when the user selects
+# the `Close\&' menu item
+WMCallback()
+{
+        echo "User has selected the Close menu item"
+}
+# Create the toplevel application shell
+XtInitialize TOPLEVEL test Dtksh "$@"
+XtDisplay DISPLAY $TOPLEVEL
+# Request notification when the user selects the `Close\&'
+# menu item
+XmInternAtom DELETE_ATOM $DISPLAY "WM_DELETE_WINDOW" false
+XmAddWMProtocolCallback $TOPLEVEL $DELETE_ATOM "WMCallback"
+# Ask Motif to not automatically close down your
+# application window
+XtSetValues $TOPLEVEL deleteResponse:DO_NOTHING\fR
+.fi
+.PP
+.SS "Responding to a Session Management Save State Notice"
+.PP
+Session management facilities allow applications to save their current
+state when the user terminates the current session, so that when the user
+later restarts the session, an application returns to the state it was in\&.
+In \fBdtksh\fP this is accomplished by setting up a handler analogously
+to handling a Close notification\&. If no such handler is set up, the application
+has to be restarted manually in the new session, and does not retain any state\&.
+To set up a handler to save state, the application must do the following:
+.IP "   \(bu" 6
+Define functions to save state at end-of-session, and restore it on
+start-up\&.
+.IP "   \(bu" 6
+Register interest in the session management notification\&.
+.IP "   \(bu" 6
+Register the function to save state\&.
+.IP "   \(bu" 6
+Determine if saved state should be restored at start-up\&.
+.PP
+The following code illustrates this process:
+.PP
+.nf
+\f(CW#! /usr/dt/bin/dtksh
+# Function invoked when the session is being ended by the user
+SessionCallback()
+{
+        # Get the name of the file into which we should save our
+        # session information
+        if DtSessionSavePath $TOPLEVEL PATH SAVEFILE; then
+                exec 9>$PATH
+                # Save off whether we are currently in an iconified state
+                if DtShellIsIconified $TOPLEVEL; then
+                        print -u9 `Iconified\&'
+                else
+                        print -u9 `Deiconified\&'
+                fi
+                # Save off the list of workspaces we currently reside in
+                if DtWsmGetWorkspacesOccupied $(XtDisplay "-" $TOPLEVEL)
+                                $(XtWindow "-" $TOPLEVEL)
+                                CURRENT_WS_LIST;
+                then
+                        # Map the comma-separated list of atoms into
+                        # their string representation
+                        oldIFS=$IFS
+                        IFS=","
+                        for item in $CURRENT_WS_LIST;
+                        do
+                                XmGetAtomName NAME $(XtDisplay "-" $TOPLEVEL)
+                                        $item
+                                print -u9 $NAME
+                        done
+                        IFS=$oldIFS
+                fi
+                exec 9<&-
+                # Let the session manager know how to invoke us when
+                # the session is restored
+                DtSetStartupCommand $TOPLEVEL
+                        "/usr/dt/contrib/dtksh/SessionTest $SAVEFILE"
+        else
+                echo "DtSessionSavePath FAILED!!"
+                exit -3
+        fi
+}
+# Function invoked during a restore session; restores the
+# application to its previous state
+RestoreSession()
+{
+        # Retrieve the path where our session file resides
+        if DtSessionRestorePath $TOPLEVEL PATH $1; then
+                exec 9<$PATH
+                read -u9 ICONIFY
+                # Extract and restore our iconified state
+                case $ICONIFY in
+                        Iconified) DtSetIconifyHint $TOPLEVEL True;;
+                        *) DtSetIconifyHint $TOPLEVEL False;
+                 esac
+                # Extract the list of workspaces we belong in, convert
+                # them to atoms, and ask the workspace manager to relocate
+                # us to those workspaces
+                WS_LIST=""
+                while read -u9 NAME
+                do
+                        XmInternAtom ATOM $(XtDisplay "-" $TOPLEVEL)
+                                        $NAME False
+                        if [ ${#WS_LIST} -gt 0 ]; then
+                                WS_LIST=$WS_LIST,$ATOM
+                        else
+                                WS_LIST=$ATOM
+                        fi
+                done
+                DtWsmSetWorkspacesOccupied $(XtDisplay "-" $TOPLEVEL)
+                                $(XtWindow "-" $TOPLEVEL) $WS_LIST
+                exec 9<&-
+         else
+                echo "DtSessionRestorePath FAILED!!"
+                exit -3
+        fi
+}
+################## Create the Main UI #######################
+XtInitialize TOPLEVEL wmProtTest Dtksh "$@"
+XtCreateManagedWidget DA da XmDrawingArea $TOPLEVEL
+XtSetValues $DA height:200 width:200
+XmInternAtom SAVE_SESSION_ATOM $(XtDisplay "-" $TOPLEVEL)
+                "WM_SAVE_YOURSELF" False
+# If a command-line argument was supplied, then treat it as the
+# name of the session file
+if (( $# > 0))
+then
+        # Restore to the state specified in the passed-in session file
+        XtSetValues $TOPLEVEL mappedWhenManaged:False
+        XtRealizeWidget $TOPLEVEL
+        XSync $(XtDisplay "-" $TOPLEVEL) False
+        RestoreSession $1
+        XtSetValues $TOPLEVEL mappedWhenManaged:True
+        XtPopup $TOPLEVEL GrabNone
+else
+        # This is not a session restore, so come up in the default state
+        XtRealizeWidget $TOPLEVEL
+        XSync $(XtDisplay "-" $TOPLEVEL) False
+fi
+# Register the fact that we are interested in participating in
+# session management
+XmAddWMProtocols $TOPLEVEL $SAVE_SESSION_ATOM
+XmAddWMProtocolCallback $TOPLEVEL $SAVE_SESSION_ATOM
+                        SessionCallback
+XtMainLoop\fR
+.fi
+.PP
+.SS "Cooperating with WorkSpace Management"
+.PP
+The \fBdtksh\fP utility provides access to all of the major
+workspace management functions of the desktop libraries, including functions
+for:
+.IP "   \(bu" 6
+Querying and setting the set of workspaces with which an application
+is associated\&.
+.IP "   \(bu" 6
+Querying the list of all workspaces\&.
+.IP "   \(bu" 6
+Querying and setting the current workspace\&.
+.IP "   \(bu" 6
+Requesting that an application be notified any time the user changes
+to a different workspace\&.
+.PP
+From a user\&'s perspective, workspaces are identified by a set of names,
+but from the workspace manager\&'s perspective, workspaces are identified by
+X atoms\&. Whenever the shell script asks for a list of workspace identifiers,
+a string of X atoms is returned; if more than one X atom is present, the list
+is comma-separated\&.
+.PP
+The workspace manager expects that the shell script uses the same format
+when passing workspace identifiers back to it\&. During a given session, it
+is safe for the shell script to work with the X atoms since they remain constant
+over the lifetime of the session\&. However, as was shown in the Session Management
+shell script example, if the shell script is going to save and restore workspace
+identifiers, the workspace identifiers must be converted from their X atom
+representation to a string before they are saved\&. Then, when the session is
+restored, the shell script needs to remap the names into X atoms before passing
+the information on to the workspace manager\&. Mapping between X atoms and strings
+and between strings and X atoms uses the following two commands:
+.PP
+.nf
+\f(CWXmInternAtom ATOM $DISPLAY $WORKSPACE_NAME false
+XmGetAtomName NAME $DISPLAY $ATOM\fR
+.fi
+.PP
+.SS "Creating Localized Shell Scripts"
+.PP
+Scripts written for \fBdtksh\fP are internationalized,
+and then localized, in a process very similar to C applications\&. All strings
+that may be presented to the user are identified in the script; a post-processor
+extracts the strings from the script, and from them builds a catalog, which
+can then be translated to any desired locale\&. When the script executes, the
+current locale determines which message catalog is searched for strings to
+display\&. When a string is to be presented, it is identified by a message-set
+ID (corresponding to the catalog), and a message number within the set; these
+values determine what text the user sees\&. The following code illustrates the
+process:
+.PP
+.nf
+\f(CW# Attempt to open our message catalog
+catopen MSG_CAT_ID "myCatalog\&.cat"
+# The localized button label is in set 1, and is message # 2
+XtCreatePushButton OK $PARENT ok
+labelString:$(catgets $MSG_CAT_ID 1 2 "OK")
+# The localized button label is in set 1, and is message #3
+XtCreatePushButton CANCEL $PARENT cancel
+labelString:$(catgets $MSG_CAT_ID 1 3 "Cancel")
+# Close the message catalog, when no longer needed
+catclose $MSG_CAT_ID\fR
+.fi
+.PP
+.PP
+The file descriptor returned by \fBcatopen\fP must be closed
+using \fBcatclose\fP, and not using the \fBsh\fP \fBexec\fP command\&.
+.SS "Using the dtksh Utility to Access X Drawing Functions"
+.PP
+The commands of the \fBdtksh\fP utility include standard
+Xlib drawing functions to draw lines, points, segments, rectangles, arcs and
+polygons\&. In the standard C programming environment, these functions take
+a graphics context, or GC as an argument, in addition to the drawing data\&.
+In \fBdtksh\fP drawing functions, a collection of GC options
+are specified in the argument list to the command\&. By default, the drawing
+commands create a GC that is used for that specific command and then discarded\&.
+If the script specifies the \fB-gc\fP option, the name
+of the graphics context object can be passed to the command; this GC is used
+in interpreting the command, and the variable is updated with any modifications
+to the GC performed by the command\&.
+.IP "\fB-gc\fP \fBGC\fR" 10
+\fBGC\fR is the name of an environment
+variable that has not yet been initialized, or which has been left holding
+a graphic context by a previous drawing command\&. If this option is specified,
+it must be the first \fBGC\fR option specified\&.
+.IP "\fB-foreground\fP \fIcolor\fP" 10
+Foreground color, which can be either the name of a color or a pixel
+number\&.
+.IP "\fB-background\fP \fIcolor\fP" 10
+Background color, which can be either the name of a color or a pixel
+number\&.
+.IP "\fB-font\fP \fIfont name\fP" 10
+Name of the font to be used\&.
+.IP "\fB-line_width\fP \fInumber\fP" 10
+Line width to be used during drawing\&.
+.IP "\fB-function\fP \fIdrawing function\fP" 10
+Drawing function, which can be any of the following: \fBxor\fP, \fBor\fP, \fBclear\fP, \fBand\fP, \fBcopy\fP, \fBnoop\fP, \fBnor\fP, \fBnand\fP, \fBset\fP, \fBinvert\fP, \fBequiv\fP, \fBandReverse\fP, \fBorReverse\fP
+or \fBcopyInverted\fP\&.
+.IP "\fB-line_style\fP \fIstyle\fP" 10
+Line style, which can be any of the following: \fBLineSolid\fP, \fBLineDoubleDash\fP
+or \fBLineOnOffDash\fP\&.
+.SS "Setting Widget Translations:"
+.PP
+The \fBdtksh\fP utility provides mechanisms for augmenting,
+overriding and removing widget translations, much as in the C programming
+environment\&. In C, an application installs a set of translation action procedures,
+which can then be attached to specific sequences of events (translations are
+composed of an event sequence and the associated action procedure)\&. Translations
+within \fBdtksh\fP are handled in a similar fashion, except only
+a single action procedure is available\&. This action procedure, named \fIksh_eval\fP, interprets any arguments passed to it as \fBdtksh\fP commands, and evaluates them when the translation is triggered\&.
+The following shell script segment gives an example of how translations can
+be used:
+.PP
+.nf
+\f(CWBtnDownProcedure()
+{
+  echo "Button Down event occurred in button "$1
+}
+XtCreateManagedWidget BUTTON1 button1 XmPushButton $PARENT
+  labelString:"Button 1"
+  translations:\&'#augment
+      <EnterNotify>:ksh_eval("echo Button1 entered")
+      <Btn1Down>:ksh_eval("BtnDownProcedure 1")\&'
+XtCreateManagedWidget BUTTON2 button2 XmPushButton $PARENT
+  labelString:"Button 2"
+XtOverrideTranslations $BUTTON2
+         \&'#override
+      <Btn1Down>:ksh_eval("BtnDownProcedure 2")\&'\fR
+.fi
+.PP
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBsh\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

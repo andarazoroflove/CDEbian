@@ -1,0 +1,198 @@
+'\" t
+...\" logon.sgm /main/4 1996/08/30 15:37:09 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "csa_logon" "library call"
+.SH "NAME"
+\fBcsa_logon\fP \(em log on to the calendar service and establish a session with a calendar
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <xcsa\&.h>
+\fBCSA_return_code \fBcsa_logon\fP\fR(
+\fBCSA_service_reference \fBcalendar_service\fR\fR,
+\fBCSA_calendar_user *\fBuser\fR\fR,
+\fBCSA_string \fBpassword\fR\fR,
+\fBCSA_string \fBcharacter_set\fR\fR,
+\fBCSA_string \fBrequired_csa_version\fR\fR,
+\fBCSA_session_handle *\fBsession\fR\fR,
+\fBCSA_extension *\fBlogon_extensions\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBcsa_logon\fP function allows the calling application to logon to the
+calendar service\&.
+If the specified calendar does not
+exist, then the error
+\fBCSA_E_CALENDAR_NOT_EXIST\fP is returned\&.
+.PP
+The function returns a Session Handle that the application
+will use in subsequent CSA calls\&.
+.SH "ARGUMENTS"
+.SS "Calendar Service (Service Reference)"
+.PP
+A calendar service name specifying the requested
+calendaring service, (e\&.g\&., the path to a calendar store or
+a remote server node name)\&.
+This value may be
+\fBNULL\fP if the underlying calendaring service does not require a
+service name or if UI is allowed\&.
+This may be necessary on
+some implementations and ignored on others\&.
+.SS "User (Calendar User)"
+.PP
+A pointer to the calendar user structure that identifies
+the user and calendar to the calendaring service\&.
+This
+value may be
+\fBNULL\fP\&.
+.SS "Password (String)"
+.PP
+A string containing the password required for access to the
+CSA service\&.
+This value may be
+\fBNULL\fP if the underlying calendaring service does not require a
+password or if UI is allowed\&.
+.SS "Character Set (String)"
+.PP
+A CSA formal public identifier string for the character set
+of strings used by the CSA caller\&.
+The client may pass
+\fBNULL\fP in which case the character set used is determined by the
+CSA service\&.
+The supported values are implementation
+specific\&.
+.SS "Required CSA Version (String)"
+.PP
+The formal public identifier for the CSA version number
+required by the application\&.
+For this version of the
+specification this string must be
+``-//XAPIA/CSA/VERSION1/NONSGML CSA Version 1//EN\&'\&'\&.
+.SS "Logon Extensions (Extensions)"
+.PP
+A pointer to an array of
+\fBCSA_extension\fR structures for this function\&.
+The array may contain both
+input extensions for providing additional information to
+the function and output extensions for receiving
+information from the function\&.
+A value of
+\fBNULL\fP indicates that the caller is not using any extensions\&.
+See the extensions structure for more information\&.
+.PP
+Through extensions, the application can find out which
+extensions are available and set which data extensions will
+be active for the session\&.
+.SH "RETURN VALUE"
+.SS "Session (Session Handle)"
+.PP
+Opaque session handle that represents a session with the
+CSA calendar\&.
+.SS "Logon Extensions (Extensions)"
+.PP
+If output extensions were passed to the function in the
+extensions list, the results from the service will be
+available in the extension\&.
+See the extensions structure for more information\&.
+Whether the function succeeded or
+not, and, if not, why\&.
+It may be success or one of the
+values listed under ERRORS below\&.
+.SH "ERRORS"
+.PP
+The
+\fBcsa_logon\fP function returns the following error values:
+.IP "CSA_E_CALENDAR_NOT_EXIST" 10
+The specified calendar does not exist\&.
+.IP "CSA_E_FAILURE" 10
+There was a general failure that does not
+fit the description of any other error code\&.
+.IP "CSA_E_INSUFFICIENT_MEMORY" 10
+Insufficient memory was available to complete the requested operation\&.
+.IP "CSA_E_INVALID_CALENDAR_SERVICE" 10
+The underlying calendar service is invalid, so logging on cannot be completed\&.
+.IP "CSA_E_INVALID_CONFIGURATION" 10
+The specified logon configuration is inconsistent with the
+selected calendar service\&.
+.IP "CSA_E_INVALID_DATA_EXT" 10
+The data extension requested is invalid\&.
+.IP "CSA_E_INVALID_FLAG" 10
+A flag value in the
+\fIflags\fP argument was invalid\&.
+.IP "CSA_E_INVALID_FUNCTION_EXT" 10
+The function extension requested is invalid\&.
+.IP "CSA_E_INVALID_PARAMETER" 10
+A function parameter was invalid\&.
+.IP "CSA_E_INVALID_PASSWORD" 10
+The password is incorrect\&.
+.IP "CSA_E_INVALID_USER" 10
+The specified calendar user is invalid\&.
+.IP "CSA_E_NO_AUTHORITY" 10
+The user has insufficient authority for this function\&.
+.IP "CSA_E_PASSWORD_REQUIRED" 10
+A password is required on this calendar service\&.
+.IP "CSA_E_SERVICE_UNAVAILABLE" 10
+The requested calendar service is unavailable\&.
+.IP "CSA_E_TOO_MANY_USERS" 10
+The implementation cannot support the additional logon of
+another calendar user at this time\&.
+.IP "CSA_E_UNSUPPORTED_CHARACTER_SET" 10
+The character set requested is not supported\&.
+.IP "CSA_E_UNSUPPORTED_DATA_EXT" 10
+The data extension requested is not supported\&.
+.IP "CSA_E_UNSUPPORTED_FUNCTION_EXT" 10
+The specified function extension is not supported or
+\fBCSA_EXT_REQUIRED\fP is set\&.
+.IP "CSA_E_UNSUPPORTED_VERSION" 10
+The specification version specified in the call cannot be
+supported by this CSA implementation\&.
+.SH "SEE ALSO"
+.PP
+\fBcsa/csa\&.h - csacsa\fP(5), \fBcsa_add_calendar\fP(3), \fBcsa_add_entry\fP(3), \fBcsa_call_callbacks\fP(3), \fBcsa_delete_calendar\fP(3), \fBcsa_delete_entry\fP(3), \fBcsa_free\fP(3), \fBcsa_free_time_search\fP(3), \fBcsa_list_calendar_attributes\fP(3), \fBcsa_list_calendars\fP(3), \fBcsa_list_entries\fP(3), \fBcsa_list_entry_attributes\fP(3), \fBcsa_list_entry_sequence\fP(3), \fBcsa_logoff\fP(3), \fBcsa_look_up\fP(3), \fBcsa_query_configuration\fP(3), \fBcsa_read_calendar_attributes\fP(3), \fBcsa_read_entry_attributes\fP(3), \fBcsa_read_next_reminder\fP(3), \fBcsa_register_callback\fP(3), \fBcsa_unregister_callback\fP(3), \fBcsa_update_calendar_attributes\fP(3), \fBcsa_update_entry_attributes\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

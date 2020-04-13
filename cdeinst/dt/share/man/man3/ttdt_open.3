@@ -1,0 +1,97 @@
+'\" t
+...\" open.sgm /main/5 1996/08/30 14:30:24 rws $
+...\" open.sgm /main/5 1996/08/30 14:30:24 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdt_open" "library call"
+.SH "NAME"
+\fBttdt_open\fP \(em create a ToolTalk communication endpoint
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBchar \fB*ttdt_open\fP\fR(
+\fBint *\fBttfd\fR\fR,
+\fBconst char *\fBtoolname\fR\fR,
+\fBconst char *\fBvendor\fR\fR,
+\fBconst char *\fBversion\fR\fR,
+\fBint \fBsendStarted\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttdt_open\fP function calls
+\fBtt_open\fP(3) and
+\fBtt_fd\fP(3)\&. It associates
+\fItoolname\fP, \fIvendor\fP and
+\fIversion\fP with the created
+procid,
+and initializes the new
+procid\&'s
+default contexts from the process environment\&.
+If
+\fIsendStarted\fP is True,
+\fBttdt_open\fP sends a
+\fBStarted\fP notice\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttdt_open\fP function
+returns the created
+procid
+in a string that can be freed with
+\fBtt_free\fP; otherwise, the
+\fBttdt_open\fP function may return any of the errors returned by
+\fBtt_open\fP(3) and
+\fBtt_fd\fP(3)\&.
+.PP
+No errors are propagated if sending the
+\fBStarted\fP notice fails\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttdt_close\fP(3), \fBtt_open\fP(3), \fBtt_fd\fP(3), \fBtt_free\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

@@ -1,0 +1,116 @@
+# ##########################################################################
+# 
+#      dtpad.dt
+# 
+#      Actions used with the DT Text Editor (dtpad)
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dtpad.dt.src /main/4 1996/04/23 17:35:35 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES TEXTFILE
+{
+        ACTIONS         Open,Print
+        ICON            Dtdata
+        IS_TEXT         true
+        NAME_TEMPLATE   %s.txt
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      text
+        MEDIA           C_STRING
+        DESCRIPTION     Diese Datei enthält unverschlüsselten Text. \
+                        Der Datentyp dieser Datei ist TEXTFILE.  Eine Datei vom \
+                        Typ TEXTFILE muß die Dateierweiterung '.txt' aufweisen.
+        TYPE_LABEL      TEXTFILE
+}
+DATA_CRITERIA TEXTFILE1
+{
+        DATA_ATTRIBUTES_NAME TEXTFILE
+        MODE            f&!x
+        NAME_PATTERN    *.txt
+}
+# ##################################################################
+# 
+#  ACHTUNG ACHTUNG ACHTUNG
+#
+# Die folgende Regel DATA_CRITERIA wird von dtmail verwendet,
+# um das System TEXTFILE DATA_ATTRIBUTE zu erkennen. Wenn diese Regel gelöscht
+# oder geändert wird, kann dtmail die Textmeldungen nicht fehlerfrei
+# anzeigen.
+# 
+# ##################################################################
+DATA_CRITERIA TEXTFILE2
+{
+        DATA_ATTRIBUTES_NAME TEXTFILE
+        MODE            f&!x
+        NAME_PATTERN    text
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        TEXTFILE
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtlp "%Arg_1%"
+}
+
+# ##########################################################################
+# ##########################################################################
+# 
+# Aktionen
+# 
+# ##########################################################################
+# ####################
+# 
+# PRINT-Aktionen
+# 
+# ####################
+# 
+# Die Aktion PRINT_DTPAD imitiert die Standardaktion "Drucken" , wobei jedoch
+# die gedruckte temporäre Datei gelöscht wird. Diese Aktion wird vom Client
+# 'dtpad' ausgeführt. 
+# 
+# ####################
+ACTION PRINT_DTPAD_TEMPFILE
+{
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING 	/usr/dt/bin/dtlp -u "%(String)Arg_2%" -e "%(File)Arg_1%"
+}
+
+# #####################
+# 
+# Editieraktionen
+# 
+# #####################
+ACTION Dtpad
+{
+	LABEL		Texteditor
+        ICON            Dtpenpd
+	TYPE		MAP
+	MAP_ACTION	DtTTMediaOpen
+	DESCRIPTION	Mit der Aktion 'Texteditor' (Dtpad) wird die angegebene \
+                        Datei in einem Texteditorfenster geöffnet.
+}
+
+# ######################## EOF ############################################

@@ -1,0 +1,139 @@
+'\" t
+...\" rpccmsd.sgm /main/7 1996/10/30 16:33:29 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "rpc\&.cmsd" "user cmd"
+.SH "NAME"
+\fBrpc\&.cmsd\fP \(em calendar manager service daemon
+.SH "SYNOPSIS"
+.PP
+\fBrpc\&.cmsd
+[-d]\fP [-s] 
+.SH "DESCRIPTION"
+.PP
+The
+\fBrpc\&.cmsd\fP is a small database manager for appointment and
+resource-scheduling data\&. Its primary client is
+\fBdtcm\fP a productivity tool included with CDE\&.
+\fBrpc\&.cmsd\fP is normally invoked by \fBinetd\fP(1m) when a
+\fBdtcm\fP request is received\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "-d" 10
+Enables debugging output\&.
+.IP "-s" 10
+Runs rpc\&.cmsd in the foreground\&. This option should
+be used when rpc\&.cmsd is invoked manually for debugging purposes\&.
+.SH "OPERANDS"
+.PP
+None\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+The database format used by the
+\fBrpc\&.cmsd\fP is private\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+None\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+None\&.
+.SH "STDOUT"
+.PP
+When the
+\fB-d\fP option is used,
+\fBrpc\&.cmsd\fP writes the debugging information to stdout\&.
+.SH "STDOUT"
+.PP
+None\&.
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+When the process exits,
+\fBrpc\&.cmsd\fP exits with the status of the exited child\&.
+Otherwise, the following exit values are returned:
+.IP "0" 10
+Normal termination\&.
+A zero exit status means
+\fBrpc\&.cmsd\fP has received a HUP signal, and terminated normally\&.
+.IP "-1" 10
+Abnormal termination\&. Permissions on the database file or
+directory were incorrect\&.
+.IP "1" 10
+RPC memory management errors have prevented successful operation,
+a socket operation failed in a nonrecoverable way, or could not create
+a udp service\&.
+.IP "2" 10
+Could not create a TLI connection\&.
+.IP "3" 10
+Could not register the service\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+The
+\fBrpc\&.cmsd\fP utility takes the standard action for all signals\&.
+.SH "APPLICATION USAGE"
+.PP
+To run
+\fBrpc\&.cmsd\fP in standalone mode, the user must be root\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBdtcm\fP(1), \fBdtcm_lookup\fP(1), \fBdtcm_delete\fP(1), \fBdtcm_insert\fP(1), \fBinetd\fP(1m)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

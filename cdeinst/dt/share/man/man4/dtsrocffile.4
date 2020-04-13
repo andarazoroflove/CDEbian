@@ -1,0 +1,278 @@
+'\" t
+...\" dtsrocfl.sgm /main/9 1996/10/31 09:47:15 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsrocffile" "special file"
+.SH "NAME"
+dtsrocffile \(em Describes the format and syntax of DtSearch ocf files
+.SH "SYNOPSIS"
+.PP
+.nf
+\fBDTSROCFPATH\fP=\fIdirectory\fP
+\fBHOME\fP=\fIdirectory\fP
+
+\fBdtsearch\&.ocf\fP
+\fBaustext\&.ocf\fP
+.fi
+.SH "DESCRIPTION"
+.PP
+An ocf file is a user-generated file that identifies the databases to be
+accessed and the execution options to be enabled by one instance of an
+online DtSearch API search engine\&. Different ocf files typically apply
+to different instances of the engine\&. The file is opened and read by
+\fBDtSearchInit\fP and its valid contents apply
+throughout an engine session\&. It may be reread during a session under
+certain circumstances referred to as reinitialization, usually caused
+either by recognizable changes in database files during the session or
+by a change in the ocf file\&'s modification time stamp\&.
+.PP
+Errors in an ocf file are typically either syntax errors or errors in
+databases referred to by the file\&. While the API expects the ocf file to
+be correct, most errors are not fatal\&. They usually result in a warning
+message and discard of the offending directive\&. But if no databases
+survive the initialization process, \fBDtSearchInit\fP
+will fail\&. For this reason, the only mandatory directive in an ocf file
+is at least one valid \fBKEYTYPE\fP directive for at least
+one valid and accessible database\&.
+.PP
+The default base file name for an ocf file is
+\fBdtsearch\&.ocf\fP, although the alternative name
+\fBaustext\&.ocf\fP is also a valid default\&. The file is
+expected to be found in the directory specified by the\fBDTSROCFPATH\fP environment variable, in the
+current working directory, or in the \fBHOME\fP directory, in that order\&. However
+the complete path/file name may be fully respecified by an argument to
+\fBDtSearchInit\fP\&.
+.SS "General Format"
+.PP
+An ocf file can contain only ASCII characters\&.
+.PP
+Each line (character string terminated by an ASCII linefeed)
+contains 1 or more \&'keywords\&', and optionally 1 or more \&'values\&',
+all separated by token delimiter characters\&.
+.PP
+All token delimiters are equivalent and any combination of one or more
+of them is acceptable for separating keywords and values\&.
+Token delimiters are the ASCII space, tab, comma, or equal sign\&.
+.PP
+Keywords must begin in column 1, and the first character
+must be alphanumeric\&.
+.PP
+Empty lines and lines that begin with \fB#\fP,
+\fB$\fP, \fB*\fP, or \fB!\fP in
+column one are discarded in their entirety as comments\&.
+.PP
+Any additional text beyond the last required value on a line
+is ignored as comments\&.
+.PP
+.nf
+\f(CWkeyword [keyword] [\&.\&.\&.] [value] [\&.\&.\&.] [comments]\fR
+.fi
+.PP
+.PP
+Keywords and/or values might be case sensitive, but usually are not\&.
+The principal exceptions are database names, which are always
+case sensitive, and file names and path names in operating systems
+like UNIX where such things are normally case sensitive\&.
+.PP
+Where a boolean value is required, any of the following are
+acceptable\&. Only enough of the first characters are parsed
+to distinguish between alternatives (case-insensitive):
+.TS
+tab();
+lw(1.12in) lw(2.49in).
+(On)(Of)f
+(T)rue(F)alse
+(Y)es(N)o
+(E)nabled(D)isabled
+(1)(0)
+.TE
+.PP
+A missing value is taken for the affirmative\&.
+.PP
+The initialization function may provide defaults for missing values\&.
+Despite the defaults, an ocf file must be provided with at least the
+\fBKEYTYPE(S)\fP correctly completed for each database to be
+accessed by the engine\&.
+.PP
+If lines are duplicated or directives conflict, the last
+specified value(s) will be used\&.
+.SS "Keywords and Options"
+.IP "KEYTYPES \fIdddd\fP = [\&'\fIc\fP\&'] \fIlabel\fP, [\&'\fIc\fP\&'] \fIlabel\fP, \&.\&.\&." 10
+.IP "KEYTYPE \fIdddd\fP = [\&'\fIc\fP\&'] \fIlabel\fP [\fIcomments\fP]" 10
+These are the only required lines in an \&.ocf file\&. They identify the
+databases to be opened, the keytypes available in each opened database,
+and the character that distinguishes that keytype in the record key\&.
+.IP "" 10
+Keytypes can be specified one at a time by several
+\fBKEYTYPE\fP lines, which include a provision for
+comments, or grouped together with one or more
+\fBKEYTYPES\fP lines\&. Both \fBKEYTYPE\fP and
+\fBKEYTYPES\fP specifications are additive; if some
+keytypes have already been specified for a database, the new ones are
+merely added to the previously defined ones\&.
+.RS
+.IP "\fIdddd\fP" 10
+1- to 8-character dictionary name; case sensitive\&.
+.IP "\&'\fIc\fP\&'" 10
+The keytype character or \fIktchar\fP for a keytype; a
+single, case sensitive, alphanumeric, ASCII character in single quotes\&.
+It identifies the first character of the database record key
+corresponding to the desired keytype\&.
+.IP "" 10
+The \fIktchar\fP value is optional; if a
+\fIktchar\fP is not specified, the default is the first
+character of the label parameter that immediately follows it (described
+below)\&. If a user config file specifies a \fIktchar\fP,
+whether in the \fIktchar\fP parameter or by default, that
+cannot be matched to a site file specification, it is ignored\&. The
+\fIktchar\fP is paired with the subsequent label string\&.
+For example, if "\&.\&.\&.\&'r\&' Old_Records,\&.\&.\&." appears in the site ocf file, a
+lowercase \&'r\&' will be the \fIktchar\fP for a record type
+labeled in user interfaces as "Old Records"\&.
+.IP "\fIlabel\fP" 10
+A 1- to 13-character symbolic string identifying the keytype\&. No spaces
+are allowed in the label string, but underscores will be replaced by
+spaces in the name field of the \fBKEYTYPES\fP structure\&.
+The string is used for record type labels in the user interface
+application\&. If there is no preceding \fIktchar\fP
+parameter, the first character of the label is the identifying prefix
+character for the record type in record ids\&.
+.IP "" 10
+Technically, the \fIlabel\fP parameter is optional
+following a \fIktchar\fP specification\&. If two adjacent
+\fIktchar\fP values in single quotes are detected, a
+generic label for the first one will be created which is derived from
+the \fIktchar\fP value\&.
+.RE
+.IP "PATH \fIdddd\fP = \fIpath\fP" 10
+This directive is optional\&.
+.RS
+.IP "\fIdddd\fP" 10
+1- to 8-character dictionary name; case sensitive\&.
+.IP "\fIpath\fP" 10
+Where to find the associated database files\&.
+If no path is provided for a database,
+the engine assumes the current working directory\&.
+.RE
+.IP "LABEL \fIdddd\fP \fItext\fP\&.\&.\&." 10
+This directive is optional\&. It assigns an arbitrary string to the
+database name, which will be returned by DtSearchInit and DtSearchReinit
+rather than the default 1 to 8 char database file name\&. It is typically
+used to provide an appropriate symbolic label string for a database for
+the user interface\&. Not otherwise used by the search engine\&.
+.PP
+.RS
+\fBNote:  
+.IP "" 10
+ALL text on the line immediately after the database name,
+except the terminating linefeed, is included in the label\&.
+.RE
+.RS
+.IP "\fIdddd\fP" 10
+1- to 8-character dictionary name; case sensitive\&.
+.IP "\fItext\fP" 10
+The string value stored is all the text
+on the rest of the line after the database name\&.
+.RE
+.IP "WHITLIM = \fIn\fP" 10
+This directive is optional\&. It changes the default value of the words
+\fIhitlimit\fP variable in the engine\&. This
+variable will cause a word/stem search to abort if the results list
+grows to some ridiculously large value\&. For extremely large repositories
+the default may be too small, and for many smaller repositories it may
+be too large\&. The value of \fIn\fP should be be a
+positive integer in the range of a signed long integer\&.
+.SH "ENVIRONMENT VARIABLES"
+.IP "\fBDTSROCFPATH\fP" 10
+Optional\&. Specifies a directory where the ocf file may be located\&.
+.IP "\fBHOME\fP" 10
+Specifies an alternative directory in which to look for the ocf file if
+it is not found in \fBDTSROCFPATH\fP or the current working
+directory\&.
+.SH "EXAMPLES"
+.PP
+.nf
+\f(CWKEYTYPES xxx = \&'A\&' \&'b\&' \&'C\&' Documents\fR
+.fi
+.PP
+.PP
+Specifies that there are only 4 keytypes in the xxx database, whose keys
+each begin with A, b, C, and D, and creates generic user interface
+labels for the first three, and the label \fBDocuments\fP
+for the last one\&.
+.PP
+.nf
+\f(CWkeytype xxx Records
+keytypes xxx \&'r\&' Old_Records XYZs\fR
+.fi
+.PP
+.PP
+Specifies that there are 3 keytypes in the xxx database, whose keys each
+begin with R, r, and X, and associates them with the labels
+\fBRecords\fP, \fBOld Records\fP, and
+\fBXYZs\fP respectively\&.
+.PP
+.nf
+\f(CWPATH xxx = /etc/dtsearch/databases/\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWLABEL helpdesk Level 2 Support Center Documents\fR
+.fi
+.PP
+.PP
+.nf
+\f(CWwhitlim = 300000\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBDtSearchInit\fP(3),
+\fBDtSrAPI\fP(3),
+\fBDtSearch\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

@@ -1,0 +1,1232 @@
+'\" t
+...\" Tttt_c.sgm /main/12 1996/09/08 20:00:33 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Tt/tt_c\&.h" "file formats"
+.SH "NAME"
+\fBTt/tt_c\&.h\fP \(em ToolTalk definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBTt/tt_c\&.h\fP header includes
+\fBtypedef\fPs for the following callback functions:
+.PP
+.nf
+typedef Tt_filter_action (*Tt_filter_function)(const char *\fInodeid\fP,
+        void *\fIcontext\fP,
+        void *\fIaccumulator\fP);
+.fi
+.PP
+.nf
+typedef Tt_callback_action (*Tt_message_callback)(Tt_message \fIm\fP,
+        Tt_pattern \fIp\fP);
+.fi
+.PP
+To enable developers to write multithreaded applications, the header defines
+.PP
+.nf
+\f(CW    typedef enum tt_feature {
+        _TT_FEATURE_MULTITHREADED = 1,  // Thread-safety
+        _TT_FEATURE_LAST                // Enum end marker
+    } Tt_feature;\fR
+.fi
+.PP
+.PP
+Note that the \fBTT_FEATURE_MULTITHREADED\fP
+value will be part of the \fBlibtt\fP binary interface\&.
+.PP
+These would be accessed by calling code with corresponding \fB#define\fP constants:
+.PP
+.nf
+\f(CW#define TT_FEATURE_MULTITHREADED _TT_FEATURE_MULTITHREADED\fR
+.fi
+.PP
+.PP
+in order that that calling code can then use \fBcpp\fP
+directives to control their use of features:
+.PP
+.nf
+\f(CW#if defined(TT_FEATURE_MULTITHREADED)
+
+\&.\&.\&.\&.
+
+#endif\fR
+.fi
+.PP
+.PP
+The header defines the
+\fBTT_VERSION\fP constant with the value 10200,
+indicating the version of the ToolTalk API\&.
+.PP
+The header defines the
+\fBTt_status\fR enumeration data type,
+with the following members and specific values:
+.PP
+.nf
+\f(CWtypedef enum tt_status {
+        TT_OK                   = 0,
+        TT_WRN_NOTFOUND         = 1,
+        TT_WRN_STALE_OBJID      = 2,
+        TT_WRN_STOPPED          = 3,
+        TT_WRN_SAME_OBJID       = 4,
+        TT_WRN_START_MESSAGE    = 5,
+        TT_WRN_APPFIRST         = 512,
+        TT_WRN_LAST             = 1024,
+        TT_ERR_CLASS            = 1025,
+        TT_ERR_DBAVAIL          = 1026,
+        TT_ERR_DBEXIST          = 1027,
+        TT_ERR_FILE             = 1028,
+        TT_ERR_INVALID          = 1029,
+        TT_ERR_MODE             = 1031,
+        TT_ERR_ACCESS           = 1032,
+        TT_ERR_NOMP             = 1033,
+        TT_ERR_NOTHANDLER       = 1034,
+        TT_ERR_NUM              = 1035,
+        TT_ERR_OBJID            = 1036,
+        TT_ERR_OP               = 1037,
+        TT_ERR_OTYPE            = 1038,
+        TT_ERR_ADDRESS          = 1039,
+        TT_ERR_PATH             = 1040,
+        TT_ERR_POINTER          = 1041,
+        TT_ERR_PROCID           = 1042,//The specified process identifier is out of date or invalid
+        TT_ERR_PROPLEN          = 1043,
+        TT_ERR_PROPNAME         = 1044,
+        TT_ERR_PTYPE            = 1045,
+        TT_ERR_DISPOSITION      = 1046,
+        TT_ERR_SCOPE            = 1047,
+        TT_ERR_SESSION          = 1048,
+        TT_ERR_VTYPE            = 1049,
+        TT_ERR_NO_VALUE         = 1050,
+        TT_ERR_INTERNAL         = 1051,
+        TT_ERR_READONLY         = 1052,
+        TT_ERR_NO_MATCH         = 1053,
+        TT_ERR_UNIMP            = 1054,
+        TT_ERR_OVERFLOW         = 1055,
+        TT_ERR_PTYPE_START      = 1056,
+        TT_ERR_CATEGORY         = 1057,
+        TT_ERR_DBUPDATE         = 1058,
+        TT_ERR_DBFULL           = 1059,
+        TT_ERR_DBCONSIST        = 1060,
+        TT_ERR_STATE            = 1061,
+        TT_ERR_NOMEM            = 1062,
+        TT_ERR_SLOTNAME         = 1063,
+        TT_ERR_XDR              = 1064,
+        TT_ERR_NETFILE          = 1065,
+        TT_DESKTOP_             = 1100,
+        TT_DESKTOP_EPERM        = 1101,
+        TT_DESKTOP_ENOENT       = 1102,
+        TT_DESKTOP_EINTR        = 1104,
+        TT_DESKTOP_EIO          = 1105,
+        TT_DESKTOP_EAGAIN       = 1111,
+        TT_DESKTOP_ENOMEM       = 1112,
+        TT_DESKTOP_EACCES       = 1113,
+        TT_DESKTOP_EFAULT       = 1114,
+        TT_DESKTOP_EEXIST       = 1117,
+        TT_DESKTOP_ENODEV       = 1119,
+        TT_DESKTOP_ENOTDIR      = 1120,
+        TT_DESKTOP_EISDIR       = 1121,
+        TT_DESKTOP_EINVAL       = 1122,
+        TT_DESKTOP_ENFILE       = 1123,
+        TT_DESKTOP_EMFILE       = 1124,
+        TT_DESKTOP_ETXTBSY      = 1126,
+        TT_DESKTOP_EFBIG        = 1127,
+        TT_DESKTOP_ENOSPC       = 1128,
+        TT_DESKTOP_EROFS        = 1130,
+        TT_DESKTOP_EMLINK       = 1131,
+        TT_DESKTOP_EPIPE        = 1132,
+        TT_DESKTOP_ENOMSG       = 1135,
+        TT_DESKTOP_EDEADLK      = 1145,
+        TT_DESKTOP_ECANCELED    = 1147,
+        TT_DESKTOP_ENOTSUP      = 1148,
+        TT_DESKTOP_ENODATA      = 1161,
+        TT_DESKTOP_EPROTO       = 1171,
+        TT_DESKTOP_ENOTEMPTY    = 1193,
+        TT_DESKTOP_ETIMEDOUT    = 1245,
+        TT_DESKTOP_EALREADY     = 1249,
+        TT_DESKTOP_UNMODIFIED   = 1299,
+        TT_MEDIA_ERR_SIZE       = 1300,
+        TT_MEDIA_ERR_FORMAT     = 1301,
+        TT_ERR_APPFIRST         = 1536,
+        TT_ERR_LAST             = 2047,
+        TT_STATUS_LAST          = 2048
+} Tt_status;\fR
+.fi
+.PP
+.PP
+Specific values are required because they can be communicated between ToolTalk
+clients on different platforms, usually via
+\fBtt_message_status_set\fP(3) and
+\fBtt_message_status\fP(3)\&.
+.PP
+The header defines the following enumeration data types,
+with at least the following members:
+.IP "\fBTt_filter_action\fR" 10
+\fBTT_FILTER_CONTINUE\fP, \fBTT_FILTER_LAST\fP, \fBTT_FILTER_STOP\fP
+.IP "\fBTt_callback_action\fR" 10
+\fBTT_CALLBACK_CONTINUE\fP, \fBTT_CALLBACK_LAST\fP, \fBTT_CALLBACK_PROCESSED\fP
+.IP "\fBTt_mode\fR" 10
+\fBTT_IN\fP, \fBTT_INOUT\fP, \fBTT_MODE_LAST\fP, \fBTT_MODE_UNDEFINED\fP, \fBTT_OUT\fP
+.IP "\fBTt_scope\fR" 10
+\fBTT_BOTH\fP, \fBTT_FILE\fP, \fBTT_FILE_IN_SESSION\fP, \fBTT_SCOPE_NONE\fP, \fBTT_SESSION\fP
+.IP "\fBTt_class\fR" 10
+\fBTT_CLASS_LAST\fP, \fBTT_CLASS_UNDEFINED\fP, \fBTT_NOTICE\fP, \fBTT_REQUEST\fP
+.IP "\fBTt_category\fR" 10
+\fBTT_CATEGORY_LAST\fP, \fBTT_CATEGORY_UNDEFINED\fP, \fBTT_HANDLE\fP, \fBTT_OBSERVE\fP
+.IP "\fBTt_address\fR" 10
+\fBTT_ADDRESS_LAST\fP, \fBTT_HANDLER\fP, \fBTT_OBJECT\fP, \fBTT_OTYPE\fP, \fBTT_PROCEDURE\fP
+.IP "\fBTt_disposition\fR" 10
+\fBTT_DISCARD\fP, \fBTT_QUEUE\fP, \fBTT_START\fP
+.IP "\fBTt_state\fR" 10
+\fBTT_CREATED\fP, \fBTT_FAILED\fP, \fBTT_HANDLED\fP, \fBTT_QUEUED\fP, \fBTT_REJECTED\fP, \fBTT_SENT\fP, \fBTT_STARTED\fP, \fBTT_STATE_LAST\fP
+.PP
+The header defines the following as opaque data types:
+\fBTt_message\fR, \fBTt_pattern\fR\&.
+.PP
+The header declares the following as functions:
+.PP
+.nf
+char *tt_X_session(const char *\fIxdisplaystring\fP);
+.fi
+.PP
+.nf
+Tt_status tt_bcontext_join(const char *\fIslotname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_bcontext_quit(const char *\fIslotname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_close(void);
+.fi
+.PP
+.nf
+Tt_status tt_context_join(const char *\fIslotname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_context_quit(const char *\fIslotname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_default_file(void);
+.fi
+.PP
+.nf
+Tt_status tt_default_file_set(const char *\fIdocid\fP);
+.fi
+.PP
+.nf
+char *tt_default_procid(void);
+.fi
+.PP
+.nf
+Tt_status tt_default_procid_set(const char *\fIprocid\fP);
+.fi
+.PP
+.nf
+char *tt_default_ptype(void);
+.fi
+.PP
+.nf
+Tt_status tt_default_ptype_set(const char *\fIptid\fP);
+.fi
+.PP
+.nf
+char *tt_default_session(void);
+.fi
+.PP
+.nf
+Tt_status tt_default_session_set(const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+int tt_error_int(Tt_status \fIttrc\fP);
+.fi
+.PP
+.nf
+void *tt_error_pointer(Tt_status \fIttrc\fP);
+.fi
+.PP
+.nf
+int tt_fd(void);
+.fi
+.PP
+.nf
+Tt_status tt_file_copy(const char *\fIoldfilepath\fP,
+        const char *\fInewfilepath\fP);
+.fi
+.PP
+.nf
+Tt_status tt_file_destroy(const char *\fIfilepath\fP);
+.fi
+.PP
+.nf
+Tt_status tt_file_join(const char *\fIfilepath\fP);
+.fi
+.PP
+.nf
+Tt_status tt_file_move(const char *\fIoldfilepath\fP,
+        const char *\fInewfilepath\fP);
+.fi
+.PP
+.nf
+char *tt_file_netfile(const char *\fIfilename\fP);
+.fi
+.PP
+.nf
+Tt_status tt_file_objects_query(const char *\fIfilepath\fP,
+        Tt_filter_function \fIfilter\fP,
+        void *\fIcontext\fP,
+        void *\fIaccumulator\fP);
+.fi
+.PP
+.nf
+Tt_status tt_file_quit(const char *\fIfilepath\fP);
+.fi
+.PP
+.nf
+void tt_free(caddr_t \fIp\fP);
+.fi
+.PP
+.nf
+char *tt_host_file_netfile(const char *\fIhost\fP,
+        const char *\fIfilename\fP);
+.fi
+.PP
+.nf
+char *tt_host_netfile_file(const char *\fIhost\fP,
+        const char *\fInetfilename\fP);
+.fi
+.PP
+.nf
+Tt_status tt_icontext_join(const char *\fIslotname\fP, int \fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_icontext_quit(const char *\fIslotname\fP, int \fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_initial_session(void);
+.fi
+.PP
+.nf
+Tt_status tt_int_error(int \fIreturn_val\fP);
+.fi
+.PP
+.nf
+int tt_is_err(Tt_status \fIs\fP);
+.fi
+.PP
+.nf
+caddr_t tt_malloc(size_t \fIs\fP);
+.fi
+.PP
+.nf
+int tt_mark(void);
+.fi
+.PP
+.nf
+Tt_status tt_message_accept(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_address tt_message_address(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_address_set(Tt_message \fIm\fP, Tt_address \fIa\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_add(Tt_message \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_bval(Tt_message \fIm\fP,
+        int \fIn\fP,
+        unsigned char **\fIvalue\fP,
+        int *\fIlen\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_bval_set(Tt_message \fIm\fP,
+        int \fIn\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlen\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_ival(Tt_message \fIm\fP,
+        int \fIn\fP,
+        int *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_ival_set(Tt_message \fIm\fP,
+        int \fIn\fP,
+        int \fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_mode tt_message_arg_mode(Tt_message \fIm\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+char *tt_message_arg_type(Tt_message \fIm\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+char *tt_message_arg_val(Tt_message \fIm\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_val_set(Tt_message \fIm\fP,
+        int \fIn\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_xval(Tt_message \fIm\fP,
+        int \fIn\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void **\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_arg_xval_set(Tt_message \fIm\fP,
+        int \fIn\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+int tt_message_args_count(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_barg_add(Tt_message \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlen\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_bcontext_set(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_callback_add(Tt_message \fIm\fP,
+        Tt_message_callback \fIf\fP);
+.fi
+.PP
+.nf
+Tt_class tt_message_class(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_class_set(Tt_message \fIm\fP,
+        Tt_class \fIc\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_context_bval(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        unsigned char **\fIvalue\fP,
+        int *\fIlen\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_context_ival(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        int *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_context_set(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_message_context_slotname(Tt_message \fIm\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+char *tt_message_context_val(Tt_message \fIm\fP,
+        const char *\fIslotname\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_context_xval(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void **\fIvalue\fP);
+.fi
+.PP
+.nf
+int tt_message_contexts_count(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_message tt_message_create(void);
+.fi
+.PP
+.nf
+Tt_message tt_message_create_super(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_destroy(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_disposition tt_message_disposition(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_disposition_set(Tt_message \fIm\fP,
+        Tt_disposition \fIr\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_fail(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_file(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_file_set(Tt_message \fIm\fP,
+        const char *\fIfile\fP);
+.fi
+.PP
+.nf
+gid_t tt_message_gid(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_handler(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_handler_ptype(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_handler_ptype_set(Tt_message \fIm\fP,
+        const char *\fIptid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_handler_set(Tt_message \fIm\fP,
+        const char *\fIprocid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_iarg_add(Tt_message \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        int \fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_icontext_set(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        int \fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_message_id(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_object(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_object_set(Tt_message \fIm\fP,
+        const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+char *tt_message_op(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_op_set(Tt_message \fIm\fP,
+        const char *\fIopname\fP);
+.fi
+.PP
+.nf
+int tt_message_opnum(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_otype(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_otype_set(Tt_message \fIm\fP,
+        const char *\fIotype\fP);
+.fi
+.PP
+.nf
+Tt_pattern tt_message_pattern(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_print(Tt_message *\fIm\fP);
+.fi
+.PP
+.nf
+Tt_message tt_message_receive(void);
+.fi
+.PP
+.nf
+Tt_status tt_message_reject(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_reply(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_scope tt_message_scope(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_scope_set(Tt_message \fIm\fP,
+        Tt_scope \fIs\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_send(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_send_on_exit(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_sender(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+char *tt_message_sender_ptype(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_sender_ptype_set(Tt_message \fIm\fP,
+        const char *\fIptid\fP);
+.fi
+.PP
+.nf
+char *tt_message_session(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_session_set(Tt_message \fIm\fP,
+        const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+Tt_state tt_message_state(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+int tt_message_status(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_status_set(Tt_message \fIm\fP,
+        int \fIstatus\fP);
+.fi
+.PP
+.nf
+char *tt_message_status_string(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_status_string_set(Tt_message \fIm\fP,
+        const char *\fIstatus_str\fP);
+.fi
+.PP
+.nf
+uid_t tt_message_uid(Tt_message \fIm\fP);
+.fi
+.PP
+.nf
+void *tt_message_user(Tt_message \fIm\fP,
+        int \fIkey\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_user_set(Tt_message \fIm\fP,
+        int \fIkey\fP,
+        void *\fIv\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_xarg_add(Tt_message \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_xcontext_join(const char *\fIslotname\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_message_xcontext_set(Tt_message \fIm\fP,
+        const char *\fIslotname\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_netfile_file(const char *\fInetfilename\fP);
+.fi
+.PP
+.nf
+int tt_objid_equal(const char *\fIobjid1\fP,
+        const char *\fIobjid2\fP);
+.fi
+.PP
+.nf
+char *tt_objid_objkey(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+Tt_message tt_onotice_create(const char *\fIobjid\fP,
+        const char *\fIop\fP);
+.fi
+.PP
+.nf
+char *tt_open(void);
+.fi
+.PP
+.nf
+Tt_message tt_orequest_create(const char *\fIobjid\fP,
+        const char *\fIop\fP);
+.fi
+.PP
+.nf
+char *tt_otype_base(const char *\fIotype\fP);
+.fi
+.PP
+.nf
+char *tt_otype_derived(const char *\fIotype\fP,
+        int \fIi\fP);
+.fi
+.PP
+.nf
+int tt_otype_deriveds_count(const char *\fIotype\fP);
+.fi
+.PP
+.nf
+Tt_mode tt_otype_hsig_arg_mode(const char *\fIotype\fP,
+        int \fIsig\fP,
+        int \fIarg\fP);
+.fi
+.PP
+.nf
+char *tt_otype_hsig_arg_type(const char *\fIotype\fP,
+        int \fIsig\fP,
+        int \fIarg\fP);
+.fi
+.PP
+.nf
+int tt_otype_hsig_args_count(const char *\fIotype\fP,
+        int \fIsig\fP);
+.fi
+.PP
+.nf
+int tt_otype_hsig_count(const char *\fIotype\fP);
+.fi
+.PP
+.nf
+char *tt_otype_hsig_op(const char *\fIotype\fP,
+        int \fIsig\fP);
+.fi
+.PP
+.nf
+int tt_otype_is_derived(const char *\fIderivedotype\fP,
+        const char *\fIbaseotype\fP);
+.fi
+.PP
+.nf
+Tt_status tt_otype_opnum_callback_add(const char *\fIotid\fP,
+        int \fIopnum\fP,
+        Tt_message_callback \fIf\fP);
+.fi
+.PP
+.nf
+Tt_mode tt_otype_osig_arg_mode(const char *\fIotype\fP,
+        int \fIsig\fP,
+        int \fIarg\fP);
+.fi
+.PP
+.nf
+char *tt_otype_osig_arg_type(const char *\fIotype\fP,
+        int \fIsig\fP,
+        int \fIarg\fP);
+.fi
+.PP
+.nf
+int tt_otype_osig_args_count(const char *\fIotype\fP,
+        int \fIsig\fP);
+.fi
+.PP
+.nf
+int tt_otype_osig_count(const char*\fIotype\fP);
+.fi
+.PP
+.nf
+char *tt_otype_osig_op(const char *\fIotype\fP,
+        int \fIsig\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_address_add(Tt_pattern \fIp\fP,
+        Tt_address \fId\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_arg_add(Tt_pattern \fIp\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_barg_add(Tt_pattern \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlen\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_bcontext_add(Tt_pattern \fIp\fP,
+        const char *\fIslotname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_callback_add(Tt_pattern \fIm\fP,
+        Tt_message_callback \fIf\fP);
+.fi
+.PP
+.nf
+Tt_category tt_pattern_category(Tt_pattern \fIp\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_category_set(Tt_pattern \fIp\fP,
+        Tt_category \fIc\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_class_add(Tt_pattern \fIp\fP,
+        Tt_class \fIc\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_context_add(Tt_pattern \fIp\fP,
+        const char *\fIslotname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_pattern tt_pattern_create(void);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_destroy(Tt_pattern \fIp\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_disposition_add(Tt_pattern \fIp\fP,
+        Tt_disposition \fIr\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_file_add(Tt_pattern \fIp\fP,
+        const char *\fIfile\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_iarg_add(Tt_pattern \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        int \fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_icontext_add(Tt_pattern \fIp\fP,
+        const char *\fIslotname\fP,
+        int \fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_object_add(Tt_pattern \fIp\fP,
+        const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_op_add(Tt_pattern \fIp\fP,
+        const char *\fIopname\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_opnum_add(Tt_pattern \fIp\fP,
+        int \fIopnum\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_otype_add(Tt_pattern \fIp\fP,
+        const char *\fIotype\fP);
+.fi
+.PP
+.nf
+char *tt_pattern_print(Tt_pattern *\fIp\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_register(Tt_pattern \fIp\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_scope_add(Tt_pattern \fIp\fP,
+        Tt_scope \fIs\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_sender_add(Tt_pattern \fIp\fP,
+        const char *\fIprocid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_sender_ptype_add(Tt_pattern \fIp\fP,
+        const char *\fIptid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_session_add(Tt_pattern \fIp\fP,
+        const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_state_add(Tt_pattern \fIp\fP,
+        Tt_state \fIs\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_unregister(Tt_pattern \fIp\fP);
+.fi
+.PP
+.nf
+void *tt_pattern_user(Tt_pattern \fIp\fP,
+        int \fIkey\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_user_set(Tt_pattern \fIp\fP,
+        int \fIkey\fP,
+        void *\fIv\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_xarg_add(Tt_pattern \fIm\fP,
+        Tt_mode \fIn\fP,
+        const char *\fIvtype\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pattern_xcontext_add(Tt_pattern \fIp\fP,
+        const char *\fIslotname\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+.PP
+.nf
+Tt_message tt_pnotice_create(Tt_scope \fIscope\fP,
+        const char *\fIop\fP);
+.fi
+.PP
+.nf
+Tt_status tt_pointer_error(void *\fIpointer\fP);
+.fi
+.PP
+.nf
+Tt_message tt_prequest_create(Tt_scope \fIscope\fP,
+        const char *\fIop\fP);
+.fi
+.PP
+.nf
+Tt_status tt_ptr_error(\fIpointer\fP);
+.fi
+.PP
+.nf
+Tt_status tt_ptype_declare(const char *\fIptid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_ptype_exists(const char *\fIptid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_ptype_opnum_callback_add(const char *\fIptid\fP,
+        int \fIopnum\fP,
+        Tt_message_callback \fIf\fP);
+.fi
+.PP
+.nf
+Tt_status tt_ptype_undeclare(const char *\fIptid\fP);
+.fi
+.PP
+.nf
+void tt_release(int \fImark\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_bprop(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        int \fIi\fP,
+        unsigned char **\fIvalue\fP,
+        int *\fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_bprop_add(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_bprop_set(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_join(const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+char *tt_session_prop(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        int \fIi\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_prop_add(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+int tt_session_prop_count(const char *\fIsessid\fP,
+        const char *\fIpropname\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_prop_set(const char *\fIsessid\fP,
+        const char *\fIpropname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_session_propname(const char *\fIsessid\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+int tt_session_propnames_count(const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_quit(const char *\fIsessid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_session_types_load(const char *\fIsession\fP,
+        const char *\fIfilename\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_bprop(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        int \fIi\fP,
+        unsigned char **\fIvalue\fP,
+        int *\fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_bprop_add(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_bprop_set(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        const unsigned char *\fIvalue\fP,
+        int \fIlength\fP);
+.fi
+.PP
+.nf
+char *tt_spec_create(const char *\fIfilepath\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_destroy(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+char *tt_spec_file(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+char *tt_spec_move(const char *\fIobjid\fP,
+        const char *\fInewfilepath\fP);
+.fi
+.PP
+.nf
+char *tt_spec_prop(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        int \fIi\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_prop_add(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+int tt_spec_prop_count(const char *\fIobjid\fP,
+        const char *\fIpropname\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_prop_set(const char *\fIobjid\fP,
+        const char *\fIpropname\fP,
+        const char *\fIvalue\fP);
+.fi
+.PP
+.nf
+char *tt_spec_propname(const char *\fIobjid\fP,
+        int \fIn\fP);
+.fi
+.PP
+.nf
+int tt_spec_propnames_count(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+char *tt_spec_type(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_type_set(const char *\fIobjid\fP,
+        const char *\fIotid\fP);
+.fi
+.PP
+.nf
+Tt_status tt_spec_write(const char *\fIobjid\fP);
+.fi
+.PP
+.nf
+char *tt_status_message(Tt_status \fIttrc\fP);
+.fi
+.PP
+.nf
+int tt_trace_control(int \fIonoff\fP);
+.fi
+.PP
+.nf
+Tt_status tt_xcontext_quit(const char *\fIslotname\fP,
+        xdrproc_t \fIxdr_proc\fP,
+        void *\fIvalue\fP);
+.fi
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

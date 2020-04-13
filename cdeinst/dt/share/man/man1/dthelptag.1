@@ -1,0 +1,346 @@
+'\" t
+...\" helptag.sgm /main/9 1996/09/08 19:53:04 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dthelptag" "user cmd"
+.SH "NAME"
+\fBdthelptag\fP \(em compile CDE Help source documents into runtime Help volumes
+.SH "SYNOPSIS"
+.PP
+\fBdthelptag\fP [options]  [\fIfile\fP]  [\fIparser-options\fP] 
+.SH "DESCRIPTION"
+.PP
+.RS
+\fBNote:  
+.PP
+This utility has been superseded by the \fBdtdocbook\fP utility,
+which converts source documents that conform to the DocBook 2\&.2\&.1 DTD
+(Document Type Definition) subelement PART to documents
+that conform to the SDL 1\&.2 DTD\&. The converted DocBook documents
+are readable by the DtHelp viewer\&.
+.RE
+.PP
+The
+\fBdthelptag\fP utility is the CDE Help System compiler for translating
+HelpTag source markup into the online distribution format suitable for
+runtime display\&.
+See the \fICDE Help System Author\&'s and Programmer\&'s
+Guide\fP for a description of the HelpTag markup language\&.
+See
+\fBdthelpview\fP(1) for more information on
+previewing compiled Help volumes\&.
+.PP
+The
+\fBdthelptag\fP utility accepts a single file name as an argument\&.
+If the file name
+contains a period (``\&.\&'\&'), any characters after the last period are
+considered to be the extension\&.
+The
+\fBdthelptag\fP utility removes all characters after the last period and uses the
+resulting name as the base name for all intermediate files and for the
+final output files\&.
+.PP
+If the \fIfile\fP
+argument has no periods,
+\fBdthelptag\fP uses the argument as the base name for intermediate and output files
+and assumes an extension of \fB\&.htg\fP, \fB\&.ctg\fP or \fB\&.sdl\fP
+for the input file\&.
+The \fB\&.ctg\fP
+extension is assumed when the \fB-formal\fP
+option described below is used\&.
+The \fB\&.sdl\fP
+extension is assumed when the \fB-compress\fP
+or \fB-decompress\fP
+option (described later in this document) is used\&.
+.PP
+Several options to
+\fBdthelptag\fP may precede the file name\&.
+Several arguments directing the
+parsing phase of the
+\fBdthelptag\fP process may follow the file name\&.
+.PP
+The output file is:
+\fIfile\fP\&.sdl - the compiled help volume file\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-verbose\fP" 10
+The \fB-verbose\fP
+option will cause
+\fBdthelptag\fP to generate and display parser messages during processing\&.
+.IP "\fB-formal\fP" 10
+The \fB-formal\fP
+option causes
+\fBdthelptag\fP to accept a subset of the HelpTag language that is strictly compliant
+to canonical SGML\&.
+(See the \fICDE Help System Author\&'s and Programmer\&'s
+Guide\fP\&.)
+When this option is given, the default extension of the
+input file becomes \fB\&.ctg\fP\&.
+.IP "\fB-nooptimize\fP" 10
+The \fB-nooptimize\fP
+option eliminates certain optimizations that normally take place
+during translation of HelpTag markup to the runtime format\&.
+Using
+this option speeds the translation process\&.
+.IP "\fB-clean\fP" 10
+The \fB-clean\fP
+option causes
+\fBdthelptag\fP to simply remove any intermediate files from the current directory\&.
+No translation takes place\&.
+.IP "\fB-debug\fP" 10
+The \fB-debug\fP
+option causes
+\fBdthelptag\fP to leave all intermediate files in the current directory\&.
+The \fB-debug\fP
+option also blocks the compression step of
+\fBdthelptag\fP, leaving the resulting \fB\&.sdl\fP
+output file in a human-readable form\&.
+.IP "\fB-files\fP" 10
+The \fB-files\fP
+option causes a list of files referenced in the translation process to
+be emitted to the standard output\&.
+No translation takes place\&.
+.IP "\fB-help\fP" 10
+The \fB-help\fP option causes
+\fBdthelptag\fP to emit a synopsis of the
+\fBdthelptag\fP command line and a list of options to the standard output\&.
+.IP "\fB-decompress\fP" 10
+The \fB-decompress\fP
+option causes
+\fBdthelptag\fP to decompress a previously created \fB\&.sdl\fP
+file\&.
+When this option is specified, the default input extension is \fB\&.sdl\fP\&.
+.IP "\fB-compress\fP" 10
+The \fB-compress\fP
+option causes
+\fBdthelptag\fP to compress a \fB\&.sdl\fP
+file that either was created by translating a \fB\&.htg\fP
+or \fB\&.ctg\fP
+file using the \fB-debug\fP
+option or was previously decompressed using the \fB-decompress\fP
+option\&.
+When this option is specified, the default input extension is \fB\&.sdl\fP\&.
+.SS "Parser Options"
+.PP
+Any \fIparser options\fP
+follow the \fIfile\fP
+argument on the command line and take the form
+\fBoption=value\fP
+for those options taking an argument and simply \fBoption\fP
+for those options not taking an argument\&.
+Parser options may also be set in the environment variable
+\fBDTTAGOPT\fP, in a
+\fBhelptag\&.opt\fP
+file or in a file named
+\fBfile\fP\fB\&.opt\fP
+in the current directory\&.
+The \fBhelptag\&.opt\fP
+file may reside in the current directory or in the directory in which
+\fBdthelptag\fP is placed\&.
+.PP
+The order of precedence of the option settings is:
+.IP "   \(bu" 6
+The file
+\fBhelptag\&.opt\fP in the
+\fBdthelptag\fP installation directory\&.
+This directory defaults to
+\fB/usr/dt/bin\&.\fP
+.IP "   \(bu" 6
+The environment variable \fBDTTAGOPT\fP\&.
+.IP "   \(bu" 6
+The file
+\fBhelptag\&.opt\fP in the current directory\&.
+.IP "   \(bu" 6
+The file \fIfile\fP\fB\&.opt\fP
+in the current directory\&.
+.IP "   \(bu" 6
+The command line\&.
+.PP
+Parser options set later in the list override options set earlier\&.
+.PP
+The parser options supported by
+\fBdthelptag\fP are:
+.IP "\fBonerror=go\fP" 10
+Cause errors to be non-fatal\&.
+That is, parsing continues and later
+phases of the
+\fBdthelptag\fP process are run even if syntax errors were encountered\&.
+.IP "\fBonerror=stop\fP" 10
+This is the default setting of the \fBonerror=\fP option\&.
+It causes the
+\fBdthelptag\fP process to stop upon completion of the parser phase if syntax errors were
+encountered during the parse\&.
+.IP "\fBcharset=name\fP" 10
+The default character set used by the
+help system is ISO8859-1\&.
+A different character set may be specified, for example,
+\fBname\fP,
+using the \fBcharset=\fP option\&.
+The character set may also be set in the \fBhelplang\&.ent\fP
+file described in the \fICDE Help System Author\&'s and Programmer\&'s Guide\fP\&.
+.IP "\fBsearch=path\fP" 10
+Specifies one or more directory \fBpath(s)\fP
+to be searched when executing
+\fBdthelptag\fP\&. Both
+\fBdthelptag\fP input files and/or additional graphics or entity declaration
+files referenced within the HelpTag markup can be made accessible by setting
+this option\&.
+The \fBsearch=\fP
+option may be specified more that once and the list of directories to
+search is accumulated\&.
+.IP "\fBclearsearch\fP" 10
+Clears the list of directories searched for file and
+image entities\&.
+.IP "\fBmemo\fP" 10
+The \fBmemo\fP
+option causes authors\&' comments to be included in the output\&.
+.IP "\fBnomemo\fP" 10
+Specifies the inverse of the \fBmemo\fP
+option\&.
+Both \fBmemo\fP
+and \fBnomemo\fP
+may be specified, but the last entry will override any previous setting\&.
+.IP "\fBshortfiles\fP" 10
+Neither the \fBshortfiles\fP \fIparser-option\fP
+nor any of its synonyms should be used\&.
+Rather, the \fB-shortfiles\fP
+option should be given as an \fIoption\fP
+to
+\fBdthelptag\fP\&. The
+\fBdthelptag\fP driver needs to know whether the user has requested short file names since
+\fBdthelptag\fP must know the names of the intermediate files\&.
+.IP "\fBshortfile\fP" 10
+This is a synonym for \fBshortfiles\fP\&.
+.IP "\fBshort\fR" 10
+This is a synonym for \fBshortfiles\fP\&.
+.IP "\fBlongfiles\fP" 10
+This option and any of its synonyms should not be used for the same
+reason that the \fBshortfiles\fP
+option should not be used\&.
+.IP "\fBlongfiles\fP" 10
+Long, untruncated file names are the default\&.
+.IP "\fBlongfile\fP" 10
+This is a synonym for \fBlongfiles\fP\&.
+.IP "\fBlong\fR" 10
+This is a synonym for \fBlongfiles\fP\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+\fBLANG\fP determines the language in which the input
+\fIfile\fP is interpreted\&.
+The
+\fBLANG\fP environment variable can be overridden in the
+\fBhelplang\&.ent\fP
+file described in the \fICDE Help System Author\&'s and Programmer\&'s Guide\fP\&.
+.PP
+\fBDTTAGOPT\fP may be used to set parser options\&.
+.SS "International Code Set Support"
+.PP
+Single- and multi-byte character code sets are supported\&.
+.SH "INPUT FILES"
+.PP
+Following are the input files used by the
+\fBdthelptag\fP parser:
+.IP "\fBfile\&.htg\fP" 10
+Default input file\&.
+.IP "\fBfile\&.ctg\fP" 10
+Default input file when the \fB-formal\fP
+option has been specified\&.
+.IP "\fBfile\&.st\fP" 10
+Status file and log\&.
+.IP "\fBhelplang\&.ent\fP" 10
+Character set information and localizable replacement text\&.
+.IP "\fBhelptag\&.opt\fP" 10
+Option file\&.
+.SH "OUTPUT FILES"
+.PP
+Following are the input files used by the
+\fBdthelptag\fP parser:
+.IP "\fBfile\&.sdl\fP" 10
+Runtime help volume
+.IP "\fBfile\&.err\fP" 10
+Run log and error listing
+.SH "EXTENDED DESCRIPTION"
+.PP
+The
+\fBdthelptag\fP utility is a driver program that executes two phases of the
+compilation process\&.
+The first phase translates the source markup
+into the distribution format\&.
+The second phase enhances the
+distribution file by precomputing information such as a list of
+identifiers in the file and their locations\&.
+These precomputations,
+along with several optimizations, enable rapid runtime display of
+the file\&.
+The second phase of the translation process also compresses
+the distribution file to reduce file system space required to store
+the file\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+Successful completion\&.
+.IP "1" 10
+An error was detected in the source file\&.
+.IP "2" 10
+An invocation error was detected\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "EXAMPLES"
+.IP "\fBdthelptag -clean myFile\&.htg\fP" 10
+Remove all files previously generated by processing a source file
+of \fBmyFile\&.htg\fP\&.
+.IP "\fBdthelptag myFile\&.htg onerror=go\fP" 10
+Process the file \fBmyFile\&.htg\fP, not stopping even if there are syntax errors\&.
+.IP "\fBdthelptag myFile\&.htg\fP" 10
+Process the file \fBmyFile\&.htg\fP\&.
+.SH "SEE ALSO"
+.PP
+\fBdthelpview\fP(1), \fICDE Help System Author\&'s and Programmer\&'s Guide\fP\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

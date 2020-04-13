@@ -1,0 +1,106 @@
+'\" t
+...\" dtsrvald.sgm 1996
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtSearchValidDateString" "library call"
+.SH "NAME"
+\fBDtSearchValidDateString\fP \(em Validate and convert a user date string
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Search\&.h>
+\fBDtSrObjdate \fBDtSearchValidDateString\fP\fR(
+\fBchar *\fBdate_string\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+\fBDtSearchValidDateString\fP validates a DtSearch date
+string, as might have been entered by a user in a free form text field,
+and converts it into a valid \fBDtSrObjdate\fR\&.
+.PP
+Since an invalid date string format returns a distinctive \fBDtSrObjdate\fR, this function may also be used as
+a boolean test for string validity\&.
+.SH "ARGUMENTS"
+.IP "\fIdate_string\fP" 10
+Specifies the date string to be validated and converted\&.
+.IP "" 10
+The format for a valid date string is "[\fIyyyy\fP
+[\fImm\fP [\fIdd\fP]]", one, two, or three
+ASCII numeric tokens separated by one or more nonnumeric chars
+(whitespace, slashes, etc)\&. The integer \fIyyyy\fP
+represents a Gregorian calendar year number in the range 1990 to 5995
+inclusive\&. If \fIyyyy\fP is less than 1900, 1900 is added
+to it\&. The integer \fImm\fP is a Gregorian calendar month
+number in the range 1 to 12 inclusive\&. The integer
+\fIdd\fP is a Gregorian calendar day number in the range
+1 to 31 inclusive\&.
+.IP "" 10
+If only two tokens are in the string, they are presumed to be
+\fIyyyy\fP and \fImm\fP, and
+\fIdd\fP is presumed to be to 1\&.
+.IP "" 10
+If only one token is in the string, it is presumed to be
+\fIyyyy\fP, and both \fImm\fP
+and \fIdd\fP are presumed to be 1\&.
+.SH "RETURN VALUE"
+.PP
+\fBDtSearchValidDateString\fP returns zero (a valid
+\fBDtSrObjdate\fR) if
+\fIdate_string\fP is NULL or empty\&.
+.PP
+It returns a correctly formatted \fBDtSrObjdate\fR on successful parse and
+conversion\&.
+.PP
+It returns -1 and a message on the MessageList if
+\fIdate_string\fP is invalid\&.
+.SH "SEE ALSO"
+.PP
+\fBDtSrAPI\fP(3),
+\fBDtSearchQuery\fP(3),
+\fBdtsrfzkfiles\fP(4),
+\fBDtSearch\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

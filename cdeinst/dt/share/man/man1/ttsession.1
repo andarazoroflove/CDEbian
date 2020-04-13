@@ -1,0 +1,340 @@
+'\" t
+...\" ttsessio.sgm /main/7 1996/09/08 20:21:08 rws $
+...\" ttsessio.sgm /main/7 1996/09/08 20:21:08 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttsession" "user cmd"
+.SH "NAME"
+\fBttsession\fP \(em the ToolTalk message server
+.SH "SYNOPSIS"
+.PP
+\fBttsession\fP [-hNpsStv]  [-E  | -X ]  [-a\ \fIlevel\fP]  [-d\ \fIdisplay\fP]  [-c\   | \fIcommand\fP ] 
+.SH "DESCRIPTION"
+.PP
+The
+\fBttsession\fP utility
+is the ToolTalk message server\&.
+This background process must be running
+before any messages can be sent or received\&.
+Each message server defines a
+\fIsession\fP\&.
+.PP
+The message server has no user interface and typically runs in the
+background, started either by the user\&'s
+\fB\&.xinitrc\fP file or automatically
+by any program that needs to send or receive a message\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-a\0\fP\fIlevel\fP" 10
+Set the server authentication level\&.
+The following
+\fIlevel\fP string values are supported:
+.RS
+.IP "\fBunix\fP" 10
+The sender and receiver must have the same user ID\&.
+.IP "\fBdes\fP" 10
+The underlying RPC calls use
+\fBAUTH_DES\fP\&.
+.RE
+.IP "\fB-c\0[\fP\fIcommand\fP\fB]\fP" 10
+Start a process tree session and run the given command\&.
+The
+\fBttsession\fP utility sets the environment variable
+\fBTT_SESSION\fP to the name of this session\&.
+Any process started with this variable in the environment
+defaults to being in this session\&.
+If
+\fIcommand\fP is omitted,
+\fBttsession\fP invokes the shell named by the
+\fBSHELL\fP environment variable\&.
+Everything after
+\fB-c\fP on the command line is used as the command to be executed\&.
+.IP "\fB-d\0\fP\fIdisplay\fP" 10
+Specify an X Windows display\&.
+The ToolTalk session will consist of those applications
+displaying on the named display\&.
+The default display is identified by the
+\fBDISPLAY\fP environment variable\&.
+.IP "\fB-E\fP" 10
+Read in the types from the Classing Engine database\&.
+If neither
+\fB-E\fP nor
+\fB-X\fP is given,
+\fB-X\fP is assumed\&.
+.IP "\fB-h\fP" 10
+Write a help message to standard error that
+describes the command syntax of
+\fBttsession\fP, and exit\&.
+.IP "\fB-N\fP" 10
+Maximize the number of clients allowed to connect to (in other words, open
+procids in) this session by attempting to raise the limit of
+open file descriptors\&.
+The precise number of clients is system-dependent;
+on some systems this option may have no effect\&.
+.IP "\fB-p\fP" 10
+Write the name of a new process tree session to standard output, and then
+fork a background instance of
+\fBttsession\fP to manage this new session\&.
+.IP "\fB-s\fP" 10
+Silent\&.
+Do not write any warning messages to standard error\&.
+.IP "\fB-S\fP" 10
+Do not fork a background instance to manage the
+\fBttsession\fP session\&.
+.IP "\fB-t\fP" 10
+Turn on trace mode\&.
+See
+\fBASYNCHRONOUS EVENTS\fP for how to turn tracing on and off during execution\&.
+Tracing displays the state of a message when it is first seen by
+\fBttsession\fP\&. The lifetime of the message is then shown by showing the result of
+matching the message against type signatures (dispatch stage) and then
+showing the result of matching the message against any registered
+message patterns (delivery stage)\&.
+Any attempt to send the message to
+a given process is also shown together with the success of that attempt\&.
+.IP "\fB-v\fP" 10
+Write the version number to standard output and exit\&.
+.IP "\fB-X\fP" 10
+Read in the types from the following XDR format databases:
+.PP
+.nf
+\f(CW$HOME/\&.tt/types\&.xdr
+/etc/tt/types\&.xdr
+$OPENWINHOME/etc/tt/types\&.xdr
+/usr/dt/appconfig/tttypes/types\&.xdr\fR
+.fi
+.PP
+.IP "" 10
+The databases are listed order of decreasing precedence\&.
+Entries in
+\fB$HOME/\&.tt/types\&.xdr\fP override any like entries in the databases
+lower in the list, and so forth\&.
+.IP "" 10
+These locations can be overridden by setting the
+\fITTPATH\fP environment variable\&.
+See
+\fBENVIRONMENT VARIABLES\fP\&.
+.SH "OPERANDS"
+.PP
+None\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+The XDR format databases listed by the
+\fB-X\fP option are serialized ToolTalk data structures of
+an unspecified format, except that it is the same
+as the format of
+\fBtt_type_comp\fP(1) output files\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of
+\fBttsession\fP:
+.IP "\fICEPATH\fP" 10
+In Classing Engine mode, this variable tells the Classing Engine
+where to find the databases that contain ToolTalk types\&.
+See
+\fBce_db_build\fP(1)\&.
+.IP "\fBDISPLAY\fP" 10
+If
+\fBTT_SESSION\fP is not set and
+\fBDISPLAY\fP is set, then the value of
+\fBDISPLAY\fP will be used by all ToolTalk clients to identify the
+\fBttsession\fP process serving their X display\&.
+If no such process is running, the ToolTalk
+service will auto-start one\&.
+.IP "" 10
+If
+\fBttsession\fP is run with the
+\fB-d\fP option and
+\fBDISPLAY\fP is not set,
+\fBttsession\fP sets
+\fBDISPLAY\fP to be the value of the
+\fB-d\fP option for itself and all processes it forks\&.
+This helps ToolTalk clients to find the right X display when
+they are auto-started by
+\fBttsession\fP\&.
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables
+that are unset or null\&.
+If
+\fBLANG\fP is unset or null, the corresponding value from the
+implementation-specific default locale will be used\&.
+If any of the internationalization variables contains an invalid setting, the
+utility behaves as if none of the variables had been defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value,
+override the values of all the other internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect
+the format and contents of diagnostic
+messages written to standard error
+and informative messages written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues
+for the processing of
+\fILC_MESSAGES\fP\&.
+.IP "\fITT_ARG_TRACE_WIDTH\fP" 10
+Specify the number of bytes of argument and context values to write when
+in trace mode\&.
+The default is to print the first 40 bytes\&.
+.IP "\fITTPATH\fP" 10
+In XDR mode, a
+.IP "" 10
+colon-separated list of directories that tells ToolTalk
+where to find the ToolTalk types databases\&.
+The format of this variable is:
+.PP
+.nf
+\f(CW\fIuserDir\fP[:\fIsystemDir\fP[:\fInetworkDir\fP]]\fR
+.fi
+.PP
+.IP "\fITTSESSION_CMD\fP" 10
+Specify the shell command to be used by all ToolTalk clients
+for auto-starting
+\fBttsession\fP\&.
+.PP
+The
+\fBttsession\fP utility creates the following variable when it invokes another process:
+.IP "\fBTT_FILE\fP" 10
+When
+\fBttsession\fP invokes a tool to receive a message, it copies the file attribute
+(if any) of the message into this variable, formatted in the same
+manner as returned by the
+\fBtt_message_file\fP(3) function\&.
+.IP "\fBTT_SESSION\fP" 10
+The
+\fBttsession\fP utility uses this variable to communicate its session ID to the tools that
+it starts\&.
+The format of the variable is implementation specific\&.
+If this variable is set, the ToolTalk client library uses its
+value as the default session ID\&.
+.IP "\fITT_TOKEN\fP" 10
+Inform the ToolTalk client library that it has been invoked by
+\fBttsession\fP, so that the client can confirm to
+\fBttsession\fP that it started successfully\&.
+The format of the variable is implementation specific\&.
+.PP
+A tool started by
+\fBttsession\fP must ensure that the
+\fBTT_SESSION\fP and
+\fITT_TOKEN\fP are present in the environment of any processes it invokes\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The
+\fBttsession\fP utility reacts to two signals\&.
+If it receives the
+\fBSIGUSR1\fP signal, it toggles trace mode on or off (see the
+\fB-t\fP option)\&.
+If it receives the
+\fBSIGUSR2\fP signal, it rereads the types file\&.
+The
+\fBttsession\fP utility takes the standard action for all other signals\&.
+.SH "STDOUT"
+.PP
+When the
+\fB-v\fP option is used,
+\fBttsession\fP writes the version number in an unspecified format\&.
+When
+\fB-p\fP is used,
+\fBttsession\fP writes the name of a new process tree session\&.
+.SH "STDERR"
+.PP
+Used only for diagnostic messages and the help message written by the
+\fB-h\fP option\&.
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+When the
+\fB-c\fP child process exits,
+\fBttsession\fP exits with the status of the exited child\&.
+Otherwise, the following exit values are returned:
+.IP "0" 10
+Normal termination\&.
+Without the
+\fB-c\fP or
+\fB-S\fP options, a zero exit status means
+\fBttsession\fP has successfully forked an instance of itself that has begun
+serving the session\&.
+.IP "1" 10
+Abnormal termination\&.
+The
+\fBttsession\fP utility was given invalid command line options, was interrupted by
+\fBSIGINT\fP, or encountered some internal error\&.
+.IP "2" 10
+Collision\&.
+Another
+\fBttsession\fP was found to be serving the session already\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+The
+\fBttsession\fP utility takes the standard action for all signals\&.
+.SH "APPLICATION USAGE"
+.PP
+Since everything after
+\fB-c\fP on the command line is used as the command to be executed,
+\fB-c\fP should be the last option\&.
+.PP
+Tracing is helpful for seeing how messages are
+dispatched and delivered, but the output may be voluminous\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBtt_type_comp\fP(1), \fBtt_message_file\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,162 @@
+'\" t
+...\" s_imp_on.sgm /main/5 1996/08/30 14:31:03 rws $
+...\" s_imp_on.sgm /main/5 1996/08/30 14:31:03 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdt_sender_imprint_on" "library call"
+.SH "NAME"
+\fBttdt_sender_imprint_on\fP \(em act like a child of the specified tool
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_status \fBttdt_sender_imprint_on\fP\fR(
+\fBconst char *\fBhandler\fR\fR,
+\fBTt_message \fBcontract\fR\fR,
+\fBchar **\fBdisplay\fR\fR,
+\fBint *\fBwidth\fR\fR,
+\fBint *\fBheight\fR\fR,
+\fBint *\fBxoffset\fR\fR,
+\fBint *\fByoffset\fR\fR,
+\fBXtAppContext \fBapp2run\fR\fR,
+\fBint \fBms_timeout\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttdt_sender_imprint_on\fP function
+is used to make the calling tool act equivalently to a child of
+another specified tool\&.
+The calling tool adopts the other
+tool\&'s X11 display, locale, and current working directory\&.
+It also learns the other tool\&'s X11 geometry, so that it may
+position itself appropriately\&.
+.PP
+If the
+\fIhandler\fP argument is non-
+\fBNULL\fP, the requests are addressed to that procid using
+\fBTT_HANDLER\fP\&. If
+\fIhandler\fP is
+\fBNULL\fP and the
+\fIcontract\fP argument is non-
+\fBNULL\fP, the requests are addressed to the
+\fBtt_message_sender\fP(3) of the contract, using
+\fBTT_HANDLER\fP\&.
+.PP
+The
+\fIcontract\fP argument is passed to
+\fBtttk_message_create\fP(3) as the
+\fIcontext\fP argument\&.
+.PP
+If the
+\fIdisplay\fP argument is not
+\fBNULL\fP, \fBttdt_sender_imprint_on\fP returns the other tool\&'s display in
+\fI*display\fP\&. If
+\fIdisplay\fP is
+\fBNULL\fP, \fBttdt_sender_imprint_on\fP sets the
+\fBDISPLAY\fP environment variable to the other tool\&'s display\&.
+.PP
+If each of the
+\fIwidth\fP, \fIheight\fP, \fIxoffset\fP, and
+\fIyoffset\fP arguments are
+\fBNULL\fP, then
+\fBttdt_sender_imprint_on\fP does not send the other tool a
+\fBGet_Geometry\fP request\&.
+.PP
+The
+\fBttdt_sender_imprint_on\fP function
+passes the
+\fIapp2run\fP and
+\fIms_timeout\fP arguments to
+\fBtttk_block_while\fP(3), blocking on the replies to the requests it sends\&.
+.PP
+If the
+\fIdisplay\fP argument is not
+\fBNULL\fP, \fBttdt_sender_imprint_on\fP sets
+\fI*display\fP to a string that can be freed with
+\fBtt_free\fP\&.
+.PP
+If for some reason no width or height is returned by the other tool,
+\fBttdt_sender_imprint_on\fP sets
+\fI*width\fP or
+\fI*height\fP to -1\&.
+If no positional information is returned,
+\fBttdt_sender_imprint_on\fP sets
+\fI*xoffset\fP and
+\fI*yoffset\fP to {INT_MAX}\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttdt_sender_imprint_on\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_DESKTOP_ETIMEDOUT" 10
+One or more of the sent requests did not complete within
+\fIms_timeout\fP milliseconds\&.
+.IP "TT_ERR_NOMEM" 10
+There is insufficient memory available to perform the function\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_OVERFLOW" 10
+The ToolTalk service has more active messages than it can handle\&.
+(The maximum number of active messages is
+implementation specific, but is at least 2000\&.)
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.SH "APPLICATION USAGE"
+.PP
+If both the
+\fIhandler\fP and
+\fIcontract\fP are zero, the requests are addressed to no tool in
+particular, using
+\fBTT_PROCEDURE\fP; this is not recommended\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBtt_free\fP(3), \fBtt_message_sender\fP(3), \fBtttk_block_while\fP(3), \fBtttk_message_create\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

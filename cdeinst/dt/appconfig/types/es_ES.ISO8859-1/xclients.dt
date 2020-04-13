@@ -1,0 +1,392 @@
+# ##########################################################################
+# 
+#     xclients.dt
+# 
+#     Actions and DataTypes for integrating X clients into the Common
+#     Desktop Environment (CDE).
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: xclients.dt.src /main/5 1996/04/23 20:26:44 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+# ##################################################################
+# 
+# Atributos de datos
+# 
+# ##################################################################
+DATA_ATTRIBUTES XWD
+{
+        ACTIONS         Open,Print
+        ICON            Dtxwd
+        NAME_TEMPLATE   %s.xwd
+        MIME_TYPE	application/octet-stream
+        SUNV3_TYPE      xwd-file
+        DESCRIPTION     Este archivo contiene una imagen gráfica en formato \
+                        XWD. Estos archivos se crean normalmente tomando \
+                        instantáneas de ventanas utilizando la acción \
+                        Capturar Xwd. Su tipo de datos se denomina XWD. \
+                        Los nombres de los archivos XWD finalizan en '.xwd' o '.wd'.
+        TYPE_LABEL      XWD
+}
+DATA_CRITERIA XWD1
+{
+        DATA_ATTRIBUTES_NAME XWD
+        MODE            f
+        NAME_PATTERN    *.xwd
+}
+DATA_CRITERIA XWD2
+{
+        DATA_ATTRIBUTES_NAME XWD
+        MODE            f
+        NAME_PATTERN    *.wd
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        XWD
+        TYPE            MAP
+        MAP_ACTION      Xwud
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        XWD
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+ACTION Xwud
+{
+        LABEL		Mostrar Xwd
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+	EXEC_STRING	xwud -noclick -in                               "%(File)Arg_1"Archivo Xwd a mostrar:"%"
+
+	DESCRIPTION	La acción Mostrar Xwd (Xwud) muestra un\
+                        archivo xwd que se ha creado utilizando la \
+                        acción Capturar Xwd (Xwd). Utiliza el mandato \
+                        'xwud'.
+}
+
+# ##########################################################################
+# 
+# Acciones
+# 
+# ##########################################################################
+ACTION Xrefresh
+{
+        LABEL		Refrescar pantalla
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xrefresh
+	DESCRIPTION	La acción Refrescar pantalla (Xrefresh) hace que \
+                        se refresque toda la pantalla utilizando el \
+                        mandato 'xrefresh'.
+}
+
+# ######
+
+ACTION Bitmap
+{
+        LABEL		Editar mapa de bits
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	bitmap 				"%(File)Arg_1"Archivo a abrir:"%"
+
+	DESCRIPTION	La acción Editar mapa de bits (Bitmap) ejecuta el cliente \
+                        'bitmap'. Se puede suministrar un argumento de archivo \
+                        o se solicita la anchura y la altura para el nuevo \
+                        archivo de mapa de bits.
+}
+ACTION Bitmap
+{
+        LABEL		Editar mapa de bits
+	ARG_COUNT	0	
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	bitmap 				-size %"Anchura:"%x%"Altura:"% 				"%(File)Arg_1"Archivo a abrir:"%"
+
+
+	DESCRIPTION	La acción Editar mapa de bits (Bitmap) ejecuta el cliente \
+                        'bitmap'. Se puede suministrar un argumento de archivo \
+                        o se solicita la anchura y la altura para el nuevo \
+                        archivo de mapa de bits.
+}
+
+# ######
+
+ACTION DttermConsole
+{
+        LABEL		Consola de terminal
+        ICON            Dtterm
+        ARG_COUNT	0
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtterm -C -ls -name Consola -title Consola
+	DESCRIPTION	La acción Consola de terminal inicia un \
+                        emulador de terminal 'dtterm' como la consola del \
+                        usuario.
+}
+
+# ######
+
+ACTION Xterm
+{
+        LABEL		Xterm
+        ICON            Dtterm
+        ARG_COUNT	0
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	xterm
+	DESCRIPTION	La acción Xterm inicia un emulador \
+                        de terminal 'xterm'.
+}
+
+# ######
+
+ACTION DttermDtspcd
+{
+        LABEL		Terminal remota
+        ICON            Dtterm
+        ARG_COUNT	0
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_HOST	%"Nombre de host:"%
+	EXEC_STRING	/usr/dt/bin/dtterm
+	DESCRIPTION	La acción Terminal remota solicita al usuario el \
+                        nombre de un sistema e inicia un emulador de \
+                        terminal 'dttern' en dicho sistema. El sistema debe \
+                        estar configurado correctamente para la ejecución remota.
+}
+
+# ######
+
+ACTION XtermDtspcd
+{
+        LABEL		Xterm remota
+        ICON            Dtterm
+        ARG_COUNT	0
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_HOST	%"Nombre de host:"%
+	EXEC_STRING	xterm
+	DESCRIPTION	La acción Xterm remota solicita al \
+                        usuario el nombre de un sistema e inicia un emulador \
+                        de terminal 'xterm' en dicho sistema. El sistema debe \
+                        estar configurado correctamente para la ejecución remota.
+}
+
+# ######
+
+ACTION DttermRlogin
+{
+        LABEL		Terminal Rlogin
+        ICON            Dtterm
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /bin/ksh -c 'export _title="%"Nombre de host:"%";             /usr/dt/bin/dtterm -title "\$_title : Dtterm" -e KORNSHELL -c             "echo Intentando establecer conexión con \$_title... Espere, por favor.;             rlogin \$_title; sleep 5;";'
+
+
+
+	DESCRIPTION	La acción Terminal Rlogin solicita al usuario el \
+                        nombre de un sistema, abre la ventana del emulador \
+                        de terminal 'dtterm' y después ejecuta un 'rlogin' \
+                        para dicho sistema.
+}
+
+# ######
+
+ACTION XtermRlogin
+{
+        LABEL		Xterm Rlogin
+        ICON            Dtterm
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /bin/ksh -c 'export _title="%"Nombre de host:"%";             xterm -title "\$_title : Xterm" -e KORNSHELL -c             "echo Intentando establecer conexión con \$_title... Espere, por favor.;             rlogin \$_title; sleep 5;";'
+
+
+
+	DESCRIPTION	La acción Xterm Rlogin solicita al usuario el \
+                        nombre de un sistema, abre una ventana del emulador \
+                        de terminal 'xterm' y después ejecuta un \
+                        'rlogin' para dicho sistema.
+}
+
+# ######
+
+ACTION XclockDig
+{
+        LABEL		Reloj digital
+        ARG_COUNT	0
+        ICON		Dtdgclk
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xclock -name "Reloj digital"                                    -digital -update 1
+
+        DESCRIPTION     La acción Reloj digital (Xclock) visualiza \
+                        un reloj digital. Utiliza el mandato 'xclock -digital'.
+}
+
+
+# ######
+
+ACTION Xload
+{
+        LABEL		Carga del sistema
+        ARG_COUNT	0
+        ICON		Dtload
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xload -name "Carga del sistema"                              -geometry 250x150 -xrm '*primaryColorSetId: 5'
+
+        DESCRIPTION     La acción Carga del sistema (Xload) muestra una vista \
+                        gráfica de la carga del sistema. Utiliza el \
+                        mandato xload.
+}
+
+# ######
+
+ACTION Xwd
+{
+        LABEL		Capturar Xwd
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+	EXEC_STRING	xwd -out                              %(File)"Archivo de salida (<nombre>.xwd):"%
+
+	DESCRIPTION	La acción Capturar Xwd (Xwd) toma una \
+                        instantánea de una ventana y la almacena en un \
+                        archivo de gráficos xwd. Cuando se ejecuta la \
+                        acción el cursor se convierte en una cruz y, entonces, \
+                        se debe pulsar en la ventana que se desee capturar. \
+                        La acción utiliza el mandato xwd. Xwd significa \
+                        'X Window Dump (Vuelco de ventana X)'.
+}
+
+# ######
+
+ACTION Xclipboard
+{
+        LABEL		Contenido del portapapeles
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	xclipboard
+	DESCRIPTION	La acción Contenido del portapapeles (Xclipboard) muestra \
+                        el portapapeles. Utiliza el mandato 'xclipboard'.
+}
+
+# ######
+
+ACTION Xfd
+{
+        LABEL		Vista previa del font
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	sh -c 'xfd -fn                 "%(String)Arg_1"Font para vista previa:"%"; 	               if [ \$? -eq 1 ] ; then                          /usr/dt/bin/dterror.ds                           "El font que ha especificado no se encuentra.\\n\
+                           Ejecute la acción Lista de fonts para mostrar\\n\
+                           una lista de nombres de fonts válidos."                           "Nombre de font no encontrado"                           "OK" ; 	                fi'
+
+
+
+
+
+
+
+	DESCRIPTION	La acción Vista previa del font (Xfd) solicita \
+                        un nombre de font y después muestra todos los \
+                        caracteres en dicho font. Utiliza el mandato 'xfd'.
+}
+
+# ######
+
+# La acción Información de ventana (Xwininfo) no puede utilizar
+# la definición '| ${PAGER:-more}' porque impide que se
+# muestre el mensaje 'pulsar en una ventana'.
+ACTION Xwininfo
+{
+        LABEL		Información de ventana
+        ARG_COUNT	0
+	TYPE		COMMAND
+	WINDOW_TYPE	PERM_TERMINAL
+	EXEC_STRING	sh -c 'xwininfo; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+	DESCRIPTION	La acción Información de ventana (Xwininfo) muestra \
+                        información acerca de una ventana. Cuando se ejecuta \
+                        Listar información de ventana, el cursor se convierte \
+                        en una cruz y entonces se pulsa en la ventana para la \
+                        cual se desea información. Esta acción utiliza el \
+                        mandato 'xwininfo'.
+}
+
+# ######
+
+ACTION Xprop
+{
+        LABEL           Propiedades de la ventana
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             echo "[Cuando el cursor se convierta en una cruz, pulse en una ventana ...]\\n";             xprop | \${PAGER:-more};             echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+        DESCRIPTION     La acción Propiedades de la ventana (Xprop) muestra \
+                        las propiedades almacenadas de una ventana. Cuando \
+                        se ejecuta Propiedades de la ventana, el cursor se \
+                        convierte en una cruz y entonces se pulsa en la \
+                        ventana para la que se desea información. Esta acción \
+                        utiliza el mandato 'xprop'.
+}
+
+# ######
+
+ACTION Xdpyinfo
+{
+        LABEL           Información del servidor de X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING               sh -c '             xdpyinfo | \${PAGER:-more};             echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+        DESCRIPTION     La acción Información del servidor de X (Xdpyinfo) muestra \
+                        información sobre el servidor de X y el sistema \
+                        de pantalla. Utiliza el mandato 'xdpyinfo'.
+}
+
+# ######
+
+ACTION Xlsfonts
+{
+        LABEL           Lista de fonts
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             echo "Buscando fonts, espere por favor......\\n        NOTA: puede bloquear el servidor de Pantallas durante un momento.";             xlsfonts | \${PAGER:-more};             echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+        DESCRIPTION     La acción Lista de fonts (Xlsfonts) lista todos \
+                        los fonts que se pueden mostrar del sistema. \
+                        Utiliza el mandato 'xlsfonts'.
+}
+
+# ######################## EOF ############################################

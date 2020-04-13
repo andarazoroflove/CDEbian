@@ -1,0 +1,178 @@
+'\" t
+...\" pdmd.sgm /main/4 1996/10/22 09:43:45 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtpdmd" "user cmd"
+.SH "NAME"
+\fBdtpdmd\fP \(em Print Dialog Manager daemon
+.SH "SYNOPSIS"
+.PP
+\fBdtpdmd\fP [-d \fIdisplay\fP]  [-a \fIselection\fP]  [-p \fIpdm\fP]  [-P \fIpdm\fP]  [-s]  [-l \fIlogfile\fP] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtpdmd\fP command uses the Print Dialog Manager
+Selection Protocol to start a Print Dialog Manager (PDM) on behalf of an
+application\&.
+.PP
+\fBdtpdmd\fP is a long-lived daemon process that receives
+client requests for a PDM, uses some lookup rules, and then starts an appropriate
+PDM to service the request\&. When the PDM finishes, control returns to \fBdtpdmd\fP and \fBdtpdmd\fP in turn responds to the client
+with the final status\&.
+.SS "PDMD/PDM Protocol"
+.PP
+\fBdtpdmd\fP uses a specific protocol to communicate with
+the PDM\&. Communication to the PDM is done via a standardized command line
+and environment\&.
+Communication from the PDM is done via standardized exit codes\&.
+.SS "Standardized Command Line"
+.PP
+The standardized command line is as follows:
+.PP
+\fBdt-pdm-command\fP [\fIdt-pdm-options\fP] -vdisplay \fIvdpy\fP -window \fIvwid\fP -pdisplay \fIpdpy\fP -pcontext \fIpcid\fP 
+.IP "\fIdt-pdm-command\fP" 10
+Specifies the path for the PDM executable\&.
+It is derived by the \fBdtpdmd\fP from either the
+\fB-p\fP or \fB-P\fP option\&.
+.IP "\fIdt-pdm-options\fP" 10
+Specifies options that may have accompanied the \fIdt-pdm-command\fP,
+whether specified on the \fBdtpdmd\fP command line by the
+\fB-p\fP or \fB-P\fP option or from other sources\&.
+.IP "\fB-vdisplay\fP \fIvdpy\fP" 10
+Specifies the display connection to the Video X-Server\&.
+.IP "\fB-window\fP \fIvwid\fP" 10
+Specifies the window id on the Video X-Server to which the PDM\&'s
+dialogs should be posted as transient windows\&.
+.IP "\fB-pdisplay\fP \fIpdpy\fP" 10
+Specifies the display connection to the Print X-Server\&.
+.IP "\fB-pcontext\fP \fIpcid\fP" 10
+Specifies the print context id on the Print X-Server\&. The PDM uses
+this id to gain access to the print context being used by the requesting
+application\&.
+.SS "Standardized Exit Codes"
+.PP
+The standardized exit codes (defined as integer constants in
+\fBDt/dtpdmd\&.h\fP) are as follows:
+.IP "\fBPDM_EXIT_OK\fP" 10
+The PDM is telling the PDMD that the user selected \fBOK\fP
+to dismiss the PDM\&.
+.IP "\fBPDM_EXIT_CANCEL\fP" 10
+The PDM is telling the PDMD that the user selected \fBCANCEL\fP to dismiss the PDM\&.
+.IP "\fBDM_EXIT_VXAUTH\fP" 10
+The PDM is telling the PDMD that it did not have proper authority to
+make a display connection on the Video X-Server\&.
+.IP "\fBPDM_EXIT_PXAUTH\fP" 10
+The PDM is telling the PDMD that it did not have proper authority to
+make a display connection to the Print X-Server\&.
+.IP "\fBPDM_EXIT_ERROR\fP" 10
+The PDM is telling the PDMD that it encountered an error\&.
+.IP "all other values" 10
+The PDMD treats all unknown return values the same as \fBPDM_EXIT_ERROR\fP\&. Such return values are likely from uncontrollable exit conditions
+often found in other libraries (for example, untrapped XIO errors from libX)\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-d\fP \fIdisplay\fP" 10
+Specifies the display connection to an X-Server upon which an X-selection
+will be created and managed for requests\&. If specified, it overrides the
+environment variable \fBXPDMDISPLAY\fP\&.
+.IP "\fB-a\fP \fIselection\fP" 10
+Specifies an alternative X-selection name for \fBdtpdmd\fP
+to create and manage\&. If specified, it overrides the environment variable
+\fBXPDMSELECTION\fP\&. By default,
+the selection name is \fBPDM_MANAGER\fP\&.
+.IP "\fB-p\fP \fIpdm\fP" 10
+Specifies a PDM execution string to use if no other PDM execution string
+can be derived, usually from the Server Attribute
+\fBdt-pdm-command\fP from the X-Server\&.
+By default, the execution string is \fBdtpdm\fP\&.
+All execution strings are applied against the current search path\&.
+.IP "\fB-P\fP \fIpdm\fP" 10
+Specifies an alternative PDM execution string that overrides all other
+sources of such execution strings\&. All execution strings are applied
+against the current search path\&.
+.IP "\fB-s\fP" 10
+Instructs \fBdtpdmd\fP to turn on the security exchange
+portion of the PDM Selection Protocol\&. By default, \fBdtpdmd\fP
+does not exchange security information with an application over the wire,
+so the appearance of \fBauto hosting\fP cannot be done\&.
+.IP "\fB-l\fP \fIlogfile\fP" 10
+Specifies a file for \fBdtpdmd\fP to use for logging errors
+and warnings\&. Entries are time-stamped and may be generated by \fBdtpdmd\fP or any child PDM via stderr\&. The previous contents of the
+log file are destroyed\&. By default, \fB/dev/null\fP is used\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+Prior to starting a PDM, the \fBdtpdmd\fP may
+first modify the following environment variable:
+.IP "\fBXAUTHORITY\fP" 10
+If the \fBdtpdmd\fP has come into possession of X-authority
+information that the PDM will need, it sets this environment
+variable so that the PDM will automatically have access to the proper
+X-authority information\&.
+.PP
+In addition, the \fBdtpdmd\fP may set a locale hint
+passed to it by the PDM Selection Protocol from the client prior
+to starting a PDM\&. On POSIX systems, \fBsetlocale\fP(3C)
+will be used\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.PP
+None\&.
+.SH "FILES"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBdtpdm\fP1
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

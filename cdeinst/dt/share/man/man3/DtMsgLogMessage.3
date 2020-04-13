@@ -1,0 +1,250 @@
+'\" t
+...\" MsgLogM.sgm /main/10 1996/10/25 10:36:20 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtMsgLogMessage" "library call"
+.SH "NAME"
+\fBDtMsgLogMessage\fP \(em logs
+a message
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/MsgLog\&.h>
+\fBvoid \fBDtMsgLogMessage\fP\fR(
+\fBconst char* \fBprogram_name\fR\fR,
+\fBDtMsgLogType \fBmsg_type\fR\fR,
+\fBconst char* \fBformat\fR\fR,
+\fBva_list \fBargs\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtMsgLogMessage\fP function
+logs the given arguments in one message\&.
+The format of the message is specified by
+\fIformat\fP and thus is
+controlled by the application\&. The format of each logged entry is:
+.PP
+.nf
+\f(CW*** <Msgtype_string>( <Msg_type>):  <Program_name>: PID  <Proc_id>:  <Date>
+ <The_message>
+*** [ <Bytes_output>]\fR
+.fi
+.PP
+.PP
+The value of <Msgtype_string> depends on the value of
+\fImsg_type\fP\&. Its value is:
+.IP "\fBINFORMATION\fP" 10
+if \fImsg_type\fP is \fBDtMsgLogInformation\fP
+.IP "\fBSTDERR\fP" 10
+if \fImsg_type\fP is \fBDtMsgLogStderr\fP
+.IP "\fBDEBUG\fP" 10
+if \fImsg_type\fP is \fBDtMsgLogDebug\fP
+.IP "\fBWARNING\fP" 10
+if \fImsg_type\fP is \fBDtMsgLogWarning\fP
+.IP "\fBERROR\fP" 10
+if \fImsg_type\fP is \fBDtMsgLogError\fP
+.IP "\fBUNKNOWN\fP" 10
+for all other values of \fImsg_type\fP
+.PP
+<Msgtype_string> is prefaced with the
+string \fB***\fP and one space character\&.
+<Msg_type> is replaced with the value of
+the \fImsg_type\fP argument (placed within parentheses)\&.
+<Program_name> is replaced with the value of the
+\fIprogram_name\fP\&.
+<Proc_id> is the application\&'s process id\&.
+<Date> is the date and time the message is logged\&.
+<The_message> is the formatted message including the arguments\&.
+<Bytes_output> (enclosed in brackets) is replaced with the
+number of bytes output for the message and header information\&.
+(The number of bytes printed for the line containing
+<Bytes_output> is not included\&.)\&. A colon and a space (respectively)
+are printed after the closing parenthesis for <Msg_type>, <Program_name>,
+and <Proc_id>\&.
+.PP
+One newline is output after the date and one newline
+is output after the message\&. After the message, a line beginning
+with the string \fB***\fP is output, followed by a space
+character, a \fB[\fP character, the number of
+bytes printed, a \fB]\fP character, and,finally,
+two newlines (one blank line separates messages)\&.
+.PP
+The message type string and date specification are localized
+and thus are retrieved from the current locale\&'s message catalog\&.
+It is the application\&'s responsibility to localize the message to be logged\&.
+.PP
+An example log entry is:
+.PP
+.nf
+\f(CW*** WARNING(3): fontview: PID 12312: Thu Jun 13 16:51:51 1995
+The specified font \&'fixed\&' could not be loaded\&.
+*** [109]\fR
+.fi
+.PP
+.PP
+To log a multi-line message, use a single call to
+\fBDtMsgLogMessage\fP\&.
+.PP
+\fBDtMsgLogMessage\fP attempts to open the
+following files in the indicated sequence (by calling the
+\fBfopen\fP function with the \fBa+\fP
+option)\&. It uses the first file that is successfully opened\&.
+.IP "\fB$HOME/\&.dt/errorlog\fP" 10
+This file is used only if the environment variable
+\fBHOME\fP is defined\&.
+.IP "\fB/var/dt/tmp/$DTUSERSESSION/errorlog\fP" 10
+This file is used only if the environment variable
+\fBDTUSERSESSION\fP is defined\&.
+.IP "<filename>/tmp/<user_name>\&.errorlog</filename>" 10
+In this filename, <user_name> is replaced by the user\&'s
+login name\&. The login name is determined by using the
+environment variable
+\fBLOGNAME\fP, if it
+is defined, or \fBUSER\fP, if
+LOGNAME is not defined\&. If neither variable is defined,
+\fBDtMsgLogMessage\fP uses the
+\fBgetpwuid\fP function to determine <user_name>\&.
+.PP
+\fBDtMsgLogMessage\fP calls
+\fBDtMsgLogOpenFile\fP to determine where to log
+the message\&. If \fBDtMsgLogOpenFile\fP returns
+NULL, \fBDtMsgLogMessage\fP will output the
+message to stderr\&.
+.SH "ARGUMENTS"
+.IP "\fIprogram_name\fP" 10
+Specifies a string "tag" to identify the application
+issuing the message\&. This is generally an application\&'s
+\fBargv[0]\fP so the message can be traced to
+an executable program\&.
+.IP "\fImsg_type\fP" 10
+Specifies the
+\fBDtMsgLogType\fR structure
+that defines the message type\&. See "Structures" in this man page\&.
+.IP "\fIformat\fP" 10
+Specifies the \fBsprintf\fP format of the message\&.
+.IP "\fIargs\fP" 10
+Specifies the variable number of arguments needed by
+\fIformat\fP\&.
+.SH "STRUCTURES"
+.PP
+The \fImsg_type\fP argument is specified
+as a \fBDtMsgLogType\fR
+enumeration data type, with the following members:
+.IP "DtMsgLogInformation" 10
+Designates informational messages that do not have to be brought
+to the user\&'s immediate attention (for example, status information)\&.
+It is acceptable to not present messages of this type to the user\&.
+.IP "DtMsgLogDebug" 10
+Designates debugging messages written by the application (for example,
+via a \fB-debug\fP command line option)\&.
+.IP "DtMsgLogStderr" 10
+Designates messages that an application produces to log the stderr
+from a child process\&.
+.IP "DtMsgLogWarning" 10
+Designates messages for errors that are not severe enough to cause
+program termination\&.
+.IP "DtMsgLogError" 10
+Designates messages for fatal errors that require program termination\&.
+.SH "RETURN VALUE"
+.PP
+None\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The values of the following environment variables
+determine which file is opened by
+\fBDtMsgLogMessage\fP:
+\fBHOME\fP,
+\fBLOGNAME\fP,
+\fBUSER\fP,
+and \fBDTUSERSESSION\fP\&.
+See "Description" in this man page for more information\&.
+.PP
+Because \fBDtMsgLogMessage\fP calls
+the \fBcatopen\fP function, it is
+indirectly influenced by the environment variables that affect
+\fBcatopen\fP, such as
+\fBLANG\fP,
+and \fBNLSPATH\fP\&.
+See \fBcatopen\fP(3) for more information\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+The default mechanism to view the message log is to
+invoke the Watch Errors action which is located in the Application Manager\&'s
+\fBDesktop_Tools\fP folder\&.
+.SH "ERRORS/WARNINGS"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+The following code fragment illustrates how to log a
+localized warning message:
+.PP
+.nf
+\f(CW#include <nl_types\&.h>
+
+char *s1, *s2; /* temp strings - catgets may return
+                  a pointer to a static buffer */
+nl_catd catd = catopen ("app\&.cat", 0);
+s1           = strdup (catgets (catd, 4, 10, "string 1"));
+s2           = strdup (catgets (catd, 4, 10, "string 2"));
+DtMsgLogMessage (argv[0],
+      DtMsgLogWarning,
+      "%s %s",
+      s1, s2);\fR
+.fi
+.PP
+.SH "FILES"
+.PP
+See \fBDtMsgLogOpenFile\fP(3)\&.
+.SH "SEE ALSO"
+.PP
+\fBDtMsgLogOpenFile\fP(3),
+\fBDtMsgLogSetHandler\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

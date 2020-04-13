@@ -1,0 +1,283 @@
+'\" t
+...\" dtsrhanf.sgm /main/6 1996/09/08 20:19:48 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsrhanfile" "special file"
+.SH "NAME"
+dtsrhanfile \(em Describes the format and syntax of DtSearch han files
+.SH "SYNOPSIS"
+.PP
+.nf
+\fIfilename\fP\&.han
+.fi
+.SH "DESCRIPTION"
+.PP
+Han files are the user generated profile files for \fBdtsrhan\fP\&.
+They identify fields in incoming text from which output fzk
+file fields can be constructed\&. The data from han files
+are loaded into memory by dtsrhan at initialization time\&.
+\fBdtsrhan\fP and han files have not been internationalized;
+han files may only contain ASCII characters\&.
+.SS "General Format"
+.PP
+All identifiers must begin with a letter, and must be composed entirely
+of alphanumerics and/or the underscore\&.
+.PP
+Observe the following points when using using "strings":
+.IP "   \(bu" 6
+If an identifying string contains quotes, use a backslash
+to create the quote\&. Example:
+.PP
+.nf
+\f(CWthis string \"contains\" quotes\fR
+.fi
+.PP
+.IP "" 10
+would find the string \fBthis string "contains" quotes\fP\&.
+.IP "   \(bu" 6
+The above point makes it necessary to use double backslashes to create
+a single backslash\&. Example:
+.PP
+.nf
+\f(CWthis string has a \\ backslash\fR
+.fi
+.PP
+.IP "" 10
+would find the string \fBthis string has a \ backslash\fP\&.
+.IP "   \(bu" 6
+Actually, using the backslash in any string will cause the next
+character to be included without exception\&. Thus, a string
+with \fBthis is \a test\fP will end up being
+\fBthis is a test\fP\&.
+The backslash is ignored, and the next character is imbedded
+in the string\&. This is only needed in the two cases described
+above, but can be used for any purpose\&.
+.SS "Individual Line Syntax"
+.IP "# \&.\&.\&. | blank line" 10
+Han file comment\&. Any line beginning with a pound sign
+in the first column, or any blank line, is discarded\&.
+.IP "line \fIidentifier\fP = \fIphysical_line_number\fP" 10
+Defines a \fBline\fP with a physical line number in the record\&.
+\fIphysical_line_number\fP must be a number\&.
+.IP "line \fIidentifier\fP = column_number,"\fIstring\fP" [\fIcolumn_number\fP,"\fIstring\fP"] \&.\&.\&." 10
+Defines a \fBline\fP using a column number and a
+\&'signature\&' string that should appear at that column\&.
+\fIcolumn_number\fP can be a number, or
+\fB*\fP for \&'any column\&'\&. "\fIstring\fP"
+should be a string that occurs on the line in question\&. It is possible
+to define complex signatures using multiple clauses\&.
+.IP "field \fIidentifier\fP = \fIline_identifier\fP,"\fIstring\fP", \fIoffset\fP, \fIlength\fP" 10
+Defines a \fBfield\fP based on a declared line, a string
+found on that line, the offset from the first letter of the string, and
+the length of field\&.
+.IP "" 10
+\fIline_identifier\fP is an identifier declared with the
+\fBline\fP directive (see above)\&.
+.IP "" 10
+"\fIstring\fP" is a string for relative positioning,
+where a field will follow a string that may not always occur in the
+same position on a line\&. If it is known that the field will always be
+in the same position, an empty string("") may be used\&.
+\fIstring\fP must be enclosed in double quotes\&.
+\fIoffset\fP must be a number, identifying the offset
+from the first character in the string\&. It starts at position 1, not 0,
+and may be negative\&.
+.IP "" 10
+\fIlength\fP represents the length of the field\&. It may
+be a number, or it may be one of two special tokens:
+.RS
+.IP "\fBeow\fP" 10
+End of word\&. The field will begin at \fIoffset\fP and
+continue until the next white-space character\&.
+.IP "\fBeoln\fP" 10
+End of line\&. The field will begin at \fIoffset\fP and
+continue to the end of the line\&.
+.RE
+.IP "" 10
+An identifier \fIstring\fP beginning with 3 uppercase M\&'s
+("MMM\&.\&.\&.") will be considered an English month name string\&.
+At run time, if the first 3 chars of the field\&'s value
+equal the first three chars of an English month name,
+the value string will be translated to a two character
+string of digits in the range "01" to "12"\&.
+For example, if field \fIMMMmymonth\fP had an original value of
+"April ", it will be translated to "04" before use\&.
+.IP "" 10
+In the case where a \fBline\fP identifier is associated with
+multiple lines in a single document, the field value will
+be determined from the last occurrence of the line within
+the record\&.
+.IP "constant \fIidentifier\fP = "\fIstring\fP"" 10
+Defines a \fBconstant\fP field that can be used in
+abstracts and keys\&. The \fIidentifier\fP is defined
+exactly the same as a \fBfield\fP identifier\&. The value
+must be enclosed in double quotes\&.
+.IP "date = null | \fIfield_id\fP [+ \fIfield_id\fP] \&.\&.\&." 10
+Defines the document date for each document\&. It will
+be converted into a correctly formated fzk file date line\&.
+.IP "" 10
+\fBnull\fP specifies undated documents\&. Undated documents
+always qualify for searches irrespective of date
+qualifiers in \fBDtSearchQuery\fP\&.
+.IP "" 10
+\fIfield_id\fP is an identifier declared using the \fBfield\fP
+or \fBconstant\fP directives (see above)\&.
+"MMM" fields are often useful for date assemblies\&.
+.IP "" 10
+Multiple fields may be concatenated into a date\&.
+.IP "" 10
+After concatenation, the assembled date must be of the following format:
+\fIYYYYMMDDhhmm\fP (exactly 12 digits)\&. For example,
+\fB199404171701\fP is April 17, 1994 at 5:01 pm\&.
+\fB200405031000\fP is May 3, 2004, at 10:00 am (10
+o\&'oclock)\&.
+.IP "" 10
+Dates before 1900 or after 5995 are invalid\&.
+.IP "" 10
+If \fBdate\fP is not specified or is invalid, a generated date
+based on the current date and time will be used, but an
+invalid \fBdate\fP will also generate an error message\&.
+.IP "key = \fIfield_id\fP [+ \fIfield_id\fP] \&.\&.\&. | time | count" 10
+Defines the unique database key for each record in a fzk file\&.
+.IP "" 10
+\fIfield_id\fP is a field identifier declared using the
+\fBfield\fP or \fBconstant\fP directives\&.
+.IP "" 10
+Multiple fields may be concatenated into a key\&.
+.IP "" 10
+\fBtime\fP is a special keyword used to generate keys based
+on the current run date and time, plus a sequential count suffix\&.
+.IP "" 10
+\fBcount\fP is a special keyword used to generate keys
+based on a sequential count of records\&.
+.IP "upper" 10
+Specifies that keys written by handel are to be entirely converted
+to upper case\&. Without using this directive, mixed-case keys
+are allowed\&.
+.IP "keychar = A | B | \&.\&.\&.Z" 10
+Defines the character used to categorize keys for DtSearch\&. It
+must be an uppercase ASCII alphabetic character\&.
+.IP "delimiter = \fIline_identifer\fP, bottom" 10
+Defines the end of text (ETX) delimiter that will separate records\&.
+.IP "" 10
+\fIline_identifier\fP is an identifier declared with the
+\fBline\fP directive\&.
+.IP "" 10
+\fBbottom\fP is required\&. It specifies that the ETX will
+occur at the bottom of each record\&. Top of record delimiters are not
+supported\&.
+.IP "image = all | none" 10
+Defines whether the document image retrieved by
+\fBDtSearchRetrieve\fP is to contain all or none of the
+record, prior to application of \fBimageinclude\fP or
+\fBimageexclude\fP directives later in the han file\&. It
+defaults to \fBall\fP\&.
+.IP "imageinclude = \fIline_identifier\fP [- \fIline_identifier\fP]" 10
+Defines a line (or range of lines) to be included in the image\&.
+\fIline_identifier\fP is an identifier declared with the
+\fBline\fP directive\&.
+.IP "imageexclude = \fIline_identifier\fP [- \fIline_identifier\fP]" 10
+Defines a line (or range of lines) to be excluded from the image\&.
+\fIline_identifier\fP is an identifier declared with the
+\fBline\fP directive\&.
+.IP "abstract = field(s) \fIfield_identifier\fP [+ \fIfield_identifier\fP]\&.\&.\&." 10
+Defines the abstract to be placed into the fzk file\&. It is created from
+the concatenations of fields\&. \fIfield_identifier\fP is
+an identifier declared with the \fBfield\fP directive\&.
+.IP "delblanklines = true | false" 10
+Determines if blank lines are to be removed from the record image or
+not\&. It defaults to \fBfalse\fP\&.
+.SS "Example"
+.PP
+The sample han file shown here describes a text file containing a
+concatenated set of man pages documents\&.
+.PP
+.nf
+\f(CW# All records in the incoming text file are delimited by the same
+# end of text convention as the default for an fzk file, namely
+# a linefeed (control-L) on a line by itself ("\f\n")\&.
+# Define a line named "etx" with that description,
+# and declare it to be the <delimiter>\&.
+# Note that there must be a real ASCII control-L character between
+# the quotes in the line below\&.
+line etx = *,"^L"
+delimiter = etx, bottom
+
+# The command name that the man page is describing is on the first line\&.
+# To access it we need to define a line directive for line number 1\&.
+line line1 = 1
+
+# The name of the man page command begins in column 3 of line 1,
+# and the length is variable\&.  So we define a field identifier
+# named "command1" from column 3 to the end of the word\&.
+field command1 = line1,"",3,eow
+
+# We want each document abstract to have a constant prefix
+# followed by the name of the command\&.
+constant preabs = "Man Pages for "
+abstract = fields preabs + command1
+
+# We want all keys to be the name of the command, prefixed with
+# the same identifying character, an uppercase M\&.
+keychar = M
+key = command1
+
+# We want the each document date to be equivalent to the release
+# date of the original man pages, which we choose here to hard code
+# as November 1, 1994, at 1 o\&'clock in the afternoon\&.
+constant datecons = "199411011300"
+date = datecons\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBdtsrhan\fP(1),
+\fBdtsrindex\fP(1),
+\fBdtsrfzkfiles\fP(4),
+\fBdtsrlangfiles\fP(4),
+\fBDtSearch\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

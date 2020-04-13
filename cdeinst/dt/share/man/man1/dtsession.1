@@ -1,0 +1,881 @@
+'\" t
+...\" session.sgm /main/12 1996/11/15 15:27:24 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsession" "user cmd"
+.SH "NAME"
+\fBdtsession\fP \(em the
+CDE Session Manager
+.SH "SYNOPSIS"
+.PP
+\fBdtsession\fP [-norestore]  [-session \fIsession_name\fP] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtsession\fP client provides X11R6 XSMP and (by
+proxy) ICCCM 1\&.1 compliant session management functionality during a user
+session, which is the time from login to logout\&. It launches a window manager
+and allows for saving a session, restoring a session, locking a session, launching
+screen savers and allocating colors for desktop compatible clients\&.
+.SS "Key Supported Tasks"
+.PP
+The \fBdtsession\fP client supports the following key tasks:
+.IP "   \(bu" 6
+Initializing a session\&.
+.IP "   \(bu" 6
+Launching a window manager\&.
+.IP "   \(bu" 6
+Restoring a home, current, \fIdisplay-specific\fP home, or \fIdisplay-specific\fP current session\&.
+.IP "   \(bu" 6
+Providing session locking on command or timeout\&.
+.IP "   \(bu" 6
+Providing session screen saving on command or timeout\&.
+.IP "   \(bu" 6
+Acting as a color allocation server for other DT
+clients\&.
+.IP "   \(bu" 6
+Saving a home, current, \fIdisplay-specific\fP home, or \fIdisplay-specific\fP current session\&.
+.IP "   \(bu" 6
+Displaying confirmation dialog at logout\&.
+.IP "   \(bu" 6
+Displaying session selection dialog at logout\&.
+.IP "   \(bu" 6
+Terminating a session\&.
+.SS "A Session"
+.PP
+A session is the collection of applications, settings and resources
+that are present on the user\&'s desktop\&. Session management is a set of conventions
+and protocols that allow a special session manager such as \fBdtsession\fP to save and restore a user\&'s session\&. A user is able to log into
+their system and be presented with the same set of running applications, settings
+and resources as were present when the user logged off\&. When a user logs into
+the desktop for the first time, a default initial (new user) session is loaded\&.
+Afterward, \fBdtsession\fP supports the notion of a current, a home, and a \fIdisplay-specific\fP session, which may be either current or home\&.
+.SS "The Initial Session"
+.PP
+When a user logs into the desktop for the first time, \fBdtsession\fP will generate the user\&'s initial session using system default values\&.
+The initial session is sometimes referred to as the "new user" session\&. Refer
+to Session Resource Management and Session Application Management for more
+information\&.
+.SS "The Current Session"
+.PP
+The user\&'s running session is always considered the current session,
+whether restored upon login from a saved home session, a saved current session
+or the system default initial session\&. Based on the user\&'s Style Manager
+Startup settings, when the user exits the session, the current session is
+automatically saved\&. When the user next logs into the desktop, \fBdtsession\fP allows the user to select the previously saved current
+session as the session to start\&. This means that the desktop will be restored
+to the same state it was in when the user last logged out\&.
+.SS "The Home Session"
+.PP
+Another option is having the desktop be restored to the same state every
+time the user logs in, regardless of its state when the user logged out\&. The
+user may save the state of the current session, then via the Style Manager
+Startup settings, have the desktop start that session every time the user
+logs in\&. Alternatively, \fBdtsession\fP will allow the user to
+select the home session as the session to start at login\&.
+.SS "Display-specific Sessions"
+.PP
+To run a specific session for a specific display, a user can create
+a display-specific session\&. To do this, the user can copy the \fB$HOME/\&.dt/sessions\fP
+directory to the \fB$HOME/\&.dt/sessions/\fP\fBdisplay\fP directory
+where \fBdisplay\fP is the real,
+unqualified hostname (for example, pablo:0 is valid, pablo\&.gato\&.com:0 or local:0
+is not)\&. When the user logs in, \fBdtsession\fP will allow the
+user to select a display-specific home or current session as the session to
+start\&. \fBDtsession\fP will actually launch the session only
+if it is compatible with the user\&'s login display\&.
+.SS "The X11R6 XSMP Session Management Protocol"
+.PP
+For an application to be saved upon logout and restarted upon login,
+it must participate in a simple session management protocol\&. \fBdtsession\fP supports the X11R6 XSMP Session Management Protocol\&.
+.PP
+Applications that wish to save their state can take part in the \fBWM_SAVE_YOURSELF\fP
+protocol\&. To do this, an application needs to set the \fBWM_SAVE_YOURSELF\fP property
+on one and only one of its top-level windows\&. When the user presses the \fBSet Home Session\fP button in the Style Manager, \fBdtsession\fP sends a \fBSaveYourself\fP message to the top-level
+window of each of its clients\&. The message sets the save-type to \fBLocal\fP, shutdown to 0, interact-style to \fBNone\fP
+and fast to 0\&.
+.PP
+When an application receives the message, it sends a \fBSaveYourselfPhase2Request\fP message to the Session Manager, which will reply with a \fBSaveYourselfPhase2\fP message\&. Only when the Window Manager receives
+the \fBSaveYourselfPhase2\fP message will it save its state\&.
+The information saved by the Window Manager for each of its client\&'s set
+of windows will include: geometry, icon state and workspace\&.
+.PP
+If interact-style on the initial \fBSaveYourself\fP message
+is \fBNone\fP, the application cannot interact with the user
+in any way as it is saving its state\&. If it is \fBAny\fP, the
+application can interact with the user for any purpose\&. This includes the
+ability to de-iconify itself, as well as to change its current workspace\&.
+To minimize confusion, the Session Manager issues a ToolTalk message to the
+Window Manager requesting the recommended order to interact\&. The Window Manager
+responds with the list of SM_CLIENT_IDs and their associated workspace numbers
+in workspace order\&. After receiving an Interact message (with interact-style
+set to \fBAny\fP), an application should go system-modal to
+prevent other, less well-behaved non-interacting applications from allowing
+user interaction while the application is interacting with its user\&.
+.PP
+Because an application will usually save its state into a file, the
+Session Manager provides \fBDtSessionSavePath\fP as a convenience
+function that returns a full pathname of a file in which an application can
+save its state\&. While the application is saving its state, \fBdtsession\fP awaits notice from the application that it is done\&. To tell \fBdtsession\fP that the state save is complete, the application updates
+the \fBWM_COMMAND\fP property on its top-level window\&.
+.PP
+The \fBWM_COMMAND\fP property on an application\&'s top-level window serves
+two purposes\&. First, a change of this property is the indication to \fBdtsession\fP that an application is done saving its state and \fBdtsession\fP can proceed to the next application\&. Second, the \fBWM_COMMAND\fP
+property value is expected to contain the command line that \fBdtsession\fP will use to restart the application at session startup\&. If an application
+is launched with a full pathname, then it should use the full pathname when
+setting \fBWM_COMMAND\fP\&. Applications that do not need to save their state, but
+wish to be restarted, can simply set \fBWM_COMMAND\fP during application startup
+and forget about it\&.
+.PP
+Refer to the \fBXmAddWmProtocols\fP, \fBXmAddWMProtocolCallback\fP, and \fBXSetCommand\fP APIs for more information\&.
+.PP
+In addition to the "save-yourself" client session management support,
+the X11R6 XSMP protocol provides the following features (which are not found
+in the ICCCM protocol):
+.IP "   \(bu" 6
+It allows applications to interact with the
+user during normal shut down to confirm or discard unsaved changes\&.
+.IP "   \(bu" 6
+It provides a mechanism to explicitly tell applications
+to exit\&.
+.IP "   \(bu" 6
+Most importantly, it provides a common framework
+to support applications that are not X clients and applications that exit
+before the session is saved but that must remain part of the session for
+restart purposes (for example, an input method server)\&.
+.SS "The ICCCM Session Management Protocol"
+.PP
+\fBdtsession\fP implements the X11R6 XSMP session
+management protocol and provides backward compatibility by acting as a proxy
+for client applications that continue to use the older ICCCM session management
+protocol\&.
+.SS "Restoring A Session"
+.PP
+At session startup time, \fBdtsession\fP presents a dialog
+that allows the user to select which of the following sessions to start:
+.IP "Current" 10
+Start the user\&'s most recent session\&.
+.IP "Home" 10
+Start the user\&'s home session\&.
+.IP "\fIdisplay-name\fP - Current" 10
+Create a new display-specific session and start the first of the following
+sessions that exists: 
+.RS
+.IP "   0." 6
+display-specific Home
+.IP "   1." 6
+generic Home
+.IP "   2." 6
+new user (initial) session
+.RE
+.IP "\fIdisplay-name\fP - Home" 10
+Create a new display-specific session and start the user\&'s generic home
+session if it exists\&. Otherwise, start a new user session\&.
+.IP "Fail-safe Session" 10
+Start a fail-safe session (Xfailsafe)
+.PP
+Although a user\&'s list of sessions is not known until after the user
+logs in, the dialog presents all of the session choices\&. If a user selects
+a session that does not exist, \fBdtsession\fP takes the following
+actions\&. If the user selects:
+.IP "Home" 10
+\fBdtsession\fP starts a new user session\&.
+.IP "Current" 10
+\fBdtsession\fP starts the user\&'s home session if it exists\&.
+If it does not, it starts a new user session\&.
+.PP
+If the user selects a display-specific session and one does not exist, \fBdtsession\fP posts a warning dialog stating that a new session will
+be created\&. The warning dialog contains three buttons:
+.IP "\fBCancel Login\fP" 10
+Cancels the login and returns the user to the login screen\&.
+.IP "\fBOK\fP" 10
+If a display-specific Home session was selected, \fBdtsession\fP creates a new display-specific session and starts the user\&'s generic
+home session if it exists\&. If it does not exist, it starts a new user session\&.
+.IP "" 10
+If a display-specific Current session was selected, \fBdtsession\fP creates a new display-specific session and starts a display-specific
+home, generic home, or new user session, depending on which it finds first\&.
+.IP "\fBHelp\fP" 10
+Displays help text about the warning dialog\&.
+.SS "Session Resource Management"
+.PP
+The session manager uses the X Server \fBRESOURCE_MANAGER\fP property on which
+to make available desktop resources to all applications\&. The session manager
+will load the \fBRESOURCE_MANAGER\fP in the following manner:
+.IP "   \(bu" 6
+load the system default resources, AND
+.IP "   \(bu" 6
+merge any system administrator specified resources,
+AND
+.IP "   \(bu" 6
+merge any user specified resources\&.
+.PP
+The desktop default resources can be found in \fB/usr/dt/config/$LANG/sys\&.resources\fP\&.
+These resources will be made available to each user\&'s session
+via the \fBRESOURCE_MANAGER\fP property\&. This file should not be edited as it will
+be unconditionally overwritten upon subsequent desktop installations\&.
+.PP
+A system administrator may augment the system default resources by creating
+\fB/etc/dt/config/$LANG/sys\&.resources\fP\&. In this file, a
+system administrator may override system default resources or specify additional
+resources\&. As this file is merged into the desktop default resources during
+session startup, it is preferable that only new or updated resource specifications
+be placed in this file, rather than a copy being made of the desktop default
+resource file\&. Resources specified in this file will be made available to
+each user\&'s session via the \fBRESOURCE_MANAGER\fP property\&. Resources specified
+in this file take precedence over those specified in the desktop default resource
+file\&.
+.PP
+A user may augment the desktop default and system administrator resources
+via their \fB$HOME/\&.Xdefaults\fP file\&. Resources specified
+in this file will be made available to only that user\&'s session via the \fBRESOURCE_MANAGER\fP
+property\&. Resources specified in this file take precedence over those specified
+in the desktop default or system administrator resource files\&.
+.PP
+.RS
+\fBNote:  
+.PP
+The X Toolkit Intrinsics specifies that it will load resources for an
+application from either \fBRESOURCE_MANAGER\fP or from \fB$HOME/\&.Xdefaults\fP,
+but not both\&. Ordinarily, this would mean that the user\&'s
+\fB$HOME/\&.Xdefaults\fP file would be ignored\&. However, the session manager
+accommodates \fB$HOME/\&.Xdefaults\fP by merging it into the \fBRESOURCE_MANAGER\fP
+at session startup as described above\&. If a user changes \fB$HOME/\&.Xdefaults\fP,
+the changes will not be visible to new applications until the
+user invokes the \fBReloadResources\fP action\&.
+.RE
+.PP
+The \fBReloadResources\fP action will instruct the session
+manager to reload the \fBRESOURCE_MANAGER\fP with the system, system administrator,
+and user specified resources\&. This is useful to make available to new applications
+changes made to system administrator or user specified resource files\&.
+.PP
+See also \fBdtresourcesfile\fP(4) and \fBdtsessionaction\fP(5)\&.
+.SS "Session Application Management"
+.PP
+At session startup, the session manager will restart any applications
+that were saved as part of the session\&. The system default set of applications
+to be restored as part of the user\&'s Initial Session can be found in
+\fB/usr/dt/config/$LANG/sys\&.session\fP\&. This file should not be edited
+as it will be unconditionally overwritten upon subsequent desktop installations\&.
+.PP
+See also \fBdtsessionfile\fP(4)\&.
+.PP
+A system administrator may replace the set of applications that are
+restored as part of the user\&'s Initial Session by creating a file named
+\fB/etc/dt/config/$LANG/sys\&.session\fP\&. Unlike the resource files, this
+file will be used as a complete replacement for the desktop default file,
+so it is valid to make a copy of the system default file and make any necessary
+modifications\&.
+.SS "Session Manager Authentication"
+.PP
+The Session Manager uses ICE-based authentication as described in the
+Inter-Client Exchange (ICE) Library v1\&.0\&.
+.PP
+The Session Manager is built with a table of available authentication
+protocols\&. Selection of the protocol is done via the \fBAuthName\fP
+resource\&. The \fBAuthName\fP default is the string \fBMIT-MAGIC-COOKIE-1\fP\&. The Session Manager supports the same protocols
+as the Login Manager\&.
+.SS "The Window Manager"
+.PP
+\fBdtsession\fP is responsible for starting the window
+manager\&. By default \fB/usr/dt/bin/dtwm\fP is started\&. An alternate
+window manager can be specified with the wmStartupCommand resource\&. Refer
+to the Workspace Manager specification for more information\&.
+.SS "The Style Manager"
+.PP
+The style manager provides the interface by which a user can change
+various desktop and X server settings for the current session\&. Refer to the
+Style Manager specification for more information\&.
+.SS "The Color Server"
+.PP
+\fBdtsession\fP serves as the color server for the desktop
+and provides a set of resources that can be used to configure it\&.
+The \fBforegroundColor\fP resource controls whether a pixel is allocated for
+the foreground color\&. The \fBdynamicColor\fP resource specifies
+whether read-only colors are allocated\&. The \fBshadowPixmaps\fP
+resource specifies whether colors are allocated for top shadow or bottom shadow\&.
+The \fBcolorUse\fP resource limits color allocation\&. Finally,
+the \fBwriteXrdbColors\fP resource specifies whether
+the \fB*background\fP
+and \fB*foreground\fP resources are placed in the resource database\&. See the Color
+Server Resources section for more information\&.
+.SS "The Color Sharing Protocol"
+.PP
+The CDE desktop makes use of a color sharing protocol between
+\fBdtsession\fP
+and the rest of the desktop (\fBdtstyle\fP in particular)
+and Motif\&. This protocol allows:
+.IP "   \(bu" 6
+Non-CDE (non Motif/\fBXmColorObject\fP) applications to
+make use of the CDE color scheme\&.
+.IP "   \(bu" 6
+Applications (Motif or not) that create their own private colormap to
+copy the \fBdtsession\fP desktop pixels and avoid or
+limit technicolor effect\&.
+.IP "   \(bu" 6
+Motif applications to easily share the desktop GUI pixels when they use
+a private colormap\&.
+.PP
+The color sharing protocol involves:
+.IP "   \(bu" 6
+The selection name (\fBCUSTOMIZE_DATA\fP), type (\fBTYPE_OF_MONITOR\fP), and format used by
+\fBdtsession\fP to communicate the monitor
+characterization to \fBdtstyle\fP (or any other style
+manager)\&.
+.IP "   \(bu" 6
+The selection name (\fBCUSTOMIZE_DATA\fP), type (\fBPIXEL_SET\fP), and format used by
+\fBdtsession\fP to communicate its palette pixel ids to
+the \fBColorObject\fP (in \fBlibXm\fP) and
+to \fBdtstyle\fP\&.
+.IP "   \(bu" 6
+Two functions (\fBXmeGetColorObjData\fP and
+\fBXmeGetColorObjCells\fP) that deliver the desktop
+pixels to the application in a form easily suitable for its use
+(\fBXColor\fP)\&.
+.PP
+A Color Set is a set of five colors that are used to represent a single
+logical color in the Motif toolkit\&. For each background color (the
+logical color), there are associated top shadow, bottom shadow,
+foreground, and select colors, all generated from the background color\&.
+These associated colors are the mechanism for giving widgets their 3-D
+appearance\&.
+.PP
+A Color Palette is a named set of a maximum of eight background colors\&.
+A single palette is used to color the desktop components\&. A list of
+default palettes is provided from which the user can select\&. The user
+can also add and delete palettes, as well as modify an existing palette\&.
+.PP
+\fBdtsession\fP, the color server, uses ICCCM X Selection
+based mechanisms to communicate color use, palette and color set pixel
+information to the desktop clients\&.
+.PP
+The name of the (\fBCUSTOMIZE_DATA\fP) selection is the atom
+\fBCustomize Data:\fP\fIi\fP, where
+\fIi\fP is the screen number\&.
+.PP
+The names of the targets are the atoms \fBType Of Monitor\fP
+and \fBPixel Sets\fP\&.
+.SS "Type of Monitor Target"
+.PP
+The \fBType Of Monitor\fP target is used to convey color
+settings to the desktop clients, such as \fBdtstyle\fP or
+the Motif toolkit, that need this information\&. The content corresponds
+to the value of the \fBdtsession\fP color usage
+resources\&.
+.PP
+When asked to convert the screen \fBCustomize
+Data:\fP\fIi\fP selection to the target
+\fBType Of Monitor\fP, the format and content encoding used
+is the following:
+.IP "   \(bu" 6
+\fBtype:\fP STRING
+.IP "   \(bu" 6
+\fBlength:\fP 20
+.IP "   \(bu" 6
+\fBformat:\fP 8
+.IP "   \(bu" 6
+\fBcontent:\fP a series of 4 numbers, in hexadecimal
+format, separated by the underscore (_) character (that is, using the
+printf/scanf format \fB%x_%x_%x_%x\fP), and including from
+left to right:
+.RS
+.IP "   \(bu" 6
+The \fBcolorUse\fP resource, which corresponds to the type
+of monitor in use by the desktop\&.
+.RS
+.IP "" 10
+\fBB_W\fP = 0
+.IP "" 10
+\fBLOW_COLOR\fP = 1
+.IP "" 10
+\fBMEDIUM_COLOR\fP = 2
+.IP "" 10
+\fBHIGH_COLOR\fP = 3
+.RE
+.IP "   \(bu" 6
+The \fBshadowPixmaps\fP resource, which controls if
+dithered pixmaps are used to render the shadows in the target GUI\&.
+.RS
+.IP "" 10
+\fBFALSE\fP = 0
+.IP "" 10
+\fBTRUE\fP = 1
+.RE
+.IP "   \(bu" 6
+The \fBforegroundColor\fP resource, which controls whether
+or not a pixel was allocated for the foreground or if
+\fBWhitePixel\fP or \fBBlackPixel\fP is used\&.
+.RS
+.IP "" 10
+\fBDYNAMIC\fP = 0
+.IP "" 10
+\fBBLACK\fP = 1
+.IP "" 10
+\fBWHITE\fP = 2
+.RE
+.IP "   \(bu" 6
+The \fBdynamicColor\fP resource, which controls whether or
+not the pixels allocated are read/write or read-only cells\&.
+.RS
+.IP "" 10
+\fBFALSE\fP = 0
+.IP "" 10
+\fBTRUE\fP = 1
+.RE
+.RE
+.PP
+This information, especially \fBdynamicColor\fP, is
+currently used only by \fBdtstyle\fP in CDE to
+implement the color manager GUI\&.
+.SS "Pixel Sets Target"
+.PP
+The \fBPixel Sets\fP target is used to convey palette and
+color set pixel information to the desktop clients\&. The content is
+always 8 color set values, but depending on the color usage settings,
+some entries will be the duplicated\&. For the receiver of this
+information, however, it simply means it can access the index as
+specified in the high color scheme\&.
+.PP
+When asked to convert the screen \fBCustomize
+Data:\fP\fIi\fP selection to the target
+\fBPixel Sets\fP, the format used is the following:
+.IP "   \(bu" 6
+\fBtype:\fP STRING
+.IP "   \(bu" 6
+\fBlength:\fP 400
+.IP "   \(bu" 6
+\fBformat:\fP 8
+.IP "   \(bu" 6
+\fBcontent:\fP a first number (\fB%x_\fP) for
+the \fBcolorUse\fP resource (see "Type of Monitor Target"
+above for encoding) and a series of 8 (corresponding to the maximum
+number of color sets in CDE) sets of 5 numbers, in hexadecimal format
+(\fB%x_%x_%x_%x_%x\fP), each describing from left to right:
+.RS
+.IP "   \(bu" 6
+\fBbackground\fP pixel (bg)
+.IP "   \(bu" 6
+\fBforeground\fP pixel (fg)
+.IP "   \(bu" 6
+\fBtop_shadow\fP pixel (ts)
+.IP "   \(bu" 6
+\fBbottom_shadow\fP pixel (bs)
+.IP "   \(bu" 6
+\fBselect_color\fP pixel (sc)
+.RE
+.PP
+The mapping between color set Ids and \fBcolorUse\fP is as follows:
+.IP "   \(bu" 6
+\fBHIGH_COLOR\fP
+.RS
+.IP "   3." 6
+Active window borders\&.
+.IP "   4." 6
+Inactive window borders\&.
+.IP "   5." 6
+Switch for workspace 1 and every fourth additonal workspace (workspace 5, 9,\&.\&.\&.)\&.
+.IP "   6." 6
+Text and list areas\&.
+.IP "   7." 6
+Main window background (\fBprimaryColorSetId\fP) and switch
+for workspace 4 and every fourth additional workspace (workspace 8,
+12,\&.\&.\&.)\&.
+.IP "   8." 6
+Dialog box background and menu bar
+(\fBsecondaryColorSetId\fP) and switch for workspace 3 and
+every fourth additional workspace (workspace 7, 11,\&.\&.\&.)\&.
+.IP "   9." 6
+Switch for workspace 2 and every fourth addional workspace (workspace 6, 10, \&.\&.\&.)\&.
+.IP "   10." 6
+Front panel background\&.
+.RE
+.IP "   \(bu" 6
+\fBMEDIUM_COLOR\fP
+.RS
+.IP "   11." 6
+Active window borders\&.
+.IP "   12." 6
+Window bodies:
+.RS
+.IP "   \(bu" 6
+Inactive window borders
+.IP "   \(bu" 6
+Main window and dialog box backgrounds and menu bar
+.IP "   \(bu" 6
+Front Panel background
+.RE
+.IP "   13." 6
+Workspace switches and backgrounds
+.IP "   14." 6
+Text and list backgrounds
+.IP "   15." 6
+same as 2
+.IP "   16." 6
+same as 2
+.IP "   17." 6
+same as 3
+.IP "   18." 6
+same as 2
+.RE
+.IP "   \(bu" 6
+\fBLOW_COLOR\fP and \fBBLACK_WHITE\fP
+.RS
+.IP "   19." 6
+Active window borders\&.
+.IP "   20." 6
+Everything else\&.
+.IP "   21." 6
+\&.\&. to 8: same as 2\&.
+.RE
+.PP
+For each color set, the cell allocation scheme is the following
+(\fBdynamicColor\fP determines if the pixels are allocated
+read/write or read-only):
+.TS
+tab();
+lw(1.76in) lw(1.70in) lw(1.92in) lw(1.34in) lw(1.05in).
+\fBcolorUse\fP\fBshadowPixmaps\fP\fBforegroundColor\fPCells allocationNumber
+HIGH_COLORFALSEDYNAMIC(fg,bg,ts,bs,sc)5*8 = 40
+HIGH_COLORFALSEBLACK or WHITE(bg,ts,bs,sc)4*8 = 32
+HIGH_COLORTRUEDYNAMIC(fg,bg,sc)3*8 = 24
+HIGH_COLORTRUEBLACK or WHITE(bg,sc)2*8 = 16
+MEDIUM_COLORFALSEDYNAMIC(fg,bg,ts,bs,sc)5*4 = 20
+MEDIUM_COLORFALSEBLACK or WHITE(bg,ts,bs,sc)4*4 = 16
+MEDIUM_COLORTRUEDYNAMIC(fg,bg,sc)3*4 = 12
+MEDIUM_COLORTRUEBLACK or WHITE(bg,sc)2*4 = 8
+LOW_COLORFALSEDYNAMIC(fg,bg,ts,bs,sc)5*2 = 10
+LOW_COLORFALSEBLACK or WHITE(bg,ts,bs,sc)4*2 = 8
+LOW_COLORTRUEDYNAMIC(fg,bg,sc)3*2 = 6
+LOW_COLORTRUEBLACK or WHITE(bg,sc)2*2 = 4
+B_WTRUEoppositeBG0
+.TE
+.SS "Session Lock"
+.PP
+Dtsession provides session locking\&. The current session can be locked
+directly by pressing the lock icon on the front panel\&. If supported by the
+X server, the current session can be locked after a specified period of inactivity\&.
+To unlock the session, the user must enter their login password\&.
+.PP
+By default, \fBdtsession\fP supports traditional local UNIX authentication
+for unlocking the session\&. Additional re-authentication functions such as
+those required by DCE may be added by individual vendors\&.
+.SS "Screen Savers"
+.PP
+Dtsession provides support for the launching of external screen savers
+as a part of session locking from the front panel or, if supported by the
+X server, after a specified period of inactivity\&. Refer to the Screen Saver
+specification for information as to how screen savers are integrated into
+the desktop\&.
+.SS "X Server Screen Saver Extensions"
+.PP
+Dtsession\&'s ability to provide session lock or screen saver launch after
+a specified period of inactivity depends upon the availability of an X server
+screen saver extension\&. \fBdtsession\fP supports two such extensions:
+.IP "   \(bu" 6
+X Consortium Sample X11 Screen Saver Extension
+1\&.0
+.IP "   \(bu" 6
+HP X Screen Saver Extension
+.PP
+The ability of \fBdtsession\fP to recognize both, either or none of these
+extensions is vendor specific\&.
+.SS "Launching The Session Manager"
+.PP
+\fBdtsession\fP should be launched from the Xsession script\&.
+Xsession is described in the login manager specification\&. It is recommended
+that Xsession be launched from \fBdtlogin\fP as part of the login
+sequence as the default, but there are alternative methods of starting Xsession:
+.IP "dtlogin" 10
+the default dtlogin configuration launches \fBXsession\fP
+when a user logs in
+.IP "proxy" 10
+some systems will allow programs such as \fBxinit\fP, \fBx11start\fP or \fBstartx\fP to start Xsession
+.SS "Starting Services Before the Session Manager"
+.PP
+If you must start a service after login but before the Session Manager
+(for example, an input method server), start the service by placing a script
+in the fdirectory \fB/usr/dt/config/Xsession\&.d\fP\&.
+.PP
+To avoid being restarted by the Session Manager when a session is started,
+a service that must be started before the Session Manager should explicitly
+set the \fBRestartStyleHint\fP property to \fBRestartNever\fP (possibly by setting an Xt resource)\&.
+.SH "OPTIONS"
+.PP
+The \fBdtsession\fP client is automatically invoked by
+the DT Login Manager (\fBdtlogin\fP)\&. If desired, \fBdtsession\fP may also be started on an existing X server\&. Note that \fBdtsession\fP automatically starts a window manager\&.
+.PP
+The following options are available:
+.IP "\fB-norestore\fP" 10
+Instructs \fBdtsession\fP not to restore a previous session
+nor save the session upon logout\&.
+.IP "\fB-session\fP \fBsession_name\fP" 10
+Instructs \fBdtsession\fP to start the specified session\&.
+Valid session names are:
+.RS
+.IP "   \(bu" 6
+current
+.IP "   \(bu" 6
+home
+.IP "   \(bu" 6
+\fBdisplay_name\fP:\fBdisplay_number\fP /current
+.IP "   \(bu" 6
+\fBdisplay_name\fP:\fBdisplay_number\fP /home
+.RE
+.IP "" 10
+where \fBdisplay_name\fP is the unqualified display host
+name and \fBdisplay_number\fP is the display number\&.
+.SH "RETURN"
+.PP
+Exit values are:
+.IP "0" 10
+Successful completion\&.
+.IP ">1" 10
+Error condition occurred\&.
+.SH "EXAMPLES"
+.SS "dtsession -norestore"
+.PP
+Start session manager from command line without restoring previous session\&.
+.SH "RESOURCES"
+.SS "Color Server"
+.TS
+tab();
+lw(1.483553i) lw(1.543860i) lw(0.916667i) lw(1.555921i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBcolorUse\fP\fBColorUse\fP\fBString\fRDEFAULT
+\fBdynamicColor\fP\fBDynamicColor\fP\fBBoolean\fRTrue
+\fBforegroundColor\fP\fBForegroundColor\fP\fBString\fRDYNAMIC
+\fBshadowPixmaps\fP\fBShadowPixmaps\fP\fBString\fRDEFAULT
+\fBwriteXrdbColors\fP\fBWriteXrdbColors\fP\fBBoolean\fRTrue
+.TE
+.SS "Screen Lock/Screen Save"
+.TS
+tab();
+lw(1.519737i) lw(1.555921i) lw(1.314693i) lw(1.109649i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBkeys\fP\fBKeys\fP\fBunsigned char\fRNULL
+\fBpasswordTimeout\fP\fBpasswordTimeout\fP\fBunsigned int\fR10
+.TE
+.SS "Miscellaneous"
+.TS
+tab();
+lw(2.04in) lw(1.88in) lw(1.39in) lw(1.11in).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBAuthName\fP\fBAuthName\fP\fBString\fRDEFAULT
+\fBIgnoreEnvironment\fP\fBIgnoreEnvironment\fP\fBString\fRNULL
+\fBqueryServerSettings\fP\fBQueryServerSettings\fP\fBBoolean\fRFalse
+\fBNumSessionsBackedup\fP\fBNumSessionsBackedup\fP\fBunsigned int\fR2
+\fBsaveFontPath\fP\fBSaveFontPath\fP\fBBoolean\fRFalse
+\fBwmStartupCommand\fP\fBWmStartupCommand\fP\fBexecutable path\fRNULL
+.TE
+.SS "AuthName"
+.PP
+This resource specifies the authentication protocol that \fBdtsession\fP is to use\&. The default is the string \fBMIT-MAGIC-COOKIE-1\fP\&. \fBdtsession\fP supports the same protocols as \fBdtlogin\fP\&.
+.SS "colorUse - DEFAULT"
+.PP
+This resource specifies the number of colors to use for the user interface\&.
+Valid types are: Color server will determine type of monitor based upon number
+of display planes of the screen as follows:
+.IP "1,2" 10
+B_W
+.IP "4" 10
+LOW_COLOR
+.IP "6" 10
+MEDIUM_COLOR
+.IP "7+" 10
+HIGH_COLOR
+.IP "" 10
+\fBB_W\fP - Specifies a black and white system\&. The color
+palettes will use two color cells for the user interface\&. In this configuration
+only two color palettes are available: BlackWhite and WhiteBlack\&. These palettes
+cannot dynamically change\&. To change a palette, all applications using that
+color palette must be restarted\&. This resource value forces ShadowPixmaps
+to True, and ForegroundColor to either black or white depending on the palette
+chosen\&.
+.IP "" 10
+\fBLOW_COLOR\fP - Specifies a low color system\&. The color
+palettes will have two color sets and use a maximum of 12 color cells for
+the user interface, including black and white (color cells 0 and 1)\&. The number
+of co ShadowPixmaps and ForegroundColor\&.
+.IP "" 10
+\fBMEDIUM_COLOR\fP - Specifies a medium color system\&. The
+color palettes will have 4 color sets and use a maximum of 22 color cells
+for the user interface, including black and white (color cells 0 and 1)\&. The
+number of color cells can be reduced by using the resources ShadowPixmaps
+and ForegroundColor\&.
+.IP "" 10
+\fBHIGH_COLOR\fP - Specifies a high color system\&. The color
+palettes will have 8 color sets and use a maximum of 42 color cells for the
+user interface\&. including black and white (color cells 0 and 1)\&. The number
+of color cells can be reduced by using the resources ShadowPixmaps and ForegroundColor\&.
+.SS "dynamicColor"
+.PP
+This resource can have values of True or False\&. dynamicColor is used
+to reduce the number of color cells being used\&. Once a palette has been selected
+and it is not likely to be changed, dynamicColor can be set to False\&. If set
+to False colors cannot be dynamically changed using the DT style manager\&.
+A selected palette will take effect the next session\&. The next time the session
+comes up, the color server uses Read Only color cells that can be shared by
+all clients, thus reducing the number of color cells used\&.
+.SS "foregroundColor"
+.PP
+This resource can have values of White, Black or Dynamic\&. ForegroundColor
+causes all text (foreground) to use either pixel 0 or 1 (Black or White) or
+to have a color cell dedicated to foreground and changes in response to the
+background color (Dynamic) for each ColorSet\&. If set to White or Black, the
+number of color cells used per ColorSet is reduced by 1\&.
+.SS "keys"
+.PP
+This resource is a list of keyholders who have the ability to unlock
+the screen any time it is locked by the user\&. The list is a list of user id\&'s
+separated by commas\&. For example if user kim has the following resource active
+during a session:
+.IP "Dtsession*keys: fred,keith" 10
+Users fred and keith have the ability to unlock the display when kim
+locks it\&.
+.SS "passwordTimeout"
+.PP
+This resource specifies (in seconds) the amount of time before the password
+dialog is removed from the screen\&. When the display is locked, the pointer
+shows a lock cursor, and a dialog appears which asks for the user password\&.
+If no activity from the pointer or keyboard is detected for passwordTimeout
+seconds, the dialog is removed from the screen\&. The dialog is redisplayed
+as soon as a pointer or keyboard event is detected\&. An passwordTimeout of
+0 leaves the password dialog in place for the entire time the display is locked\&.
+The default value is 10 seconds\&.
+.SS "queryServerSettings"
+.PP
+This resource specifies whether \fBdtsession\fP queries the server at logout
+for all its settings or saves only those settings set by using the DT Style
+Manager\&. Querying the server ensures that all settings are saved; however,
+there is a degradation in performance when a full query is done\&. The default
+value is False, which means that the server will not be queried\&.
+.SS "NumSessionsBackedup"
+.PP
+This resource specifies the number of checkpoints to keep\&. When the
+number of checkpoints for a session exceeds this value, the \fBDiscardCommand\fP properties for the oldest session will be executed and the oldest
+checkpoint will be removed\&. The default is 2\&.
+.SS "shadowPixmaps"
+.PP
+For color systems, this resource can have a value of True or False\&.
+If True, topShadowColor and bottomShadowColor use the same pixel as background
+and topShadowPixmap and bottomShadowPixmap are specified instead of solid
+color to create the 3D look\&. This reduces the number of color cells per ColorSet
+by 2\&. ShadowPixmaps defaults to True for systems with 4 or less color planes
+(16 or less color cells), and False for systems with more than 4 color planes\&.
+.SS "wmStartupCommand"
+.PP
+This resource allows for an alternate window manager to be started at
+login\&. If this resource is \fBNULL\fP, \fBdtsession\fP
+starts \fB/usr/dt/bin/dtwm\&.\fP An alternate startup might look
+like: \fBDtsession*wmStartupCommand: /usr/bin/X11/mwm\fP
+.PP
+.RS
+\fBNote:  
+.PP
+The command should not have any commands to a shell in it, and that
+it should not be surrounded by quotes\&. Also, if any other window manager other
+than dtwm is used, clients will be restored, but may not be restored to the
+correct position\&. By default, this resource contains a NULL value\&.
+.RE
+.SH "FILES"
+.IP "/usr/dt/config/$LANG/sys\&.session" 10
+The desktop default set of applications for the user\&'s Initial Session\&.
+.IP "/etc/dt/config/$LANG/sys\&.session" 10
+System Administrator specified set of applications for the user\&'s Initial
+Session\&.
+.IP "/usr/dt/config/$LANG/sys\&.resources" 10
+The desktop default resources\&.
+.IP "$HOME/\&.dt/startlog" 10
+A log of processes started by the \fBXsession\fP script\&. This file is used
+only to help diagnose session startup problems\&.
+.IP "$HOME/\&.dt/session/\fBsession_name\fP/db\&.session" 10
+The CDE1\&.0 database file maintained for each session\&.
+.IP "$HOME/\&.dt/sessionlogs" 10
+When \fBdtsession\fP is started by the \fBXsession\fP script,
+its \fBstderr\fP is duplicated to a session-specific file in
+\fB$HOME/\&.dt/sessionlogs\fP, so that all \fBstderr\fP
+written by apps started by \fBdtsession\fP will get logged in this file\&.
+The name of the file that is used is \fB\fBhost_name\fP_DISPLAY\fP=$DISPLAY,
+where \fBhost_name\fP is the name of the host where the session was started\&.
+.IP "$HOME/\&.dt/\fBsession_dir\fP/\fBsession_name\fP/dtsession\&.db" 10
+The CDEnext database file maintained for each session,
+where \fBsession_dir\fP is \fBsessions\fP or
+the display name for display-specific
+\fBsession_name\fP is either \fBhome\fP or
+\fBcurrent\fP\&.
+CDEnext session databases supersede CDE1\&.0 session databases\&.
+.IP "/etc/dt/config/$LANG/sys\&.resources" 10
+System administrator specified resources\&.
+.IP "$HOME/\&.Xdefaults" 10
+User specified resources\&.
+.IP "" 10
+Dtsession stores session information in \fB$HOME/\&.dt/sessions\fP
+or \fB$HOME/\&.dt/sessions/\fP\fIdisplay\fP\&. The content of these directories should not be directly edited
+by the user\&.
+.IP "/usr/dt/app-defaults/$LANG/Dtsession" 10
+Default \fBdtsession\fP resources\&.
+.SH "SEE"
+.PP
+See related specifications:
+.IP "dtstyle" 10
+Customization of many session properties
+.IP "dtscreen" 10
+Desktop screen savers
+.IP "dtwm" 10
+Window manager
+.IP "dtlogin" 10
+Login manager
+.IP "dtsessionaction" 10
+Session manager actions
+.IP "dtsessiondb" 10
+Format and location of CDEnext session database files
+.IP "dtsessionfile" 10
+Format and location of CDE 1\&.0 desktop session files
+.IP "dtresourcesfile" 10
+Format and location of desktop resource files
+.IP "startlog" 10
+Log of processes started by the \fBXsession\fP script
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

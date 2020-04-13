@@ -1,0 +1,590 @@
+'\" t
+...\" info.sgm /main/13 1996/10/30 11:38:13 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtinfo" "user cmd"
+.SH "NAME"
+\fBdtinfo\fP \(em browse on-line information
+.SH "SYNOPSIS"
+.PP
+\fBdtinfo\fP [-help]  [-l \fIinfolib\fP]  [-sect \fIsection\fP
+ [ {-\fIsection\fP  | ,\fIsection\fP }  \&...] ]  [-secondary]  [-verbose]  [-print]  [-hierarchy]  [-printer \fIx_print_server\fP]  [-copies \fInumber\fP]  [-paperSize \fIsize\fP]  [-s] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtinfo\fP command starts the desktop on-line
+information browser, also known as the CDE Information Manager\&.
+On-line information is typically packaged into an
+information library (infolib), which is a hierarchy of bookcases
+containing SGML books (see the \fBdtinfogen\fP(1) command)\&.
+The browser offers an ability to view, search, and print on-line
+information with a high degree of control\&. Bookmarks and annotations may
+be attached at desired points for later recall\&.
+.SS "Generalized Locator Format"
+.PP
+The generalized locator format is used as an identifier for target
+information\&. The following format shows the fully specified case,
+although it is usually not required to
+uniquely identify sections:
+.PP
+\fBmmdb:INFOLIB=\fP\fBilib_path\fP\fB&BOOKCASE=\fP\fBbc_name\fP\fB&LOCATOR=\fP\fBlocator\fP
+.PP
+where \fBilib_path\fP is the infolib\&'s path on disk;
+\fBbc_name\fP is the name of the bookcase (an MMDB); and
+\fBlocator\fP is the MMDB locator value\&.
+The locator itself must be a unique reference across
+document collections by the time an infolib\&'s build process is complete\&.
+.PP
+If just \fBINFOLIB\fP is present, the collection
+corresponding to the infolib is returned\&. To display at the beginning of
+a known bookcase, use the form:
+.PP
+\fBmmdb:INFOLIB=\fP\fBilib_path\fP\fB&BOOKCASE=\fP\fBbc_name\fP
+.PP
+Note, however, that bookcase names are less protected from change than
+locators, and should not be relied upon for other than dynamically
+verifiable bookcase targets\&.
+.PP
+If a locator is not expected to be in the desktop default infolib,
+identify its infolib by including the full file path name for the
+information library (\fBilib_path\fP)\&. The most common
+form of reference is then either:
+.PP
+\fBmmdb:INFOLIB=\fP\fBilib_path\fP\fB&LOCATOR=\fP\fBlocator\fP
+.PP
+or:
+.PP
+\fBmmdb:LOCATOR=\fP\fBlocator\fP
+.PP
+If INFOLIB and BOOKCASE are omitted, a locator is looked up in all
+loaded information libraries\&. If no information libraries are currently
+loaded, the locator is looked up in the default information library(s)
+specified by \fBDTINFOLIBDEFAULT\fP\&.
+For the \fB-sect\fP argument, the value(s) "locator" alone
+is sufficient to reach the desired section, if it occurs in the default infolib,
+or those indicated by \fB-l\fP arguments\&.
+.SS "Persistent User Settings"
+.PP
+A few characteristics are saved across browser sessions\&. These are
+bookmarks, annotations, named search scopes, and certain user
+preferences\&. All of these are saved on a locale-specific basis\&. Query
+history and browse history lists are provided, but are not persistent
+across sessions\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-help\fP" 10
+Prints a summary of the command\&'s syntax\&.
+.IP "\fB-l\fP \fBinfolib\fP" 10
+Specifies an absolute file path or the filename of an information library\&.
+If an infolib\&'s filename is specified, the search path specified by
+\fBDTINFOLIBSEARCHPATH\fP
+is used to help locate the file\&. If the \fB-l\fP option
+is omitted, the browser displays the default information library(s)
+specified by \fBDTINFOLIBDEFAULT\fP\&.
+This option can be specified more than once\&.
+.IP "\fB-secondary\fP" 10
+Starts a secondary instance of \fBdtinfo\fP\&. Secondary
+instances do not respond to \fBDtinfo_ShowInfoAtLoc\fP
+and \fBDtinfo_LoadInfoLib\fP ToolTalk messages\&.
+.IP "\fB-verbose\fP" 10
+Prints information on the terminal as the command runs, if
+\fBdtinfo\fP is started from the command line\&.
+.IP "\fB-sect\fP \fBsection\fP[{-\fBsection\fP|,\fBsection\fP}\&...]" 10
+Specifies the infolib section or sections to either display
+or print\&. Sections can be specified in generalized locator format\&.
+.IP "" 10
+To specify a range of sections, use the form:
+.IP "" 10
+\fB-sect\fP \fBsection\fP\fB-\fP\fBsection\fP
+.IP "" 10
+where the start and end sections are separated by the hyphen character\&.
+.IP "" 10
+To specify a discontiguous list of sections, use the form:
+.IP "" 10
+\fB-sect\fP \fBsection\fP,\fBsection\fP
+.IP "" 10
+where the sections in the list are separated by the comma character\&.
+.IP "" 10
+If the \fB-print\fP option is specified, the sections are printed\&.
+Otherwise, \fBdtinfo\fP loads the specified infolib(s) and displays
+all the sections in separate browser windows\&.
+.IP "\fB-print\fP" 10
+Instructs \fBdtinfo\fP to print the locations specified
+with the \fB-sect\fP option\&. Printing of an entire infolib
+from the command line is disallowed\&. If a specified location is not at
+the top of a section, the section containing the location is printed\&.
+.SS "Print Control Options"
+.PP
+These options are valid only if the \fB-print\fP
+option is also specified\&.
+.IP "\fB-hierarchy\fP" 10
+Prints an entire specified section and all of its subsections\&. By
+default, only the specified section is printed\&.
+.IP "\fB-printer\fP \fBx_print_server\fP" 10
+Specifies which X Print server to use\&. If this is not specified as a
+command-line option or resource, the value is taken from the
+environment\&.
+.IP "\fB-copies\fP \fBnumber\fP" 10
+Specifies how many copies to print\&. The default value is 1\&. This option
+is ignored when generating an output file\&.
+.IP "\fB-paperSize\fP \fBsize\fP" 10
+Specifies a size of paper to which the output should be formatted\&. Valid
+sizes are \fBiso-a4\fP, \fBiso-b4\fP,
+\fBna-letter\fP, and \fBna-legal\fP\&.
+.IP "\fB-outputFile\fP \fBfilename\fP" 10
+Specifies a file to hold the print-ready output\&. If this option is
+specified, no output is sent to the printer\&. If this
+option is specified, the \fB-copies\fP option is ignored\&.
+.IP "\fB-s\fP" 10
+Specifies silent printing\&. \fBdtinfo\fP does not write to
+either standard out or standard error, nor does it attempt to open any
+windows\&.
+.SH "PRINT FEATURES"
+.PP
+This section describes the features that affect printing with
+\fBdtinfo\fP\&.
+.SS "Page Numbers"
+.PP
+Pages are numbered relative to the print job\&. For example, if a
+section spans over four printed pages, the pages are numbered
+1-4\&. To get page numbers starting relative to the front of the book, it
+is necessary to print the entire contents of the book\&. When
+printing more than one book (a bookcase, for example) the page numbering
+is reset to page 1 at the start of each book\&. A section is determined
+to be a book if it is a Table of Contents\&.
+.PP
+When specifying "what to print" all references are given in logical
+terms\&. You cannot specify a page range since this
+number has no real meaning until the document is rendered to a given
+page size\&. "What to print" is specified as a section or list of sections
+in generalized locator format\&. It is also possible to specify a range of
+sections\&.
+.SS "Table of Contents"
+.PP
+The table of contents can be printed as part of a book or as a separate
+section\&. When printed as part of a book, it is always printed last to
+allow the page number references to be calculated while the document is
+printing\&. When printed separately, the page numbers are not calculated\&.
+.SS "Image Scaling"
+.PP
+Dtinfo supports a number of graphic file formats: Tiff, XPM, XWD, GIF,
+JPEG, and CGM\&. Of all these formats, only CGM is a natural "scalable"
+format made of vectors and independent coordinates, much like
+PostScript\&. All the other graphic formats are specified in Dots Per Inch
+(DPI) and designed for a given resolution\&. Since most displays have a
+resolution of between 90/100 DPI and printers commonly have resolutions
+of 300/600 DPI, printed documents can end up with graphics 3 or 6 times
+smaller than their screen counterparts, especially when the surrounding
+fonts are scaled to match the screen size\&.
+.PP
+To address this problem, \fBdtinfo\fP automatically scales
+a graphic according to the following formula:
+.PP
+.nf
+\f(CWprinted_image_size= image_size * (resolution / 100 DPI)\fR
+.fi
+.PP
+.PP
+During scaling it is important that the image not be scaled in excess of
+the hard page boundary\&. See "Hard Page Boundaries" for more detail\&.
+.SS "Hard Page Boundaries"
+.PP
+On-line documentation is often developed with little or no consideration
+for printability\&. As a result, on-line documents often have graphics or
+tables that exceed the hard-page boundaries of the printed media\&. The
+\fBdtinfo\fP command attempts to correct these problems
+during the layout-for-print process by a combination of page break
+insertions, rotation (landscape/portrait), and scalable objects\&.
+.PP
+Graphic objects that are too wide for the page are scaled down to the
+page width\&.
+.PP
+Graphic objects that are too tall for the remaining page height are
+started on the next page\&. If a graphic object is too tall for a single
+page it is scaled down to the page height\&.
+.PP
+Table objects that are too wide for the page are started on the next
+page and rotated for landscape printing\&. If a table is still too large,
+it is scaled to the page height\&. Once the table has been printed, an
+additional page break is performed and the remainder of the printing
+resumes in the default page orientation\&. Space left in the current page
+layout is filled by flow-up of subsequent text\&.
+.SS "Hard Copy Page Style Rendering"
+.PP
+\fBdtinfo\fP hard copy page-style rendering, with addition
+of headers and footers, page breaks, and numbering\&. For these
+characteristics, it is necessary to use print-specific style sheet
+features\&.
+.SS "Background Printing"
+.PP
+\fBdtinfo\fP allows simultaneous browsing and multiple
+print requests to be active in parallel\&.
+.SH "RESOURCES"
+.SS "XRM Resources"
+.PP
+The XRM resources understood by
+\fBdtinfo\fP are as follows:
+.IP "\fBBrowseGeometry\fP" 10
+Specifies the default size of reading windows in pixel dimensions, x by
+y\&. The default is \fB500x630\fP\&.
+.IP "\fBBrowseLock\fP" 10
+Specifies whether the current reading window is automatically "pinned"
+when a new document display request is made (\fBon\fP) or
+not (\fBoff\fP)\&. If \fBon\fP, the new document
+appears in a new reading window\&. System resources utilized are often
+much higher in the \fBon\fP mode\&. The default is
+\fBoff\fP\&.
+.IP "\fBDisplayFirstHit\fP" 10
+Specifies whether the first document listed in the search results list
+is displayed automatically (\fBtrue\fP) or not
+(\fBfalse\fP)\&. The default is \fBfalse\fP\&.
+.IP "\fBFontScale\fP" 10
+Specifies the relative size to use for text in all reading windows,
+compared to the publisher-specified font size, where 0 means "per style
+sheet"\&. Possible values are -2, -1, 0, 1, 2, 3, 4, and 5\&. Invalid values
+default to 0\&. A non-zero value is used by the browser to associate
+incrementally larger sizes of the same font, when possible\&. The default
+is \fB0\fP\&.
+.IP "\fBMapAutoUpdate\fP" 10
+Specifies whether the graphical map (when visible) is automatically
+updated as the user moves to new documents (\fBtrue\fP) or
+not (\fBfalse\fP)\&. The default is \fBtrue\fP\&.
+.IP "\fBMapGeometry\fP" 10
+Specifies the default size of the graphical map window in pixel
+dimensions, x by y\&. The default is \fB520x350\fP\&.
+.IP "\fBMaxSearchHits\fP" 10
+Specifies the maximum number of document titles to be displayed in the
+Search Results List window in fulfillment of a query\&. The entries in the
+search results list are ordered roughly by importance to the query, so a
+value here includes the most relevant results\&. The default is
+\fB50\fP\&.
+.IP "\fBNodeHistSize\fP" 10
+Specifies the maximum number of document visits to be maintained in
+the browse history list\&. Duplicates are not displayed in the list, but
+re-visits change the list order by moving a previously viewed document
+to the top\&. The browse history is not saved across
+\fBdtinfo\fP sessions\&. The default is
+\fB100\fP\&.
+.IP "\fBSearchHistorySize\fP" 10
+Specifies the maximum number of previously performed queries to be
+maintained for the search history list\&. Using the search history list is
+a quick way to re-access the results of a prior query\&. The search
+history is not saved across \fBdtinfo\fP sessions\&. The
+default is \fB50\fP\&.
+.SS "Display Color Resources"
+.PP
+The following resources set colors for various \fBdtinfo\fP
+display features:
+.IP "\fBDtinfo*display_area\&.background\fP" 10
+Specifies the background color for on-line document presentation\&. The
+user is cautioned to avoid choices of background color which match the
+color used for either hypertext links or search hits\&. The keyboard
+traversal highlight color should also be considered when setting this
+resource\&. There is no default\&.
+.IP "\fBDtinfo*display_area\&.foreground\fP" 10
+Specifies the foreground color for on-line document presentation (used
+for text not otherwise highlighted)\&. The user is cautioned to avoid
+choices of foreground color which match the color used for either
+hypertext links or search hits\&. There is no default\&.
+.IP "\fBDtinfo*doc_list\&.background\fP" 10
+Specifies the background color for the infolib book list\&. There is no
+default\&.
+.IP "\fBDtinfo*doc_list\&.foreground\fP" 10
+Specifies the foreground color for the infolib book list\&.
+There is no default\&.
+.IP "\fBDtinfo\&.results*list\&.background\fP" 10
+Specifies the background color for the search results list\&.
+There is no default\&.
+.IP "\fBDtinfo\&.results*list\&.foreground\fP" 10
+Specifies the foreground color for the search results list\&.
+There is no default\&.
+.SS "Print-Related Resources"
+.PP
+For print-related resources, see "Descendants" and
+"Resources" in \fBDtPrintSetupBox\fP(3)\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of \fBdtinfo\fP:
+.IP "\fBDTINFOLIBSEARCHPATH\fP" 10
+Specifies the search path for locating information libraries on local
+and remote mounted systems\&.
+.IP "\fBDTINFOLIBDEFAULT\fP" 10
+Specifies the name of the default information library(s) to load if the
+\fB-l\fP or \fB-sect\fP option is not
+specified\&. Multiple information libraries can be specified by a comma
+separated list\&. By default, \fBDTINFOLIBDEFAULT\fP is initialized
+to the CDE infolib cde\&.
+Note that \fBdtinfo\fP will not start if there is no infolib specified explicitly
+or by default\&. \fBDTINFOLIBDEFAULT\fP requires
+the definition of an applicable \fBDTINFOLIBSEARCHPATH\fP\&.
+.IP "\fBPDPRINTER\fP,
+\fBLPDEST\fP,
+\fBPRINTER\fP" 10
+Specify the name of the printer to use if the
+\fB-printer\fP option, \fBXPRINTER\fP environment variable,
+and \fBXpPrinter\fP resource
+are not specified\&. \fBdtinfo\fP checks \fBPDPRINTER\fP first, \fBLPDEST\fP next, and \fBPRINTER\fP last to obtain a printer name
+that can be used to generate an X Printer Specifier to use for the
+default X Printer shown in the Printer Name text field\&. The
+\fBhost\fP:\fBdisplay\fP portion of the
+specifier is obtained by checking if the X Server to which the client
+application is connected is an X Print Server managing printer
+\fBname\fP\&. If not, the list of X Print Servers specified
+in the \fBXpServerList\fP
+resource is queried, until the first X Printer with a matching printer
+name is found\&.
+.IP "\fBXPRINTER\fP" 10
+Specifies the default destination X Printer Specifier for the
+\fBDtPrintSetupBox\fP\&. If the specifier is just a
+\fBprinterName\fP, the
+\fBhost\fP:\fBdisplay\fP portion of the
+specifier is obtained by checking if the X Server to which the client
+application is connected is an X Print Server managing
+\fBprinterName\fP\&. Otherwise, the first server in the
+\fBXpServerList\fP resource
+or the \fBXPSERVERLIST\fP
+environment variable that manages the printer will be used\&. If the
+:\fBdisplay\fP number is omitted, :0 is assumed\&.
+.IP "\fBDTPRINTSILENT\fP" 10
+Specifies whether to display a Print dialog box if the
+\fB-s\fP option is not specified\&. When the variable is set
+to \fBTrue\fP, the Print dialog is not displayed\&. If the
+variable is not set, the dialog is displayed\&.
+.IP "\fBXPDMDISPLAY\fP" 10
+Specifies whether an alternate X Print Server will be used to find the
+PDM_MANAGER selection\&. If the variable is not set, an alternate X Print
+Server will not be used\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+\fBdtinfo\fP registers with ToolTalk to handle the following ToolTalk requests:
+.IP "\fBDtInfo_LoadInfoLib\fP" 10
+Causes \fBdtinfo\fP to load the specified infolib or the
+default infolib, if none is specified\&.
+.IP "\fBDtInfo_ShowInfoAtLoc\fP" 10
+Causes \fBdtinfo\fP to display a particular section
+of data or topic\&.
+.IP "\fBDtInfo_PrintInfoAtLoc\fP" 10
+Routes print requests back to the requesting \fBdtinfo\fP
+process after the end-user drags one or more sections from the book list
+and drops them on the printer icon in the front panel\&.
+.PP
+Desktop actions invoking the browser are:
+.IP "\fBDtShowInfoAtLoc\fP" 10
+Sends a \fBDtInfo_ShowInfoAtLoc\fP message\&.
+.IP "\fBDtLoadInfoLib\fP" 10
+Sends a \fBDtInfo_LoadInfoLib\fP message\&.
+.IP "\fBDtPrintInfoAtLoc\fP" 10
+Sends a \fBDtInfo_PrintInfoAtLoc\fP message\&.
+.PP
+Use of any default desktop representations to start
+\fBdtinfo\fP from its icon or the icon of an infolib causes
+\fBdtinfo\fP to be invoked via the desktop action
+mechanism\&.
+.SH "STDOUT"
+.PP
+Not used\&.
+.SH "STDERR"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+For input, \fBdtinfo\fP accepts the file path,
+relative or absolute, for one or more information libraries\&.
+.SH "OUTPUT FILES"
+.PP
+For output, \fBdtinfo\fP produces a file to hold
+print-ready output, if the \fB-outputFile\fP and the
+\fB-print\fP options are specified\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "RETURN VALUE"
+.PP
+A non-zero return value for \fBdtinfo\fP implies an error
+condition on start-up\&.
+.SH "ERRORS/WARNINGS"
+.SS "Warning Messages"
+.IP "\fBWarning: Illegal or missing paper size\&.\fP" 10
+This warning indicates an invalid value of the \fBpaperSize\fP resource or
+\fB-paperSize\fP option\&. Correctly specify the option on
+the utility line or set a default resource value\&.
+.IP "\fBWarning: Illegal number of copies\&.\fP" 10
+This warning is displayed when both the \fB-outputFile\fP
+and \fB-copies\fP options are specified, and the number of
+copies is greater than 1\&.
+.SS "Error Messages"
+.IP "\fBError: Unable to open x print server <x_print_server>\fP" 10
+This error indicates that the display specified by the printer resource
+or \fB-printer\fP option could not be opened\&.
+.IP "\fBError: section not found\&.\fP" 10
+This error indicates that the specified section locator could not be
+found\&.
+.IP "\fBError: invalid section specification <section>\&.\fP" 10
+This error indicates that specified section locator was incorrectly formatted\&.
+.IP "\fBError: printing of the entire infolib is not supported\&.\fP" 10
+Use the \fB-sect\fP option to identify the specific
+sections to print\&.
+.IP "\fBError: unable to allocate memory for temporary file\&.\fP" 10
+This error indicates that the memory needed to create the temporary file
+name could not be allocated\&.
+.IP "\fBError: unable to open temporary file\&.\fP" 10
+This error indicates that the temporary file could not be opened for
+writing\&.
+.SH "EXAMPLES"
+.PP
+Start the browser and display the default information library:
+.PP
+.nf
+\f(CW% dtinfo\fR
+.fi
+.PP
+.PP
+Start the browser with a library located at \fB/cdrom/encyclopedia\&.dti\fP:
+.PP
+.nf
+\f(CW% dtinfo -l /cdrom/encyclopedia\&.dti\fR
+.fi
+.PP
+.PP
+Start the browser with a library from the search path:
+.PP
+.nf
+\f(CW% dtinfo -l encyclopedia\fR
+.fi
+.PP
+.PP
+Start the browser with a specific section to display:
+.PP
+.nf
+\f(CW% dtinfo -sect mmdb:INFOLIB=encyclopedia&LOCATOR=home_topic\fR
+.fi
+.PP
+.PP
+or:
+.PP
+.nf
+\f(CW% dtinfo -sect INFOUG\&.SEARCH\&.DIV\&.5,INFOUG\&.SEARCH\&.DIV\&.22\fR
+.fi
+.PP
+.PP
+An alternate form of the previous command:
+.PP
+.nf
+\f(CW% dtinfo -l /cdrom/encyclopedia\&.dti -sect mmdb:LOCATOR=home_topic\fR
+.fi
+.PP
+.PP
+Print a specific section without starting \fBdtinfo\fP:
+.PP
+.nf
+\f(CW% dtinfo -print -sect INFOUG\&.NAVIGATE\&.DIV\&.3\fR
+.fi
+.PP
+.PP
+Printing of an entire infolib is not supported from the command line:
+.PP
+.nf
+\f(CW% dtinfo -print -l /cdrom/encyclopedia\&.dti
+*** Error ***\fR
+.fi
+.PP
+.PP
+Examples for the use of \fBdtinfo\fP directly:
+.PP
+.nf
+\f(CW% dtaction DtLoadInfoLib /usr/dt/infolib/C/cde\&.dti
+\fR
+.fi
+.PP
+.PP
+.nf
+\f(CW% dtaction DtShowInfoAtLoc /usr/dt/infolib/C/cde\&.dti GI\&.RGFBE\&.1698OL
+\fR
+.fi
+.PP
+.PP
+If the infolib path environment variable is defined:
+.PP
+.nf
+\f(CW% dtaction DtShowInfoAtLoc cde INFOUG\&.GSTART\&.DIV\&.3\fR
+.fi
+.PP
+.SH "FILES"
+.PP
+Command line start-up recognizes an infolib directory path (see
+\fBDtMmdbInfoLibInfo\fP(5))\&.
+The name of the directory and its contained files
+is used to ascertain whether it is a valid infolib\&.
+.PP
+User-specific files for bookmarks and annotations are internally managed
+under the locale-specific directory
+\fB$HOME/\&.dt/dtinfo/%L/marks/\fP\&.
+.PP
+User preferences, set via the Preferences dialog in an instance of
+\fBdtinfo\fP, and user-defined search scopes are saved in
+the generated file
+\fB$HOME/\&.dt/dtinfo/%L/preferences\fP\&.
+.PP
+Application specific resources are defined in
+\fB/usr/dt/app-defaults/%L/Dtinfo\fP\&.
+.PP
+Utility files and supporting data for dtinfo are found in the system location
+\fB/usr/dt/infolib\fP\&.
+.SH "SEE ALSO"
+.PP
+\fBGeneralized Locator Format\fP(4),
+\fBdtinfogen\fP(1),
+\fBDtPrintSetupBox\fP(3),
+\fBDtInfo_LoadInfoLib\fP(4),
+\fBDtInfo_ShowInfoAtLoc\fP(4),
+\fBDtInfo_PrintInfoAtLoc\fP(4),
+\fBdtinfoaction\fP(5),
+\fBDtMmdbInfoLibInfo\fP(5)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

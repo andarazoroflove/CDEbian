@@ -1,0 +1,73 @@
+! $XConsortium: sys.font.src /main/4 1996/04/21 19:51:16 drk $
+!#################################################################
+!#
+!#   sys.font:  The default session font resource file
+!#
+!#   placed in:	/usr/dt/config/C/sys.fonts
+!#
+!#   (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#   (c) Copyright 1993, 1994 International Business Machines Corp.
+!#   (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#   (c) Copyright 1993, 1994 Novell, Inc.
+!#################################################################
+
+!###
+!#
+!#  Font Resource Specifications 
+!#
+!# Font resource values must be a valid font alias name.
+!#
+!# Font resource values must match exactly the default font resources 
+!# specified in /usr/dt/app-defaults/%L/Dtstyle
+!###
+
+# if WIDTH > 1175
+!###
+!#   High Resolution Displays
+!#
+!###
+  *FontList:              -dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *buttonFontList:        -dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *labelFontList:         -dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *textFontList:          -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *XmText*FontList:       -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *XmTextField*FontList:  -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *systemFont:            -dt-interface system-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *userFont:              -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *DtEditor*textFontList: -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*:
+  *Font:                  -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*
+  *FontSet:               -dt-interface user-medium-r-normal-m*-*-*-*-*-*-*-*-*
+# else
+# if WIDTH > 850
+!###
+!#   Medium Resolution Displays
+!###
+  *FontList:              -dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *buttonFontList:        -dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *labelFontList:         -dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *textFontList:          -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *XmText*FontList:       -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *XmTextField*FontList:  -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *systemFont:            -dt-interface system-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *userFont:              -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *DtEditor*textFontList: -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*:
+  *Font:                  -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*
+  *FontSet:               -dt-interface user-medium-r-normal-s*-*-*-*-*-*-*-*-*
+# else
+!###
+!#   Low Resolution Displays
+!###
+  *FontList:              -dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *buttonFontList:        -dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *labelFontList:         -dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *textFontList:          -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *XmText*FontList:       -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *XmTextField*FontList:  -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *systemFont:            -dt-interface system-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *userFont:              -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *DtEditor*textFontList: -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*:
+  *Font:                  -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*
+  *FontSet:               -dt-interface user-medium-r-normal-xs*-*-*-*-*-*-*-*-*
+# endif
+# endif
+

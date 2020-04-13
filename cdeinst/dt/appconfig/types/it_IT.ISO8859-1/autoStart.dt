@@ -1,0 +1,53 @@
+# ##########################################################################
+# 
+#      autoStart.dt
+# 
+#      Action definitions for auto-starting the DT clients
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: autoStart.dt.src /main/4 1996/04/23 20:23:54 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+
+ACTION InvokeFILEMGR
+{
+	TYPE		COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtfile -noview
+	DESCRIPTION	L'azione InvokeFILEMGR avvia la Gestione \
+                        di file del desktop (dtfile client).
+}
+
+ACTION InvokeDTPAD
+{
+	TYPE		COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtpad -server
+	DESCRIPTION	L'azione InvokeDTPAD avvia L'Editor di testo \
+                        del desktop (dtpad client).
+}
+
+ACTION InvokeMAILER
+{
+	TYPE		COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtmail
+	DESCRIPTION	L'azione InvokeMAILER avvia la Gestione \
+                        posta del desktop (dtmail client).
+}
+# ######################## EOF ############################################

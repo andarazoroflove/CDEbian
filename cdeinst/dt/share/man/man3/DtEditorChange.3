@@ -1,0 +1,121 @@
+'\" t
+...\" EdChange.sgm /main/5 1996/08/30 12:57:35 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtEditorChange" "library call"
+.SH "NAME"
+\fBDtEditorChange\fP \(em change one or all occurrences of a string in a DtEditor widget
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Editor\&.h>
+\fBBoolean \fBDtEditorChange\fP\fR(
+\fBWidget \fBwidget\fR\fR,
+\fBDtEditorChangeValues *\fBfindChangeStrings\fR\fR,
+\fBunsigned int \fBinstanceToChange\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtEditorChange\fP function replaces the next occurrence of a string, all occurrences of
+the string, or the currently selected text in a DtEditor widget with a
+replacement string\&.
+The string to search for and the value to
+change it to can be the last values entered in the Find/Change
+dialog (see
+\fBDtEditorInvokeFindChangeDialog\fP(3)) or passed as arguments to
+\fBDtEditorChange\fP\&.
+.PP
+The search begins at the insertion cursor\&.
+If the string is not found by the time the end of the document is reached,
+the search continues at the beginning of the document,
+stopping at the character before the insertion cursor\&.
+.PP
+The
+\fIwidget\fP argument specifies the DtEditor widget ID\&.
+.PP
+The
+\fIfindChangeStrings\fP argument specifies the string to change and the replacement value\&.
+If
+\fIfindChangeStrings\fP is
+\fBNULL\fP, \fBDtEditorChange\fP uses the last string specified in the Find and Change To fields
+of the Find/Change dialog\&.
+If the
+\fIinstanceToChange\fP argument is
+\fBDtEDITOR_CURRENT_SELECTION\fP, the Find field of
+\fBDtEditorChangeValues\fR is ignored\&.
+.PP
+If the
+\fIinstanceToChange\fP argument
+is set to
+\fBDtEDITOR_NEXT_OCCURRENCE\fP, \fBDtEditorChange\fP replaces the next occurrence (relative to the
+insertion cursor) of the find string\&.
+If this argument is set to
+\fBDtEDITOR_ALL_OCCURRENCES\fP, all instances of the find string are changed\&.
+If this argument ia set to
+\fBDtEDITOR_CURRENT_SELECTION\fP, the Find field of
+\fBDtEditorChangeValues\fR, is ignored and the currently selected text is replaced\&.
+.PP
+For a complete definition of the DtEditor widget
+and its associated resources, see
+\fBDtEditor\fP(3)\&. 
+.PP
+For a complete definition of
+\fBDtEditorChangeValues\fR, see
+\fBDt/Editor\&.h - DtEditor\fP(5)\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBDtEditorChange\fP function returns
+True
+if the substitution occurred;
+otherwise, it returns
+False\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Editor\&.h - DtEditor\fP(5), \fBDtEditor\fP(3), \fBDtEditorFind\fP(3), \fBDtEditorInvokeFindChangeDialog\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

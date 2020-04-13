@@ -1,0 +1,213 @@
+# ##########################################################################
+# 
+#      dthelptag.dt
+# 
+#      Actions and DataTypes for authoring Help information.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $TOG: dthelptag.dt.src /main/6 1998/07/29 17:08:50 mgreess $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVERTISSEMENT: Il est possible que ce fichier soit écrasé lors des 
+#     installations suivantes du Bureau CDE. Il est donc conseillé d'effectuer
+#     les modifications devant s'appliquer sur tout le système dans un
+#     fichier de base de données équivalent du répertoire /etc/dt/types.
+# 
+# ##########################################################################
+
+# Les exécutables d'aide se trouvent dans le répertoire ../dt/bin, 
+# qui peut ne pas faire partie du chemin de tous les utilisateurs.
+# Par conséquent, la chaîne suivante permet d'ajouter ce répertoire
+# avant d'appeler le client.
+
+set HELPTAG_PATH=\$PATH:/usr/dt/bin
+
+# ##################################################################
+# 
+# Attributs de données
+# 
+# ##################################################################
+DATA_ATTRIBUTES DTHELP_HTG
+{
+        ACTIONS         Open,Compile,CleanUp
+        ICON            Dthsrc
+        NAME_TEMPLATE   %s.htg
+        MIME_TYPE	text/plain
+        DESCRIPTION     Il s'agit d'un fichier source HelpTag principal \
+                        utilisé par le système d'aide du Bureau. Les données \
+                        qu'il contient sont mises en forme à l'aide du langage \
+                        HelpTag. Pour le visualiser, vous devez le compiler à \
+                        l'aide du programme approprié (dthelptag). Son type de \
+                        données est DTHELP_HTG et son suffixe, .htg.
+        TYPE_LABEL      DTHELP_HTG
+}
+
+DATA_CRITERIA DTHELP_HTG1
+{
+	DATA_ATTRIBUTES_NAME DTHELP_HTG
+        MODE            f
+        NAME_PATTERN    *.htg
+}
+
+# ##################################################################
+
+DATA_ATTRIBUTES DTHELP_CTG
+{
+        ACTIONS         Open,CompileCanon,CleanUp
+        ICON            Dthsrc
+        NAME_TEMPLATE   %s.ctg
+        MIME_TYPE	text/plain
+        DESCRIPTION     Il s'agit d'un fichier source principal HelpTag SGML \
+                        destiné au système d'aide du Bureau. Les données \
+                        qu'il contient sont mises en forme à l'aide du \
+                        langage HelpTag ordinaire. Pour le visualiser, vous \
+                        devez le compiler à l'aide du programme approprié \
+                        (dthelptag). Son type de données est DTHELP_CTG et \
+                        son suffixe, .ctg.
+        TYPE_LABEL      DTHELP_CTG
+}
+
+DATA_CRITERIA DTHELP_CTG1
+{
+	DATA_ATTRIBUTES_NAME DTHELP_CTG
+        MODE            f
+        NAME_PATTERN    *.ctg
+}
+
+# ##################################################################
+
+DATA_ATTRIBUTES DTHELP_ERR
+{
+        ACTIONS         Open
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.err
+        MIME_TYPE	text/plain
+        DESCRIPTION     Ce fichier contient des erreurs d'analyse syntaxique \
+                        associées à un volume d'aide compilé. Ce fichier \
+                        est généré par l'analyseur syntaxique dthelptag \
+                        lorsque des erreurs se produisent au cours de la \
+                        compilation d'un volume d'aide. Son type de données \
+                        est DTHELP_ERR et son suffixe, .err.
+        TYPE_LABEL      DTHELP_ERR
+}
+
+DATA_CRITERIA DTHELP_ERR1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_ERR
+        NAME_PATTERN    *.err
+        MODE            f
+}
+
+# ##################################################################
+# ##################################################################
+# 
+# Actions
+# 
+# ##################################################################
+ACTION Open
+{
+        LABEL           Ouvrir
+        ARG_TYPE        DTHELP_HTG,DTHELP_CTG
+	TYPE		MAP
+        MAP_ACTION      OpenHelpTag
+}
+
+# ######
+
+ACTION Compile
+{
+        LABEL           Compiler
+        ARG_TYPE        DTHELP_HTG
+	TYPE		MAP
+        MAP_ACTION	HelpTag
+}
+
+# ######
+
+ACTION CompileCanon
+{
+        LABEL           Compiler_ordinaire
+        ARG_TYPE        DTHELP_CTG
+	TYPE		MAP
+        MAP_ACTION	HelpTagCanon
+}
+
+# ######
+
+ACTION CleanUp
+{
+        LABEL           Nettoyer
+        ARG_TYPE        DTHELP_HTG,DTHELP_CTG
+	TYPE		MAP
+        MAP_ACTION	CleanHelpTag
+}
+
+# ######
+
+ACTION OpenHelpTag
+{
+        LABEL           Ouvrir_HelpTag
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	/usr/dt/bin/dtpad "%(File)Arg_1%"
+	DESCRIPTION	L'action Ouvrir_HelpTag permet d'ouvrir un \
+                        fichier HelpTag principal (.sdl' ou .hv) dans un éditeur de texte.
+}
+
+# ######
+
+ACTION HelpTag
+{
+        LABEL           HelpTag
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	sh -c 'PATH=$HELPTAG_PATH dthelptag -clean 				  `basename "%(File)Arg_1"Fichier HelpTag:"%"`; 			       PATH=$HELPTAG_PATH dthelptag 				  `basename "%(File)Arg_1%"`'
+
+
+
+	DESCRIPTION	L'action HelpTag permet de compiler un fichier principal HelpTag \
+                        afin de créer des fichiers d'aide d'exécution. Ceux-ci \
+                        peuvent être affichés à l'aide d'une application utilisant \
+                        le système d'aide ou par l'intermédiaire du programme dthelpview.
+}
+
+# ######
+
+ACTION HelpTagCanon
+{
+        LABEL           HelpTag_ordinaire
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	sh -c 'PATH=$HELPTAG_PATH dthelptag -clean 				  `basename "%(File)Arg_1"Fichier HelpTag:"%"`; 			       PATH=$HELPTAG_PATH dthelptag -formal 				  `basename "%(File)Arg_1%"`'
+
+
+
+	DESCRIPTION	L'action HelpTag_ordinaire permet de compiler un fichier \
+                        HelpTag principal au format SGML ordinaire afin de \
+                        créer des fichiers d'aide d'exécution. Ceux-ci peuvent \
+                        être affichés à l'aide d'une application utilisant le \
+                        système d'aide ou par l'intermédiaire du programme dthelpview.
+}
+
+# ######
+
+ACTION CleanHelpTag
+{
+        LABEL           Nettoyer_HelpTag
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	sh -c 'PATH=$HELPTAG_PATH dthelptag -clean 				  `basename "%(File)Arg_1"Fichier HelpTag:"%"`'
+
+	DESCRIPTION	L'action Nettoyer_HelpTag permet de supprimer les fichiers \
+                        d'aide d'exécution créés à l'aide de l'action HelpTag.
+}
+# ######################## EOF ############################################

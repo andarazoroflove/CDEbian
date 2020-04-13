@@ -1,0 +1,143 @@
+###############################################################################
+#
+#     dtcm.dt
+#
+#     Action and DataType definitions for the Common Desktop Environment
+#     (CDE) Calendar Component.
+#
+#    (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#    (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#    (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#    (c) Copyright 1993, 1994, 1995 Novell, Inc.
+#
+#
+###############################################################################
+set DtDbVersion=1.0
+
+###############################################################################
+#
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+#
+###############################################################################
+
+###################################################################
+#
+# Datenattribute
+#
+###################################################################
+DATA_ATTRIBUTES DtcmAppointmentAttrs
+{
+	ACTIONS		Open,Insert,Print
+	ICON		DtCMapt
+	NAME_TEMPLATE	%s.appt
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      ae-file
+	MEDIA		DT_APPOINTMENT
+	DESCRIPTION	Diese Datei enthält Informationen zu Terminen des \
+                        Kalendermanagers. Der Datentyp dieser Datei ist \
+                        CalendarAppointmentAttrs. Die Namen von Dateien des \
+                        Typs CalendarAppointmentAttrs haben die Erweiterung '.appt'.
+	TYPE_LABEL      DtcmAppointmentAttrs
+}
+DATA_CRITERIA DtcmAppointmentAttrs1
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	NAME_PATTERN	*.appt
+}
+DATA_CRITERIA DtcmAppointmentAttrs2
+{
+	DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+	MODE 		fr
+	CONTENT		3 string ** Calendar Appointment **
+}
+DATA_CRITERIA DtcmAppointmentAttrs3
+{
+        DATA_ATTRIBUTES_NAME DtcmAppointmentAttrs
+        MODE            fr
+        CONTENT         3 string ** Calendar To Do Item **
+}
+ACTION Open
+{
+        LABEL		Öffnen
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmEdit
+}
+ACTION Insert
+{
+        LABEL		Eintragen
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      DtcmInsert
+}
+ACTION Print
+{
+        LABEL		Drucken
+        ARG_TYPE        DtcmAppointmentAttrs
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+
+###################################################################
+###################################################################
+#
+# Aktionen
+#
+###################################################################
+ACTION Dtcm
+{
+        LABEL		Kalender
+        ICON            DtCM
+	TYPE		COMMAND
+	EXEC_STRING	/usr/dt/bin/dtcm
+	WINDOW_TYPE	NO_STDIO
+	DESCRIPTION	Die Aktion 'Kalender' (Dtcm) startet den \
+                        Kalendermanager.
+}
+
+######
+
+ACTION DtcmInsert
+{
+        LABEL		Kalendereintrag
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING     sh -c '/usr/dt/bin/dtcm_insert  -a "%(File)Arg_1%" ;\
+			if [ \$? -ne 0 ] ; then \
+			  /usr/dt/bin/dterror.ds \
+			    "Der Termin wurde aufgrund eines Fehlers nicht in \
+			     Ihrem Kalender\\n\
+			     geplant. Er ist u.U. nicht \
+			     richtig\\n\
+			     formatiert, oder es kann nicht auf Ihren Kalender\
+			     zugegriffen werden." \
+			    "Kalender : Fehler - Terminplanung" \
+			    "OK" ; \
+			fi'
+	DESCRIPTION	Die Aktion 'Kalendereintrag' (DtcmInsert) \
+                        trägt einen Termin in den Standardkalender des Benutzers ein.
+}
+
+######
+
+ACTION DtcmEdit
+{
+        LABEL		Kalender bearbeiten
+        TYPE            TT_MSG
+	TT_SCOPE	TT_SESSION
+	TT_CLASS	TT_REQUEST
+	TT_OPERATION	Edit
+	TT_ARG0_MODE	TT_INOUT
+	TT_ARG0_VTYPE	%Arg_1%
+	TT_FILE		%Arg_1"Appointment File:"%
+	DESCRIPTION	Die Aktion 'Kalender bearbeiten' (DtcmEdit) \
+                        führt den eigenständigen Termineditor für einen \
+                        Termin im Kalender aus.
+}
+
+########################### EOF ##############################################

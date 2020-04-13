@@ -1,0 +1,217 @@
+'\" t
+...\" docbook.sgm /main/7 1996/10/22 12:17:02 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtdocbook" "user cmd"
+.SH "NAME"
+\fBdtdocbook\fP \(em DocBook
+to SDL  translator
+.SH "SYNOPSIS"
+.PP
+\fBdtdocbook\fP [-c]  [-d]  [-h]  [-m]  [-o \fIfile\fP]  [-r]  [-s \fIdir\fP]  [-u]  [-v]  [-x]  [\fIfile\fP] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtdocbook\fP command converts documents that conform
+to the DocBook 2\&.2\&.1 DTD (Document Type Definition) subelement PART to documents
+that conform to the SDL 1\&.2 DTD\&. The reason for translating DocBook documents
+to SDL is to make them readable by the the DtHelp viewer\&.
+.PP
+The CDE documentation authoring environment produces documents that
+conform to the DocBook DTD Version 2\&.2\&.1\&. The CDE online documentation browser
+(\fBdtinfo\fP) accepts only documents in the DocBook DTD 2\&.2\&.1
+format\&. The CDE online help viewer (\fBDtHelp\fP) accepts only
+documents in the SDL DTD Version 1\&.2 format\&. Both DocBook and SDL are implementations
+of the SGML standard, ISO 8879:1986\&. \fBdtdocbook\fP translates
+document from one format to the other, making them suitable for use with
+the help viewer\&.
+.PP
+During translation, several items are precomputed to accelerate run-time
+display of the resulting SDL document\&. These items include: the table of
+contents, the keyword index, cross-reference resolution, and the labeling
+of ordered lists\&. By default, \fBdtdocbook\fP also compresses
+the SDL document\&.
+.PP
+\fBdtdocbook\fP requires only the filename of the input
+file\&. Note that the input file can be either a DocBook document or an SDL
+document, depending on the operation you want \fBdtdocbook\fP
+to perform\&. If the file name ends in the characters \fB\&.sgm\fP
+or \fB\&.sdl\fP, \fBdtdocbook\fP assumes they are
+the file name extension removes them to create the base name for all intermediate
+files and for the final output file\&. If the file name does not end in the
+characters \fB\&.sgm\fP or \fB\&.sdl\fP, \fBdtdocbook\fP uses the file name as given for the base name\&. If you
+request either compression or decompression (\fB-c\fP
+or \fB-d\fP option) of an existing SDL file, the input
+file name extension will be \fB\&.sdl\fP\&. If you specify neither \fB-c\fP nor \fB-d\fP, the input file name extension
+must be \fB\&.sgm\fP\&. The output file name extension will always
+be \fB\&.sdl\fP unless you specify the \fB-o\fP
+option, in which case \fBdtdocbook\fP will use the output filename
+that you specify\&.
+.PP
+If you specify the \fB-c\fP option and the file is
+already compressed, \fBdtdocbook\fP will decompress and recompress
+the file\&. This is a convenient way to verify the integrity of a compressed
+SDL file\&.
+.PP
+If you specify the \fB-c\fP
+option and the file is already decompressed,
+\fBdtdocbook\fP will re-parse the file,
+repeat all precomputations, and
+update the existing file\&. This is a convenient way
+to verify the integrity of an SDL
+file\&. It also allows you to force a recomputation
+of the table of contents to reflect edits
+made to the SDL file\&. You must recompute the table
+of contents because it consists
+of byte offsets to the individual help topics in the
+file\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-c\fP" 10
+Compresses an existing SDL file\&. This option
+assumes an
+input file name extension of \fB\&.sdl\fP\&.
+.IP "\fB-d\fP" 10
+Decompresses an existing SDL file\&. This option
+assumes an
+input file name extension of \fB\&.sdl\fP\&.
+.IP "\fB-h\fP" 10
+Outputs a summary of the command and its options
+to standard output\&.
+.IP "\fB-m\fP" 10
+Adds additional SDATA and/or character mapping
+files\&.
+.IP "\fB-o\fP \fIfile\fP" 10
+Uses the specified filename for the output file
+and does not add any file name extension\&.
+.IP "\fB-r\fP" 10
+Removes any intermediate files and the output
+file\&. If none exist,
+\fBdtdocbook\fP does not issue an error
+message\&.
+.IP "\fB-s\fP \fIdir\fP" 10
+Instructs \fBdtdocbook\fP to find the DocBook SGML declaration
+and associated files in the specified directory\&.
+.IP "\fB-u\fP" 10
+Turns off compression for the output file during translation\&.
+.IP "\fB-v\fP" 10
+Instructs \fBdtdocbook\fP to generate and display parser
+messages during processing (verbose mode)\&.
+.IP "\fB-x\fP" 10
+Retains intermediate files when finished\&. This option is used primarily
+for debugging \fBdtdocbook\fP itself\&.
+.SH "OPERANDS"
+.PP
+The following operand is supported:
+.IP "\fIfile\fP" 10
+The document file to be input to \fBdtdocbook\fP\&. The
+file can be in either DocBook or SDL format, depending on which options you
+specify\&.
+.SH "EXIT STATUS"
+.IP "0" 10
+The input file was processed successfully\&.
+.IP ">1" 10
+The operation failed\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+\fBdtdocbook\fP references the \fBLANG\fP variable to determine the language used for the input file\&'s
+contents\&. \fBLANG\fP can be overridden
+by the \fBLANG\fP attribute of the DocBook PART element\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.PP
+\fBTO BE SUPPLIED\fP
+.SH "FILES"
+.IP "\fIfile\fP\&.sgm" 10
+The source file
+.IP "\fIfile\fP\&.idx" 10
+An intermediate file, typically removed after use
+.IP "\fIfile\fP\&.snb" 10
+An intermediate file, typically removed after
+use
+.IP "\fIfile\fP\&.sdl" 10
+the output file
+.SH "EXAMPLES"
+.IP "" 10
+Remove all files that resulted from previously
+processing
+the source file \fBmyFile\&.dbk\fP:
+.IP "" 10
+% \fBdtdocbook\fP \fB-r myFile\&.dbk\fP
+.IP "" 10
+or (without the \&.dbk extension)
+.IP "" 10
+% \fBdtdocbook\fP \fB-r myFile\fP
+.IP "" 10
+Process the file \fBmyFile\&.dbk\fP:
+.IP "" 10
+% \fBdtdocbook\fP \fBmyFile\&.dbk\fP
+.IP "" 10
+or (without the \&.dbk extension)
+.IP "" 10
+% \fBdtdocbook\fP \fBmyFile\fP
+.IP "" 10
+Process the file \fBmyFile\&.dbk\fP
+and write the
+SDL output to \fBotherFile\&.sdl\fP:
+.IP "" 10
+% \fBdtdocbook\fP\fB-o otherFile\&.sdl
+myFile\&.dbk\fP
+.IP "" 10
+or (without the \&.dbk extension)
+.IP "" 10
+% \fBdtdocbook\fP\fB-o otherFile\&.sdl
+myFile\fP
+.SH "SEE ALSO"
+.PP
+TO BE SUPPLIED
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

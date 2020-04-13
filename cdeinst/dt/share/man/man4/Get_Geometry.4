@@ -1,0 +1,96 @@
+'\" t
+...\" Get_Geom.sgm /main/6 1996/08/30 14:48:30 rws $
+...\" Get_Geom.sgm /main/6 1996/08/30 14:48:30 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Get_Geometry" "special file"
+.SH "NAME"
+\fBGet_Geometry\fP \(em get a tool\&'s on-screen geometry
+.SH "SYNOPSIS"
+.PP
+.nf
+Get_Geometry(out width \fIw\fP,
+        out height \fIh\fP,
+        out xOffset \fIx\fP,
+        out yOffset \fIy\fP
+        [in messageID \fIcommission\fP]);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBGet_Geometry\fP request
+reports the on-screen geometry of the optionally specified
+window, or of the window primarily associated with the recipient
+procid (if no window is specified)\&.
+.PP
+The
+\fIw\fP, \fIh\fP, \fIx\fP and
+\fIy\fP arguments are integer geometry values, in pixels,
+representing width, height, x-coordinate and y-coordinate,
+respectively\&.
+Negative offset values
+are interpreted according to the
+\fBX11\fP(7) man page\&.
+.PP
+The
+\fIcommission\fP argument
+is the ID of the ongoing request, if any, that resulted in the creation
+of the window in question\&.
+.SH "APPLICATION USAGE"
+.PP
+The
+\fBttdt_session_join\fP(3), and
+\fBttdt_message_accept\fP(3), functions can be used by Xt applications to register for,
+and transparently process, the
+\fBGet_Geometry\fP request\&.
+Also,
+\fBGet_Geometry\fP can be sent by
+\fBttdt_sender_imprint_on\fP(3)\&.
+.SH "SEE ALSO"
+.PP
+\fBttdt_message_accept\fP(3), \fBttdt_sender_imprint_on\fP(3), \fBttdt_session_join\fP(3); \fBSet_Geometry\fP request\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

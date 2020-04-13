@@ -1,0 +1,182 @@
+'\" t
+...\" dtdtfile.sgm /main/7 1996/09/08 20:17:38 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtdtfile" "special file"
+.SH "NAME"
+\fBdtdtfile\fP \(em define the format and location of actions and data type database files
+.SH "SYNOPSIS"
+.PP
+.nf
+See
+\fBdtactionfile\fP(4) and
+\fBdtdtsfile\fP(4)\&.
+.fi
+.SH "DESCRIPTION"
+.PP
+The actions and data types database provides definitions for the actions
+and data types XCDE clients recognize\&.
+Files containing actions and data type definitions must end
+with the
+\fB\&.dt\fP suffix\&.
+The database is constructed by reading
+all files ending in the
+\fB\&.dt\fP suffix that are found in the search path
+specified by the
+\fBDTDATABASESEARCHPATH\fP environment variable\&.
+.PP
+The
+\fBdttypes\fP(1) utility is the tool that allows users to examine and debug their database\&.
+.PP
+The
+\fBDTDATABASESEARCHPATH\fP environment variable contains a comma-separated
+list of directories specified in \fB[\fP\fIhost\fP\fB:]/\fP\fIpath\fP format\&.
+The
+\fIhost\fP: portion is optional, but if specified,
+\fI/path\fP is interpreted relative to
+\fIhost\fP\&. In addition,
+\fIhost\fP defines the
+\fIDatabaseHost\fP for records defined by files in the
+\fI/path\fP directory\&.
+Otherwise, the
+\fIDatabaseHost\fP is the same as the
+\fILocalHost\fP\&. To allow for localized action definitions, the data base
+search path supports the string
+\fB%L\fP within the pathname string\&.
+The logic that parses
+\fBDTDATABASESEARCHPATH\fP substitutes the
+value of the current locale as stored in the
+\fBLANG\fP environment variable for the string
+\fB%L\fP (or no characters if
+\fBLANG\fP is not set)\&.
+Other uses of % within the
+\fBDTDATABASESEARCHPATH\fP pathnames produce unspecified results\&.
+Directories can be set up for various locales\&.
+Each directory contains localized action definitions for a
+single locale\&.
+For examples, see the default search path shown below\&.
+The local system administrator or the user
+(in
+\fB$HOME/\&.dtprofile\fP) can modify the actual value of the search path\&.
+The default search path includes the following directories,
+searched in the following sequence:
+.IP "\fB$HOME/\&.dt/types/\fP" 10
+personal user-defined database files
+.IP "\fB/etc/dt/appconfig/types/%L\fP" 10
+locally defined language-specific database files
+.IP "\fB/etc/dt/appconfig/types/C\fP" 10
+locally defined default database files
+.IP "\fB/usr/dt/appconfig/types/%L\fP" 10
+language-specific database files
+.IP "\fB/usr/dt/appconfig/types/C\fP" 10
+implementation-default database files
+.SS "File Format"
+.PP
+In addition to the version information, comments and variable references
+described under other headings in this document, these files may contain action
+and data type records, as described in
+\fBdtactionfile\fP(4) and
+\fBdtdtsfile\fP(4)\&.
+.SS "Comments"
+.PP
+Any line whose first non-space character is # is treated as a
+comment line, and is ignored during the reading of the database file\&.
+.SS "Database Version"
+.PP
+The database loader supports a version number, which indicates
+the version of the database syntax used by a particular database file\&.
+If a database version number is not specified, then the database
+loader assumes that the file uses the version 1\&.0 syntax, described here\&.
+If a database file specifies a version number, then it
+must be the first non-blank, non-comment line in the database file;
+if the version is specified anywhere else in the file, then an error
+message is generated, and the remainder of that database file is ignored\&.
+The database version number is specified using the following syntax:
+.PP
+.nf
+\f(CWset DtDbVersion=\fIversion_number\fP\fR
+.fi
+.PP
+.SS "String Variables"
+.PP
+Database entries can reference string variables that can be set
+within the database file\&.
+The scope of a string variable is restricted
+to only those record definitions within the database file defining the
+string variable\&.
+A string variable is defined using the following syntax:
+.PP
+.nf
+\f(CWset \fIVariableName\fP=\fIvariable_value\fP\fR
+.fi
+.PP
+.PP
+String variables are referenced using either of the standard shell
+variable referencing syntaxes:
+$\fIvariable_name\fP or ${\fIvariable_name\fP}\&.
+A variable name can be made up of any of the alphanumeric characters
+and the underscore\&.
+.SS "Environment Variables"
+.PP
+Database records may refer to environment variables, using either
+of the standard shell variable referencing syntaxes:
+$\fIenvironment_variable\fP
+or ${\fIenvironment_variable\fP}\&.
+If the environment variable name conflicts
+with a string variable name, the string variable takes precedence\&.
+.SS "Line Continuation"
+.PP
+Any field within a record can be continued onto another line by
+ending the line with a \e character\&.
+The \e and any
+\fB<blank>\fPs following the \e and preceding the newline are discarded;
+leading
+\fB<blank>\fPs on the following line are preserved in the continued field\&.
+.SH "SEE ALSO"
+.PP
+\fBdtactionfile\fP(4), \fBdtdtsfile\fP(4), \fBdttypes\fP(1)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

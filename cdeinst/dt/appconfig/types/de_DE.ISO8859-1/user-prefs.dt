@@ -1,0 +1,84 @@
+# ##########################################################################
+# 
+#      user-prefs.dt
+# 
+#      Actions which define user preferences.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: user-prefs.dt.src /main/4 1996/04/23 17:36:30 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# Definitionen der Datenbank mit CDE-Aktionen (CDE = Common Desktop Environment)
+#
+# Die in dieser Dateientabelle definierten Aktionen reichen von generellen Aktionen
+# wie z. B. "Texteditor" bis zu spezifischen Anwendungen wie z. B. "Vi". Wenn diese
+# Auflistung an spezifische Anforderungen des Benutzers angepaßt werden soll, die 
+# Datei in das Verzeichnis $HOME/.dt/types/user-prefs.dt kopieren und für jede
+# MAP_ACTION die Aktion angeben, die ausgeführt werden soll.
+#
+# Um festzustellen, welche Aktionen auf dem System verfügbar sind, den Anwendungsmanager
+# im Bedienfeld öffnen und durchblättern.
+# 
+# ##########################################################################
+
+
+# Wenn der Texteditor 'vi' verwendet werden soll, den (Motif-basierten)
+# CDE-Texteditor 'Dtpad' durch 'Vi' ersetzen
+
+ACTION TextEditor
+{
+        LABEL		Texteditor
+        ICON            Dtpenpd
+	TYPE		MAP
+	MAP_ACTION	Dtpad
+        DESCRIPTION	Die Aktion 'Texteditor' führt den vom Benutzer \
+                        bevorzugten Texteditor aus.
+}
+
+# #####
+
+# Standard-Terminal in CDE (Common Desktop Environment) ist Dtterm.
+
+ACTION Terminal
+{
+        LABEL		Terminal
+        ICON            Dtterm
+	TYPE		MAP
+	MAP_ACTION	Dtterm
+        DESCRIPTION	Die Aktion 'Terminal' führt die vom Benutzer \
+                        bevorzugte Terminal-Emulation aus.
+}
+
+# #####
+
+# Der Standardpapierkorb für Common Desktop Environment (CDE) ist Dttrash.
+
+ACTION Trash
+{
+        LABEL		Papierkorb
+        ICON		Dttrsh
+	TYPE		MAP
+	MAP_ACTION	Dttrash
+        DESCRIPTION	Die Aktion 'Papierkorb' führt den vom Benutzer \
+                        bevorzugten Trash-Client aus.
+}
+
+# ###################### EOF ############################################

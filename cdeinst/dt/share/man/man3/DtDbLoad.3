@@ -1,0 +1,101 @@
+'\" t
+...\" DbLoad.sgm /main/8 1996/09/08 20:02:35 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtDbLoad" "library call"
+.SH "NAME"
+\fBDtDbLoad\fP \(em load actions and data types database
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Action\&.h>
+\fBvoid \fBDtDbLoad\fP\fR(\fBvoid\fR)
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtDbLoad\fP function loads the actions and data types database
+into the application\&.
+When the function returns, the database has been loaded\&.
+.PP
+An environment variable determines the set of directories to be searched\&.
+The
+\fBDtDbLoad\fP function loads all actions and data types
+defined in files with a
+\fB\&.dt\fP suffix located in these directories\&.
+.PP
+The directory search path is based on the value of the
+\fBDTDATABASESEARCHPATH\fP environment variable and internal defaults\&.
+\fBDTDATABASESEARCHPATH\fP contains a comma-separated list of directories
+in \fB[\fP\fIhost\fP\fB:]/\fP\fIpath\fP format\&.
+The application must call
+\fBDtDbLoad\fP before calling
+any of the routines that query either the action or data type databases\&.
+If called multiple times, the old databases are freed before the new
+ones are created\&.
+.SH "RETURN VALUE"
+.PP
+The
+\fBDtDbLoad\fP function returns no value\&.
+.SH "APPLICATION USAGE"
+.PP
+If this function is used in a long-lived application, the application
+must dynamically reload the databases when they are modified\&.
+To do this, the client must register to receive notification whenever the
+actions and data types database needs to be modified\&.
+It is up to the application to recall
+\fBDtDbLoad\fP after receiving notification\&.
+This is done with a call to
+\fBDtDbReloadNotify\fP(3)\&.
+.PP
+If errors are encountered when reading the database files, error messages are
+written to the user\&'s errorlog file (\fB$HOME/\&.dt/errorlog\fP)\&.
+Records containing errors are not incorporated into the internal database\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Action\&.h - DtAction\fP(5), \fBDtDbReloadNotify\fP(3), \fBdtdtfile\fP(4)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

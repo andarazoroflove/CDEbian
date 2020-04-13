@@ -1,0 +1,730 @@
+'\" t
+...\" term.sgm /main/16 1996/11/15 15:22:47 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtterm" "user cmd"
+.SH "NAME"
+\fBdtterm\fP \(em emulate a terminal window
+.SH "SYNOPSIS"
+.PP
+\fBdtterm\fP [\(+-132]  [\(+-aw]  [-background \fIbackground_color\fP]  [-bg \fIbackground_color\fP]  [\(+-bs]  [-C]  [-display \fIdisplay_name\fP]  [-e \fIprogram_argument \&.\&.\&.\fP]  [-fb \fIfontset\fP]  [-fg \fIforeground_color\fP]  [-fn \fIfontset\fP]  [-font \fIfontset\fP]  [-foreground \fIforeground_color\fP]  [-geometry \fIgeometry_string\fP]  [-help]  [\(+-iconic]  [\(+-j]  [\(+-kshMode] 
+.br 
+ [\(+-l]  [-lf \fIfile_name\fP]  [\(+-ls]  [\(+-map]  [\(+-mb]  [-ms \fIpointer_color\fP]  [-name \fIprog_name\fP]  [-nb \fInumber\fP]  [\(+-rw]  [-S \fIccn\fP]  [-S \fIc\&.n\fP]  [\(+-sb]  [\(+-sf]  [-sl \fIscreens\fP  [s\!  | \!l ] ]  [-ti \fIterm_id\fP]  [-title \fItitle_string\fP]  [-tm \fIterm_modes\fP]  [-tn \fIterm_name\fP]  [-usage]  [\(+-vb]  [-xrm \fIresource_string\fP] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtterm\fP
+utility provides runtime support of legacy applications written for terminals
+conforming to \fBANSI X3\&.64-1979\fP and \fBISO 6429:1992(E)\fP, such as the DEC VT220\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-132\fP" 10
+Recognize the \fBDECCOLM\fP escape
+sequence and resize the window appropriately\&. Normally, \fBdtterm\fP
+ignores the \fBDECCOLM\fP escape sequence,
+which switches between 80- and 132-column mode\&.
+.IP "\fB+132\fP" 10
+Ignore the \fBDECCOLM\fP escape
+sequence\&. This is the default behavior\&.
+.IP "\fB-aw\fP" 10
+Allow auto-wraparound\&. This option allows the cursor to automatically
+wrap to the beginning of the next line when it is at the right-most position
+of a line and text is output\&. This is the default behavior\&.
+.IP "\fB+aw\fP" 10
+Do not allow auto-wraparound\&.
+.IP "\fB-background\fP  \fIbackground_color\fP" 10
+Specify the terminal window background and the default background for
+the scroll bar and the X11 pointer cursor\&. This option defaults to either
+the primary colorset background (default) or select pixel (see \fB-bs\fP )\&. The \fIbackground_color\fP argument describes
+the background color\&.
+.IP "\fB-bg\fP  \fIbackground_color\fP" 10
+The \fIbackground_color\fP argument describes the background color\&.
+.IP "\fB-bs\fP" 10
+Use the Motif select color instead of the background color for the terminal
+window\&'s background color\&.
+.IP "\fB+bs\fP" 10
+Do not use the Motif select color instead of the background color for
+the terminal window\&'s background color\&. This is the default behavior\&.
+.IP "\fB-C\fP" 10
+Specify that output directed to \fB/dev/console\fP be directed
+instead to the terminal window\&. It is provided as a way to prevent output,
+which would normally be displayed on the internal terminal emulator (ITE),
+from overwriting the X server\&'s display\&. It is not provided as a general purpose
+mechanism to direct the output from an arbitrary system\&'s \fB/dev/console\fP to an arbitrary X server\&. Ownership of, and read-write permission
+for, \fB/dev/console\fP is required in order to redirect console
+output\&.
+.IP "\fB-display\fP \fBdisplay_name\fP" 10
+Specify the X11 display server\&. This defaults to the \fBDISPLAY\fP environment variable\&. The \fBdisplay_name\fP
+argument specifies the X11 display to which \fBdtterm\fP connects\&.
+.IP "\fB-e\fP \fBprogram_argument
+\&.\&.\&.\fP" 10
+Specify an executable program and any command-line arguments \fBdtterm\fP invokes as a subprocess when \fBdtterm\fP is
+started\&. It must be the last option on the command line\&. The \fBprogram_argument\fP arguments specify the program and any command-line arguments to
+be invoked by \fBdtterm\fP\&.
+.IP "\fB-fb\fP \fBfontset\fP" 10
+Specify an \fBXFontSet\fR used by \fBdtterm\fP when displaying bold terminal text\&. The \fBXFontSet\fR should be specified as a Motif \fBXmFontList\fP(3)\&. The terminal emulator supports only character
+or mono-spaced fonts\&. When using proportional fonts, the behavior is undefined\&.
+The terminal emulator generates a default bold font based on the XLFD name
+of the \fBuserFont\fP\&. If that font is not available, the terminal
+emulator generates bold text by overstriking (with a one pixel offset) the \fBuserFont\fP\&. The \fBfontset\fP argument specifies the
+bold terminal \fBXFontSet\fR used by \fBdtterm\fP\&.
+.IP "\fB-fg\fP  \fIforeground_color\fP" 10
+Specify the foreground color of the terminal window as well as the default
+foreground color used by \fBdtterm\fP for the scroll bar and
+the for the X11 pointer cursor\&. This option defaults to either the primary
+colorset foreground (default) or select pixel\&. The \fIforeground_color\fP argument specifies
+the foreground color\&.
+.IP "\fB-fn\fP \fBfontset\fP" 10
+Specify an \fBXFontSet\fR used by \fBdtterm\fP when displaying terminal text\&. It should be specified as
+a Motif \fBXmFontList\fP(3)\&. Only character or mono-spaced fonts
+are supported\&. When using proportional fonts, the behavior is undefined\&. This
+font is not used to display non-terminal text (such as menu bar, popup menus
+or dialogs)\&. The default uses the \fBXmNtextFontList\fP value of the parent bulletin board (see the XmBulletinBoard
+widget) in the same manner as the XmText widget\&. The \fBfontset\fP
+argument specifies the terminal \fBXFontSet\fR\&.
+.IP "\fB-font\fP \fBfontset\fP" 10
+Equivalent to \fB-fn\fP\&. The \fBfontset\fP
+argument specifies the terminal \fBXFontSet\fR\&.
+.IP "\fB-foreground\fP  \fIforeground_color\fP" 10
+Equivalent to \fB-fg\fP\&. The \fIforeground_color\fP argument specifies the foreground color used by \fBdtterm\fP\&.
+.IP "\fB-geometry\fP \fBgeometry_string\fP" 10
+Specify the terminal window\&'s preferred size and position\&. Width and
+height are expressed in characters\&. The default size is 24 lines of 80 characters
+each\&. There is no default position\&. The \fBgeometry_string\fP
+argument specifies the terminal geometry used by \fBdtterm\fP\&.
+.IP "\fB-help\fP" 10
+Display a message summarizing \fBdtterm\fP usage\&.
+.IP "\fB-iconic\fP" 10
+Display the terminal emulator initially in an iconified state\&.
+.IP "\fB+iconic\fP" 10
+Display the terminal emulator initially as a normal window\&. This is
+the default behavior\&.
+.IP "\fB-j\fP" 10
+Use jump scrolling\&. With jump scrolling, the screen may be scrolled
+more than one line at a time\&. This provides for faster screen updates when
+multiple lines of text are sent to the terminal\&. The maximum number of lines
+that may be jump scrolled is limited to the number of lines in the terminal
+window\&. The \fBdtterm\fP terminal emulator guarantees that all
+lines are displayed\&. This is the default behavior\&.
+.IP "\fB+j\fP" 10
+Do not use jump scrolling\&.
+.IP "\fB-kshMode\fP" 10
+Enable \fBksh\fP mode\&. In \fBksh\fP mode,
+a key pressed with the extend modifier bit set generates an escape character
+followed by the character generated by the un-extended keystroke\&. This option is provided for use with \fBemacs\fP command-line editor mode of \fBksh\fP(1)\&. It conflicts
+with the normal meta key use for generating extended single byte characters
+and for generating multi-byte Asian characters\&.
+.IP "\fB+kshMode\fP" 10
+Do not enable \fBksh\fP(1) mode\&. This is the default behavior\&.
+.IP "\fB-l\fP" 10
+Enables output logging\&. When \fBdtterm\fP enables logging,
+all output received from the subprocess is logged either to a file or to a
+command pipeline (as specified via the \fB-lf\fP option
+described in the following paragraph)\&. Since data are logged directly from
+the subprocess, the log file includes all escape characters and carriage-return
+and newline pairs the terminal line discipline sends\&. The application may
+enable and disable logging via escape sequences\&.
+.IP "\fB+l\fP" 10
+Disable output logging\&. This is the default behavior\&.
+.IP "\fB-lf\fP  \fIfile_name\fP" 10
+Name the file to which \fBdtterm\fP writes the output log\&.
+If the \fIfile_name\fP argument begins with a pipe
+symbol (\!|\!), \fBdtterm\fP assumes the rest of
+the string to be a command to be used as the endpoint of a pipe\&. The default
+file name is \fBDttermLog\fP \fBXXXXX\fP (where \fBXXXXX\fP is a unique value) and is created
+in the directory from which the subprocess was started\&. The \fIfile_name\fP argument specifies the log file name used by \fBdtterm\fP for logging\&.
+.IP "\fB-ls\fP" 10
+Start a login shell (the first character
+of \fIargv\fP[0] is a dash), indicating to the
+shell that it should read the system\&'s \fBprofile\fP and the
+user\&'s \fB\&.profile\fP files (for \fBksh\fP(1) and \fBsh\fP(1)), or the system\&'s \fBcsh\&.login\fP and the user\&'s \fB\&.login\fP (for \fBcsh\fP(1))\&.
+.IP "\fB+ls\fP" 10
+Start a normal (non-login) shell\&. This is the default behavior\&.
+.IP "\fB-map\fP" 10
+Map (de-iconify) \fBdtterm\fP upon subprocess output if \fBdtterm\fP is unmapped (iconified)\&. The user can specify, via the \fBmapOnOutputDelay\fP resource, an initial period of time during which \fBdtterm\fP does not map itself upon subprocess output\&.
+.IP "\fB+map\fP" 10
+Indicate there is no special mapping behavior\&. This is the default behavior\&.
+.IP "\fB-mb\fP" 10
+Ring a bell when the user types at a specified distance from the right
+margin\&. The distance from the right margin is specified by the \fB-nb\fP option\&.
+.IP "\fB+mb\fP" 10
+Do not ring a bell when the user types near the right margin\&. This is
+the default behavior\&.
+.IP "\fB-ms\fP \fBpointer_color\fP" 10
+Specify the foreground color used by \fBdtterm\fP for the
+terminal window\&'s (X11) pointer cursor\&. The default is the terminal window\&'s
+foreground color (see \fB-foreground\fP)\&. The \fBpointer_color\fP argument specifies the pointer foreground color used
+by \fBdtterm\fP\&.
+.IP "\fB-name\fP \fBprog_name\fP" 10
+Specify the X11 name of the \fBdtterm\fP window\&. The \fBprog_name\fP argument specifies the name to use\&.
+.IP "\fB-nb\fP \fBnumber\fP" 10
+Ring the bell this number of characters from the right margin when enabled\&.
+The default is 10\&. The \fBnumber\fP argument specifies the
+number of characters\&.
+.IP "\fB-rw\fP" 10
+Enable reverse-wraparound\&.
+.IP "\fB+rw\fP" 10
+Do not enable reverse-wraparound\&. This is the default behavior\&.
+.IP "\fB-S\fP\fBccn\fP" 10
+Run the terminal emulator against a pre-opened  \fBpty\fP or STREAMS pseudo-terminal device\&. The terminal emulator
+provides this option to use when the pseudo-terminal device name is of the
+form \fBtty??\fP (that is, exactly two characters following the \fBtty\fP)\&. This option is intended for use when \fBdtterm\fP
+is programmatically invoked from within another application\&. The \fBcc\fP argument specifies the last two characters of the pseudo-terminal
+device\&'s slave name where the pseudo-terminal device slave name is of the
+form \fBtty??\fP\&. This value is ignored, but must be exactly
+two characters in length\&. The \fIn\fP argument
+specifies the file descriptor number that corresponds to the pseudo-terminal
+device\&'s already opened master side\&.
+.IP "\fB-S\fP\fBc\&.n\fP" 10
+Equivalent to \fB-S\fP\fBccn\fP, but
+provided for systems with a larger pseudo-terminal device name space\&. The \fBc\fP argument specifies the last component of the pseudo-terminal
+device slave name\&. The terminal emulator ignores this value and the value
+may be empty\&. The \fIn\fP argument specifies the
+number of the file descriptor that corresponds to the pseudo-terminal device\&'s
+already opened master side\&.
+.IP "\fB-sb\fP" 10
+Display a scroll bar\&. This is the default behavior\&.
+.IP "\fB+sb\fP" 10
+Do not display a scroll bar\&.
+.IP "\fB-sf\fP" 10
+Generate Sun Function Key escape sequences instead of standard
+ANSI escape sequences for the terminal\&'s function keys\&. 
+.IP "\fB+sf\fP" 10
+Generate standard ANSI escape sequences instead
+of Sun Function Key escape sequences for the terminal\&'s function keys\&. This
+is the default behavior\&.
+.IP "\fB-sl\fP  \fIscreens\fP[\fBs|l\fP]" 10
+Specify the number of lines in the terminal buffer beyond the length
+of the window\&. The option value consists of a number followed by an optional
+suffix\&. If no suffix is included or the suffix is "l" (ell), the total length
+of the terminal buffer is \fIscreens\fP plus the
+length of the terminal window\&. If the suffix is "s" (ess) the total length
+of the terminal buffer is ( \fIscreens\fP+1) times
+the length of the terminal window\&. The \fBdtterm\fP utility attempts
+to maintain the same buffer-to-window ratio when the window is resized larger\&.
+The default is \fB4s\fP\&. The \fIscreens\fP
+argument specifies the number of screens or lines to save\&.
+.IP "\fB-ti\fP \fBterm_id\fP" 10
+Specify the name used by \fBdtterm\fP to select the correct
+response to terminal ID queries\&. Valid values are \fBvt100\fP, \fBvt101\fP, \fBvt102\fP, and \fBvt220\fP\&. The
+default is \fBvt220\fP\&. The \fBterm_id\fP argument
+specifies the terminal ID to use\&.
+.IP "\fB-title\fP \fBtitle_string\fP" 10
+The \fBtitle_string\fP argument specifies
+the window title used by \fBdtterm\fP\&. The title
+defaults to the last component of the program\&'s path if the
+\fB-e\fP option is specified;
+otherwise the title defaults to \fBTerminal\fP\&.
+.IP "\fB-tm\fP \fBterm_modes\fP" 10
+Specify a string containing terminal-setting keywords and the characters
+to which they can be bound\&. Allowable keywords include: \fBintr\fP, \fBquit\fP, \fBerase\fP, \fBkill\fP, \fBeof\fP, \fBeol\fP, \fBswtch\fP, \fBstart\fP, \fBstop\fP, \fBbrk\fP, \fBsusp\fP, \fBdsusp\fP, \fBrprnt\fP, \fBflush\fP, \fBweras\fP and \fBlnext\fP\&. The
+terminal emulator correctly parses and silently ignores keywords that do not
+apply to a specific architecture\&. Control characters can be specified as \fB^\fP\fIchar\fP (for example, \fB^c\fP or \fB^u\fP), and \fB^?\fP can be used to indicate Delete\&. This is useful
+for overriding the default terminal settings without having to do an \fBstty\fP(1) every time a DtTerm widget is created\&. The default is \fBNULL\fP\&. The \fBterm_modes\fP argument
+specifies the terminal mode string\&.
+.IP "\fB-tn\fP \fBterm_name\fP" 10
+Specify a name to which \fBdtterm\fP sets the \fBTERM\fP environment variable\&. The default is \fBdtterm\fP\&.
+The \fBterm_name\fP argument specifies the terminal name used
+by \fBdtterm\fP\&.
+.IP "\fB-usage\fP" 10
+Display a usage message on the screen\&.
+.IP "\fB-vb\fP" 10
+Use a visual bell instead of an audible one\&. Flash the window instead
+of ringing the terminal bell whenever a <control>-G is received\&.
+.IP "\fB+vb\fP" 10
+Use an audio bell instead of a visual one\&. This is the default behavior\&.
+.IP "\fB-xrm\fP \fBresource_string\fP" 10
+Allow the user to specify the X11 Resource Manager-style resources on
+the command line\&. The \fBresource_string\fP argument specifies
+an X11 resource string\&. (See \fBXrmParseCommand\fP(3) and \fBXGetDefault\fP(3) for more information\&.)
+.SH "OPERANDS"
+.PP
+None\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+None\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of \fBdtterm\fP:
+.IP "\fBDISPLAY\fP" 10
+Specify the default X Windows display to connect to (see \fB-display\fP )\&. The terminal emulator sets the subprocess\&'s \fBDISPLAY\fP environment variable to the connected X11 display name\&.
+.IP "\fBHOME\fP" 10
+Determine the user\&'s home directory, the location of configuration files\&.
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables that
+are unset or null\&. If \fBLANG\fP is
+unset or null, the corresponding value from the implementation-specific default
+locale will be used\&. If any of the internationalization variables contains
+an invalid setting, the utility behaves as if none of the variables had been
+defined\&.
+.IP "\fBLC_ALL\fP" 10
+If set to a non-empty string value, override the values of all the other
+internationalization variables\&.
+.IP "\fBLC_MESSAGES\fP" 10
+Determine the locale that is used to affect the format and contents
+of diagnostic messages written to standard error and informative messages
+written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues for the processing of \fBLC_MESSAGES\fP\&.
+.IP "\fBSHELL\fP" 10
+Determine the default application to run\&.
+.IP "\fBXAPPLRESDIR\fP" 10
+Specify the name of a directory that contains application-specific resources\&.
+If this environment variable is defined, and is set to an existing directory,
+then it is searched (in addition to the standard locations) for files containing
+application-specific resource specifications\&.
+.IP "\fBXENVIRONMENT\fP" 10
+Specify the name of a resource file with user- or machine-specific resources\&.
+If this variable is not defined, \fBdtterm\fP looks for a file
+named \fB$HOME/\&.Xdefaults-\fP \fBhostname\fP
+instead, where \fBhostname\fP is the name of the host where
+the application is executing\&.
+.IP "\fBXFILESEARCHPATH\fP" 10
+Define a language-dependent location of \fBapp-defaults\fP\&.
+.IP "\fBXMODIFIER\fP" 10
+Specify which input method to use\&.
+.IP "\fBXUSERFILESEARCHPATH\fP" 10
+Control where X applications look for their \fBapp-defaults\fP
+resource files\&. The default is located in the directory \fB/usr/dt/app-defaults\fP\&. The user must set \fBXUSERFILESEARCHPATH\fP if the user\&'s resource
+files are not in this location\&.
+.PP
+The terminal emulator creates the following variable when it invokes
+another process:
+.IP "\fBTERM\fP" 10
+The terminal emulator sets the subprocess\&'s \fBTERM\fP
+environment variable to the \fBtermName\fP resource value\&. Applications
+use this variable to determine the type of escape sequences to use when driving
+the terminal emulator\&.
+.IP "\fBTERMINAL_EMULATOR\fP" 10
+The terminal emulator sets the subprocess\&'s \fBTERMINAL_EMULATOR\fP environment variable to \fBdtterm\fP to indicate
+that the process is running from a \fBdtterm\fP terminal emulator\&.
+.IP "\fBWINDOWID\fP" 10
+The terminal emulator sets the subprocess\&'s \fBWINDOWID\fP
+environment variable to the window number of the window in which text is rendered\&.
+.SH "RESOURCES"
+.PP
+The \fBdtterm\fP utility allows the user to specify behavior
+through X11 resources as well as the command-line interface\&. The following
+is a list of the defined resources:
+.TS
+tab();
+lw(2.052951i) lw(1.651910i) lw(0.754340i) lw(1.040799i).
+\fBThe dtterm Client
+Resource Set\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBallowSendEvents\fP\fBAllowSendEvents\fP\fBBoolean\fRFalse
+\fBappCursorDefault\fP\fBAppCursorDefault\fP\fBBoolean\fRFalse
+\fBappKeypadDefault\fP\fBAppKeypadDefault\fP\fBBoolean\fRFalse
+\fBautoWrap\fP\fBAutoWrap\fP\fBBoolean\fRTrue
+\fBbackground\fP\fBBackground\fP\fBString\fR
+\fBbackgroundIsSelect\fP\fBBackgroundIsSelect\fP\fBBoolean\fRFalse
+\fBblinkRate\fP\fBBlinkRate\fP\fBint\fR250
+\fBborderColor\fP\fBBorderColor\fP\fBString\fR"black"
+\fBborderWidth\fP\fBBorderWidth\fP\fBint\fR0
+\fBc132\fP\fBC132\fP\fBBoolean\fRFalse
+\fBcharCursorStyle\fP\fBCharCursorStyle\fP\fBString\fR"char_cursor_box"
+\fBconsoleMode\fP\fBConsoleMode\fP\fBBoolean\fRFalse
+\fBforeground\fP\fBForeground\fP\fBString\fR
+\fBgeometry\fP\fBGeometry\fP\fBString\fRNULL
+\fBiconic\fP\fBIconic\fP\fBBoolean\fRFalse
+\fBiconName\fP\fBIconName\fP\fBString\fR"dtterm"
+\fBjumpScroll\fP\fBJumpScroll\fP\fBBoolean\fRTrue
+\fBkshMode\fP\fBKshMode\fP\fBBoolean\fRFalse
+\fBlogging\fP\fBLogging\fP\fBBoolean\fRFalse
+\fBlogFile\fP\fBLogFile\fP\fBString\fRT{
+"DttermLog\fBXXXXX\fP" (where
+ \fBXXXXX\fP is a unique value)
+T}
+\fBlogInhibit\fP\fBLogInhibit\fP\fBBoolean\fRFalse
+\fBloginShell\fP\fBLoginShell\fP\fBBoolean\fRFalse
+\fBmapOnOutput\fP\fBAutoMap\fP\fBBoolean\fRFalse
+\fBmapOnOutputDelay\fP\fBMapDelay\fP\fBint\fR0
+\fBmarginBell\fP\fBMarginBell\fP\fBBoolean\fRFalse
+\fBmenuBar\fP\fBMenuBar\fP\fBBoolean\fRTrue
+\fBmenuPopup\fP\fBMenuPopup\fP\fBBoolean\fRTrue
+\fBnMarginBell\fP\fBNMarginBell\fP\fBint\fR10
+\fBpointerBlank\fP\fBPointerBlank\fP\fBBoolean\fRFalse
+\fBpointerBlankDelay\fP\fBPointerBlankDelay\fP\fBint\fR2
+\fBpointerColor\fP\fBForeground\fP\fBString\fRforeground color
+\fBpointerColorBackground\fP\fBBackground\fP\fBString\fRbackground color
+\fBpointerShape\fP\fBPointerShape\fP\fBString\fR"xterm"
+\fBreverseWrap\fP\fBReverseWrap\fP\fBBoolean\fRFalse
+\fBsaveLines\fP\fBSaveLines\fP\fBString\fR4s
+\fBscrollBar\fP\fBScrollBar\fP\fBBoolean\fRTrue
+\fBsunFunctionKeys\fP\fBSunFunctionKeys\fP\fBBoolean\fRFalse
+\fBtermId\fP\fBTermId\fP\fBString\fR"vt220"
+\fBtermName\fP\fBTermName\fP\fBString\fR"dtterm"
+\fBtitle\fP\fBTitle\fP\fBString\fR"dtterm"
+\fBttyModes\fP\fBTtyModes\fP\fBString\fRNULL
+\fBuserBoldFont\fP\fBUserBoldFont\fP\fBXmFontList\fRdynamic
+\fBuserFont\fP\fBUserFont\fP\fBXmFontList\fRdynamic
+\fBvisualBell\fP\fBVisualBell\fP\fBBoolean\fRFalse
+.TE
+.IP "\fBallowSendEvents\fP" 10
+Specifies that the terminal emulator allow synthetic events (generated
+and sent by another application)\&. Enabling this resource opens up a possible
+security hole\&.
+.IP "\fBappCursorDefault\fP" 10
+If True, the cursor keys are initially in application mode\&. If False,
+the cursor keys are initially in cursor mode\&.
+.IP "\fBappKeypadDefault\fP" 10
+If True, the keypad keys are initially in application mode\&. If False,
+the keypad keys are initially in numeric mode\&.
+.IP "\fBautoWrap\fP" 10
+Specifies whether or not auto-wraparound is initially enabled\&.
+.IP "\fBbackground\fP" 10
+Specifies the background color of the terminal window as well as the
+default background color for the scroll bar\&. This resource defaults to either
+the primary colorset background or select pixel (see \fBbackgroundIsSelect\fP )\&. 
+.IP "\fBbackgroundIsSelect\fP" 10
+Specifies that the terminal window should use the Motif select color
+instead of the background color for the terminal window\&'s background color\&.
+.IP "\fBblinkRate\fP" 10
+Specifies the number of milliseconds the cursor is in the on and off
+states while blinking\&. A value of 250 blinks the cursor two times per second\&.
+A value of zero turns blinking off\&.
+.IP "\fBborderColor\fP" 10
+Specifies the border color for the window\&. The window border need not
+be visible when re-parenting window managers are used\&.
+.IP "\fBborderWidth\fP" 10
+Specifies the border width of the shell widget\&'s window\&. This value
+may be overridden by re-parenting window managers\&.
+.IP "\fBc132\fP" 10
+Specifies whether or not the \fBDECCOLM\fP
+escape sequence, which switches between a 132- and 80-column window, is honored\&.
+.IP "\fBcharCursorStyle\fP" 10
+This resource specifies the shape of the text cursor\&. A \fBchar_cursor_box\fP value specifies a cursor the
+width and height of the base font\&'s bounding box\&. A \fBchar_cursor_bar\fP value specifies a cursor the width of the base
+font\&'s bounding box, 2 pixels high, and drawn with its top on the baseline\&.
+.IP "\fBconsoleMode\fP" 10
+Specifies that output directed at \fB/dev/console\fP be
+directed instead to the terminal window\&. It is provided as a way to prevent
+output, that would normally be displayed on the internal terminal emulator
+(ITE), from overwriting the X server\&'s display\&. It is not provided as a general
+mechanism to direct the output from an arbitrary system\&'s \fB/dev/console\fP to an arbitrary X server\&. Ownership of, and read-write permission
+for, \fB/dev/console\fP is required in order to redirect console
+output\&.
+.IP "\fBforeground\fP" 10
+Specifies the foreground of the terminal window as well as the default
+used by \fBdtterm\fP for the scroll bar and the color used for
+the pointer cursor\&. This resource defaults to the primary colorset foreground
+pixel\&. 
+.IP "\fBgeometry\fP" 10
+Specifies the terminal window\&'s preferred size and position\&. The default
+size is 24 lines of 80 characters each\&. There is no default position\&.
+.IP "\fBiconGeometry\fP" 10
+Specifies the preferred position of the terminal emulator\&'s icon\&. Window
+managers may ignore this value\&. There is no default\&.
+.IP "\fBiconic\fP" 10
+Specifies whether or not the terminal emulator is initially displayed
+in an iconified state\&.
+.IP "\fBiconName\fP" 10
+Specifies the name for the icon\&. When used with the \fB-e\fP option, the default is the last component of the program\&'s path;
+otherwise, the default is the last component of the name used to execute \fBdtterm\fP (that is, \fIargv\fP[0])\&.
+.IP "\fBjumpScroll\fP" 10
+Specifies that \fBdtterm\fP use jump scrolling\&. With jump
+scrolling, the screen may be scrolled more than one line at a time\&. This provides
+for faster screen updates when multiple lines of text are sent to the terminal\&.
+The maximum number of lines that may be jump scrolled is limited to the number
+of lines in the terminal window\&. The \fBdtterm\fP terminal emulator
+guarantees that all lines are displayed\&.
+.IP "\fBkshMode\fP" 10
+Enables ksh mode\&. With ksh mode, a key pressed with the extend modifier
+bit set generates an escape character followed by the character generated
+by the un-extended keystroke\&. This option is provided for use with the \fBemacs\fP command-line editor mode of \fBksh\fP(1)\&. It conflicts
+with the normal meta key use for generating extended single byte characters
+and for generating multi-byte Asian characters\&.
+.IP "\fBlogging\fP" 10
+Enables output logging\&. When logging is enabled, all output received
+from the subprocess is logged either to a file or to a command pipeline (as
+specified via the \fBlogFile\fP option)\&. Since the data is logged
+directly from the subprocess, it includes all escape characters and carriage-returns
+and newline pairs the terminal line discipline sends\&. Logging may be enabled
+and disabled via escape sequences\&.
+.IP "\fBlogFile\fP" 10
+Specifies the filename to which \fBdtterm\fP writes the
+output log\&. If the filename begins with a pipe symbol (\!|\!), \fBdtterm\fP assumes the rest of the string is a command to be used as
+the endpoint of a pipe\&. The default filename is
+\fBDttermLog\fP\fBXXXXX\fP
+(where \fBXXXXX\fP is a unique value) and
+is created in the directory from which the subprocess was started\&.
+.IP "\fBlogInhibit\fP" 10
+Indicates that \fBdtterm\fP inhibit device and file logging\&.
+.IP "\fBloginShell\fP" 10
+Indicates that the shell that is started
+be a login shell (that is, the first character of \fIargv\fP[0] is a dash), indicating that the shell should read the system\&'s \fBprofile\fP and the user\&'s \fB\&.profile\fP files (for \fBksh\fP(1) and \fBsh\fP(1)) or the system \fBcsh\&.login\fP and the user\&'s \fB\&.login\fP (for \fBcsh\fP(1))\&.
+.IP "\fBmapOnOutput\fP" 10
+Indicates that the terminal emulator map (de-iconify) itself upon subprocess
+output if it is unmapped (iconified)\&. The user can specify, via the \fBmapOnOutputDelay\fP resource, an initial period of time during which \fBdtterm\fP does not map itself upon subprocess output\&.
+.IP "\fBmapOnOutputDelay\fP" 10
+Specifies the number of seconds after start-up that \fBdtterm\fP does not honor the \fBmapOnOutput\fP
+resource\&. This
+allows the application to send initial output (for example, shell prompts)
+to the terminal without auto mapping the window\&. The default is zero (no delay)\&.
+.IP "\fBmarginBell\fP" 10
+Specifies whether or not the bell rings when the user types near the
+right margin\&. The distance from the right margin is specified by the \fBnMarginBell\fP resource\&.
+.IP "\fBmenuBar\fP" 10
+Indicates that \fBdtterm\fP displays a pulldown menu bar\&.
+The default is True\&.
+.IP "\fBmenuPopup\fP" 10
+Indicates that \fBdtterm\fP displays a popup menu\&. The
+default is True\&.
+.IP "\fBnMarginBell\fP" 10
+Specifies the number of characters from the right margin at which the
+margin bell rings, when enabled\&.
+.IP "\fBpointerBlank\fP" 10
+Specifies that \fBdtterm\fP puts the pointer cursor into
+blanking mode\&. In this mode, the cursor turns on when the pointer is moved,
+and is blanked after a selectable number of seconds or after keyboard input\&.
+The \fBpointerBlankDelay\fP resource sets the delay\&.
+.IP "\fBpointerBlankDelay\fP" 10
+Specifies the number of seconds to wait after the pointer has stopped
+moving before blanking the pointer (see \fBpointerBlank\fP)\&.
+A value of zero delays pointer blanking until a key is pressed\&.
+.IP "\fBpointerColor\fP" 10
+Specifies the foreground color used by \fBdtterm\fP for
+the terminal window\&'s pointer (X11) cursor\&. The default is the terminal window\&'s
+foreground color (see \fBforeground\fP)\&.
+.IP "\fBpointerColorBackground\fP" 10
+Specifies the background color used by \fBdtterm\fP for
+the terminal window\&'s pointer (X11) cursor\&. The default is the terminal window\&'s
+background color (see \fBbackground\fP)\&.
+.IP "\fBpointerShape\fP" 10
+Specifies the X cursor font character used by \fBdtterm\fP
+as the pointer cursor\&. The font character must be specified as a string from
+the \fBX11/cursorfont\&.h\fP header with the leading \fBXC_\fP removed\&. The default is \fBxterm\fP(1)\&.
+.IP "\fBreverseWrap\fP" 10
+Specifies whether or not reverse-wraparound is enabled\&.
+.IP "\fBsaveLines\fP" 10
+Specifies the number of lines in the terminal buffer beyond the length
+of the window\&. The option value consists of a number followed by an optional
+suffix\&. If no suffix is included or the suffix is "l" (ell), the total length
+of the terminal buffer is \fIscreens\fP plus the
+length of the terminal window\&. If the suffix is "s" (ess) the total length
+of the terminal buffer is ( \fIscreens\fP+1) times
+the length of the terminal window\&. The \fBdtterm\fP utility attempts
+to maintain the same buffer-to-window ratio when the window is resized larger\&.
+.IP "\fBscrollBar\fP" 10
+Specifies that \fBdtterm\fP displays a scroll bar\&.
+.IP "\fBsunFunctionKeys\fP" 10
+Specifies whether \fBdtterm\fP generates Sun Function Key
+escape sequences instead of standard ANSI escape sequences for
+the terminal\&'s function keys\&. 
+.IP "\fBtermId\fP" 10
+Supplies the name used to select the correct response to terminal ID
+queries\&. Valid values are \fBvt100\fP, \fBvt101\fP, \fBvt102\fP, and \fBvt220\fP\&.
+.IP "\fBtermName\fP" 10
+Specifies a name to which \fBdtterm\fP sets the \fBTERM\fP environment variable\&. The default is \fBdtterm\fP\&.
+.IP "\fBtitle\fP" 10
+Specifies the window title\&. When used with the \fB-e\fP
+option, the default is the last component of the program\&'s path; otherwise,
+the default is the last component of the name used to execute \fBdtterm\fP (that is, \fIargv\fP[0])\&.
+.IP "\fBttyModes\fP" 10
+Specifies a string containing terminal-setting keywords and the characters
+to which they can be bound\&. Allowable keywords include: \fBintr\fP, \fBquit\fP, \fBerase\fP, \fBkill\fP, \fBeof\fP, \fBeol\fP, \fBswtch\fP, \fBstart\fP, \fBstop\fP, \fBbrk\fP, \fBsusp\fP, \fBdsusp\fP, \fBrprnt\fP, \fBflush\fP, \fBweras\fP and \fBlnext\fP\&. The
+terminal emulator correctly parses and silently ignores keywords that do not
+apply to a specific architecture\&. Control characters can be specified as \fB^\fP\fIchar\fP (for example, \fB^c\fP or \fB^u\fP), and \fB^?\fP can be used to indicate Delete\&. This is useful
+for overriding the default terminal settings without having to do an \fBstty\fP(1) every time a DtTerm widget is created\&. 
+.IP "\fBuserBoldFont\fP" 10
+Specifies an \fBXFontSet\fR used by \fBdtterm\fP when displaying bold terminal text\&. The \fBXFontSet\fR should be specified as a Motif \fBXmFontList\fP(3)\&. The terminal emulator supports only character
+or mono-spaced fonts\&. When using proportional fonts, the behavior is undefined\&.
+The terminal emulator generates a default bold font based on the \fBXLFD\fP name of the \fBuserFont\fP\&. If that font is not
+available, \fBdtterm\fP generates bold text by overstriking (with
+a one pixel offset) the \fBuserFont\fP\&.
+.IP "\fBuserFont\fP" 10
+Specifies an \fBXFontSet\fR used by \fBdtterm\fP when displaying terminal text\&. \fBXFontSet\fR should be specified as a Motif \fBXmFontList\fP(3)\&. The terminal emulator supports only character
+or mono-spaced fonts\&. When using proportional fonts, the behavior is undefined\&.
+This font is not used to display non-terminal text (such as menu bar, popup
+menu and dialog)\&. The default is the \fBXmNtextFontList\fP value of the parent bulletin board (see the XmBulletinBoard
+widget) in the same manner as the XmText widget\&.
+.IP "\fBvisualBell\fP" 10
+Indicates that a visual bell is preferred over an audible one\&. Instead
+of ringing the terminal bell whenever a <control>-G is received, the window
+is flashed\&.
+.SS "Resource/Option Correspondence"
+.PP
+Many of the preceding resources correspond to the command-line arguments\&.
+The following table describes the relationship between the two:
+.TS
+tab();
+lw(2.421315i) lw(3.078685i).
+\fBCommand-line option\fP\fBResource Setting\fP
+\fB-132\fP\fB*c132: True\fP
+\fB+132\fP\fB*c132: False\fP
+\fB-aw\fP\fB*autoWrap: True\fP
+\fB+aw\fP\fB*autoWrap: False\fP
+T{
+\fB-background\fP \fIbackground_color\fP
+T}\fB*background:\fP \fIbackground_color\fP
+\fB-bg\fP \fIbackground_color\fP\fB*background:\fP \fIbackground_color\fP
+\fB-bs\fP\fB*backgroundIsSelect: True\fP
+\fB+bs\fP\fB*backgroundIsSelect: False\fP
+\fB-C\fP\fB*consoleMode: True\fP
+\fB-display\fP \fBdisplay_name\fP\fB\&.display:\fP \fBdisplay_name\fP
+\fB-e\fP \fBprogram_argument\&.\&.\&.\fP
+\fB-fb\fP \fBfontset\fP\fB*userBoldFont:\fP \fBfontset\fP
+\fB-fg\fP \fIforeground_color\fP\fB*foreground:\fP \fIforeground_color\fP
+\fB-fn\fP \fBfontset\fP\fB*userFont:\fP \fBfontset\fP
+\fB-font\fP \fBfontset\fP\fB*userFont:\fP \fBfontset\fP
+T{
+\fB-foreground\fP \fIforeground_color\fP
+T}\fB*foreground:\fP \fIforeground_color\fP
+T{
+\fB-geometry\fP \fBgeometry_string\fP
+T}\fB\&.geometry:\fP \fBgeometry_string\fP
+\fB-iconic\fP\fB\&.iconic: True\fP
+\fB+iconic\fP\fB\&.iconic: False\fP
+\fB-j\fP\fB*jumpScroll: True\fP
+\fB+j\fP\fB*jumpScroll: False\fP
+\fB-kshMode\fP\fB*kshMode: True\fP
+\fB+kshMode\fP\fB*kshMode: False\fP
+\fB-l\fP\fB*logging: True\fP
+\fB+l\fP\fB*logging: False\fP
+\fB-lf\fP \fIfile_name\fP\fB*logFile:\fP \fIfile_name\fP
+\fB-ls\fP\fB*loginShell: True\fP
+\fB+ls\fP\fB*loginShell: False\fP
+\fB-map\fP\fB*mapOnOutput: True\fP
+\fB+map\fP\fB*mapOnOutput: False\fP
+\fB-mb\fP\fB*marginBell: True\fP
+\fB+mb\fP\fB*marginBell: False\fP
+\fB-ms\fP \fBpointer_color\fP\fB*pointerColor:\fP \fBpointer_color\fP
+\fB-name\fP \fBprog_name\fP\fB\&.name:\fP \fBprog_name\fP
+\fB-nb\fP \fBnumber\fP\fB*nMarginBell:\fP \fBnumber\fP
+\fB-rw\fP\fB*reverseWrap: True\fP
+\fB+rw\fP\fB*reverseWrap: False\fP
+\fB-sb\fP\fB*scrollBar: True\fP
+\fB+sb\fP\fB*scrollBar: False\fP
+\fB-sf\fP\fB*sunFunctionKeys: True\fP
+\fB+sf\fP\fB*sunFunctionKeys: False\fP
+\fB-sl\fP \fIscreens\fPs\fB*saveLines:\fP \fIscreens  * lines/screen\fP
+\fB-sl\fP \fIlines\fP\fB*saveLines:\fP \fIlines\fP
+\fB-ti\fP \fBterm_id\fP\fB*termId:\fP \fBterm_id\fP
+\fB-title\fP \fBtitle_string\fP\fB\&.title:\fP \fBtitle_string\fP
+\fB-tm\fP \fBterm_modes\fP\fB*ttyModes:\fP \fBterm_modes\fP
+\fB-tn\fP \fBterm_name\fP\fB*termName:\fP \fBterm_name\fP
+\fB-vb\fP\fB*visualBell: True\fP
+\fB+vb\fP\fB*visualBell: False\fP
+.TE
+.SH "ASYNCHRONOUS EVENTS"
+.PP
+The \fBdtterm\fP utility takes the
+standard action for all signals\&.
+.SH "STDOUT"
+.PP
+Not used\&.
+.SH "STDERR"
+.PP
+Used only for diagnostic messages\&.
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.SS "On-the-Spot Preedit Style and Behavior"
+.PP
+When the user selects the on-the-spot input method style, preedit
+strings are displayed in the \fBdtterm\fP window, causing
+original data within \fBdtterm\fP to shift out to make room
+for the data in the preedit buffer\&.
+.PP
+To cause \fBdtterm\fP to commit the preedit string,
+the user can select one of the following actions:
+.IP "" 10
+ \fBcut\fP
+.IP "" 10
+ \fBpaste\fP
+.IP "" 10
+ \fBselection\fP
+.IP "" 10
+ \fBcursor movement\fP
+.IP "" 10
+ \fBcommit key\fP
+.PP
+Note that the input method server may interpret cursor movement events
+within the preedit buffer as preedit movement commands\&. In this case,
+the string may not be committed\&. The interpretation of these movement
+events is completely dependent upon the implementation of the input
+method server\&.
+.PP
+In addition to the generic actions listed above, there are several
+action routines defined in the \fBDtTerm\fP widget that
+may cause committal\&. These action routines include
+\fBmove_cursor\fP, \fBprocess_bdrag\fP,
+and \fBstring\fP\&. The action routines correspond
+to the generic commit actions listed above\&.
+.PP
+When the preedit buffer is active, it may be highlighted\&. This highlight
+value can be set by the input method server\&. Since there is only a
+single highlight mode available in the \fBDtTerm\fP widget,
+the following \fBXIMFeedback\fPs will set the highlight:
+.IP "" 10
+ \fBXIMPrimary\fP
+.IP "" 10
+ \fBXIMSecondary\fP
+.IP "" 10
+ \fBXIMTertiary\fP
+.SH "EXIT STATUS"
+.IP "0" 10
+successful completion
+.IP ">0" 10
+an error occurred
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Term\&.h - DtTerm\fP(5),  \fBstty\fP(1), \fBdtterm\fP(5), \fBX\fP(1), \fBXmFontList\fP(3), \fBXmText\fP(3), \fBpty\fP(7), \fBtty\fP(7)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

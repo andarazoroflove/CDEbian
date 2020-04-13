@@ -1,0 +1,720 @@
+# ##########################################################################
+# 
+#      dtfile.dt
+# 
+#      Actions for interfacing to the Common Desktop Environment 
+#      File Manager.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $TOG: dtfile.dt.src /main/5 1997/03/28 14:46:11 mgreess $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Atributos de datos - utilizados principalmente por el Gestor de archivos
+# 
+# ##################################################################
+# ###########################################################
+# 
+# Carpetas
+# 
+# ###########################################################
+DATA_ATTRIBUTES TRASH_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON            DtdirR
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION  FILESYSTEM_MOVE
+	DESCRIPTION	Esta carpeta es una ubicación temporal de la papelera.
+        TYPE_LABEL      TRASH_FOLDER
+}
+DATA_CRITERIA TRASH_FOLDER1
+{
+        DATA_ATTRIBUTES_NAME TRASH_FOLDER
+        MODE            d
+        PATH_PATTERN    */.dt/Trash
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        TRASH_FOLDER
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        TRASH_FOLDER
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES OPEN_PARENT_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		Dtdirup
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+}
+DATA_ATTRIBUTES PARENT_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		Dtdirup
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+	DESCRIPTION	El icono '..' representa la carpeta padre \
+                        de la carpeta actual. #bralo para desplazarse \
+                        a un nivel superior del árbol de carpetas. Su \
+                        tipo de datos se denomina PARENT_FOLDER.
+        TYPE_LABEL      PARENT_FOLDER
+}
+DATA_CRITERIA PARENT_FOLDER1
+{
+	DATA_ATTRIBUTES_NAME PARENT_FOLDER
+	MODE		d
+	NAME_PATTERN	..
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        PARENT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        PARENT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES OPEN_CURRENT_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		DtdirB
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+}
+DATA_ATTRIBUTES CURRENT_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		DtdirB
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+	DESCRIPTION	El icono '.' representa la carpeta actual. \
+                        Su tipo de datos se denomina CURRENT_FOLDER.
+        TYPE_LABEL      CURRENT_FOLDER
+}
+DATA_CRITERIA CURRENT_FOLDER1
+{
+	DATA_ATTRIBUTES_NAME CURRENT_FOLDER
+	MODE		d
+	NAME_PATTERN	.
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        CURRENT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        CURRENT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES DOT_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		DtdirB
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+	DESCRIPTION	El tipo de datos de esta carpeta se denomina DOT_FOLDER. \
+                        Una carpeta DOT_FOLDER es una carpeta cuyo nombre \
+                        empieza por un punto (.). Normalmente, una DOT_FOLDER \
+                        está oculta.
+        TYPE_LABEL      DOT_FOLDER
+}
+DATA_CRITERIA DOT_FOLDER1
+{
+	DATA_ATTRIBUTES_NAME DOT_FOLDER
+	MODE		d
+	NAME_PATTERN	.*
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        DOT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        DOT_FOLDER
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES FOLDER_LOCK
+{
+	ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		Dtdirlk
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+	DESCRIPTION	Es una carpeta para la que le falta el permiso \
+                        de grabación. No puede añadir ni eliminar archivos. \
+                        Su tipo de datos se denomina FOLDER_LOCK.
+        TYPE_LABEL      FOLDER_LOCK
+}
+DATA_CRITERIA FOLDER_LOCK1
+{
+	DATA_ATTRIBUTES_NAME FOLDER_LOCK
+	MODE            d&!r
+}
+DATA_CRITERIA FOLDER_LOCK2
+{
+	DATA_ATTRIBUTES_NAME FOLDER_LOCK
+	MODE            d&!x
+}
+DATA_ATTRIBUTES OPEN_NON_WRITABLE_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON            DtdirBO
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION  FILESYSTEM_MOVE
+        COPY_TO_ACTION  FILESYSTEM_COPY
+        LINK_TO_ACTION  FILESYSTEM_LINK
+}
+DATA_ATTRIBUTES NON_WRITABLE_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON            Dtdirnw
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION  FILESYSTEM_MOVE
+        COPY_TO_ACTION  FILESYSTEM_COPY
+        LINK_TO_ACTION  FILESYSTEM_LINK
+        DESCRIPTION     Es una carpeta para la que le falta el permiso \
+                        de grabación. No puede añadir ni eliminar archivos. \
+                        Su tipo de datos se denomina FOLDER_LOCK.
+        TYPE_LABEL      NON_WRITABLE_FOLDER
+}
+DATA_CRITERIA NON_WRITABLE_FOLDER1
+{
+	DATA_ATTRIBUTES_NAME NON_WRITABLE_FOLDER
+	MODE            d&!w
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        FOLDER_LOCK
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        FOLDER_LOCK
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES OPEN_FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		DtdirBO
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+}
+DATA_ATTRIBUTES FOLDER
+{
+        ACTIONS         OpenInPlace,OpenNewView,Print
+        ICON		DtdirB
+        MEDIA           FILE_NAME
+        MOVE_TO_ACTION	FILESYSTEM_MOVE
+        COPY_TO_ACTION	FILESYSTEM_COPY
+        LINK_TO_ACTION	FILESYSTEM_LINK
+	DESCRIPTION	Es una carpeta. Una carpeta es un \
+                        contenedor de archivos o de otras carpetas. \
+                        Su tipo de datos se denomina FOLDER.
+        TYPE_LABEL      FOLDER
+}
+DATA_CRITERIA FOLDER1
+{
+	DATA_ATTRIBUTES_NAME FOLDER
+	MODE		d
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        FOLDER
+        TYPE            MAP
+        MAP_ACTION      OpenFolder
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        FOLDER
+        TYPE            MAP
+        MAP_ACTION      PrintFolderList
+}
+
+# ###########################################################
+# ###########################################################
+# 
+# Atributos de datos
+# 
+# ###########################################################
+
+DATA_ATTRIBUTES RECURSIVE_LINK
+{
+	ICON		Dtinf
+	DESCRIPTION	Este icono representa un enlace simbólico que apunta a \
+                        sí mismo, a la carpeta o mediante una serie de \
+                        enlaces simbólicos intermedios. Su tipo de datos \
+                        se denomina RECURSIVE_LINK.
+        TYPE_LABEL      RECURSIVE_LINK
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES BROKEN_LINK
+{
+        ICON            Dtblink
+        DESCRIPTION     Este icono representa un enlace simbólico \
+                        que apunta a un archivo no existente. Su tipo de \
+                        datos se denomina BROKEN_LINK.
+        TYPE_LABEL      BROKEN_LINK
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES DOT_FILE
+{
+        ACTIONS         Open,Print
+        ICON		Dtdata
+        IS_TEXT		true
+        MIME_TYPE	text/plain
+        MEDIA           C_STRING
+	DESCRIPTION	El tipo de datos de este archivo se denomina DOT_FILE. \
+                        Un DOT_FILE es un archivo cuyo nombre empieza por \
+                        un punto (.). Normalmente, un archivo DOT_FILE está \
+                        oculto.
+        TYPE_LABEL      DOT_FILE
+}
+DATA_CRITERIA DOT_FILE1
+{
+	DATA_ATTRIBUTES_NAME DOT_FILE
+        MODE            f
+	NAME_PATTERN	.*
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES EXECUTABLE
+{
+	ACTIONS		Run,Open
+        ICON		Dtexec
+        IS_EXECUTABLE	true
+        COPY_TO_ACTION  Execute
+        MIME_TYPE	application/octet-stream
+	SUNV3_TYPE	default-app
+        MEDIA           _DT_DATA
+	DESCRIPTION	Este archivo contiene un script de shell o un programa \
+                        compilado que puede ejecutarse. Su tipo de datos se \
+                        denomina EXECUTABLE.
+        TYPE_LABEL      EXECUTABLE
+}
+DATA_CRITERIA EXECUTABLE1
+{
+	DATA_ATTRIBUTES_NAME EXECUTABLE
+	MODE		f&x
+}
+ACTION Run
+{
+        LABEL           Ejecutar
+        ARG_TYPE        EXECUTABLE
+        TYPE            MAP
+        MAP_ACTION      Execute
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES UNKNOWN
+{
+	ACTIONS		Open,Print
+        ICON		Dtdata
+        MIME_TYPE	application/octet-stream
+        MEDIA           _DT_DATA
+	DESCRIPTION	Este archivo no coincide con ningún otro tipo de datos, \
+                        por lo que se le ha asignado el tipo de datos \
+                        denominado UNKNOWN.
+        TYPE_LABEL      UNKNOWN
+}
+
+# ###########################################################
+
+DATA_ATTRIBUTES DATA
+{
+	ACTIONS		Open,Print
+        ICON		Dtdata
+        MIME_TYPE	text/plain
+        MEDIA           _DT_DATA
+	DESCRIPTION	Este archivo no coincide con ningún otro tipo de datos, \
+                        por lo que se le ha asignado el tipo de datos \
+                        denominado DATA.
+        TYPE_LABEL      DATA
+}
+DATA_CRITERIA DATA1
+{
+	DATA_ATTRIBUTES_NAME DATA
+	MODE		f&!x
+}
+
+# ###################################################################
+# ###################################################################
+# 
+#  Acciones proporcionadas por el Gestor de archivos del Common Desktop Environment.
+# 
+# ###################################################################
+ACTION DtfileHome
+{
+        LABEL           	Gestor de archivos - Inicio
+        ARG_COUNT		0
+        ICON			Fphome
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		DtHome_Show
+        DESCRIPTION     	La acción Gestor de archivos - Inicio (DtfileHome) abre \
+                        una vista del Gestor de archivos de la carpeta \
+                        de inicio del usuario.
+}
+
+# #####
+
+ACTION Dtfile
+{
+        LABEL           	Gestor de archivos
+        ICON			Fphome
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		Edit
+        TT_FILE		   	%Arg_1"Carpeta a abrir:"%
+        TT_ARG0_MODE		TT_INOUT
+        TT_ARG0_VTYPE   	FILE_NAME
+        DESCRIPTION     	La acción Gestor de archivos (Dtfile) abre una vista del \
+                        Gestor de archivos de la carpeta especificada.
+}
+
+# #####
+
+ACTION Dtappmgr
+{
+        LABEL           	Gestor de aplicaciones
+        ICON			Fpapps
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		DtTools_Show
+        TT_FILE			/var/dt/appconfig/appmanager/$DTUSERSESSION
+        TT_ARG0_MODE            TT_IN
+        TT_ARG0_VTYPE           -title
+        TT_ARG0_REP_TYPE        TT_REP_STRING
+        TT_ARG0_VALUE   	Gestor de aplicaciones
+        TT_ARG1_MODE            TT_IN
+        TT_ARG1_VTYPE           -help_volume
+        TT_ARG1_REP_TYPE        TT_REP_STRING
+        TT_ARG1_VALUE   	Appmanager
+        DESCRIPTION     	La acción Gestor de aplicaciones (Dtappmgr) abre una vista \
+                        del Gestor de archivos del Gestor de aplicaciones.
+}
+
+# #####
+
+ACTION DtEmptyTrash
+{
+        LABEL           Vaciar papelera
+        ARG_COUNT	      0
+        ICON            Dtshred
+        TYPE           	TT_MSG
+        TT_CLASS        TT_REQUEST
+        TT_SCOPE        TT_SESSION
+        TT_OPERATION    DtTrash_Empty
+	DESCRIPTION     La operación para vaciar la papelera (DtEmptyTrash) vacía la ventan de la papelera del escritorio \
+                        cuando se hace doble clic en el icono de dicha operación.
+}
+ACTION Dttrash
+{
+        LABEL           Papelera
+        ARG_COUNT	0
+        ICON		Dttrsh
+        TYPE           	TT_MSG
+        TT_CLASS	TT_REQUEST
+        TT_SCOPE	TT_SESSION
+        TT_OPERATION	DtTrash_Show
+	DESCRIPTION	La acción Papelera (Dttrash) abre la ventana Papelera \
+                        del escritorio cuando se realiza una doble pulsación \
+                        en el icono de la acción. Cuando se suelta un archivo en \
+                        el icono, dicho archivo se traspasa a la Papelera.
+}
+ACTION Dttrash
+{
+        LABEL           	Papelera
+        ARG_COUNT		>0
+        ICON			Dttrsh
+        TYPE            	TT_MSG
+        TT_CLASS                TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		DtTrash_Remove
+        TT_ARG0_MODE		TT_IN
+        TT_ARG0_VTYPE		string
+        TT_ARG1_MODE		TT_IN
+        TT_ARG1_VTYPE		string
+        TT_ARG1_REP_TYPE	TT_REP_STRING
+        TT_ARG1_VALUE		%Arg_1%
+	DESCRIPTION		La acción Papelera (Dttrash) abre la ventana Papelera \
+                        del escritorio cuando se realiza una doble pulsación \
+                        en el icono de la acción. Cuando se suelta un archivo en \
+                        el icono, dicho archivo se traspasa a la Papelera.
+}
+ACTION DtUnlink
+{
+        LABEL           	Papelera
+        ARG_COUNT		2
+        ICON			Dttrsh
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		DtTrash_Remove
+        TT_FILE			%Arg_1%
+        TT_ARG0_MODE		TT_IN
+        TT_ARG0_VTYPE   	string
+        TT_ARG1_MODE		TT_IN
+        TT_ARG1_VTYPE   	string
+        TT_ARG1_REP_TYPE	TT_REP_STRING
+	TT_ARG1_VALUE		%Arg_2%
+	DESCRIPTION	La acción Papelera (Dttrash) abre la ventana Papelera \
+                        del escritorio cuando se realiza una doble pulsación \
+                        en el icono de la acción. Cuando se suelta un archivo en \
+                        el icono, dicho archivo se traspasa a la Papelera.
+}
+ACTION DtUnlink
+{
+        LABEL           	Papelera
+        ARG_COUNT		>2
+        ICON			Dttrsh
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		DtTrash_Remove
+        TT_FILE			%Arg_1%
+        TT_ARG0_MODE		TT_IN
+        TT_ARG0_VTYPE   	string
+        TT_ARG0_REP_TYPE	TT_REP_STRING
+	TT_ARG0_VALUE		%Args%
+	DESCRIPTION		La acción Papelera (Dttrash) abre la ventana Papelera \
+                        del escritorio cuando se realiza una doble pulsación \
+                        en el icono de la acción. Cuando se suelta un archivo en \
+                        el icono, dicho archivo se traspasa a la Papelera.
+}
+
+ACTION PutOnWorkspace
+{
+        LABEL           	Poner en área de trabajo
+        ICON			Dtpodt
+        TYPE			TT_MSG
+        TT_CLASS			TT_REQUEST
+        TT_SCOPE			TT_SESSION
+        TT_OPERATION		DtFile_PutOnWorkspace
+        TT_FILE			%Arg_3%
+        TT_ARG0_MODE		TT_IN
+        TT_ARG0_VTYPE   	-workspace
+        TT_ARG0_REP_TYPE      	TT_REP_STRING
+	TT_ARG0_VALUE		%Arg_2%
+        TT_ARG2_MODE		TT_IN
+        TT_ARG2_VTYPE   	string
+        TT_ARG2_REP_TYPE	TT_REP_STRING
+	TT_ARG2_VALUE		%Arg_3%
+	DESCRIPTION		La operación (DtPutOnWorkspace) colocará el objeto en el área de trabajo
+}
+
+# #####
+
+ACTION FILESYSTEM_MOVE
+{
+        LABEL                   Move To Directory
+        TYPE                    TT_MSG
+        TT_CLASS                TT_REQUEST
+        TT_SCOPE                TT_SESSION
+        TT_OPERATION            DtFile_Move
+        TT_FILE                 %Arg_1%
+        TT_ARG0_MODE            TT_IN
+        TT_ARG0_VTYPE           string
+        TT_ARG0_REP_TYPE        TT_REP_STRING
+        TT_ARG0_VALUE           %Arg_1%
+        TT_ARG1_MODE            TT_IN
+        TT_ARG1_VTYPE           string
+        TT_ARG1_REP_TYPE        TT_REP_STRING
+        TT_ARG1_VALUE           %Args%
+        DESCRIPTION             The FILESYSTEM_MOVE action allows an Common                                Desktop Environment compliant application                                 to run an action to which causes the File                                 Manager to preform a move on the file(s)                                 passed in.  The format for this action is:                                 'FILESYSTEM_MOVE <folder_name_to> <files>'                                 where files is a full path name list of files                                 separated by spaces.
+
+
+
+
+
+
+
+}
+
+# #####
+
+ACTION FILESYSTEM_COPY
+{
+        LABEL                   Copy To Directory
+        TYPE                    TT_MSG
+        TT_CLASS                TT_REQUEST
+        TT_SCOPE                TT_SESSION
+        TT_OPERATION            DtFile_Copy
+        TT_FILE                 %Arg_1%
+        TT_ARG0_MODE            TT_IN
+        TT_ARG0_VTYPE           string
+        TT_ARG0_REP_TYPE        TT_REP_STRING
+        TT_ARG0_VALUE           %Arg_1%
+        TT_ARG1_MODE            TT_IN
+        TT_ARG1_VTYPE           string
+        TT_ARG1_REP_TYPE        TT_REP_STRING
+        TT_ARG1_VALUE           %Args%
+        DESCRIPTION             The FILESYSTEM_COPY action allows an Common                                Desktop Environment compliant application                                 to run an action to which causes the File                                 Manager to preform a copy on the file(s)                                 passed in.  The format for this action is:                                 'FILESYSTEM_COPY <folder_name_to> <files>'                                 where files is a full path name list of files                                 separated by spaces.
+
+
+
+
+
+
+
+}
+
+# #####
+
+ACTION FILESYSTEM_LINK
+{
+        LABEL                   Link To Directory
+        TYPE                    TT_MSG
+        TT_CLASS                TT_REQUEST
+        TT_SCOPE                TT_SESSION
+        TT_OPERATION            DtFile_Link
+        TT_FILE                 %Arg_1%
+        TT_ARG0_MODE            TT_IN
+        TT_ARG0_VTYPE           string
+        TT_ARG0_REP_TYPE        TT_REP_STRING
+        TT_ARG0_VALUE           %Arg_1%
+        TT_ARG1_MODE            TT_IN
+        TT_ARG1_VTYPE           string
+        TT_ARG1_REP_TYPE        TT_REP_STRING
+        TT_ARG1_VALUE           %Args%
+        DESCRIPTION             The FILESYSTEM_LINK action allows an Common                                Desktop Environment compliant application                                 to run an action to which causes the File                                 Manager to preform a link on the file(s)                                 passed in.  The format for this action is:                                 'FILESYSTEM_LINK <folder_name_to> <files>'                                 where files is a full path name list of files                                 separated by spaces.
+
+
+
+
+
+
+
+}
+
+# #####
+
+ACTION OpenFolder
+{
+        LABEL           	Abrir
+        TYPE            	TT_MSG
+        TT_CLASS		TT_REQUEST
+        TT_SCOPE		TT_SESSION
+        TT_OPERATION		Edit
+        TT_FILE		   	%Arg_1"Carpeta a abrir:"%
+        TT_ARG0_MODE		TT_INOUT
+        TT_ARG0_VTYPE   	FILE_NAME
+        DESCRIPTION		La acción Abrir en Ventana Nueva muestra una vista \
+                        del Gestor de archivos de la carpeta especificada \
+                        en la ventana nueva de Gestor de archivos.
+}
+
+# #####
+
+ACTION OpenNewView
+{
+        LABEL           Abrir en ventana nueva
+        TYPE            MAP
+	MAP_ACTION      Open
+}
+
+# #####
+
+ACTION OpenInPlace
+{
+        LABEL           Abrir en ventana actual
+        TYPE            MAP
+	MAP_ACTION      Open
+}
+
+# #####
+
+ACTION PrintFolderList
+{
+        LABEL           ImprimirListadoCarpeta
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     sh -c '                         ls -aLlF "%(File)Arg_1%" |                         /usr/dt/bin/dtlp -u "%(File)Arg_1%"'
+
+
+        DESCRIPTION     La acción ImprimirListadoCarpeta imprime el contenido \
+                        de una carpeta en la impresora predeterminada.
+}
+
+# ######################## EOF ############################################

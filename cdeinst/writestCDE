@@ -1,0 +1,6 @@
+echo "export PATH=/usr/dt/bin:$PATH" > /tmp/startCDE.tmp
+echo "export LANG=C" >> /tmp/startCDE.tmp
+echo "startx /usr/dt/bin/Xsession" >> /tmp/startCDE.tmp
+
+sudo mv /tmp/startCDE.tmp /usr/local/bin/startCDE
+sudo chmod +x /usr/local/bin/startCDE

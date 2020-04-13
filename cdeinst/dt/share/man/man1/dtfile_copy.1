@@ -1,0 +1,278 @@
+'\" t
+...\" file_cop.sgm /main/6 1996/10/30 16:26:59 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtfile_copy" "user cmd"
+.SH "NAME"
+\fBdtfile_copy\fP \(em the CDE File Manager copy utility
+.SH "SYNOPSIS"
+.PP
+\fBdtfile_copy\fP [options \&.\&.\&.]  [source_folder target_folder] 
+.SH "DESCRIPTION"
+.PP
+The CDE File Manager copy utility is used to
+recursively copy folders and their contents, including subfolders\&. The
+utility\&'s default action is to create a duplicate of the source_folder
+in the target_folder\&'s location\&. Thus objects which exist in the target
+but not in the source are deleted, objects which exist in the source but
+not in the target are copied, and objects which exist in the target and
+in the source are replaced if they are different\&. The utility compares
+both timestamp and size of two objects to determine if they are
+identical\&.
+.PP
+The copy utility is invoked by the File Manager whenever a user requests
+a folder be moved or copied\&. Its use is thus transparent to the user\&.
+However, it can also be explicitly invoked from a shell window\&. The
+utility has many options which can be used to modify its default
+behavior\&.
+.SH "OPTIONS"
+.PP
+The following options are available from the command line:
+.SS "-dontDoIt"
+.PP
+Write a description of the actions that would be performed to a dialog window,
+but do not modify any objects\&.
+.SS "-keepNew"
+.PP
+If an object exists in the source and target folders, do not replace the
+target object if it is newer than the source object\&.
+.SS "-keepOld"
+.PP
+If an object exists in the source and target folders, rename the
+existing target object by appending \&.old to the name before copying the
+source\&.
+.SS "-dontDelete"
+.PP
+If an object exists in the target folder but not the source, do not
+delete the target object\&.
+.SS "-dontAdd"
+.PP
+If an object exists in the source folder but not the target, do not copy
+the source file\&.
+.SS "-dontReplace"
+.PP
+If an object exists in the source and target folders, do not replace the
+target object\&.
+.SS "-dontRecur"
+.PP
+Process only the files in the source folder, do not process any
+subfolders\&.
+.SS "-keepLinks"
+.PP
+If the target object is a symbolic link to the source object, retain the link
+instead of replacing the link by a copy of the source object\&.
+.SS "-keepCopies"
+.PP
+If a source object is a symbolic link and the target object is a
+a copy of the object that the source link points at (i\&.e\&., has same
+size and timestamp), retain the target object instead of replacing
+it by a symbolic link\&.
+.SS "-forceCopies"
+.PP
+If an object exists in the source and target folders, copy the source
+object even if the timestamps and sizes are equal\&.
+.SS "-linkFolders"
+.PP
+If a folder exists in the source but not the target, create a symbolic link in
+the target pointing to the source instead of copying the source folder\&.
+.SS "-linkFiles"
+.PP
+If a file exists in the source but not the target, create a symbolic link in the
+target pointing to the source instead of copying the source file\&.
+.SS "-copyFolders"
+.PP
+If the source is a symbolic link to a folder, make a copy of the folder
+that the source link points at, instead of just copying the link\&.
+.SS "-copyFiles"
+.PP
+If the source is a symbolic link to a file, makes a copy of the file
+that the source link points at, instead of just copying the link\&.
+.SS "-copyTop"
+.PP
+If the target folder does not exist, create one\&.
+.SS "-move"
+.PP
+Following a successful copy operation, remove the source folder\&.
+.SS "-confirmReplace"
+.PP
+If an object exists in the source and target directories, display a
+dialog giving a choice of actions before proceeding\&.
+.SS "-confirmErrors"
+.PP
+If an error occurs processing an object, display a dialog describing the
+error before proceeding\&.
+.SS "-popDown"
+.PP
+Following a successful copy or move operation, automatically remove the
+dtfile_copy dialog after the interval specified by the delay option\&.
+.SS "-delay"
+.PP
+The time, in microseconds, that the dtfile_copy dialog is displayed after a
+successful copy operation is completed\&.
+.SS "-slow"
+.PP
+Pause for a preset time interval between each file operation\&.
+.SH "EXAMPLES"
+.SS "dtfile /u/aUser/FolderA /u/aUser/FolderA\&.backup"
+.PP
+The folder /u/aUser/FolderA\&.backup is made to be a duplicate of
+/u/aUser/FolderA\&. The name of each oject processed is written to a dialog window
+with an indication of the operation performed\&.
+.SH "RESOURCES"
+.PP
+.nf
+\f(CW \fBName             Class            Type             Default\fP
+
+dontDoIt         DontDoIt         XmRBoolean       False
+keepNew          KeepNew          XmRBoolean       False
+keepOld          KeepOld          XmRBoolean       False
+dontDelete       DontDelete       XmRBoolean       False
+dontAdd          DontAdd          XmRBoolean       False
+dontReplace      DontReplace      XmRBoolean       False
+dontRecur        DontRecur        XmRBoolean       False
+keepLinks        KeepLinks        XmRBoolean       False
+keepCopies       KeepCopies       XmRBoolean       False
+forceCopies      ForceCopies      XmRBoolean       False
+linkFolders      LinkFolders      XmRBoolean       False
+linkFiles        LinkFiles        XmRBoolean       False
+copyFolders      CopyFolders      XmRBoolean       False
+copyFiles        CopyFiles        XmRBoolean       False
+copyTop          CopyTop          XmRBoolean       False
+move             move             XmRBoolean       False
+confirmReplace   ConfirmReplace   XmRBoolean       False
+confirmErrors    ConfirmErrors    XmRBoolean       False
+popDown          PopDown          XmRBoolean       False
+delay            Delay            XmRBoolean       False
+toggle           Toggle           XmRBoolean       True
+slow             Slow             XmRBoolean       False\fR
+.fi
+.PP
+.SS "Dtfile*dontDoIt:"
+.PP
+Write a description of the actions that would be performed to a dialog window,
+but do not modify any objects\&.
+.SS "Dtfile*keepNew:"
+.PP
+If an object exists in the source and target folders, do not replace the
+target object if it is newer than the source object\&.
+.SS "Dtfile*keepOld:"
+.PP
+If an object exists in the source and target folders, rename the
+existing target object by appending \&.old to the name before copying the
+source\&.
+.SS "Dtfile*dontDelete:"
+.PP
+If an object exists in the target folder but not the source, do not
+delete the target object\&.
+.SS "Dtfile*dontAdd:"
+.PP
+If an object exists in the source folder but not the target, do not copy
+the source file\&.
+.SS "Dtfile*dontReplace:"
+.PP
+If an object exists in the source and target folders, do not replace the
+target object\&.
+.SS "Dtfile*dontRecur:"
+.PP
+Process only the files in the source folder, do not process any
+subfolders\&.
+.SS "Dtfile*keepLinks:"
+.PP
+If the target object is a symbolic link to the source object, retain the link
+instead of replacing the link by a copy of the source object\&.
+.SS "Dtfile*keepCopies:"
+.PP
+If a source object is a symbolic link and the target object is a
+a copy of the object that the source link points at (i\&.e\&., has same
+size and timestamp), retain the target object instead of replacing
+it by a symbolic link\&.
+.SS "Dtfile*forceCopies:"
+.PP
+If an object exists in the source and target folders, copy the source
+object even if the timestamps and sizes are equal\&.
+.SS "Dtfile*linkFolders:"
+.PP
+If a folder exists in the source but not the target, create a symbolic link in
+the target pointing to the source instead of copying the source folder\&.
+.SS "Dtfile*linkFiles:"
+.PP
+If a file exists in the source but not the target, create a symbolic link in the
+target pointing to the source instead of copying the source file\&.
+.SS "Dtfile*copyFolders:"
+.PP
+If the source is a symbolic link to a folder, make a copy of the folder
+that the source link points at, instead of just copying the link\&.
+.SS "Dtfile*copyFiles:"
+.PP
+If the source is a symbolic link to a file, makes a copy of the file
+that the source link points at, instead of just copying the link\&.
+.SS "Dtfile*copyTop:"
+.PP
+If the target folder does not exist, create one\&.
+.SS "Dtfile*move:"
+.PP
+Following a successful copy operation, remove the source folder\&.
+.SS "Dtfile*confirmReplace:"
+.PP
+If an object exists in the source and target directories, display a
+dialog giving a choice of actions before proceeding\&.
+.SS "Dtfile*confirmErrors:"
+.PP
+If an error occurs processing an object, display a dialog describing the
+error before proceeding\&.
+.SS "Dtfile*popDown:"
+.PP
+Following a successful copy or move operation, automatically remove the
+dtfile_copy dialog after the interval specified by the delay option\&.
+.SS "Dtfile*delay:"
+.PP
+The time, in microseconds, that the dtfile_copy dialog is displayed after a
+successful copy operation is completed\&.
+.SS "Dtfile*slow:"
+.PP
+Pause for a preset time interval between each file operation\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

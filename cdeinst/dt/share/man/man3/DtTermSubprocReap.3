@@ -1,0 +1,99 @@
+'\" t
+...\" TermSubR.sgm /main/8 1996/10/08 20:44:54 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtTermSubprocReap" "library call"
+.SH "NAME"
+\fBDtTermSubprocReap\fP \(em allow a DtTerm widget to clean up after subprocess termination
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Term\&.h>
+\fBvoid \fBDtTermSubprocReap\fP\fR(
+\fBpid_t \fBpid\fR\fR,
+\fBint *\fBstat_loc\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtTermSubprocReap\fP function allows DtTerm widgets to function correctly
+in applications that have installed a
+\fBSIGCHLD\fP signal handler\&.
+.PP
+The
+\fIpid\fP argument specifies the process ID of the child process
+\fBwait\fP(2) returns\&.
+.PP
+The
+\fIstat_loc\fP argument specifies the termination information
+\fBwait\fP(2) returns\&.
+.SH "RETURN VALUES"
+.PP
+The
+\fBDtTermSubprocReap\fP function returns no value\&.
+.SH "APPLICATION USAGE"
+.PP
+The
+\fBDtTermSubprocReap\fP function allows an application to install its own
+\fBSIGCHLD\fP signal handler\&.
+.PP
+The application must install its own
+\fBSIGCHILD\fP signal handler and call
+\fBDtTermSubprocReap\fP if the DtTerm widget was created with the
+\fBDtSubprocessTerminatorCatch\fP resource set to
+\fBFalse\fP\&.
+.PP
+The application must call the
+\fBDtTermSubprocReap\fP function after performing a
+\fBwait\fP(2) (or associated function) on a terminated child process\&.
+If the child process is associated with a DtTerm
+widget, the widget\&'s data structures are cleaned
+up and the associated callbacks invoked\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Term\&.h - DtTerm\fP(5), \fBDtTerm\fP(3), \fBsignal\fP(5), \fBwait\fP(2)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

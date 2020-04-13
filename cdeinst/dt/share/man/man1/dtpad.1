@@ -1,0 +1,558 @@
+'\" t
+...\" pad.sgm /main/12 1996/09/08 19:55:19 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtpad" "user cmd"
+.SH "NAME"
+\fBdtpad\fP \(em edit text files
+.SH "SYNOPSIS"
+.PP
+\fBdtpad\fP [-\fIoptions\fP]  [\fIfile\fP] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtpad\fP utility is a basic editor that supports
+editing text files in a manner consistent with other common Graphical User
+Interface text manipulation and file access mechanisms\&. Cursor positioning
+and text selection as well as access to various edit operations can be done
+via the standard Motif text manipulation mechanisms using the mouse or user-definable
+key combinations\&. Text can be cut, copied or pasted, or dragged to and from
+the Text Editor and/or other compliant application windows via the standard
+Motif Clipboard and ICCCM Primary and Secondary selection mechanisms\&. Also,
+standard dialogs are presented for accessing files and printing text\&.
+.PP
+The Text Editor also provides the following features:
+.IP "   \(bu" 6
+Pull down menus for common edit and file operations\&.
+.IP "   \(bu" 6
+Undo of the previous edit operation\&.
+.IP "   \(bu" 6
+Search and replace\&.
+.IP "   \(bu" 6
+Spell checking\&.
+.IP "   \(bu" 6
+Simple formatting\&.
+.IP "   \(bu" 6
+Wrap-to-fit and overstrike modes\&.
+.IP "   \(bu" 6
+Optional status line - allowing cursor positioning by line number\&.
+.IP "   \(bu" 6
+Automatic file save on many abnormal termination conditions\&.
+.IP "   \(bu" 6
+Mechanism for automatic session save and restore\&.
+.PP
+In the XCDE, the Text Editor can be a drag target
+for XCDE files, allowing a File Manager file icon to be dropped on a Text
+Editor window for insertion in the current text\&. Also, in XCDE, the Text
+Editor operates in a transparent client-server mode in which all text editing
+for a display is handled by a single Text Editor server process\&. In this mode,
+invoking the Text Editor causes the invoked Text Editor process to be relegated
+to the role of a requestor process that simply sends an edit request to the
+server process where the actual editing is handled\&. The server creates and
+maintains a separate edit window for each edit request and notifies the requestor
+when its edit window is closed\&. The requestor normally just blocks until told
+by the server to exit; however, if the server cannot honor the edit request
+(for example, it can\&'t access the directory containing the requestor\&'s file),
+the requestor handles the editing by itself\&. If a Text Editor server for a
+display is not running when an edit request is made, XCDE automatically
+starts one, normally on the XCDE session server (which need not be the
+same as the requestor\&'s host)\&. The normal client-server behavior can be disabled
+or altered via the Client and Server Control options described under the \fBOPTIONS\fP heading in this manual page\&. 
+.SH "OPTIONS"
+.PP
+The following options are available:
+.SS "Basic Command Line Options"
+.IP "\fB-saveOnClose\fP" 10
+Automatically and silently saves the current text when there are unsaved
+changes and the Text Editor is closed\&. The default action for this situation
+posts a dialog asking whether or not to save the current text\&. This option
+inhibits the posting of the Save dialog when the Text Editor is closed\&. The
+Save dialog is always posted when a new file is specified and there are unsaved
+changes\&.
+.IP "\fB-missingFileWarning\fP" 10
+Posts a Warning dialog whenever a file name is specified and the file
+does not exist or cannot be accessed\&.
+.IP "\fB-noReadOnlyWarning\fP" 10
+Disables the Warning dialog posted whenever a file is specified for
+which the user does not have write permission\&. The default posts a Warning
+dialog whenever this situation occurs\&.
+.IP "\fB-noNameChange\fP" 10
+Indicates that the default file name associated with the current text
+is not to change when the text is saved under a name different than what it
+was read in under\&. The current text can still be saved under a different file
+name; however, the default file name does not change\&. By default, the default
+file name is automatically changed to correspond to the last name under which
+the current text was saved\&.
+.IP "\fB-viewOnly\fP" 10
+Disallows editing of text in the edit window, essentially turning the
+Text Editor into a text viewer\&. The default allows text editing in the edit
+window even if the text was obtained from a file for which the user does not
+have write permission\&.
+.IP "\fB-statusLine\fP" 10
+Displays a status line at the bottom of the edit window\&. The status
+line shows the line number of the line where the text cursor is currently
+positioned\&. The text cursor can be positioned to a specific line by selecting
+the line number window in the status line, typing the desired number and pressing
+the Return key\&. Normally, a status line is not displayed\&.
+.IP "\fB-wrapToFit\fP" 10
+Initially turns on wrap-to-fit mode\&. Wrap-to-fit mode can be toggled
+on or off via the \fBEdit\fP menu Wrap-to-fit button
+and normally is initially turned off\&.
+.IP "\fB-workspaceList\fP \fIworkspace_list\fP" 10
+Displays the edit window for the current invocation of the Text Editor
+in the specified workspace or workspaces\&. The default displays the edit window
+in the workspace in which the Text Editor was invoked\&. The \fIworkspace_list\fP argument specifies a blank-separated list of XCDE workspaces\&.
+If more than one workspace is specified, the list must be enclosed in quotes\&.
+.IP "\fB-session\fP \fIsession_file\fP" 10
+Restores the Text Editor to all text editing windows and settings that
+were in effect at a previous XCDE shutdown\&. All other command-line options
+are ignored when this option is specified\&. The \fIsession_file\fP
+argument specifies a Text Editor session file, previously saved at session
+shutdown by the Text Editor, to be used to restore the Text Editor to its
+state at shutdown\&.
+.SS "Client and Server Control Options"
+.IP "\fB-standAlone\fP" 10
+Forces the current invocation of the Text Editor to do its own text
+processing in its own window, independent of the Text Editor server\&. This
+is useful for displaying the Text Editor with an environment different from
+that of other edit windows controlled by the server as, for example, to specify
+a different locale or different color resources\&. The Text Editor still supports
+file drag and drop in this mode\&.
+.IP "\fB-noBlocking\fP" 10
+Terminates the Text Editor requestor process as soon as the Text Editor
+server determines that it can handle the requestor\&'s edit request\&. If this
+option is not specified, the requestor blocks, terminating only when it receives
+notification from the server that its edit window has been closed\&.
+.IP "\fB-server\fP" 10
+Forces a Text Editor server to be started up (if one is not already
+running) to process all subsequent edit requests for the display\&. These edit
+requests are normally generated by subsequent invocations of the Text Editor
+without the \fB-standAlone\fP command-line option and cause
+the server to create a separate edit window to handle each request\&. Users
+normally do not need to use this option since the initial edit request for
+the display causes the XCDE to start a Text Editor server automatically\&.
+.IP "\fB-exitOnLastClose\fP" 10
+Specifies that the Text Editor server process is to terminate when the
+last edit window for the display is closed\&. It should only be used with the \fB-server\fP option since it only applies to the server process\&.
+If this option is not specified, the Text Editor server remains active indefinitely,
+even when all active edit windows have been closed\&.
+.SH "OPERANDS"
+.PP
+The following operand is supported:
+.IP "\fIfile\fP" 10
+The file to be edited or viewed\&. If no \fIfile\fP
+is specified, the Text Editor opens a new (empty) edit window and
+the file name must be specified when the contents are saved\&.
+.SH "RESOURCES"
+.PP
+The \fBdtpad\fP
+utility supports the specific Text Editor resources described here plus the
+standard resources related to the Text Editor widget hierarchy\&. The main widgets
+that make up the Text Editor hierarchy are shown under this heading to aid
+in specifying resources\&. The widget instance name is shown first, followed
+by the widget class name in parentheses\&. Indentation indicates hierarchical
+structure\&.
+.PP
+.nf
+\f(CWdtpad (Dtpad)
+    main (MainWindow)
+        bar (MenuBar)
+            fileMenu (PulldownMenu)
+            editMenu (PulldownMenu)
+            formatMenu (PulldownMenu)
+            optionsMenu (PulldownMenu)
+            helpMenu (PulldownMenu)
+        editor (DtEditor)\fR
+.fi
+.PP
+.PP
+The client-server architecture of \fBdtpad\fP
+restricts the scope of resources that can be specified for individual edit
+windows that the Text Editor server handles\&. For efficiency, only the resources
+specific to the Text Editor are passed on the Text Editor server\&. None of
+the standard widget resources, except for geometry, are passed on from the
+requestor Text Editor to the Text Editor server\&. These resources are loaded
+according to the environment on the server\&'s host at the time the server is
+started up\&. If more control is required, the \fB-standAlone\fP
+command-line option is used to create a separate, stand alone \fBdtpad\fP process where any and all of the standard resources, such as \fBfontList\fP or \fBcolors\fP, can be loaded according to
+the environment on the requestor\&'s host\&.
+.TS
+tab();
+lw(1.907088i) lw(1.896552i) lw(0.737548i) lw(0.958812i).
+\fBBasic Resources\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBsaveOnClose\fP\fBSaveOnClose\fP\fBBoolean\fRFalse
+\fBmissingFileWarning\fP\fBMissingFileWarning\fP\fBBoolean\fRFalse
+\fBreadOnlyWarning\fP\fBReadOnlyWarning\fP\fBBoolean\fRTrue
+\fBnameChange\fP\fBNameChange\fP\fBBoolean\fRTrue
+\fBviewOnly\fP\fBViewOnly\fP\fBBoolean\fRFalse
+\fBstatusLine\fP\fBStatusLine\fP\fBBoolean\fRFalse
+\fBwrapToFit\fP\fBWrapToFit\fP\fBBoolean\fRFalse
+\fBworkspaceList\fP\fBWorkspaceList\fP\fBString\fRNULL
+\fBsession\fP\fBSession\fP\fBString\fRNULL
+.TE
+.IP "\fBsaveOnClose\fP" 10
+Indicates whether the Text Editor is to save automatically the current
+text when there are unsaved changes and the Text Editor is closed\&. Setting
+this resource to True automatically saves unsaved changes when the Text Editor
+is closed\&. This is equivalent to specifying the \fB-saveOnClose\fP command-line option\&.
+.IP "\fBmissingFileWarning\fP" 10
+Indicates whether a warning dialog is to be posted when a file is specified
+that does not exist or cannot be accessed\&. Setting this resource to True displays
+the warning\&. This is equivalent to specifying the \fB-missingFileWarning\fP command-line option\&.
+.IP "\fBreadOnlyWarning\fP" 10
+Indicates whether a warning dialog is to be posted when a file for which
+the user does not have write permission is read\&. Setting this resource to
+False suppresses the warning\&. This is equivalent to specifying the \fB-noReadOnlyWarning\fP command-line option\&.
+.IP "\fBnameChange\fP" 10
+Indicates whether the current file name is to be changed when the current
+text is saved under a new name\&. Setting this resource to False does not allow
+the name to be reset\&. This is equivalent to specifying the \fB-noNameChange\fP command-line option\&.
+.IP "\fBviewOnly\fP" 10
+Indicates whether text only be viewed or whether it can be edited in
+the edit window\&. Setting this resource to True disables text editing\&. This
+is equivalent to specifying the \fB-viewOnly\fP command-line
+option\&.
+.IP "\fBstatusLine\fP" 10
+Indicates whether the Text Editor is to display the status line at the
+bottom of the edit window\&. Setting this resource to True displays the status
+line\&. This is equivalent to specifying the \fB-statusLine\fP
+command-line option\&.
+.IP "\fBwrapToFit\fP" 10
+Indicates whether the Text Editor is to enable wrap-to-fit mode when
+the editor is started\&. Setting this resource to True enables wrap-to-fit mode\&.
+This is equivalent to specifying the \fB-wrapToFit\fP command-line
+option\&.
+.IP "\fBworkspaceList\fP" 10
+Indicates which workspace or workspaces the Text Editor is to be displayed
+in\&. This is equivalent to specifying the \fB-workspaceList\fP
+command-line option\&.
+.IP "\fBsession\fP" 10
+Specifies the saved session file to use in restoring a previously saved
+Text Editor session\&. This is equivalent to specifying the \fB-session\fP command-line argument\&.
+.TS
+tab();
+lw(1.869518i) lw(1.773026i) lw(0.892544i) lw(0.964912i).
+\fBClient-Server Control
+Resources\fP
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBstandAlone\fP\fBStandAlone\fP\fBBoolean\fRFalse
+\fBblocking\fP\fBBlocking\fP\fBBoolean\fRTrue
+\fBserver\fP\fBServer\fP\fBBoolean\fRFalse
+\fBexitOnLastClose\fP\fBExitOnLastClose\fP\fBBoolean\fRFalse
+.TE
+.SS "Client And Server Control Resources"
+.IP "\fBstandAlone\fP" 10
+Specifies whether the Text Editor is to run as a separate, independent
+Text Editor process without using the Text Editor server\&. Setting this resource
+to True invokes a separate, independent process\&. This is equivalent to specifying
+the \fB-standAlone\fP command-line option\&.
+.IP "\fBblocking\fP" 10
+Specifies that the client Text Editor process is not to terminate until
+receiving notification from the Text Editor server that the user exited or
+closed its edit window\&. Setting this resource to False causes the client process
+to exit immediately when the server determines that it can handle its edit
+request\&. This is equivalent to specifying the \fB-noBlocking\fP
+command-line option\&.
+.IP "\fBserver\fP" 10
+Specifies that the Text Editor is to be started in server mode to handle
+all processing for all subsequent edit requests for the display\&. Setting this
+resource to True is equivalent to specifying the \fB-server\fP
+command-line option\&.
+.IP "\fBexitOnLastClose\fP" 10
+Specifies that the Text Editor server is to terminate when the last
+edit window for the display is closed\&. Setting this resource to True is equivalent
+to specifying the \fB-exitOnLastClose\fP command-line option\&.
+.SH "STDIN"
+.PP
+Not used\&.
+.SH "INPUT FILES"
+.PP
+None\&.
+.SH "PRINTING"
+.PP
+\fBdtpad\fP allows you to print either frgaments of text
+files or complete text files\&.
+.PP
+You print a fragment from a text file using Drag and Drop\&. Select the
+portion you want to print and drag the selected text over the printer icon
+on the desktop\&. This Drag and Drop action displays a print setup dialog
+that allows you to configure the print job and execute it\&.
+.PP
+You can print a complete text file either from the File Manager or
+from within \fBdtpad\fP\&.
+.PP
+To print from the File Manager, select the file\&'s icon and drag it
+over the printer icon on the desktop\&. As with printing a text file fragment,
+this Drag and Drop action displays a print setup dialog that allows you
+to configure the print job and execute it\&.
+.PP
+You can print the currently open document from within \fBdtpad\fP in either of two ways:
+.IP "   \(bu" 6
+By selecting \fBPrint\fP from the \fBFile\fP pulldown menu\&. With this method, \fBdtpad\fP
+prints the current file using the print setup options established by the
+last print job\&. No print setup dialog is displayed\&.
+.IP "   \(bu" 6
+By selecting \fBPrint\&.\&.\&.\fP from the \fBFile\fP pulldown menu\&. This method gives you the most control over
+the printing process and the resulting output\&. When you select \fBPrint\&.\&.\&.\fP, \fBdtpad\fP displays a Print Setup window
+that allows you to set a number of generic and printer-specific printing options\&.
+For example, you can send the output to a file or a printer\&. In the case
+of printed output, you can specify how many copies you want\&. You can also
+access another window to set options specific to the printer/spooler you are
+using\&. For example, you can select paper size, orientation, a banner page
+title, one- or two-sided printing, and email notification on completion of
+the print job\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+The following environment variables affect the execution of \fBdtpad\fP:
+.IP "\fBDISPLAY\fP" 10
+Specify the default X Windows display to connect to\&.
+.IP "\fBLANG\fP" 10
+Provide a default value for the internationalization variables that
+are unset or null\&. If \fBLANG\fP is
+unset or null, the corresponding value from the implementation-specific default
+locale will be used\&. If any of the internationalization variables contains
+an invalid setting, the utility behaves as if none of the variables had been
+defined\&.
+.IP "\fILC_ALL\fP" 10
+If set to a non-empty string value, override the values of all the other
+internationalization variables\&.
+.IP "\fILC_MESSAGES\fP" 10
+Determine the locale that is used to affect the format and contents
+of diagnostic messages written to standard error and informative messages
+written to standard output\&.
+.IP "\fBNLSPATH\fP" 10
+Determine the location of message catalogues for the processing of \fILC_MESSAGES\fP\&.
+.SH "ASYNCHRONOUS EVENTS"
+.SS "ToolTalk Messages"
+.PP
+The following ToolTalk Desktop and Media requests are supported by the
+Text Editor server:
+.IP "C_STRING" 10
+Text in an arbitrary codeset
+.IP "_DT_DATA" 10
+Data that does not match any other data type
+.PP
+In addition, the Text Editor supports the messages below for any media
+type that does not have a specific editor registered\&.
+.PP
+The following messages are supported from the Media Exchange message
+set:
+.IP "\fIInstantiate\fP" 10
+Opens a new edit window for composing arbitrary file(s)\&.
+.IP "\fBEdit\fP" 10
+Opens a new edit window for editing an existing file or buffer or for
+composing a specific new file or buffer\&.
+.IP "\fBDisplay\fP" 10
+Opens a new edit window for displaying an existing file or buffer\&.
+.PP
+The following messages are supported from the Desktop message set:
+.IP "\fBQuit\fP" 10
+Terminates the text editing services or closes a specific Text Editor
+edit window as specified by the \fIoperation2Quit\fP argument\&.
+The \fIoperation2Quit\fP argument must be the message ID of
+the Media Exchange request that created the edit window\&.
+.IP "" 10
+The default actions for notifying the user, saving or returning text
+and closing edit windows are:
+.RS
+.IP "   \(bu" 6
+If \fIoperation2Quit\fP is specified, the specified edit
+window is closed; otherwise, all edit window(s) are closed and the text editing
+services are terminated
+.IP "   \(bu" 6
+If there are unsaved changes, the user is notified and allowed to save
+the text and/or abort the \fBQuit\fP; otherwise,
+the user is not notified and the text is not saved (or returned if a buffer
+is being edited)
+.RE
+.IP "" 10
+Both the \fIsilent\fP and \fIforce\fP
+arguments are supported\&. However, the semantics of \fIsilent\fP
+differ from the Desktop message set in that the text editing services provides
+user notification only when there are unsaved changes, rather than user notification
+when an edit window is terminated\&. The following table describes variances
+in the default action for various combination of \fIsilent\fP
+and \fIforce\fP\&.
+.TS
+tab();
+lw(0.832237i) lw(0.964912i) lw(3.702851i).
+\fIsilent\fP\fIforce\fP\fIaction\fP
+\fBFalse\fP\fBFalse\fP\fIdefault\fP
+\fBTrue\fP\fBFalse\fPT{
+If there are unsaved changes, the user is
+not notified, the text is not saved and the edit window is not terminated\&.
+T}
+\fBFalse\fP\fBTrue\fPT{
+If there are unsaved changes, the user is
+still notified and allowed to save the text, but cannot abort the
+\fBQuit\fP\&.
+T}
+\fBTrue\fP\fBTrue\fPT{
+If there are unsaved changes, the user is
+not notified, the text is not saved and the edit window is closed\&.
+T}
+.TE
+.IP "" 10
+Whenever the \fBQuit\fP request is not carried
+out (i\&.e\&., in the default case when the user explicitly aborts the
+\fBQuit\fP or when \fIsilent\fP is True and \fIforce\fP is not specified or is False), the \fBQuit\fP request is failed with \fBTT_DESKTOP_ECANCELED\fP\&.
+.IP "\fBSave\fP" 10
+Saves a specific edit window opened via an \fBEdit\fP
+request\&. The ID argument must have the \fBmessageID\fP
+vtype and have the value of the message ID of the \fBEdit\fP request that created the edit window\&.
+.IP "\fBSaved\fP" 10
+Sent when a file has been saved, as the result of a \fBSave\fP request or a user action\&.
+.SH "STDOUT"
+.PP
+Not used\&.
+.SH "STDERR"
+.PP
+Not used\&.
+.SH "OUTPUT FILES"
+.PP
+None\&.
+.SH "EXTENDED DESCRIPTION"
+.PP
+None\&.
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.IP "0" 10
+Successful completion\&.
+.IP ">0" 10
+An error occurred\&.
+.SH "CONSEQUENCES OF ERRORS"
+.PP
+Default\&.
+.SH "APPLICATION USAGE"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "NOTES"
+.SS "Modes of Operation"
+.PP
+Each instance of the Text Editor operates in one of three modes:
+.IP "\fBRequestor Mode\fP" 10
+When the Text Editor is started without any overriding command-line
+options (that is, \fB-standAlone\fP or \fB-server\fP), it always attempts to run in this mode\&. In this mode it simply
+sends an edit request to a separate Text Editor server process and then blocks
+(does nothing) until it receives a notice from the server when its edit request
+is done, at which time it exits\&. If \fB-noBlocking\fP is
+specified, it exits immediately after the server accepts its edit request
+rather than waiting until the edit request is done\&.
+.IP "\fBStandAlone Mode\fP" 10
+If the Text Editor server cannot process the edit request from the Text
+Editor instance (for example, the server process doesn\&'t exist or can\&'t be
+started, or it can\&'t access the requestor\&'s file), or if \fB-standAlone\fP is specified on the command line, the Text Editor instance operates
+in \fBstandAlone\fP mode\&. In this mode the Text Editor creates
+its own edit window and handles all processing for this window on its own\&.
+In addition, it does not handle any edit requests from outside sources and
+it exits when its edit window is closed\&.
+.IP "\fBServer Mode\fP" 10
+When \fB-server\fP is specified on the command line,
+the Text Editor instance operates as a server for all Text Editor edit requests
+for the same display\&. That is, it creates a separate edit window and does
+the actual editing for all Text Editor instances running to the same display
+that do not have \fB-standAlone\fP specified on their command
+line\&. Only one Text Editor server for a display can exist, and in the XCDE,
+this instance is normally started automatically if it\&'s not running at the
+time an edit request is made\&.
+.SS "Automatic File Save"
+.PP
+The Text Editor automatically saves the current text to a panic save
+file before exiting whenever it encounters a panic signal or an internal X
+error\&. Panic signals are signals such as SIGHUP, SIGINT, SIGQUIT, SIGILL,
+SIGABRT, SIGIOT, SIGEMT, SIGFPE, SIGBUS, SIGSEGV, SIGSYS, SIGPIPE and SIGTERM\&.
+Internal X errors are both non fatal X Error events (as trapped by \fBXSetErrorHandler\fP(3)), such as a failure in X server memory allocation,
+and fatal X errors (as trapped by \fBXSetIOErrorHandler\fP),
+such as losing the connection to the X server\&. The Text Editor constructs
+the name of the panic save file by bracketing the file name as supplied by
+the user (or \fBnoName\fP if none is supplied) with enough number
+symbols ( \fB#\fP) to make the name unique\&.
+.SS "Wrap-to-fit Mode and Formatting"
+.PP
+Wrap-to-fit mode and text formatting are essentially independent operations\&.
+Wrap-to-fit mode pertains to the dynamic display of lines, as delimited by \fB<newline>\fP characters, which exceed the width of the Text Editor window
+and is based on the left and right window boundaries\&. When wrap-to-fit mode
+is off (the default), each line of text is displayed on a single line on the
+display and text entered at the right window boundary causes the window to
+scroll automatically to the right to accommodate the new text until an actual \fB<newline>\fP character is entered (normally, by pressing the Return key)\&.
+When wrap-to-fit mode is on, lines longer than the window width are automatically
+wrapped at the right window margin to one or more display lines, and text
+entered at the right window boundary is automatically broken on a word boundary
+to the first column of the next display line\&. Wrap-to-fit mode is dynamic
+in that wrapped lines are automatically adjusted when text is inserted or
+deleted or when the window is resized\&. Wrap-to-fit mode only affects the display
+of lines; it does not actually insert \fB<newline>\fP characters
+in the text\&.
+.PP
+Text formatting is a static operation that inserts actual \fB<newline>\fP (and/or \fB<space>\fP) characters directly in the text
+to match it to the left and right margins (and justification mode) specified
+in the Format Settings dialog\&. Format settings affect text only when explicitly
+applied and have no affect on wrap-to-fit mode or previously formatted text\&.
+Initially, and whenever the window is resized, the right format margin is
+automatically set to the window width to match the wrap-to-fit boundary\&.
+.SH "FILES"
+.IP "\fB/usr/dt/app-defaults/$LANG/Dtpad\fP" 10
+Text Editor Application Defaults\&.
+.IP "\fB/usr/dt/lib/nls/msg/$LANG/dtpad\&.cat\fP" 10
+Text Editor Message Catalog\&.
+.IP "\fB/usr/dt/appconfig/help/$LANG/Textedit\&.sdl\fP" 10
+Text Editor Help Volume\&.
+.IP "\fB/usr/dt/appconfig/types/$LANG/dtpad\&.dt\fP" 10
+Contains Text Editor action definitions used by the Text Editor\&.
+.IP "\fB/usr/dt/appconfig/tttypes/types\&.xdr\fP" 10
+ToolTalk process-types file containing message definitions used by the
+Text Editor\&.
+.IP "\fB#<file name>#\fP" 10
+Panic save file (see \fBAutomatic File Save\fP)\&.
+.SH "SEE ALSO"
+.PP
+\fBDtEditor\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

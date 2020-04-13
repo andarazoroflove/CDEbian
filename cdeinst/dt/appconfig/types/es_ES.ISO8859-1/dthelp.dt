@@ -1,0 +1,222 @@
+# #######################################################################
+# 
+#      dthelp.dt
+# 
+#      Actions and filetypes for Help files.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dthelp.dt.src /main/4 1996/04/23 17:35:19 drk $
+# 
+# #####################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Atributos de datos
+# 
+# ##################################################################
+DATA_ATTRIBUTES DTHELP_VOL
+{
+        ACTIONS         Open,Print
+        ICON		Dthvol
+        NAME_TEMPLATE   %s.sdl
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Es un archivo del volumen maestro para un volumen \
+                        de ayudas. Su tipo de datos se denomina DTHELP_VOL. \
+                        Los nombres de los archivos DTHELP_VOL finalizan \
+                        en '.sdl' o '.hv'.
+        TYPE_LABEL      DTHELP_VOL
+}
+DATA_CRITERIA DTHELP_VOL1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.sdl
+}
+DATA_CRITERIA DTHELP_VOL2
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.hv
+}
+ACTION Open
+{
+        LABEL           Abrir
+	ARG_TYPE 	DTHELP_VOL
+	TYPE		MAP
+        MAP_ACTION	Dthelpview
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        DTHELP_VOL
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HT
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.ht
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Es un archivo de tema de ayuda que forma parte de un \
+                        volumen de ayudas. Para ver el tema de ayuda, debe abrir \
+                        el archivo del volumen maestro. El tipo de datos de \
+                        este archivo se denomina DTHELP_HT. Los nombres de los \
+                        archivos DTHELP_HT finalizan en '.ht'.
+        TYPE_LABEL      DTHELP_HT
+}
+DATA_CRITERIA DTHELP_HT1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HT
+        NAME_PATTERN    *.ht
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HVK
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.hvk
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Es un archivo asociado con el volumen de ayudas \
+                        compilado. Para ver el volumen de ayudas, debe abrir \
+                        el archivo del volumen maestro. El tipo de datos de \
+                        este archivo se denomina DTHELP_HVK. Los nombres de \
+                        los archivos DTHELP_HVK finalizan en '.hvk'.
+        TYPE_LABEL      DTHELP_HVK
+}
+DATA_CRITERIA DTHELP_HVK1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HVK
+        NAME_PATTERN    *.hvk
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_XRH
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.xrh
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Es un archivo asociado con el volumen de ayudas \
+                        compilado. Para ver el volumen de ayudas, debe abrir \
+                        el archivo del volumen maestro. El tipo de datos de \
+                        este archivo se denomina DTHELP_XRH. Los nombres de \
+                        los archivos DTHELP_XRH finalizan en '.xrh'.
+        TYPE_LABEL      DTHELP_XRH
+}
+DATA_CRITERIA DTHELP_XRH
+{
+        DATA_ATTRIBUTES_NAME DTHELP_XRH
+        NAME_PATTERN    *.xrh
+        MODE            f
+}
+
+# ##################################################################
+# ##################################################################
+# 
+# Acciones
+# 
+# ##################################################################
+ACTION Dthelpview
+{
+        LABEL           Visor de ayuda
+	ARG_COUNT	0
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir $HOME/.dt/help/$DTUSERSESSION;                            /usr/dt/bin/dthelpview -helpVolume browser '
+
+	DESCRIPTION	La acción Visor de ayuda (Dthelpview) visualiza el Nivel superior \
+                        de ayuda cuando se realiza una doble pulsación en \
+                        el icono. Si se suelta un archivo de volumen de ayudas \
+                        en el icono, se muestra dicho volumen.
+}
+ACTION Dthelpview
+{
+        LABEL           Visor de ayuda
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen 				    -dir $HOME/.dt/help/$DTUSERSESSION;                             /usr/dt/bin/dthelpview -helpVolume "%(File)Arg_1%" '
+
+
+	DESCRIPTION	La acción Visor de ayuda (Dthelpview) visualiza el Nivel superior \
+                        de ayuda cuando se realiza una doble pulsación en \
+                        el icono. Si se suelta un archivo de volumen de ayudas \
+                        en el icono, se muestra dicho volumen.
+}
+
+# #######
+
+ACTION Dthelpgen
+{
+        LABEL           Generador de ayudas
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir                          "%(File)Arg_1"Ubicación donde poner los archivos de ayuda generados:"%"'
+
+	DESCRIPTION	La acción Generador de ayudas (Dthelpgen) ejecuta \
+                        dthelpgen que genera la ayuda en línea para un \
+                        usuario. También muestra el diálogo "Generando \
+                        información de examinador. Espere, por favor" \
+                        mientras se ejecuta. Esta acción se ejecuta cuando \
+                        un usuario inicia la sesión en el Common Desktop \
+                        Environment por primera vez.
+}
+ACTION Dthelpgen_delay
+{
+        LABEL           Generador de ayudas
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c 'sleep 15; /usr/dt/bin/dthelpgen -dir                          $HOME/.dt/help/$DTUSERSESSION'
+
+	DESCRIPTION	La acción Generador de ayudas (Dthelpgen) ejecuta \
+                        dthelpgen que genera la ayuda en línea para un \
+                        usuario. También muestra el diálogo "Generando \
+                        información de examinador. Espere, por favor" \
+                        mientras se ejecuta. Esta acción se ejecuta cuando \
+                        un usuario inicia la sesión en el Common Desktop \
+                        Environment por primera vez.
+}
+
+# #######
+
+ACTION Dtmanpageview 
+{
+        LABEL           Visor de página de manual
+        ICON		Dthover
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     sh -c ' /usr/dt/bin/dthelpview -manPage               `basename "%(File)Arg_1"Página man:"%" | sed /[.].*/s///`               -xrm "Dthelpview*manBox*columns: 100"'
+
+
+	DESCRIPTION	La acción Visor de página de manual (Dtmanpageview) \
+                        muestra una página de manual en la ventana del Visor \
+                        de ayuda rápida.
+}
+# ######################## EOF ############################################

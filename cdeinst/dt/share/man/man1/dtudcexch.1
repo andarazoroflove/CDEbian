@@ -1,0 +1,175 @@
+'\" t
+...\" udcexch.sgm /main/8 1996/09/08 19:57:46 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtudcexch" "user cmd"
+.SH "NAME"
+\fBdtudcexch\fP \(em UDC data exchange utility
+.SH "SYNOPSIS"
+.PP
+\fBdtudcexch\fP
+.SH "DESCRIPTION"
+.PP
+The \fBdtudcexch\fP utility is a tool for exchanging User
+Defined Character (UDC) glyph images between systems\&. It runs only in
+GUI mode\&.
+.PP
+\fBdtudcexch\fP provides the system administrator with a
+mechanism for distributing UDC glyph images among different systems\&.
+Specifically, it allows UDC glyph images to be created on one system
+using the UDC Font Editor (\fBdtudcfonted\fP) and then
+propagated to other systems\&. \fBdtudcexch\fP stores the UDC
+glyph images in a BDF (Bitmap Distribution Format) file, which is
+transported to a target system\&. On the taregt system,
+\fBdtudcexch\fP is run again, this time to extract the
+images from the BDF file and add them to the appropriate font file\&.
+.PP
+\fBdtudcexch\fP provides both an export and an import
+function\&. The export function reads the selected UDC
+glyph images from a font file and stores them in a BDF file for transfer
+to other systems\&. The import function reads all UDC glyph images in a
+BDF file and adds them to a specified font file\&.
+.PP
+\fBdtudcexch\fP searches font files in the directories
+that are specified on the X server\&'s font path or in the \fBDTUDCFONTPATH\fP environment variable\&. It accepts
+only UDC fonts that are available in the current locale and that are defined
+in the X NLS database\&.
+.PP
+When exporting, \fBdtudcexch\fP uses glyph indexes of the
+UDC code area in the PCF/SNF font file to select the UDC glyph images\&. It
+stores the converted images in the BDF-format file at the same glyph indexes\&.
+When importing, \fBdtudcexch\fP adds the UDC glyph images to
+the PCF/SNF font file at the same glyph indexes found in the BDF file\&. The
+UDC code area information is defined in the X NLS database\&.
+.PP
+To create different glyph indexes for the images on the target system,
+you can edit the BDF file before you invoke the import function\&.
+.SS "Starting the Exchange Utility"
+.PP
+Start the Exchange Utility by entering the \fBdtudcexch\fP
+command\&. The \fBStarting\fP window appears\&.
+.SS "Exporting UDCs"
+.PP
+To export UDCs:
+.IP "   1." 6
+Select the \fBexport function\fP button on the
+\fBStarting\fP window\&. The \fBFont
+Selection\fP window appears\&. (This window is the same as the
+\fBFont Selection\fP window in the Font Editor\&. For a
+description of the available operations on this window, see
+\fBdtudcfonted\fP(1)\&.)
+.IP "   2." 6
+Select a font on the \fBFont Selection\fP window and click
+\fBOpen\fP\&. The \fBUDC Glyph Indexes
+Selection\fP window appears\&. This window lists all the glyph
+indexes for all the UDC glyph images contained in the selected font\&.
+.IP "   3." 6
+Select one or more glyph indexes on the window\&. (To select multiple
+glyph indexes, use the \fBCtrl\fP or
+\fBShift\fP key as usual\&.) Then click
+\fBOK\fP\&. The \fBBDF File Selection\fP window
+appears\&.
+.IP "   4." 6
+Specify a file name on the \fBBDF File Selection\fP window
+and click \fBOK\fP\&. \fBdtudcexch\fP creates
+the file and stores the glyph images of the selected glyph indexes in
+the file in BDF format\&. \fBdtudcexch\fP then terminates\&.
+.SS "Importing UDCs"
+.PP
+To import UDCs:
+.IP "   1." 6
+Select the \fBimport function\fP button on the
+\fBStarting\fP window\&. The \fBBDF File
+Selection\fP window appears\&.
+.IP "   2." 6
+Specify the name of the BDF file that contains the UDC glyph images to
+be imported and click \fBOK\fP\&. The \fBFont
+Selection\fP window appears\&.
+.IP "   3." 6
+Select an XLFD (X Logical Font Description) font file and click
+\fBOpen\fP\&. \fBdtudcexch\fP adds all glyph
+imagees in the BDF file to the selected font\&.
+\fBdtudcexch\fP then terminates\&.
+.SH "EXIT STATUS"
+.IP "0" 10
+\fBdtudcexch\fP terminated successfully\&.
+.IP ">1" 10
+An error occurred\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+\fBdtudcexch\fP references the \fBDTUDCFONTPATH\fP variable, which is a colon-separated list of directories
+to search when looking for UDC font files\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.IP "Failed to open the selected font\&. You have no right to
+access the font file, or the format of the file is not consistent\&." 10
+An error occurred when attempting to open the PCF/SNF font file\&.
+.IP "Failed to open \fIBDF-font-file\fP\&. ou
+have no right to access the file, or the format of the file is not consistent\&." 10
+An error occurred when attempting to open the BDF font file\&.
+.IP "Glyph images in this BDF file can\&'t be added to
+the font\&." 10
+An error occurred when attempting to save the PCF/SNF font file\&.
+.IP "There are one or more glyph images being overwritten\&.
+Overwrite?" 10
+One or more glyph images in the PCF/SNF font file will be replaced
+by glyph images from the BDF file\&.
+.SH "FILES"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBdtudcfonted\fP(1)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,85 @@
+# ##########################################################################
+# 
+#      user-prefs.dt
+# 
+#      Actions which define user preferences.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: user-prefs.dt.src /main/4 1996/04/23 17:36:30 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# Definizioni del database delle azioni del CDE 
+#
+# Le azioni definite in questo file indirizzano le richieste di azioni 
+# generali come "Editor di testo" ad applicazioni specifiche come "Vi". 
+# Per personalizzare le mappature delle azioni, copiare questo file 
+# in $HOME/.dt/types/user-prefs.dt e sostituire le MAP_ACTION da 
+# rimappare con l'azione desiderata.
+#
+# Per determinare le azioni disponibili sul sistema, avviare la 
+# Gestione di applicazioni dal Pannello principale e aprire la 
+# cartella Strumenti_desktop.
+# 
+# ##########################################################################
+
+
+# Per utilizzare 'vi' come editor di testo, sostituire 'Dtpad'
+#  (l'editor di testo Motif del CDE) con 'Vi'. 
+
+ACTION TextEditor
+{
+        LABEL		Editor di testo
+        ICON            Dtpenpd
+	TYPE		MAP
+	MAP_ACTION	Dtpad
+        DESCRIPTION	L'azione Editor di testo avvia l'editor \
+                        impostato dall'utente.
+}
+
+# #####
+
+# Il terminale predefinito per il CDE è Dtterm. 
+
+ACTION Terminal
+{
+        LABEL		Terminale
+        ICON            Dtterm
+	TYPE		MAP
+	MAP_ACTION	Dtterm
+        DESCRIPTION	L'azione Terminale avvia l'emulatore di terminale \
+                        impostato dall'utente.
+}
+
+# #####
+
+# Il Cestino di default per il CDE è Dttrash.
+
+ACTION Trash
+{
+        LABEL		Cestino
+        ICON		Dttrsh
+	TYPE		MAP
+	MAP_ACTION	Dttrash
+        DESCRIPTION	L'azione Cestino avvia il cestino \
+                        definito dall'utente.
+}
+
+# ###################### EOF ############################################

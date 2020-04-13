@@ -1,0 +1,257 @@
+'\" t
+...\" f_join.sgm /main/6 1996/09/08 20:22:03 rws $
+...\" f_join.sgm /main/6 1996/09/08 20:22:03 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttdt_file_join" "library call"
+.SH "NAME"
+\fBttdt_file_join\fP \(em register to observe ToolTalk events on a file
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_pattern \fB*ttdt_file_join\fP\fR(
+\fBconst char *\fBpathname\fR\fR,
+\fBTt_scope \fBthe_scope\fR\fR,
+\fBint \fBjoin\fR\fR,
+\fBTtdt_file_cb \fBcb\fR\fR,
+\fBvoid *\fBclientdata\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttdt_file_join\fP function registers to observe
+\fIDeleted\fP, \fBModified\fP, \fBReverted\fP, \fIMoved\fP, and
+\fBSaved\fP notices\&.
+.PP
+If
+\fIjoin\fP is True,
+\fBttdt_file_join\fP calls
+\fBtt_file_join\fP with a
+\fIpathname\fP argument\&.
+.PP
+The
+\fIthe_scope\fP argument identifies the scope of the request\&.
+If
+\fIthe_scope\fP is
+\fBTT_SCOPE_NONE\fP, it tries
+\fBTT_BOTH\fP, and falls back to
+\fBTT_FILE_IN_SESSION\fP if, for example,
+the ToolTalk database server
+is not installed on the file server that owns
+\fIpathname\fP\&.
+.PP
+The
+\fBttdt_file_join\fP function
+associates
+\fIthe_scope\fP and a copy of
+\fIpathname\fP with the
+\fBTt_pattern\fRs returned, so that
+\fBttdt_file_quit\fP can access them\&.
+Thus, the caller is free to modify or free
+\fIpathname\fP after
+\fBttdt_file_join\fP returns\&.
+.PP
+The
+\fIclientdata\fP argument points to arbitrary data that will be passed
+into the callback unmodified\&.
+.PP
+The
+\fBTtdt_file_cb\fR argument is a callback defined as:
+.PP
+.nf
+\f(CWTt_message (*Ttdt_file_cb)(Tt_message \fImsg\fP,
+        Tttk_op \fIop\fP,
+        char *\fIpathname\fP,
+        void *\fIclientdata\fP,
+        int \fIsame_euid_egid\fP,
+        int \fIsame_procid\fP);\fR
+.fi
+.PP
+.PP
+The
+\fImessage\fP argument is the message\&.
+The
+\fIop\fP argument is the operation\&.
+The
+\fIpathname\fP argument is the pathname of the file the message is about\&.
+The
+\fIclientdata\fP argument is the client data passed into
+\fBttdt_file_join\fP\&. The
+\fIsame_euid_egid\fP argument is
+True if the sender can be trusted;
+otherwise it is False\&.
+The
+\fIsame_procid\fP argument is True if the sender
+is the same
+procid
+as the receiver;
+otherwise it is False\&.
+A
+\fBTtdt_file_cb\fR must return the message if it does not consume the message\&.
+(Consuming means replying, rejecting or failing
+a request, and then destroying the message\&.)
+Otherwise, it must consume the message and return either zero or a
+\fBtt_error_pointer\fP cast to
+\fBTt_message\fR\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttdt_file_join\fP function
+returns a null-terminated array of
+\fBTt_pattern\fR, which can be passed to
+\fBttdt_file_event\fP(3) to register for requests that the application should handle
+once it begins to modify the file;
+otherwise, it returns an error pointer\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned handle:
+.IP "TT_ERR_DBAVAIL" 10
+The ToolTalk service could not access the ToolTalk database
+needed for this operation\&.
+.IP "TT_ERR_DBEXIST" 10
+The ToolTalk service could not access the specified ToolTalk database
+in the expected place\&.
+.IP "TT_ERR_NOMEM" 10
+There is insufficient memory available to perform the function\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_PATH" 10
+The specified pathname included an unsearchable directory\&.
+.SH "APPLICATION USAGE"
+.PP
+The null-terminated array of
+\fBTt_pattern\fR returned by
+\fBttdt_file_join\fP should be destroyed by passing the array to
+\fBttdt_file_quit\fP(3)\&.
+.PP
+The
+\fIpathname\fP argument to
+\fBTtdt_file_cb\fR is a copy that can be freed using
+\fBtt_free\fP(3)\&.
+.SH "EXAMPLES"
+.PP
+This is the typical algorithm of a
+\fBTtdt_file_cb\fR:
+.PP
+.nf
+\f(CWTt_message myFileCB(Tt_message      msg,
+        Tttk_op         op,
+        char           *pathname,
+        int             trust,
+        int             isMe)
+{
+        tt_free(pathname);
+        Tt_status status = TT_OK;
+        switch(op) {
+            case TTDT_MODIFIED:
+                if ((_modifiedByMe)&&(! isMe)) {
+                        /* Hmm, the other editor either does not know or
+                         * does not care that we are already modifying the
+                         * file, so the last saver will win\&.
+                         */
+                } else {
+                        /* Interrogate user if she ever modifies the buffer */
+                        _modifiedByOther = 1;
+                        XtAddCallback(myTextWidget, XmNmodifyVerifyCallback,
+                                       myTextModifyCB, 0);
+                }
+                break;
+            case TTDT_GET_MODIFIED:
+                tt_message_arg_ival_set(msg, 1, _modifiedByMe);
+                tt_message_reply(msg);
+                break;
+            case TTDT_SAVE:
+                status = mySave(trust);
+                if (status == TT_OK) {
+                        tt_message_reply(msg);
+                } else {
+                        tttk_message_fail(msg, status, 0, 0);
+                }
+                break;
+            case TTDT_REVERT:
+                status = myRevert(trust);
+                if (status == TT_OK) {
+                        tt_message_reply(msg);
+                } else {
+                        tttk_message_fail(msg, status, 0, 0);
+                }
+                break;
+            case TTDT_REVERTED:
+                if (! isMe) {
+                        _modifiedByOther = 0;
+                }
+                break;
+            case TTDT_SAVED:
+                if (! isMe) {
+                        _modifiedByOther = 0;
+                        int choice = myUserChoice(myContext, myBaseFrame,
+                                                 "Another tool has saved "
+                                                 "this file\&.", 2, "Ignore",
+                                                 "Revert");
+                        switch(choice) {
+                            case 1:
+                                myRevert(1);
+                                break;
+                        }
+                }
+                break;
+            case TTDT_MOVED:
+            case TTDT_DELETED:
+                /* Do something appropriate */
+                break;
+        }
+        tttk_message_destroy(msg);
+        return 0;
+}\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttdt_file_quit\fP(3), \fBttdt_file_event\fP(3), \fBttdt_Get_Modified\fP(3), \fBttdt_Save\fP(3), \fBttdt_Revert\fP(3), \fBtt_file_join\fP(3), \fBtt_free\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

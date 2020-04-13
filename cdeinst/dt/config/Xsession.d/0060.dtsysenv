@@ -1,0 +1,60 @@
+# !/bin/ksh
+# ####################################################################
+# ##  File:              0060.srcsysenv
+# ##
+# ##  Default Location:  /usr/dt/config/Xsession.d/
+# ##
+# ##  Purpose:           Source system-defined environment variables
+# ##
+# ##  Description:
+# ##                     This script is invoked by means of the Xsession
+# ##                     file at user login.
+# ##
+# ##  Invoked by:        /usr/dt/bin/Xsession
+# ##
+# ##  $TOG: 0060.srcsysenv.src /main/1 1998/08/03 18:10:08 devobj $
+# ##
+# ##  (c) Copyright 1993, 1994 Hewlett-Packard Company
+# ##  (c) Copyright 1993, 1994 International Business Machines Corp.
+# ##  (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+# ##  (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary of
+# ##  (c) Copyright 1993, 1994 Novell, Inc.
+# ##
+# ####################################################################
+
+# ##
+# ####################################################################
+
+
+
+#
+# Source TIMEZONE
+#
+TZ_FILE=/etc/TIMEZONE
+if [ -f $TZ_FILE -a -r $TZ_FILE ]; then
+        . $TZ_FILE
+fi
+unset TZ_FILE
+
+#
+# Source PATH - it does NOT set the variable so this
+# this script must take of it
+#
+PATH_FILE=/etc/PATH
+if [ -f $PATH_FILE -a -r $PATH_FILE ]; then
+        export PATH="$PATH:`cat $PATH_FILE`"
+fi
+unset PATH_FILE
+
+#
+# Source MANPATH - it does NOT set the variable so this
+# this script must take of it
+#
+MANPATH_FILE=/etc/MANPATH
+if [ -f $MANPATH_FILE -a -r $MANPATH_FILE ]; then
+        export MANPATH="$MANPATH:`cat $MANPATH_FILE`"
+fi
+unset MANPATH_FILE
+
+# #########################         eof       #####################
+

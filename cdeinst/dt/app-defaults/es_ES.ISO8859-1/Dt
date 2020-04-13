@@ -1,0 +1,113 @@
+!######################################################################
+!#
+!#     Dt
+!#
+!#     Common Desktop Environment (Cde)
+!#
+!#     Global Defaults for Cde Desktop
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary 
+!#         of Novell, Inc.
+!#
+!#	$XConsortium: Dt.ad /main/3 1995/10/26 15:19:31 rswiston $
+!#
+!######################################################################
+
+*foregroundThreshold:	70
+
+!########
+!#
+!#   Help system specific resources
+!#
+!#
+!#  Window Sizes
+!#     
+!#     These resources set the window sizes for the Help windows.
+!#     These resources are complex because they have to override
+!#     the standard widget resources.   
+!#
+
+*DtHelpDialog*onHelpDialog.rows:                              23
+*DtHelpDialog*onHelpDialog.columns:                           69
+*DtHelpQuickDialog.printShell.printForm.printerField.columns: 10
+*DtHelpQuickDialog.printShell.printForm.copiesField.columns:  4
+*DtHelpDialog.printShell.printForm.printerField.columns:      10
+*DtHelpDialog.printShell.printForm.copiesField.columns:       4
+*DtHelpDialog.historyShell*historyTopicList.visibleItemCount: 5
+*DtHelpDialog.historyShell*historyVolumeList.visibleItemCount: 5
+*DtHelpDialog.searchShell*searchForm.srchWord.columns:        20
+*DtHelpDialog.searchShell*resultList.visibleItemCount:        12
+*DtHelpDialog.searchShell*fileSelectShell*selList.visibleItemCount: 15
+
+!#
+!#  Display Area Colors
+!#
+!#     These resources set the colors for the display area (where
+!#     actual help text is displayed).  The resources are complex
+!#     because they have to override the standard color resources
+!#     in all cases.  
+!#
+
+*XmDialogShell.DtHelpDialog*DisplayArea.background: White
+*XmDialogShell*XmDialogShell.DtHelpDialog*DisplayArea.background: White
+*XmDialogShell.DtHelpDialog*DisplayArea.foreground: Black
+*XmDialogShell*XmDialogShell.DtHelpDialog*DisplayArea.foreground: Black
+
+
+*XmDialogShell.DtHelpQuickDialog*DisplayArea.background: White
+*XmDialogShell*XmDialogShell.DtHelpQuickDialog*DisplayArea.background: White
+*XmDialogShell.DtHelpQuickDialog*DisplayArea.foreground: Black
+*XmDialogShell*XmDialogShell.DtHelpQuickDialog*DisplayArea.foreground: Black
+
+
+!########
+!# 
+!#  Menu Accelerators
+!#
+!#     The following resources establish keyboard accelerators
+!#     for the most frequently accessed menu commands.
+!#
+!########
+
+*DtHelpDialog*searchMenu.keyword.acceleratorText:     Control+I
+*DtHelpDialog*searchMenu.keyword.accelerator:         Control<Key>i
+*DtHelpDialog*navigateMenu.backTrack.acceleratorText: Control+B
+*DtHelpDialog*navigateMenu.backTrack.accelerator:     Control<Key>b
+*DtHelpDialog*navigateMenu.homeTopic.acceleratorText: Control+H
+*DtHelpDialog*navigateMenu.homeTopic.accelerator:     Control<Key>h
+*DtHelpDialog*fileMenu.close.acceleratorText:         Alt+F4
+*DtHelpDialog*fileMenu.close.accelerator:             Alt<Key>f4
+*DtHelpDialog*fileMenu.print.acceleratorText:         Control+P
+*DtHelpDialog*fileMenu.print.accelerator:             Control<Key>p
+*DtHelpDialog*editMenu.copy.acceleratorText:          Control+C
+*DtHelpDialog*editMenu.copy.accelerator:              Control<Key>c
+
+!########
+!#
+!#  Non-ISO-8859-1 font resources.
+!#
+!#     The following resources establish fonts used for help information
+!#     written using a non-ISO-8859-1 code set. The default is to be
+!#     empty.
+!#
+!########
+
+
+!#################################################################
+!#
+!#  Cde File Selection dialog global resources
+!#
+!#################################################################
+*XmFileSelectionBox.fileFilterStyle:    XmFILTER_HIDDEN_FILES
+*XmFileSelectionBox.pathMode:           XmPATH_MODE_RELATIVE
+*XmFileSelectionBox.resizePolicy:       XmRESIZE_GROW
+
+*XmFileSelectionBox*dirTextLabelString:         Entrar nombre de ruta o de carpeta:
+*XmFileSelectionBox*applyLabelString:           Actualizar
+*XmFileSelectionBox*selectionLabelString:       Entrar nombre del archivo:
+*XmFileSelectionBox*dirListLabelString:         Carpetas
+
+!###########################        eof      ###################

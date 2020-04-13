@@ -1,0 +1,88 @@
+# !/bin/ksh
+# ####################################################################
+# ##  File:              0030.dttmpdir
+# ##
+# ##  Default Location:  /usr/dt/config/Xsession.d/
+# ##
+# ##  Purpose:           Create the temporary directory on a per-user,
+# ##                     per-session basis, keying on the $DTUSERSESSION
+# ##                     value, which can also be set by the dtsearchpath 
+# ##                     utility.
+# ##
+# ##  Description:
+# ##                     This script is invoked by means of the Xsession file
+# ##                     at user login.  It creates a temporary directory
+# ##                     for files on behalf of the user.
+# ##
+# ##  Invoked by:        /usr/dt/bin/Xsession
+# ##
+# ##  Product:           @(#)Common Desktop Environment 1.0          
+# ##
+# ##  Note:              Creates the /var/dt directory if one doesn't exist.
+# ##                     However, root privilege may be required.  If /var/dt
+# ##                     disappears, then logging in as root should restore it.
+# ##
+# ##  $TOG: 0030.dttmpdir.src /main/7 1997/04/21 12:08:15 samborn $
+# ##
+# ##  (c) Copyright 1993, 1994 Hewlett-Packard Company
+# ##  (c) Copyright 1993, 1994 International Business Machines Corp.
+# ##  (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+# ##  (c) Copyright 1993, 1994 Unix System Labs, Inc., a subsidiary of
+# ##      Novell, Inc.
+# ####################################################################
+
+
+if (( ${#DTUSERSESSION} == 0 ))
+then
+    #
+    #  Set the DTAPPMANDIR directory component, which will control
+    #  the location of the user's Application Manager directory,
+    #  as well as the location of his or her temporary directory.
+    #
+      DTAPPDIR_HOST_COMPONENT=${DISPLAY%:*}
+      DTAPPDIR_DISP_COMPONENT=${DISPLAY#*:}
+
+      if [[ ${DTAPPDIR_HOST_COMPONENT} = "" ]]
+      then
+	   DTAPPDIR_HOST_COMPONENT=`uname -n`
+      fi
+    
+    #
+    #  If the screen number is "0" (e.g., "host:3.0"), then
+    #  strip off the screen number.
+    #
+      if [[ ${DTAPPDIR_DISP_COMPONENT#*.} = "0" ]]
+      then
+          DTAPPDIR_DISP_COMPONENT=${DTAPPDIR_DISP_COMPONENT%.0}
+      fi
+    
+      DTUSERSESSION=${LOGNAME}-${DTAPPDIR_HOST_COMPONENT}-${DTAPPDIR_DISP_COMPONENT}
+      export DTUSERSESSION
+fi
+
+# 
+# 	Create the /var/dt subdirectory, if one doesn't exist
+# 
+if [[ ! -d /var/dt ]]
+then
+        #
+	#  This step requires root privilege
+	#
+	mkdir -p /var/dt >/dev/null 2>/dev/null
+	chmod 755 /var/dt >/dev/null 2>/dev/null
+	chgrp bin /var/dt >/dev/null 2>/dev/null
+	chown bin /var/dt >/dev/null 2>/dev/null
+fi
+
+if [ ! -d /var/dt/tmp ]
+then
+	#
+	#  This step requires root privilege
+	#
+	mkdir -p /var/dt/tmp >/dev/null 2>/dev/null
+	chmod 755 /var/dt/tmp >/dev/null 2>/dev/null
+	chgrp bin /var/dt/tmp >/dev/null 2>/dev/null
+	chown bin /var/dt/tmp >/dev/null 2>/dev/null
+fi
+
+# #########################         eof       ########################

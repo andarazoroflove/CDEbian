@@ -1,0 +1,774 @@
+# ##########################################################################
+#
+#     uxstd.dt
+#
+#     Action and DataType definitions for standard operating system commands.
+#
+#    (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#    (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#    (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#    (c) Copyright 1993, 1994, 1995 Novell, Inc.
+#
+# $TOG: uxstd.dt.src /main/7 1998/07/29 17:09:27 mgreess $
+#
+# ##########################################################################
+
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+#
+# AVISO:  Se puede sobreescribir este archivo en instalaciones subsiguientes
+#     del Common Desktop Environment (CDE). Por tanto, cualquier cambio
+#     general del sistema se debe realizar en un archivo de base de datos
+#     equivalente de /etc/dt/types y no en este archivo.
+#
+# ##########################################################################
+
+# ##########################################################################
+#
+# Atributos de datos
+# 
+# ##########################################################################
+DATA_ATTRIBUTES MAN_PAGE
+{
+        ACTIONS         Open,Print
+        ICON            Dtmanpg
+        IS_TEXT		true
+        ACTIONS         Open,Print
+        MIME_TYPE	text/plain
+	DESCRIPTION	Este archivo contiene una página de manual. \
+                        Su tipo de datos se denomina MAN_PAGE.
+        TYPE_LABEL      MAN_PAGE
+}
+DATA_CRITERIA MAN_PAGE1
+{
+        DATA_ATTRIBUTES_NAME MAN_PAGE
+        MODE            f
+        PATH_PATTERN    */man/man*/*.[1-9]*
+}
+DATA_CRITERIA MAN_PAGE2
+{
+        DATA_ATTRIBUTES_NAME MAN_PAGE
+        MODE            f
+        PATH_PATTERN    */man/cat*/*.[1-9]*
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        MAN_PAGE
+        TYPE            MAP
+        MAP_ACTION	Dtmanpageview
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        MAN_PAGE
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtlp -a "%Arg_1%"
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES TAR
+{
+        ACTIONS         Open,TarUnpack,Print
+        ICON		Dtmagtp
+        NAME_TEMPLATE	%s.tar
+        MIME_TYPE	application/octet-stream
+	DESCRIPTION	Este archivo es un archivo archivador que contiene \
+                        varios archivos individuales. Su tipo de datos se \
+                        denomina TAR. Los nombres de los archivos TAR \
+                        finalizan en '.tar'.
+        TYPE_LABEL      TAR
+}
+DATA_CRITERIA TAR1
+{
+	DATA_ATTRIBUTES_NAME TAR
+        MODE            f
+	NAME_PATTERN	*.tar
+}
+ACTION Open
+{
+        LABEL           Abrir
+        ARG_TYPE        TAR
+        TYPE            MAP
+        MAP_ACTION      TarList
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        TAR
+        TYPE            MAP
+        MAP_ACTION      PrintTarList
+}
+ACTION TarList
+{
+	LABEL		Contenido de la lista del archivo archivador
+        ICON		Dtmagtp
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                         tar -tvf "%(File)Arg_1%" 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+	DESCRIPTION	La acción Contenido de la lista del archivo archivador (TarList) \
+                        lista los archivos contenidos en un archivo archivador TAR.
+}
+ACTION PrintTarList
+{
+	LABEL		ImprimirListaTar
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     sh -c '                         tar -tvf "%(File)Arg_1%" |                            /usr/dt/bin/dtlp -u "Contenido de la lista del archivo archivador"'
+
+
+	DESCRIPTION	La acción ImprimirListaTar imprime una lista de los \
+                        archivos contenidos en un archivo archivador TAR \
+                        en la impresora predeterminada.
+}
+ACTION TarUnpack
+{
+	LABEL		Desempaquetar archivo archivador
+        ICON		Dtmagtp
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	                tar -xvf "%(File)Arg_1"Nombre del archivo:"%"                            2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+	DESCRIPTION	La acción Desempaquetar archivo archivador (TarUnpack) \
+                        acepta un archivo TAR como argumento y separa los \
+                        archivos archivados en archivos independientes.
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES COMPRESSED
+{
+        ACTIONS         Uncompress
+        ICON		Dtcmprs
+        NAME_TEMPLATE	%s.Z
+        MIME_TYPE	application/octet-stream
+        SUNV3_TYPE      compress
+	DESCRIPTION	Es un archivo que lo ha comprimido el mandato \
+                        compress para que ocupe menos espacio. Su tipo de \
+                        datos se denomina COMPRESSED. Los nombres de los \
+                        archivos COMPRESSED finalizan en '.Z'.
+        TYPE_LABEL      COMPRESSED
+}
+DATA_CRITERIA COMPRESSED1
+{
+	DATA_ATTRIBUTES_NAME COMPRESSED
+        MODE            f
+        NAME_PATTERN    *.Z
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        COMPRESSED
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+ACTION Uncompress
+{
+	LABEL		Descomprimir archivo
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	                uncompress -vf "%(File)Arg_1%" %(File)Args% 2>&1 |                            \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+	DESCRIPTION	La acción Descomprimir archivo acepta uno o más \
+                        archivos que se han comprimido utilizando el mandato \
+                        'compress' y los descomprime. Utiliza el mandato \
+                        'uncompress'.
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES SHELL
+{
+        ACTIONS         Run,Open,Print
+        ICON            Dtbshll
+        IS_EXECUTABLE   true
+        COPY_TO_ACTION  Execute
+        NAME_TEMPLATE	%s.sh
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      shell-script
+        DESCRIPTION     Este archivo contiene un script ejecutable que se ha \
+                        escrito utilizando el lenguaje de scripts del \
+                        shell BOURNE. Su tipo de datos se denomina SHELL. \
+                        Los nombres del archivo SHELL finalizan en '.sh' \
+                        o contienen los caracteres "#!/bin/sh" o "#! /bin/sh".
+        TYPE_LABEL      SHELL
+}
+DATA_CRITERIA SHELL1
+{
+        DATA_ATTRIBUTES_NAME SHELL
+        MODE            f&x
+	NAME_PATTERN	*.sh
+}
+DATA_CRITERIA SHELL2
+{
+        DATA_ATTRIBUTES_NAME SHELL
+        CONTENT         0 string #!/bin/sh
+        MODE            f&x
+}
+DATA_CRITERIA SHELL3
+{
+        DATA_ATTRIBUTES_NAME SHELL
+        CONTENT         0 string #! /bin/sh
+        MODE            f&x
+}
+ACTION Run
+{
+        LABEL           Ejecutar
+        ARG_TYPE        SHELL
+        TYPE            MAP
+        MAP_ACTION      Execute
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES CSHELL
+{
+        ACTIONS         Run,Open,Print
+        ICON            Dtcshll
+        IS_EXECUTABLE   true
+        COPY_TO_ACTION  Execute
+        NAME_TEMPLATE	%s.csh
+        MIME_TYPE	text/plain
+        SUNV3_TYPE      cshell-script
+        DESCRIPTION     Este archivo contiene un script ejecutable que se ha \
+                        escrito utilizando el lenguaje de scripts de C-SHELL. \
+                        Su tipo de datos se denomina CSHELL. Los nombres de \
+                        archivo CSHELL finalizan en '.csh' o contienen los \
+                        caracteres "#!/bin/csh" o "#! /bin/csh".
+        TYPE_LABEL      CSHELL
+}
+DATA_CRITERIA CSHELL1
+{
+        DATA_ATTRIBUTES_NAME CSHELL
+        MODE            f&x
+        NAME_PATTERN    *.csh
+}
+DATA_CRITERIA CSHELL2
+{
+        DATA_ATTRIBUTES_NAME CSHELL
+        CONTENT		0 string #!/bin/csh
+        MODE            f&x
+}
+DATA_CRITERIA CSHELL3
+{
+        DATA_ATTRIBUTES_NAME CSHELL
+        CONTENT		0 string #! /bin/csh
+        MODE            f&x
+}
+ACTION Run
+{
+        LABEL           Ejecutar
+        ARG_TYPE        CSHELL
+        TYPE            MAP
+        MAP_ACTION      Execute
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES KSHELL
+{
+        ACTIONS         Run,Open,Print
+        ICON            Dtkshll
+        IS_EXECUTABLE   true
+        COPY_TO_ACTION  Execute
+        NAME_TEMPLATE	%s.ksh
+        MIME_TYPE	text/plain
+        DESCRIPTION     Este archivo contiene un script ejecutable que se ha \
+                        escrito utilizando el lenguaje de scripts de K-SHELL. \
+                        Su tipo de datos se denomina KSHELL.  Los nombres de \
+                        archivo KSHELL finalizan en '.ksh' o contienen los \
+                        caracteres "#!/bin/ksh" o "#! /bin/ksh".
+        TYPE_LABEL      KSHELL
+}
+DATA_CRITERIA KSHELL1
+{
+        DATA_ATTRIBUTES_NAME KSHELL
+        MODE            f&x
+        NAME_PATTERN    *.ksh
+}
+DATA_CRITERIA KSHELL2
+{
+        DATA_ATTRIBUTES_NAME KSHELL
+        CONTENT		0 string #!/bin/ksh
+        MODE            f&x
+}
+DATA_CRITERIA KSHELL3
+{
+        DATA_ATTRIBUTES_NAME KSHELL
+        CONTENT		0 string #! /bin/ksh
+        MODE            f&x
+}
+DATA_CRITERIA KSHELL4
+{
+        DATA_ATTRIBUTES_NAME KSHELL
+        CONTENT		0 string #!/bin/ksh
+        MODE            f&x
+}
+DATA_CRITERIA KSHELL5
+{
+        DATA_ATTRIBUTES_NAME KSHELL
+        CONTENT		0 string #! /bin/ksh
+        MODE            f&x
+}
+ACTION Run
+{
+        LABEL           Ejecutar
+        ARG_TYPE        KSHELL
+        TYPE            MAP
+        MAP_ACTION      Execute
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES SHAR
+{
+        ACTIONS         Unshar
+        ICON 		Dtshar           
+        NAME_TEMPLATE	%s.shar
+        MIME_TYPE	text/plain
+        DESCRIPTION     Este archivo es un paquete de archivos de shell. \
+                        Los paquetes de archivos de shell se \
+                        utilizan normalmente para archivos de correo. \
+                        Su tipo de datos se denomina SHAR. Los nombres \
+                        de los archivos SHAR finalizan en '.shar'.
+        TYPE_LABEL      SHAR
+}
+DATA_CRITERIA SHAR1
+{
+        DATA_ATTRIBUTES_NAME SHAR
+        MODE            f
+        NAME_PATTERN    *.shar
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        SHAR
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+ACTION Unshar
+{
+        LABEL           Deshacershar
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                         sh "%(File)Arg_1%" 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+        DESCRIPTION     La acción Deshacershar acepta un archivo en el que \
+                        se ha ejecutado el mandato shar y deshace la \
+                        acción de dicho mandato.
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES UUENCODE
+{
+        ACTIONS         Uudecode
+        ICON            Dtuuncd
+        NAME_TEMPLATE	%s.uu
+        MIME_TYPE	text/plain
+        DESCRIPTION     Es un archivo binario utilizado para la \
+                        transmisión a través de una aplicación de correo \
+                        Su tipo de datos se denomina UUENCODE. Los nombres \
+                        de los archivos UUENCODE finalizan en '.uu'.
+        TYPE_LABEL      UUENCODE
+}
+DATA_CRITERIA UUENCODE1
+{
+        DATA_ATTRIBUTES_NAME UUENCODE
+        MODE            f
+        NAME_PATTERN    *.uu
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        UUENCODE
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+ACTION Uudecode
+{
+        LABEL           Uudecode
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                         uudecode "%(File)Arg_1%" 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+        DESCRIPTION     La acción Uudecode acepta un archivo en el que \
+                        se ha ejecutado el mandato uuencode y deshace \
+                        la acción de dicho mandato.
+}
+
+# ##########################################################
+
+DATA_ATTRIBUTES MESSAGE_CAT
+{
+        ACTIONS         (None)
+        ICON            Dtcat
+        NAME_TEMPLATE   %s.cat
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Este archivo contiene un mensaje localizado \
+                        para un ejecutable. Su tipo de datos se denomina \
+                        MESSAGE_CAT. Los nombres de los archivos MESSAGE_CAT \
+                        finalizan en '.cat'.
+        TYPE_LABEL      MESSAGE_CAT
+}
+DATA_CRITERIA MESSAGE_CAT1
+{
+        DATA_ATTRIBUTES_NAME MESSAGE_CAT
+        MODE            f
+        NAME_PATTERN    *.cat
+}
+ACTION Print
+{
+        LABEL           Imprimir
+        ARG_TYPE        MESSAGE_CAT
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# ##########################################################################
+# ##########################################################################
+#
+# Acciones
+# 
+# ##########################################################################
+# #####################
+#
+# Editores de Unix
+#
+# #####################
+ACTION Vi
+{
+        LABEL		Editor de textos (Vi)
+        ARG_COUNT       0
+	TYPE		COMMAND
+	WINDOW_TYPE	TERMINAL
+        EXEC_STRING     vi
+	DESCRIPTION	La acción Editor de textos (Vi) ejecuta el mandato 'vi' \
+                        en una ventana de la terminal y carga un archivo \
+                        de datos si el usuario lo suministra.
+}
+ACTION Vi
+{
+        LABEL		Editor de textos (Vi)
+	TYPE		COMMAND
+	WINDOW_TYPE	TERMINAL
+        EXEC_STRING     vi "%(File)Arg_1"Archivo a editar:"%"
+	DESCRIPTION	La acción Editor de textos (Vi) ejecuta el mandato 'vi' \
+                        en una ventana de la terminal y carga un archivo \
+                        de datos si el usuario lo suministra.
+}
+
+# ######
+
+ACTION Vedit
+{
+        LABEL		Vedit
+        ARG_COUNT       0
+	TYPE		COMMAND
+	WINDOW_TYPE	TERMINAL
+	EXEC_STRING	vedit
+	DESCRIPTION	La acción Vedit ejecuta el mandato 'vi' \
+                        en modo 'vedit' en una ventana de la terminal. Carga
+}
+ACTION Vedit
+{
+        LABEL		Vedit
+	TYPE		COMMAND
+	WINDOW_TYPE	TERMINAL
+	EXEC_STRING	vedit "%(File)Arg_1"Archivo a editar:"%"
+	DESCRIPTION	La acción Vedit ejecuta el mandato 'vi' \
+                        en modo 'vedit' en una ventana de la terminal. Carga
+}
+
+# #####################
+#
+# Mandatos de Unix
+#
+# #####################
+# La siguiente acción utiliza 'true %(File)Args%' en EXEC_STRING.
+# El único resultado de esta sentencia es hacer que todos los
+# argumentos se 'utilicen' en una sola invocación de la acción.
+ACTION Tar
+{
+	LABEL		Archivar
+        ICON		Dtmagtp
+	ARG_COUNT	>1
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	          sh -c '            if [ "%(File)Args%" = "" ] ; then                 /usr/dt/bin/dterror.ds             "La acción Archivar sólo acepta un único\\n \
+argumento que debe ser una carpeta."             "Argumentos no válidos"             "OK" ;            else            true %(File)Args%;            /usr/dt/bin/dterror.ds             "La acción Archivar sólo acepta un único\\n \
+argumento que debe ser una carpeta."             "Argumentos no válidos"             "OK"            fi; '
+	DESCRIPTION	La acción Archivar (Tar) acepta un argumento de \
+                        carpeta y archiva todos los archivos que \
+                        contiene en un solo archivo "tar". Utiliza el \
+                        mandato 'tar'.
+}
+ACTION Tar
+{
+	LABEL		Archivar
+        ICON		Dtmagtp
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+	EXEC_STRING		  sh -c '             if [ "%(File)Args%" = "" ] ; then 	        echo "ERROR: '%(File)Arg_1%' no es una carpeta.";             else 	    if [ ! -d "%(File)Arg_1"Carpeta a archivar:"%" ] ; then 	        echo "ERROR: '%(File)Arg_1%' no es una carpeta."; 	    else                 FOLDER="%(File)Arg_1%.tar"; 	        TAR_FILE=`basename "%(File)Arg_1%.tar"`;                 echo "Creando \$FOLDER.";                 echo "[Espere, por favor ...]\\n"; 	        tar -cvf \$TAR_FILE `basename "%(File)Arg_1%"` 2>&1 | 	          \${PAGER:-more};                 echo "\\nEl Archivo archivador se ha creado y se ha almacenado en \$FOLDER."; 	    fi; 	    fi; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+	DESCRIPTION	La acción Archivar (Tar) acepta un argumento de \
+                        carpeta y archiva todos los archivos que \
+                        contiene en un solo archivo "tar". Utiliza el \
+                        mandato 'tar'.
+}
+
+# ######
+
+ACTION TarList
+{
+        LABEL           Contenido de la lista del archivo archivador
+        ICON		Dtmagtp
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtaction TarList                             "%(File)Arg_1"Archivo archivador a listar:"%"
+
+        DESCRIPTION     La acción Contenido de la lista del archivo archivador (TarList) \
+                        lista los archivos contenidos en un archivo archivador TAR.
+}
+
+# ######
+
+ACTION TarUnpack
+{
+        LABEL           Desempaquetar archivo archivador
+        ICON		Dtmagtp
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtaction TarUnpack                             "%(File)Arg_1"Archivo archivador a desempaquetar:"%"
+
+        DESCRIPTION     La acción Desempaquetar archivo archivador (TarUnpack) \
+                        acepta un archivo TAR como argumento y separa los \
+                        archivos archivados en archivos independientes.
+}
+
+# ######
+
+ACTION Compress
+{
+	LABEL		Comprimir archivo
+        ICON		Dtcmprs
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	                 compress -vf "%(File)Arg_1"Archivo a comprimir:"%"                          %(File)Args% 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+	DESCRIPTION	La acción Comprimir archivo (Compress) acepta \
+                        uno o más archivos y los comprime utilizando el \
+                        mandato 'compress'.
+}
+
+# ######
+
+ACTION Uncompress
+{
+        LABEL           Descomprimir archivo
+        ICON		Dtcmprs
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     /usr/dt/bin/dtaction Uncompress                             "%(File)Arg_1"Archivo a descomprimir:"%"
+
+        DESCRIPTION     La acción Descomprimir archivo acepta uno o más \
+                        archivos que se han comprimido utilizando el mandato \
+                        'compress' y los descomprime. Utiliza el mandato \
+                        'uncompress'.
+}
+
+# ######
+
+ACTION Env
+{
+	LABEL		Variables de entorno
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '                          env 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+	DESCRIPTION	La acción Variables de entorno (Env) muestra \
+                        las variables de entorno del usuario utilizando \
+                        el mandato 'env'.
+}
+
+# ######
+
+ACTION Diff
+{
+	LABEL		Comparar archivos
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	    file1="%(File)Arg_1"Primer archivo (<):"%" ;	    file2="%(File)Arg_2"Segundo archivo (>):"%" ;            cmp -s \$file1 \$file2 ;            if [ \$? -eq 0 ] ; then               echo "Los archivos \$file1 y \$file2 son iguales." ;             else               diff \$file1 \$file2  | \${PAGER:-more} ;            fi ;	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+	DESCRIPTION	La acción Comparar archivos (Diff) compara dos archivos \
+                        utilizando el mandato 'diff'.
+}
+
+# ######
+
+ACTION Rm
+{
+	LABEL		Eliminar archivo definitivamente
+	TYPE		COMMAND
+	WINDOW_TYPE	PERM_TERMINAL
+	EXEC_STRING		  sh -c ' 	    echo "[Entre y para suprimir un archivo, n para dejarlo ...]\\n"; 	    rm -i "%(File)Arg_1"Archivo a eliminar definitivamente:"%" %(File)Args%; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+
+	DESCRIPTION	La acción Eliminar archivo definitivamente (Rm) \
+                        utiliza el mandato 'rm -i' para eliminar \
+                        archivos sin colocarlos en la papelera. \
+                        Solicita el nombre de cada archivo y permite \
+                        indicar si el archivo debe eliminarse o no. \
+                        LOS ARCHIVOS QUE SE HAN ELIMINADO DEFINITIVAMENTE \
+                        NO PUEDEN RECUPERARSE.
+}
+
+# ######
+
+ACTION Wc
+{
+	LABEL		Contar palabras 
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	    (echo "  líneas  palabras  caracteres nombre del archivo"; 	     echo "  ==============================================="; 	     wc "%(File)Arg_1"Archivo a contar:"%" %(File)Args%) 2>&1 | 	       \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+
+
+	DESCRIPTION	La acción Contar palabras (Wc) cuenta las líneas, las palabras y \
+                        los caracteres de los archivos. Utiliza el mandato 'wc'.
+}
+
+# ######
+
+ACTION Spell
+{
+	LABEL		Verificar ortografía
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING               sh -c ' 	    (echo "Palabras con errores ortográficos\\n=================================\\n"; 	     spell "%(File)Arg_1"Archivos a verificar ortografía:"%" %(File)Args%) 2>&1 |                \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+
+
+	DESCRIPTION	La acción Verificar ortografía (Spell) verifica \
+                        la ortografía de todas las palabras del archivo. \
+                        Utiliza el mandato 'spell'.
+}
+
+# ######
+
+ACTION Df
+{
+	LABEL		Utilización de disco
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING               sh -c '             df 2>&1 | \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+	DESCRIPTION	La acción Utilización de disco (Df) muestra \
+                        la cantidad de espacio de disco disponible en todos \
+                        los discos montados. Utiliza el mandato 'df'.
+}
+
+
+# ######
+
+ACTION DuSort
+{
+	LABEL		Tamaño de carpeta
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	    if [ ! -d "%(File)Arg_1"Carpeta a dimensionar:"%" ] ; then 	        echo "ERROR: '%(File)Arg_1%' no es una carpeta."; 	    else 	        echo "[Espere, por favor ...]\\n"; 	        (echo "Bloques  Arch./Dir  - (Los bloques son de 512 bytes)"; 	         echo "======================================================"; 	         du -s "%(File)Arg_1"Carpeta a dimensionar:"%" | sort -n) 2>&1 |                    \${PAGER:-more}; 	    fi; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+	DESCRIPTION	La acción Tamaño de carpeta (DuSort) muestra el tamaño \
+                        de todos los archivos y subcarpetas de una \
+                        carpeta. Utiliza una combinación de los mandatos \
+                        'du' y 'sort'.
+}
+
+# ######
+
+ACTION Grep
+{
+	LABEL		Buscar texto
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c '             SEARCH_FILE="%(File)Arg_1"Archivo a buscar:"%";             if [ -d \$SEARCH_FILE ] ; then                 echo "ERROR: \$SEARCH_FILE es una carpeta y la acción\\nBuscar texto no busca cadenas en carpetas.";             else                grep %"Buscar cadena:"% \$SEARCH_FILE                                    %(File)Args% >/tmp/dtstrsearch 2>&1;                if [ \$? -eq 1 ] ; then                    echo "No se han encontrado coincidencias.";                else                   cat /tmp/dtstrsearch | \${PAGER:-more};                fi;                rm /tmp/dtstrsearch;             fi; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+	DESCRIPTION	La acción Buscar texto (Grep) busca todas \
+                        las apariciones de una cadena dentro de un conjunto \
+                        de archivos utilizando el mandato 'grep'.
+}
+
+# ######
+
+ACTION File
+{
+	LABEL		Tipo de archivo
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	    file "%(File)Arg_1"Archivo para Tipo:"%" %(File)Args% 2>&1 |               \${PAGER:-more}; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+
+	DESCRIPTION	La acción Tipo de archivo (File) determina el \
+                        tipo de un archivo utilizando el mandato file. \
+                        No es igual que el tipo de datos del escritorio para \
+                        el archivo. Para determinar el tipo de datos del \
+                        escritorio de un archivo, seleccione el archivo y \
+                        elija el mandato de menú Seleccionado->Cambiar \
+                        Permisos... en una vista del Gestor de archivos.
+}
+
+# ######
+
+ACTION Execute
+{
+	LABEL		Ejecutar
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     	  "%(File)Arg_1"Archivo a ejecutar:"%" %"Opciones:"% %"Argumentos:"% %(File)Args%
+
+	DESCRIPTION	La acción Ejecutar ejecuta un script de shell o \
+                        un ejecutable binario. Solicita opciones y \
+                        argumentos y después ejecuta el script o el \
+                        ejecutable en una ventana de terminal.
+}
+
+# ######
+
+ACTION ExecuteCmd
+{
+	LABEL		Ejecutar mandato
+        TYPE            COMMAND
+        WINDOW_TYPE     PERM_TERMINAL
+        EXEC_STRING     sh -c ' 	          %"Mandato:"% %(File)Args%; 	    echo "\\n*** Seleccione Cerrar o Salir en el menú de la ventana para cerrar esta ventana ***"'
+
+
+	DESCRIPTION	La acción Ejecutar mandato (ExecuteCmd) solicita \
+                        un mandato y después lo ejecuta en los archivos \
+                        que se suministran como argumentos.
+}
+# ######################## EOF ############################################

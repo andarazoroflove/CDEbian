@@ -1,0 +1,156 @@
+'\" t
+...\" Deposit.sgm /main/5 1996/08/30 14:42:49 rws $
+...\" Deposit.sgm /main/5 1996/08/30 14:42:49 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttmedia_Deposit" "library call"
+.SH "NAME"
+\fBttmedia_Deposit\fP \(em send a Deposit request to checkpoint a document
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_status \fBttmedia_Deposit\fP\fR(
+\fBTt_message \fBload_contract\fR\fR,
+\fBconst char *\fBbuffer_id\fR\fR,
+\fBconst char *\fBmedia_type\fR\fR,
+\fBconst unsigned char *\fBnew_contents\fR\fR,
+\fBint \fBnew_len\fR\fR,
+\fBconst char *\fBpathname\fR\fR,
+\fBXtAppContext \fBapp2run\fR\fR,
+\fBint \fBms_timeout\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttmedia_Deposit\fP function
+is used to perform a checkpoint save on a document that was the
+subject of a Media Exchange
+\fIload_contract\fP request such as
+\fBEdit\fP, \fICompose\fP, or
+\fIOpen\fP\&. To carry out a checkpoint save, the editor must send the new document
+contents back to the sender of
+\fIload_contract\fP\&.
+.PP
+The
+\fBttmedia_Deposit\fP function
+creates and sends a
+\fBDeposit\fP request and returns the
+success or failure of that request\&.
+The
+\fIload_contract\fP argument is the request that caused this editor to load the document\&.
+The
+\fIbuffer_id\fP argument is the identifier
+of the buffer this editor created if the document was
+loaded via an
+\fIOpen\fP request\&.
+If
+\fIbuffer_id\fP is
+\fBNULL\fP, the
+the ToolTalk service
+gives the
+\fBDeposit\fP request a
+\fBTt_address\fR of
+\fBTT_HANDLER\fP and sends it directly to the
+\fBtt_message_sender\fP of
+\fIload_contract\fP; otherwise, the
+the ToolTalk service
+will address it as a
+\fBTT_PROCEDURE\fP and insert
+\fIbuffer_id\fP into the request to match the pattern registered by the
+sender of the
+\fIload_contract\fP\&.
+.PP
+The
+\fBttmedia_Deposit\fP function uses the
+\fImedia_type\fP argument as the
+vtype
+of the contents argument of the sent request, and
+\fInew_contents\fP and
+\fInew_len\fP as its value\&.
+The latter two must be zero if
+\fIpathname\fP is used to name a temporary file into which the editor will place the
+checkpointed document\&.
+The editor is free to remove the temporary
+file after the reply to the
+\fBDeposit\fP request is received; that is, after
+\fBttmedia_Deposit\fP has returned\&.
+.PP
+After the request is sent,
+\fBttmedia_Deposit\fP passes
+\fIapp2run\fP and
+\fIms_timeout\fP to
+\fBtttk_block_while\fP(3) to wait for the reply\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttmedia_Deposit\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_DESKTOP_ETIMEDOUT" 10
+No reply was received within
+\fIms_timeout\fP milliseconds\&.
+.IP "TT_ERR_NOMEM" 10
+There is insufficient memory available to perform the function\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_OVERFLOW" 10
+The ToolTalk service has more active messages than it can handle\&.
+(The maximum number of active messages is
+implementation specific, but is at least 2000\&.)
+.IP "TT_ERR_POINTER" 10
+The
+\fIpathname\fP argument was
+\fBNULL\fP or was a ToolTalk error pointer\&.
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttmedia_load\fP(3), \fBttmedia_load_reply\fP(3), \fBttmedia_ptype_declare\fP(3), \fBttdt_Save\fP(3), \fBtttk_block_while\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

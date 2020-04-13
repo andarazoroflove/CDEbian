@@ -1,0 +1,93 @@
+'\" t
+...\" SaverGet.sgm /main/5 1996/08/30 13:12:14 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtSaverGetWindows" "library call"
+.SH "NAME"
+\fBDtSaverGetWindows\fP \(em get the list of windows for drawing by a screen saver application
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Saver\&.h>
+\fBBoolean \fBDtSaverGetWindows\fP\fR(
+\fBDisplay *\fBdisplay\fR\fR,
+\fBWindow **\fBwindow\fR\fR,
+\fBint *\fBcount\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtSaverGetWindows\fP function returns a list of windows on which a screen saver
+application should draw when invoked by XCDE\&.
+.PP
+The
+\fIdisplay\fP argument is the X display\&.
+The
+\fIwindow\fP argument is the address of
+a pointer to receive the pointer to a list of windows\&.
+The
+\fIcount\fP argument is the address of an integer to receive the
+number of elements in the list of windows returned in
+\fIwindow\fP\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBDtSaverGetWindows\fP function returns True;
+otherwise, it returns False\&.
+.SH "APPLICATION USAGE"
+.PP
+If the
+\fBDtSaverGetWindows\fP function is not successful, failure may be due to a memory
+allocation error or that the screen
+saver application was not invoked from XCDE\&.
+.PP
+The application must use
+\fBXtFree\fP(3) to free data returned in \fI*window\fP\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Saver\&.h - DtSaver\fP(5); \fBXtFree\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

@@ -1,0 +1,77 @@
+'\" t
+...\" dticoact.sgm /main/5 1996/08/30 13:54:03 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dticonaction" "file formats"
+.SH "NAME"
+\fBdticonaction\fP \(em XCDE icon editing actions
+.SH "SYNOPSIS"
+.PP
+.nf
+Dticon [\fIicon\fP]
+Open \fIicon\fP
+.fi
+.SH "DESCRIPTION"
+.PP
+The XCDE Icon Editing Services support the following
+icon editing actions:
+.IP "\fBDticon\fP" 10
+Open an empty icon editor view\&.
+.IP "\fBDticon\fP\0\fIicon\fP" 10
+Open an icon editor view of the bitmap or pixmap named by the pathname in the
+\fIicon\fP argument\&.
+.IP "\fBOpen\fP\0\fIicon\fP" 10
+Open an icon editor view of the bitmap or pixmap named by the pathname in the
+\fIicon\fP argument\&.
+.PP
+These actions can be invoked from an application using the
+\fBDtActionInvoke\fP(3) function or invoked from a command line using the
+\fBdtaction\fP(1) utility\&.
+.SH "SEE ALSO"
+.PP
+\fBdtaction\fP(1), \fBDtActionInvoke\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

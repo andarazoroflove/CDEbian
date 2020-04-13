@@ -1,0 +1,499 @@
+'\" t
+...\" DndDragS.sgm /main/8 1996/09/08 20:02:44 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtDndDragStart" "library call"
+.SH "NAME"
+\fBDtDndDragStart\fP,
+\fBDtDndVaDragStart\fP \(em initiate a drag
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Dnd\&.h>
+\fBWidget \fBDtDndDragStart\fP\fR(
+\fBWidget \fBdragSource\fR\fR,
+\fBXEvent *\fBevent\fR\fR,
+\fBDtDndProtocol \fBprotocol\fR\fR,
+\fBCardinal \fBnumItems\fR\fR,
+\fBunsigned char \fBoperations\fR\fR,
+\fBXtCallbackList \fBconvertCallback\fR\fR,
+\fBXtCallbackList \fBdragFinishCallback\fR\fR,
+\fBArgList \fBargList\fR\fR,
+\fBCardinal \fBargCount\fR\fR);
+.fi
+.PP
+.nf
+\fBWidget \fBDtDndVaDragStart\fP\fR(
+\fBWidget \fBdragSource\fR\fR,
+\fBXEvent *\fBevent\fR\fR,
+\fBDtDndProtocol \fBprotocol\fR\fR,
+\fBCardinal \fBnumItems\fR\fR,
+\fBunsigned char \fBoperations\fR\fR,
+\fBXtCallbackList \fBconvertCallback\fR\fR,
+\fBXtCallbackList \fBdragFinishCallback\fR\fR,
+\fB\&.\&.\&.\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP functions initiate a Motif drag, with drag visuals appropriate to the
+type of data being dragged,
+and updates the translation table of the drag context\&.
+Either of the functions
+is called from the application\&'s event handler, which interprets
+mouse events to determine when a drag should begin\&.
+.PP
+The only difference between
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP is how the argument list is passed\&.
+The argument list is passed as an
+\fBArgList\fR to
+\fBDtDndDragStart\fP and using
+\fIvarargs\fP for
+\fBDtDndVaDragStart\fP\&.
+.PP
+The
+\fIdragSource\fP argument is the widget that received the event that triggered the drag\&.
+.PP
+The
+\fIevent\fP argument is the button press or button motion event that triggered the drag\&.
+.PP
+The
+\fIprotocol\fP argument specifies the protocol used for the data transfer\&.
+Valid values are:
+.IP "DtDND_TEXT_TRANSFER" 10
+A list of text is being transferred\&.
+.IP "DtDND_FILENAME_TRANSFER" 10
+A list of file names is being transferred\&.
+.IP "DtDND_BUFFER_TRANSFER" 10
+A list of memory buffers is being transferred\&.
+.PP
+The
+\fInumItems\fP argument specifies the number of items being dragged\&.
+.PP
+The
+\fIoperations\fP argument indicates which operations the
+\fIdragSource\fP supports\&.
+The operations are:
+.IP "XmDROP_COPY" 10
+Copy operations are valid\&.
+.IP "XmDROP_LINK" 10
+Link operations are valid\&.
+.IP "XmDROP_MOVE" 10
+Move operations are valid\&.
+.PP
+A drag source can support any combination of these operations\&.
+A combination of operations is specified by the
+bitwise inclusive OR of several operation values\&.
+For example, to support the move and copy operations,
+the application can specify:
+.PP
+.nf
+\f(CWXmDROP_MOVE | XmDROP_COPY\fR
+.fi
+.PP
+.PP
+The
+\fIconvertCallback\fP argument is a callback function that
+is invoked when a drop has started and the drop site has requested
+data from the drag source\&.
+The
+\fIconvertCallback\fP is responsible for providing the data that is transferred to the drop site\&.
+The arguments for the
+\fIconvertCallback\fP are the Motif Drag Context, an
+\fBXtPointer\fR to application-supplied client data,
+and an
+\fBXtPointer\fR to a
+\fBDtDndConvertCallbackStruct\fR structure\&.
+.PP
+The
+\fIdragFinishCallback\fP argument is a callback function that
+is invoked when the drag and drop transaction is complete\&.
+The
+\fIdragFinishCallback\fP is called after the
+\fIconvertCallback\fP, if applicable\&.
+(The
+\fIconvertCallback\fP is called only after a drop has started
+on an eligible drop site, whereas
+\fIdragFinishCallback\fP is called after the drag finishes,
+whether or not a drop occurred\&.)
+The
+\fIdragFinishCallback\fP should reset any drag motion handler and free any memory allocated
+by the drag source during the drag and drop transaction\&.
+The arguments
+for the
+\fIdragFinishCallback\fP are the Motif Drag Context, an
+\fBXtPointer\fR to application-supplied client data,
+and an
+\fBXtPointer\fR to a
+\fBDtDndDragFinishCallbackStruct\fR structure\&.
+.SS "Argument Value Pairs"
+.PP
+The
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP functions support the following optional argument-value pairs\&.
+Motif resources can be set via the argument list as well,
+provided they are not resources that are used by the drag and drop subsystem;
+see
+\fBMotif Resources\fP\&.
+.IP "\fBDtNsourceIcon\fP (\fBWidget\fR)" 10
+Specifies the
+\fBXmDragIcon\fP used to represent the data being dragged\&.
+This icon is created using either
+\fBDtDndCreateSourceIcon\fP(3) or
+\fBXmCreateDragIcon\fP(3)\&. If
+\fBDtNsourceIcon\fP is
+\fBNULL\fP, then a default icon is used, which is appropriate for the data
+begin dragged\&.
+The default value is
+\fBNULL\fP\&.
+.IP "\fBDtNbufferIsText\fP (\fBBoolean\fR)" 10
+Specifies whether the dragged buffer should also be sourced
+as text, allowing the buffer to be dropped onto text widgets\&.
+This attribute is only valid if
+\fIprotocol\fP \fBDtDND_BUFFER_TRANSFER\fP and is ignored for other transfers\&.
+If
+\fBDtNbufferIsText\fP is True, the buffer is sourced as text in addition
+to being sourced as buffers;
+if it is False, the buffers are sourced only as buffers\&.
+.IP "\fBDtNdropOnRootCallback\fP" 10
+Specifies the callback to be invoked when the drop occurs on the desktop\&.
+This callback is only for use by specialized clients such as file managers\&.
+If
+\fBDtNdropOnRootCallback\fP is
+\fBNULL\fP, then drops onto the desktop background are not allowed\&.
+The default value is
+\fBNULL\fP\&. 
+.SS "Callbacks"
+.PP
+Once the rendezvous with the drop site has been accomplished,
+the application-provided callback functions are called
+to perform the transfer of the dragged data\&.
+.PP
+First, the
+\fIconvertCallback\fP is called with a
+\fIreason\fP of
+\fBDtCR_DND_CONVERT_DATA\fP\&. The application must set the
+\fBDtDndContext\fR fields appropriate to the transfer protocol to
+provide the data to be transferred to the drop site\&.
+.PP
+If the drag operation is
+\fBXmDROP_MOVE\fP and the drop site requests that the move be completed,
+the
+\fIconvertCallback\fP is called again with a
+\fIreason\fP of
+\fBDtCR_DND_CONVERT_DELETE\fP\&. The application should delete its version of the dragged data\&.
+.PP
+Once the data transfer is complete, the
+\fIdragFinishCallback\fP is called with a
+\fIreason\fP of
+\fBDtCR_DND_DRAG_FINISH\fP\&. The application should free any memory allocated in the
+\fIconvertCallback\fP and restore any application state\&.
+.SS "Callback Information"
+.PP
+Each of the callbacks for
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP has an associated callback structure\&.
+These callbacks cannot be used with the
+\fBXtAddCallback\fP(3) interface\&.
+.PP
+A pointer to the following structure is passed to the
+\fIconvertCallback\fP:
+.PP
+.nf
+\f(CWtypedef struct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        DtDndContext *\fIdragData\fP;
+        DtDndStatus \fIstatus\fP;
+} DtDndConvertCallbackStruct, *DtDndConvertCallback;\fR
+.fi
+.PP
+.PP
+The
+\fIreason\fP argument indicates why the callback was invoked\&.
+The possible reasons for this callback are:
+.IP "DtCR_DND_CONVERT_DATA" 10
+The callback provides the requested data by setting appropriate
+fields in the
+\fIdragData\fP structure\&.
+.IP "DtCR_DND_CONVERT_DELETE" 10
+The callback completes the
+\fBXmDROP_MOVE\fP operation by deleting its copy of the dragged data\&.
+.PP
+The
+\fIevent\fP argument
+points to the
+\fBXEvent\fR that triggered the callback\&.
+.PP
+The
+\fIdragData\fP argument
+specifies the
+\fBDtDndContext\fR that contains the data to be dragged\&.
+If the
+\fIreason\fP argument
+is
+\fBDtCR_DND_CONVERT_DATA,\fP the application must provide the data by setting the relevant fields in the
+\fBDtDndContext\fR, as described in the following
+\fBStructures\fP section\&.
+If the
+\fIreason\fP argument is
+\fBDtCR_DND_CONVERT_DELETE\fP, the application must delete the original data that
+completes a move operation\&.
+.PP
+The
+\fIstatus\fP argument
+indicates the status of the conversion\&.
+The application can set this to
+\fBDtDND_FAILURE\fP to cancel the conversion and consequently the drag and drop operation\&.
+The value of
+\fIstatus\fP is normally
+\fBDtDND_SUCCESS\fP\&.
+.PP
+A pointer to the following structure is passed to the
+\fIdragFinishCallback\fP:
+.PP
+.nf
+\f(CWtypedef struct {
+        int \fIreason\fP;
+        XEvent *\fIevent\fP;
+        DtDndContext *\fIdragData\fP;
+        Widget \fIsourceIcon\fP;
+} DtDndDragFinishCallbackStruct, *DtDndDragFinishCallback;\fR
+.fi
+.PP
+.PP
+The
+\fIreason\fP argument
+indicates why the callback was invoked\&.
+The valid reason for this callback is
+\fBDtCR_DND_DRAG_FINISH\fP\&.
+.PP
+The
+\fIevent\fP argument
+points to the
+\fBXEvent\fR that triggered the callback\&.
+.PP
+The
+\fIsourceIcon\fP argument
+specifies the source icon registered in the call to
+\fBDtDndDragStart\fP\&. This widget is provided to allow the application to free data associated
+with the source icon and optionally destroy the source icon\&.
+.PP
+The
+\fIdragData\fP argument specifies the
+\fBDtDndContext\fR that contains the data that was dragged\&.
+The application should free any
+data it associated with the
+\fIdragData\fP\&.
+.SS "Structures"
+.PP
+The following structures are used by the drag source in the
+\fIconvertCallback\fP and
+\fIdragFinishCallback\fP to communicate data between the application and the drag and drop subsystem\&.
+The
+\fBDtDndContext\fR structure is passed to these callbacks as
+\fIdragData\fP in the callback structure appropriate to the callback\&.
+.PP
+In the
+\fIconvertCallback\fP, the application that is acting as the drag source is responsible for filling
+in the
+\fBDtDndContext\fR structure with the data being transferred\&.
+.PP
+In the
+\fIdragFinishCallback\fP, the application acting as the drag source is responsible for freeing any
+data it allocated for use in the
+\fBDtDndContext\fR structure\&.
+.PP
+.nf
+\f(CWtypedef struct _DtDndContext {
+        DtDndProtocol \fIprotocol\fP;
+        int \fInumItems\fP;
+        union {
+                XmString *\fIstrings\fP;
+                String *\fIfiles\fP;
+                DtDndBuffer *\fIbuffers\fP;
+        } \fIdata\fP;
+} DtDndContext;\fR
+.fi
+.PP
+.PP
+The
+\fIprotocol\fP argument indicates the data transfer protocol under which the data in the
+\fBDtDndContext\fR is being transferred\&.
+Valid values are:
+.IP "DtDND_TEXT_TRANSFER" 10
+A list of text is being transferred\&.
+.IP "DtDND_FILENAME_TRANSFER" 10
+A list of file names is being transferred\&.
+.IP "DtDND_BUFFER_TRANSFER" 10
+A list of memory buffers is being transferred\&.
+.PP
+The
+\fInumItems\fP argument indicates the number of items being transferred\&.
+.PP
+The
+\fIdata\fP argument is a union containing data that
+should be stored and read in the format
+corresponding to the specified
+\fIprotocol\fP\&. The data structures corresponding to the transfer protocols are as follows\&.
+.PP
+The
+\fIstrings\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_TEXT_TRANSFER\fP\&. The
+\fIstrings\fP argument is an array of pointers to Motif strings
+containing the text being transferred\&.
+.PP
+The
+\fIfiles\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_FILENAME_TRANSFER\fP\&. It is an array of pointers to the names of the files being transferred\&.
+The file names have been converted to local host file names
+where possible\&.
+.PP
+The
+\fIbuffers\fP argument is valid if the
+\fIprotocol\fP is
+\fBDtDND_BUFFER_TRANSFER\fP\&. It is an array of pointers to
+\fBDtDndBuffer\fR structures containing the meory buffers being transferred\&.
+.PP
+The following structure is used with
+\fBDtDND_FILENAME_TRANSFER\fP:
+.PP
+.nf
+\f(CWtypedef struct _DtDndBuffer {
+        void *\fIbp\fP;
+        int \fIsize\fP;
+        string \fIname\fP;
+} DtDndBuffer;\fR
+.fi
+.PP
+.PP
+The
+\fIbp\fP argument points to the buffer data being transferred\&.
+.PP
+The
+\fIsize\fP argument indicates the number of bytes in the buffer\&.
+.PP
+The
+\fIname\fP argument points to the name of the buffer\&.
+.SS "Motif Resources"
+.PP
+When it calls
+\fBXmDragStart\fP(3), the
+\fBDtDndDragStart\fP function sets Motif resources;
+the application must not modify the values of any of these resources\&.
+Resources other than those listed here
+can be used and are passed through to the underlying
+\fBXmDragStart\fP call\&.
+.PP
+The following resources are modified by
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP in the Motif Drag Context:
+.IP "   \(bu" 6
+\fBXmNblendModel\fP
+.IP "   \(bu" 6
+\fBXmNclientData\fP
+.IP "   \(bu" 6
+\fBXmNconvertProc\fP
+.IP "   \(bu" 6
+\fBXmNcursorBackground\fP
+.IP "   \(bu" 6
+\fBXmNcursorForeground\fP
+.IP "   \(bu" 6
+\fBXmNdragDropFinishCallback\fP
+.IP "   \(bu" 6
+\fBXmNdragOperations\fP
+.IP "   \(bu" 6
+\fBXmNdropFinishCallback\fP
+.IP "   \(bu" 6
+\fBXmNdropStartCallback\fP
+.IP "   \(bu" 6
+\fBXmNexportTargets\fP
+.IP "   \(bu" 6
+\fBXmNnumExportTargets\fP
+.IP "   \(bu" 6
+\fBXmNsourcePixmapIcon\fP
+.IP "   \(bu" 6
+\fBXmNtopLevelEnterCallback\fP
+.PP
+The following resources are modified by
+\fBDtDndDragStart\fP and
+\fBDtDndVaDragStart\fP in the Motif Drag Icon:
+.IP "   \(bu" 6
+\fBXmNattachment\fP
+.IP "   \(bu" 6
+\fBXmNdepth\fP
+.IP "   \(bu" 6
+\fBXmNheight\fP
+.IP "   \(bu" 6
+\fBXmNhotX\fP
+.IP "   \(bu" 6
+\fBXmNhotY\fP
+.IP "   \(bu" 6
+\fBXmNmask\fP
+.IP "   \(bu" 6
+\fBXmNoffsetX\fP
+.IP "   \(bu" 6
+\fBXmNoffsetY\fP
+.IP "   \(bu" 6
+\fBXmNpixmap\fP
+.IP "   \(bu" 6
+\fBXmNwidth\fP
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBDtDndDragStart\fP function returns the drag context widget created
+when the Motif drag is started;
+otherwise, it returns
+\fBNULL\fP if the drag could not be started\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Dnd\&.h - DtDnd\fP(5), \fBDtDtsFileToDataType\fP(3), \fBDtDndCreateSourceIcon\fP(3), \fBDtDndDropRegister\fP(3), \fBDtDndDropRegister\fP(3), \fBDtDndDropUnregister\fP(3), \fBXmCreateDragIcon\fP(3), \fBXmDragContext\fP(3), \fBXmDragIcon\fP(3), \fBXmDragStart\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

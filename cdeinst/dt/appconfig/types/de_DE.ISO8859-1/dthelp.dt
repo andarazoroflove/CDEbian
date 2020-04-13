@@ -1,0 +1,222 @@
+# #######################################################################
+# 
+#      dthelp.dt
+# 
+#      Actions and filetypes for Help files.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dthelp.dt.src /main/4 1996/04/23 17:35:19 drk $
+# 
+# #####################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES DTHELP_VOL
+{
+        ACTIONS         Open,Print
+        ICON		Dthvol
+        NAME_TEMPLATE   %s.sdl
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Dies ist eine Masterdatei für einen Hilfeband. \
+                        Der Datentyp dieser Datei ist DTHELP_VOL. \
+                        Die Namen von Dateien des Typs DTHELP_VOL haben die \
+                        Erweiterung '.sdl' oder '.hv'.
+        TYPE_LABEL      DTHELP_VOL
+}
+DATA_CRITERIA DTHELP_VOL1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.sdl
+}
+DATA_CRITERIA DTHELP_VOL2
+{
+        DATA_ATTRIBUTES_NAME DTHELP_VOL
+        MODE            f
+        NAME_PATTERN    *.hv
+}
+ACTION Open
+{
+        LABEL           Öffnen
+	ARG_TYPE 	DTHELP_VOL
+	TYPE		MAP
+        MAP_ACTION	Dthelpview
+}
+ACTION Print
+{
+        LABEL           Drucken
+        ARG_TYPE        DTHELP_VOL
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HT
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.ht
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Dies ist eine Hilfedatei, die Bestandteil eines Hilfebandes \
+                        ist. Zum Anzeigen des Hilfethemas muß die Masterdatei \
+                        geöffnet werden. Der Datentyp dieser Datei ist DTHELP_HT. \
+                        Die Namen von Dateien des Typs DTHELP_HT haben die \
+                        Erweiterung '.ht'.
+        TYPE_LABEL      DTHELP_HT
+}
+DATA_CRITERIA DTHELP_HT1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HT
+        NAME_PATTERN    *.ht
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_HVK
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.hvk
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Diese Datei ist einem kompilierten Hilfeband \
+                        zugeordnet. Zum Anzeigen des Hilfebandes muß die \
+                        Masterdatei geöffnet werden. Der Datentyp dieser Datei \
+                        ist DTHELP_HVK. Die Namen von Dateien des Typs DTHELP_HVK \
+                        haben die Endung '.hvk'.
+        TYPE_LABEL      DTHELP_HVK
+}
+DATA_CRITERIA DTHELP_HVK1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_HVK
+        NAME_PATTERN    *.hvk
+        MODE            f
+}
+
+# #########################################################
+
+DATA_ATTRIBUTES DTHELP_XRH
+{
+        ACTIONS		(None)         
+        ICON		Dthtop
+        NAME_TEMPLATE   %s.xrh
+        MIME_TYPE	application/octet-stream
+        DESCRIPTION     Diese Datei ist einem kompilierten Hilfeband \
+                        zugeordnet. Zum Anzeigen des Hilfebandes muß die \
+                        Masterdatei geöffnet werden. Der Datentyp dieser Datei \
+                        ist DTHELP_XRH. Die Namen von Dateien des Typs DTHELP_XRH \
+                        haben die Erweiterung '.xrh'.
+        TYPE_LABEL      DTHELP_XRH
+}
+DATA_CRITERIA DTHELP_XRH
+{
+        DATA_ATTRIBUTES_NAME DTHELP_XRH
+        NAME_PATTERN    *.xrh
+        MODE            f
+}
+
+# ##################################################################
+# ##################################################################
+# 
+# Aktionen
+# 
+# ##################################################################
+ACTION Dthelpview
+{
+        LABEL           Hilfeanzeige
+	ARG_COUNT	0
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir $HOME/.dt/help/$DTUSERSESSION;                            /usr/dt/bin/dthelpview -helpVolume browser '
+
+	DESCRIPTION	Mit der Aktion 'Hilfeanzeige' (Dthelpview) wird die \
+                        oberste Hilfeebene angezeigt, nachdem das Symbol \
+                        doppelt angeklickt wurde. Wenn eine Datei des Hilfebandes \
+                        auf das Symbol gezogen wird, wird dieser Band angezeigt.
+}
+ACTION Dthelpview
+{
+        LABEL           Hilfeanzeige
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen 				    -dir $HOME/.dt/help/$DTUSERSESSION;                             /usr/dt/bin/dthelpview -helpVolume "%(File)Arg_1%" '
+
+
+	DESCRIPTION	Mit der Aktion 'Hilfeanzeige' (Dthelpview) wird die \
+                        oberste Hilfeebene angezeigt, nachdem das Symbol \
+                        doppelt angeklickt wurde. Wenn eine Datei des Hilfebandes \
+                        auf das Symbol gezogen wird, wird dieser Band angezeigt.
+}
+
+# #######
+
+ACTION Dthelpgen
+{
+        LABEL           Hilfegenerator
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c '/usr/dt/bin/dthelpgen -dir                          "%(File)Arg_1"Bestimmungsort für generierte Hilfedateien:"%"'
+
+	DESCRIPTION	Die Aktion 'Hilfegenerator' (Dthelpgen) führt \
+                        den Befehl 'dthelpgen' aus, mit dem die Online-Hilfe \
+                        für den Benutzer generiert wird. Während der Ausführung \
+                        dieser Aktion wird der Dialog "Informationen für Hilfebibliothek \
+                        werden generiert. Bitte warten" angezeigt. Diese Aktion wird \
+                        ausgeführt, wenn ein Benutzer sich zum ersten Mal \
+                        in der CDE-Umgebung anmeldet.
+}
+ACTION Dthelpgen_delay
+{
+        LABEL           Hilfegenerator
+        ICON		Fphelp
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     /bin/sh -c 'sleep 15; /usr/dt/bin/dthelpgen -dir                          $HOME/.dt/help/$DTUSERSESSION'
+
+	DESCRIPTION	Die Aktion 'Hilfegenerator' (Dthelpgen) führt \
+                        den Befehl 'dthelpgen' aus, mit dem die Online-Hilfe \
+                        für den Benutzer generiert wird. Während der Ausführung \
+                        dieser Aktion wird der Dialog "Informationen für Hilfebibliothek \
+                        werden generiert. Bitte warten" angezeigt. Diese Aktion wird \
+                        ausgeführt, wenn ein Benutzer sich zum ersten Mal \
+                        in der CDE-Umgebung anmeldet.
+}
+
+# #######
+
+ACTION Dtmanpageview 
+{
+        LABEL           Anzeigefenster für Handbuchseiten
+        ICON		Dthover
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+        EXEC_STRING     sh -c ' /usr/dt/bin/dthelpview -manPage               `basename "%(File)Arg_1"Handbuchseite:"%" | sed /[.].*/s///`               -xrm "Dthelpview*manBox*columns: 100"'
+
+
+	DESCRIPTION	Mit der Aktion 'Anzeigefenster für Handbuchseiten' (Dtmanpageview) \
+                        wird eine Handbuchseite in einem Anzeigefenster für Kurzhilfe \
+                        angezeigt.
+}
+# ######################## EOF ############################################

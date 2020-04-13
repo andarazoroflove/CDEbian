@@ -1,0 +1,314 @@
+!######################################################################
+!#
+!#     Dtmail
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Application Defaults for the CDE Mailer
+!#
+!#     (c) Copyright 1993, 1994 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994 Novell, Inc.
+!#
+!#
+!######################################################################
+#include "Dt"
+
+Dtmail*Font:		-dt-application-medium-r-normal--*-120-75-75-p-74-dtsymbol-1
+
+!######################################################################
+!#
+!# Formatting for the printing output.
+!#
+!######################################################################
+!#
+!# Formatting when printing to printer.
+!#
+
+!# Sizes the PrintShell.
+Dtmail*Print.width:				8.5in
+Dtmail*Print.height:				11.0in
+Dtmail*Print.Page*foreground:			black
+Dtmail*Print.Page*background:			white
+ 
+!# Places a border around the text portion of the output.
+Dtmail*Print.Page*shadowThickness:		2
+Dtmail*Print.Page*topShadowColor:		black
+Dtmail*Print.Page*bottomShadowColor:		black
+ 
+!# Controls margins and background of the header and footer labels.
+Dtmail*Print.Page*XmLabel.marginBottom:		0.0in
+Dtmail*Print.Page*XmLabel.marginTop:		0.0in
+!Dtmail*Print.Page*XmLabel.background:		grey
+
+!# Fonts for headers, footers, and text.
+Dtmail*Print.Page*XmLabel.renderTable:		-dt-application-bold-r-normal-serif-0-120-0-0-m-0-*-*
+Dtmail*Print.Page*Editor.renderTable:		-dt-application-medium-r-normal-serif-0-100-0-0-m-0-*-*
+
+!#
+!# Formatting when "printing" to video.
+!# Debugging only
+!#
+Dtmail*PrintVideo.width:			8.5in
+Dtmail*PrintVideo.height:			9.5in
+Dtmail*PrintVideo.Page.width:			8.5in
+Dtmail*PrintVideo.Page.height:			9.5in
+Dtmail*PrintVideo.Page*foreground:		black
+Dtmail*PrintVideo.Page*background:		white
+
+Dtmail*PrintVideo.Page*shadowThickness:		2
+Dtmail*PrintVideo.Page*topShadowColor:		black
+Dtmail*PrintVideo.Page*bottomShadowColor:	black
+ 
+Dtmail*PrintVideo.Page*XmLabel.marginTop:	0.0
+Dtmail*PrintVideo.Page*XmLabel.marginBottom:	0.0
+!Dtmail*PrintVideo.Page*XmLabel.background:	grey
+
+
+!######################################################################
+!#
+!# Formatting for the Print Setup dialog.
+!#
+!######################################################################
+Dtmail*PrintingOptionsPane*leftOffset:		50
+Dtmail*PrintingOptionsPane*verticalSpacing:	5
+
+Dtmail*Message_List*doubleClickInterval:	400
+
+!######
+!# Examples of overriding default values
+!#
+!# Dtmail*UserFont: -b&h-lucidatypewriter-medium-r-*-sans-*-120-*-*-*-*-*
+!# Dtmail*SystemFont: -b&h-lucida-medium-r-*-sans-*-120-*-*-*-*-*-*
+!# Dtmail*GlyphFont: -adobe-symbol-*-*-*-*-*-100-*-*-*-*-adobe-fontspecific
+!#
+!# Dtmail*Work_Area*Text*foreground: black
+!# Dtmail*Work_Area*Text*background: white
+!# Dtmail*Message_List*foreground: black
+!# Dtmail*Message_List*background: white
+
+
+!#
+!# The width of header fields in the compose window.
+!#
+!# The following is changed by IBM.
+!# Dtmail*ComposeDialog*HeaderArea*form_*columns: 70
+Dtmail*ComposeDialog*HeaderArea*form_*columns: 70
+
+
+!# The text fields column width in Find dialog
+Dtmail*find*To.columns: 1
+Dtmail*find*From.columns: 1
+Dtmail*find*Subject.columns: 1
+Dtmail*find*Cc.columns: 1
+
+
+!######################################################################
+!#
+!#   The Compose Dialog accelerators and Text for those accelerators
+!#
+Dtmail*Send.acceleratorText: 					F3
+Dtmail*menubar*Send.accelerator:				Alt<Key>F3
+Dtmail*ComposeDialog*menubar*File.Close.acceleratorText: 	Alt+F4
+Dtmail*ComposeDialog*menubar*File.Close.accelerator: 		Alt<Key>F4
+Dtmail*ComposeDialog*menubar*Edit.Undo.acceleratorText:		Ctrl+Z
+Dtmail*ComposeDialog*menubar*Edit.Undo.accelerator: 		Ctrl<Key>Z
+Dtmail*ComposeDialog*menubar*Edit.Cut.acceleratorText: 		Ctrl+X
+Dtmail*ComposeDialog*menubar*Edit.Cut.accelerator: 		Ctrl<Key>X
+Dtmail*ComposeDialog*menubar*Edit.Copy.acceleratorText:  	Ctrl+C
+Dtmail*ComposeDialog*menubar*Edit.Copy.accelerator: 		Ctrl<Key>C
+Dtmail*ComposeDialog*menubar*Edit.Paste.acceleratorText: 	Ctrl+V
+Dtmail*ComposeDialog*menubar*Edit.Paste.accelerator: 		Ctrl<Key>V
+Dtmail*ComposeDialog*menubar*Edit.Delete.acceleratorText: 	Del
+Dtmail*ComposeDialog*menubar*Edit.Delete.accelerator: 		Del
+Dtmail*ComposeDialog*menubar*Edit.Find/Change.acceleratorText: 	Ctrl+R
+Dtmail*ComposeDialog*menubar*Edit.Find/Change.accelerator: 	Ctrl<Key>R
+
+
+!#############################################################
+!#
+!#   The Main Mailer accelerators and Text for those accelerators
+!#
+Dtmail*menubar*Mailbox.Check_for_New_Mail.acceleratorText: 	Ctrl+P
+Dtmail*menubar*Mailbox.Check_for_New_Mail.accelerator: 		Ctrl<Key>P
+Dtmail*menubar*Mailbox.Mail_Options.acceleratorText: 		Ctrl+O
+Dtmail*menubar*Mailbox.Mail_Options.accelerator: 		Ctrl<Key>O
+Dtmail*menubar*Mailbox.Close.acceleratorText: 			Alt+F4
+Dtmail*menubar*Mailbox.Close.accelerator: 			Alt<Key>F4
+Dtmail*menubar*Message*Print.acceleratorText: 			Ctrl+S
+Dtmail*menubar*Message*Print.accelerator: 			Ctrl<Key>S
+Dtmail*menubar*Edit.Copy.acceleratorText: 			Ctrl+C
+Dtmail*menubar*Edit.Copy.accelerator: 				Ctrl<Key>C
+Dtmail*menubar*Compose.New_Message.acceleratorText: 		Ctrl+N
+Dtmail*menubar*Compose.New_Message.accelerator: 		Ctrl<Key>N
+Dtmail*menubar*Compose.Reply_to_Sender.acceleratorText:		Ctrl+M
+Dtmail*menubar*Compose.Reply_to_Sender.accelerator: 		Ctrl<Key>M
+
+!#############################################################
+!#
+!#   The Compose Dialog's mnemonic's
+!#
+Dtmail*ComposeDialog*menubar*File.mnemonic: 			F
+Dtmail*ComposeDialog*menubar*File.Include.mnemonic: 		I
+Dtmail*Save_As.mnemonic: 					S
+Dtmail*ComposeDialog*menubar*File.Log_Message.mnemonic: 	R
+Dtmail*menubar*Send.mnemonic: 					v
+Dtmail*ComposeDialog*menubar*File.Send_As.mnemonic: 		n
+Dtmail*ComposeDialog*menubar*File.Close.mnemonic: 		C
+Dtmail*ComposeDialog*Undo.mnemonic: 				A
+Dtmail*ComposeDialog*Cut.mnemonic: 				T
+Dtmail*Copy.mnemonic: 						C
+Dtmail*ComposeDialog*Paste.mnemonic: 				I
+Dtmail*menubar*Delete.mnemonic: 				n
+Dtmail*RoamMsgsPopup*Delete.mnemonic:				n
+Dtmail*Select_All.mnemonic: 					z
+Dtmail*ComposeDialog*menubar*Edit.Find/Change.mnemonic: 	R
+Dtmail*ComposeDialog*menubar*Edit.Check_Spelling.mnemonic: 	o
+Dtmail*ComposeDialog*Add_File.mnemonic: 			f
+Dtmail*ComposeDialog*Undelete.mnemonic: 			u
+Dtmail*ComposeDialog*menubar*Attachments.Rename.mnemonic: 	b
+Dtmail*ComposeDialog*menubar*Attachments.Show_List.mnemonic: 	M
+Dtmail*ComposeDialog*menubar*Format.mnemonic: 			r
+Dtmail*ComposeDialog*menubar*Format.Word_Wrap.mnemonic: 	A
+Dtmail*ComposeDialog*menubar*Format.Settings.mnemonic: 		I
+Dtmail*ComposeDialog*menubar*Format.Templates.mnemonic: 	M
+Dtmail*ComposeDialog*menubar*Format.Add_Bcc.mnemonic: 	        B
+
+!######################################################################
+!#
+!#   The Main Mailer mnemonic's
+!#
+Dtmail*menubar*Mailbox.mnemonic: 				C
+Dtmail*menubar*Check_for_New_Mail.mnemonic: 			p
+Dtmail*RoamMsgsPopup*Check_for_New_Mail.mnemonic:		p
+Dtmail*menubar*Mailbox.Open_Inbox.mnemonic: 			r
+Dtmail*menubar*Mailbox.New.mnemonic: 				N
+Dtmail*menubar*Mailbox.Open.mnemonic: 				A
+Dtmail*menubar*Mailbox.Destroy_Deleted_Message.mnemonic: 	D
+Dtmail*menubar*Mailbox.Mail_Options.mnemonic: 			O
+Dtmail*menubar*Mailbox.Close.mnemonic: 				C
+Dtmail*menubar*Message.mnemonic: 				M
+Dtmail*menubar*Message*Open.mnemonic: 				A
+Dtmail*menubar*Save_As_Text.mnemonic: 				t
+Dtmail*RoamMsgsPopup*Save_As_Text.mnemonic:			t
+Dtmail*menubar*Message*Copy_To.mnemonic: 			C
+Dtmail*menubar*Print.mnemonic: 					p
+Dtmail*RoamMsgsPopup*Print.mnemonic:				p
+Dtmail*menubar*Message*Find.mnemonic: 				R
+Dtmail**menubar*Undelete_Last.mnemonic:				u
+Dtmail*RoamMsgsPopup*Undelete_Last.menemonic:			u
+Dtmail*menubar*Message*Undelete_From_List.mnemonic: 		l
+Dtmail*menubar*Edit.mnemonic: 					E
+Dtmail*menubar*Attachments.mnemonic:				A
+Dtmail*menubar*View.mnemonic: 					V
+Dtmail*menubar*View.Next.mnemonic: 				S
+Dtmail*menubar*View.Previous.mnemonic: 				P
+Dtmail*menubar*View.Abbreviated_Headers.mnemonic: 		b
+Dtmail*menubar*View.By_Date/Time.mnemonic: 			d
+Dtmail*menubar*View.By_Sender.mnemonic: 			m
+Dtmail*menubar*View.By_Subject.mnemonic: 			o
+Dtmail*menubar*View.By_Size.mnemonic: 				i
+Dtmail*menubar*View.By_Status.mnemonic:				t
+Dtmail*menubar*Compose.mnemonic: 				p
+Dtmail*menubar*Compose.New_Message.mnemonic: 			N
+Dtmail*menubar*Compose.New__Include_All.mnemonic: 		u
+Dtmail*menubar*Compose.Forward_Message.mnemonic: 		I
+Dtmail*menubar*Reply_to_Sender.mnemonic: 			R
+Dtmail*RoamMsgsPopup*Reply_to_Sender.mnemonic:			R
+Dtmail*menubar*Compose.Reply_to_All.mnemonic: 			t
+Dtmail*menubar*Compose.Reply_to_Sender__Include.mnemonic: 	m
+Dtmail*menubar*Compose.Reply_to_All__Include.mnemonic: 		c
+Dtmail*menubar*Move.mnemonic: 					S
+Dtmail*RoamMsgsPopup*Move.mnemonic:				S
+Dtmail*Inbox.mnemonic:						C
+Dtmail*Other_Mailboxes.mnemonic:				A
+Dtmail*menubar*Help.mnemonic: 					A
+Dtmail*menubar*Help.Overview.mnemonic: 				P
+Dtmail*menubar*Help.Tasks.mnemonic: 				A
+Dtmail*menubar*Help.Reference.mnemonic: 			R
+Dtmail*menubar*Help.On_Item.mnemonic: 				S
+Dtmail*menubar*Help.Using_Help.mnemonic: 			U
+Dtmail*menubar*Help.About_Mailer.mnemonic: 			I
+
+!##################################################################################
+####
+!#
+!#   Some more Main Mailer accelerators and Text
+!#
+Dtmail*menubar*Message*Delete.acceleratorText:                  Ctrl+L
+Dtmail*menubar*Message*Delete.accelerator:                      Ctrl<Key>L
+
+!##################################################################################
+####
+!#   More Mnemonics for Compose window Edit menu
+Dtmail*ComposeDialog*Clear.mnemonic: 				e
+
+!##################################################################################
+!! Default column width for Compose window and Main Mailer
+Dtmail*ComposeDialog*Text*columns: 				80
+Dtmail*Work_Area*Text*columns: 			        	80
+
+!################################################################
+!#
+!#  Other Mailer resources
+!#
+Dtmail*interval:       5
+Dtmail*Next:           True
+Dtmail*Next*default:   True
+Dtmail*Start*default:  True
+Dtmail*Message_List*scrollBarDisplayPolicy:    STATIC
+Dtmail*Message_List*visibleItemCount:  15
+Dtmail*Message_List*width:     600
+Dtmail*Message_List*listSizePolicy:    VARIABLE
+Dtmail*Message_List*viewHeight:        7
+Dtmail*Message_List*selectionPolicy:      EXTENDED_SELECT
+Dtmail*Work_Area*Text*editMode:        MULTI_LINE_EDIT
+Dtmail*Message_Send*scrollHorizontal:	False
+!!Dtmail*Message_Send*wordWrap:		True
+Dtmail*ComposeDialog*Work_Area*Text*wordWrap: False
+Dtmail*Message_View*scrollHorizontal:	False
+Dtmail*Message_View*wordWrap:		True
+Dtmail*Mail_View*scrollVertical:	True
+Dtmail*menubar*tearOffModel:	TEAR_OFF_DISABLED
+!!
+!!Dtmail*menubar*Compose.tearOffModel:	TEAR_OFF_ENABLED
+!!Dtmail*menubar*Move.tearOffModel:	TEAR_OFF_ENABLED
+!!
+Dtmail*View*Separator*separatorType: SHADOW_ETCHED_IN
+Dtmail*ComposeDialog*menubar*File.Log_Message.indicatorType: XmONE_OF_MANY
+Dtmail*ComposeDialog*menubar*File.Log_Message.set: TRUE
+Dtmail*ComposeDialog*menubar*File.Log_Message.visibleWhenOff: TRUE
+Dtmail*ComposeDialog*menubar*Attachments.Show_List.indicatorType: XmONE_OF_MANY
+Dtmail*ComposeDialog*menubar*Attachments.Show_List.set: TRUE
+Dtmail*ComposeDialog*menubar*Attachments.Show_List.visibleWhenOff: TRUE
+Dtmail*ComposeDialog*menubar*Format.Word_Wrap.indicatorType: XmONE_OF_MANY
+!!Dtmail*ComposeDialog*menubar*Format.Word_Wrap.set: TRUE
+Dtmail*ComposeDialog*menubar*Format.Word_Wrap.set: False
+Dtmail*ComposeDialog*menubar*Format.Word_Wrap.set: TRUE
+Dtmail*ComposeDialog*menubar*Format.Word_Wrap.visibleWhenOff: TRUE
+Dtmail*menubar*View.Abbreviated_Headers.indicatorType: XmONE_OF_MANY
+Dtmail*menubar*View.Abbreviated_Headers.set: TRUE
+Dtmail*menubar*View.Abbreviated_Headers.visibleWhenOff: TRUE
+*Message_View*Work_Area.width: 600
+*Message_View*Work_Area.height: 400
+Dtmail*separateViewWindow*Work_Area.width: 600
+Dtmail*separateViewWindow*Work_Area.height: 400
+!###########################   eof   ###########################
+!
+Dtmail*dtb_options_fields_hide.columns: 30
+Dtmail*dtb_options_deadletter_field.dtb_options_deadletter_field_field.columns: 36
+Dtmail*dtb_options_indent_str_tf.columns: 36
+Dtmail*dtb_options_hdr_field.columns: 36
+Dtmail*dtb_options_def_value_field.columns: 36
+Dtmail*dtb_options_sent_mail_tf.columns: 36
+Dtmail*dtb_options_path_file_name_tf.columns: 36
+Dtmail*dtb_options_srt_looking_tf.columns: 36
+Dtmail*dtb_options_vacation_msg_tp_pane.columns: 48
+Dtmail*dtb_options_subject_tf.columns: 50
+Dtmail*dtb_options_menu_label.columns: 48
+Dtmail*dtb_options_path_filename_label.columns: 48
+Dtmail*dtb_options_alias_tf.columns: 48
+Dtmail*dtb_options_addresses_tf.columns: 48
+Dtmail*dtb_options_local_name_tf.columns: 36
+

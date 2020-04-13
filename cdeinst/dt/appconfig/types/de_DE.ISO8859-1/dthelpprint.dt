@@ -1,0 +1,56 @@
+# ##########################################################################
+# 
+#      dthelpprint.dt
+# 
+#      Actions and filetypes for dthelpprint files.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: dthelpprint.dt.src /main/4 1996/04/23 17:35:22 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Datenattribute
+# 
+# ##################################################################
+DATA_ATTRIBUTES DTHELP_PRINT_FILE
+{
+        ACTIONS         Print
+        ICON		Dthvol
+        NAME_TEMPLATE   _phlp%s
+        DESCRIPTION     Diese Datei wird generiert, wenn vom Hilfesystem \
+                        aus gedruckt wird. Der Datentyp dieser \
+                        Datei ist DTHELP_PRINT_FILE. Die Namen von Dateien \
+                        des Typs DTHELP_PRINT_FILE beginnen mit '_phlp'.
+        TYPE_LABEL      DTHELP_PRINT_FILE
+}
+DATA_CRITERIA DTHELP_PRINT_FILE1
+{
+        DATA_ATTRIBUTES_NAME DTHELP_PRINT_FILE
+        MODE            f
+        NAME_PATTERN    _phlp*
+}
+ACTION Print
+{
+	ARG_TYPE 	DTHELP_PRINT_FILE
+	TYPE		COMMAND
+	WINDOW_TYPE	NO_STDIO
+	EXEC_STRING	/usr/dt/bin/dtlp -f "%(File)Arg_1%"                 ${LPDEST:+-d} ${LPDEST:+$LPDEST}                 -n "${DTPRINTCOPYCOUNT:-1}"                 -b "${DTPRINTBANNERTITLE:-CDE Help}"                 "${DTPRINTCOMMAND:+-m}"                         "${DTPRINTCOMMAND:+$DTPRINTCOMMAND}"                 "${DTPRINTFROMCODESET:+-c}"                         "${DTPRINTFROMCODESET:+$DTPRINTFROMCODESET}"                 "${DTPRINTCODESET:+-t}" "${DTPRINTCODESET:+$DTPRINTCODESET}"                 -u "${DTPRINTUSERFILENAME:-Help Information}"                 -w "${DTPRINTRAW:-$FALSE}"                 -s "${DTPRINTSILENT:-$TRUE}"                 -e "${DTPRINTFILEREMOVE:-$TRUE}";
+}
+# ######################## EOF ############################################

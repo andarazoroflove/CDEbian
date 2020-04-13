@@ -1,0 +1,169 @@
+#!/bin/ksh
+
+# $XConsortium: dtloadresources.src /main/6 1996/04/23 18:51:41 drk $
+#   (c) Copyright 1996 Digital Equipment Corporation.
+#   (c) Copyright 1993,1994,1996 Hewlett-Packard Company.
+#   (c) Copyright 1993,1994,1996 International Business Machines Corp.
+#   (c) Copyright 1993,1994,1996 Sun Microsystems, Inc.
+#   (c) Copyright 1993,1994,1996 Novell, Inc. 
+#   (c) Copyright 1996 FUJITSU LIMITED.
+#   (c) Copyright 1996 Hitachi.
+
+
+
+# ##########################################################################
+# #
+# #  File:              dtsession_res
+# #
+# #  Default Location:  /usr/dt/bin/dtsession_res
+# #
+# #  Purpose:           Load the RESOURCE_MANAGER with desktop resources
+# #
+# #  Description:       This script is invoked to load or reload the 
+# #                     RESOURCE_MANAGER from the desktop resource files.
+# #
+# #  Invoked by:        The desktop Session Manager at session startup, 
+# #                     or user by means of 'dtaction LoadResources'.
+# #                     This script should not be invoked directly.
+# #
+# #  Product:           @(#)Common Desktop Environment 1.0
+# #
+# #                     (c) Copyright 1993, 1994 Hewlett-Packard Company
+# #                     (c) Copyright 1993, 1994 International Business
+# #                         Machines Corp.
+# #                     (c) Copyright 1993, 1994 Sun Microsystems, Inc.
+# #                     (c) Copyright 1993, 1994 Unix System Labs, Inc., 
+# #                         a subsidiary of Novell, Inc.
+# #
+# #  Note:              Please do not modify this file.
+# #                     Later product updates will overwrite this file.
+# #
+# ##########################################################################
+
+Msg()
+{
+  #
+  # $1 - message catalog number
+  # $2 - fallback message text
+  #
+  echo "$2"
+  # dspmsg dtsession_res.cat -s 1 $1 "$2"
+}
+
+Usage()
+{
+  #
+  # $1 - message catalog number 
+  #
+  Msg 1 "dtsession_res -load|-merge [-system] [-xdefaults] [-file <name>]"
+  case $1 in
+    needArgs) Msg 2 "Option -load or -merge must be specified";;
+    xrdbOptDone) Msg 3 "Option -load or -merge already specified";;
+    needFile) Msg 4 "Missing <filename> after -file option";;
+    unknownArg) Msg 5 "Unknown option specified";;
+    # needOption);;		# this is the Usage statement above
+  esac
+  exit 1
+}
+
+
+#
+# Parse options
+#
+if [ $# -eq 0 ]; then
+  Usage needArgs
+fi
+
+
+
+
+
+
+rFactory=/usr/dt/config/$LANG/sys.resources
+rFactoryC=/usr/dt/config/C/sys.resources
+
+rCustom=/etc/dt/config/$LANG/sys.resources
+
+rXdefaults=$HOME/.Xdefaults
+
+xrdbOption=""
+resourceFiles=""
+
+while [ $# -gt 0 ]; do
+  case $1 in 
+    -load|-merge)
+      #
+      # xrdb option specified
+      #
+      if [ ! -z "$xrdbOption" ]; then
+        Usage xrdbOptDone
+      fi
+      xrdbOption=$1
+      ;;
+    -system)
+      #
+      # locate system resources
+      #
+
+
+
+
+
+      if [ -r "$rFactory" ]; then
+        resourceFiles="$resourceFiles $rFactory"
+      elif [ -r "$rFactoryC" ]; then
+        resourceFiles="$resourceFiles $rFactoryC"
+      fi
+      #
+      # Locate customized system resources
+      #
+      if [ -r "$rCustom" ]; then
+        resourceFiles="$resourceFiles $rCustom"
+      fi
+      ;;
+    -xdefaults)
+      #
+      # Locate .Xdefaults
+      #
+      if [ -r "$rXdefaults" ]; then
+        resourceFiles="$resourceFiles $rXdefaults"
+      fi
+
+
+
+
+
+      ;;
+    -file)
+      #
+      # Locate specified file
+      #
+      shift
+      if [ -z "$1" ]; then
+        Usage needFile
+      fi
+      if [ -r "$1" ]; then
+        resourceFiles="$resourceFiles $1"
+      fi
+      ;;
+    *) Usage unknownArg;;
+  esac
+  shift
+done
+
+if [ -z "$xrdbOption" ]; then
+  Usage needOption
+fi
+
+# converts ":0" to "0", but leaves "pablo:0" as is
+display=${DISPLAY##:}
+
+# converts "blanco.flexicat.com:0.0" to "blanco_flexicat_com_0"
+display=$(echo ${display%.*} | /usr/bin/tr ".:" "__") 
+
+(
+  echo "dtsession_res*files: $resourceFiles"
+  if [ ! -z "$resourceFiles" ]; then
+    cat $resourceFiles
+  fi
+) | /usr/bin/xrdb -quiet $xrdbOption -DDISPLAY_$display

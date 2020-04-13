@@ -1,0 +1,154 @@
+'\" t
+...\" dtsessdb.sgm /main/6 1996/09/08 20:19:12 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsessiondb" "special file"
+.SH "NAME"
+\fBdtsessiondb\fP \(em format and location of desktop session database
+.SH "DESCRIPTION"
+.PP
+During a session checkpoint, the Session Manager creates a database
+of its clients and for each client saves the values of the following
+properties:
+.IP "" 10
+\fBCurrentDirectory\fP
+.IP "" 10
+\fBProgram\fP
+.IP "" 10
+\fBRestartCommand\fP
+.IP "" 10
+\fBCloneCommand\fP
+.IP "" 10
+\fBDiscardCommand\fP
+.IP "" 10
+\fBEnvironment\fP
+.IP "" 10
+\fBRestartStyleHint\fP
+.PP
+The Session Manager also saves a client\&'s host name and session id\&.
+If a client\&'s screen number is available, the Session Manager
+will save the screen number\&.
+.PP
+CDEnext session databases (\fBdtsession\&.db\fP)
+supersede CDE1\&.0 session databases (described in
+\fBdtsessionfile\fP(4))\&. The CDEnext Session Manager
+can read CDE 1\&.0 session databases but not write
+to them\&. It will write only to CDEnext session databases\&.
+.PP
+At session startup, the session manager restarts any applications
+that were saved as part of the selected session\&. The system default set of
+applications to be restored as part of the user\&'s Initial Session can be found in
+/usr/dt/config/$LANG/sys\&.session\&. This file should not be edited as
+it will be unconditionally overwritten upon subsequent desktop
+installations\&.
+.PP
+A system administrator may replace the set of applications that
+are restored as part of the user\&'s Initial Session by creating
+a file named /etc/dt/config/$LANG/sys\&.session\&. Unlike the resource
+files, this file will be used as a complete replacement for the
+desktop default file, so it is valid to make a copy of the system
+default file and make any necessary modifications\&.
+.SH "FORMAT"
+.PP
+The CDEnext Session Manager database format is based upon Xrm and
+is as follows:
+.PP
+.nf
+\f(CW! dtsession\&.db
+!
+\&.version: <dtsession version>
+\&.dtsessionID: <dtsession\&'s session ID>
+!
+Client\&.<ClientID>: <ClientID>
+<ClientID>\&.SessionID: <client\&'s session ID>
+<ClientID>\&.Program:
+<ClientID>\&.host:
+<ClientID>\&.screen:
+<ClientID>\&.RestartCommand\&.0:
+<ClientID>\&.RestartCommand\&.1:
+<ClientID>\&.RestartCommand\&.<n>:
+<ClientID>\&.CloneCommand\&.0:
+<ClientID>\&.CloneCommand\&.1:
+<ClientID>\&.CloneCommand\&.<n>:
+<ClientID>\&.DiscardCommand\&.0:
+<ClientID>\&.DiscardCommand\&.1:
+<ClientID>\&.DiscardCommand\&.<n>:
+<ClientID>\&.Environment\&.0:
+<ClientID>\&.Environment\&.1:
+<ClientID>\&.Environment\&.<n>:
+!
+ProxyClient\&.<proxy_client_num>: <proxy_client_num>
+<proxy_client_num>\&.screen:
+<proxy_client_num>\&.host:
+<proxy_client_num>\&.cmd:\fR
+.fi
+.PP
+.PP
+<ClientID> is a sequential number for the XSMP-based session clients\&.
+<proxy_client_num> is a sequential number for the proxy or ICCCM-based
+session clients\&.
+.PP
+The \fBRestartCommand\fP, \fBCloneCommand\fP,
+\fBDiscardCommand\fP, and \fBEnvironment\fP properties
+are of format ARRAY8\&. To facilitate the storage of these properties, the
+Session Manager stores them as separate resources, with appropriate suffixes
+for their positions in the array\&.
+.PP
+The CDEnext Session Manager includes its version number when it writes a
+session database\&. CDE 1\&.0 session databases do not contain version information\&.
+.PP
+The Session Manager sets only the \fB_DT_SESSION_HINTS\fP
+property if the started session is from a CDE 1\&.0 session database\&.
+The CDEnext Window Manager uses the \fB_DT_SESSION_HINTS\fP
+property if it is defined\&. It saves this information in its state file\&.
+The Session Manager does not store any window manager
+information in its database\&.
+.SH "SEE ALSO"
+.PP
+\fBdtsession\fP(1),
+\fBdtsessionfile\fP(4)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

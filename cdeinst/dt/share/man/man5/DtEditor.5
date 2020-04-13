@@ -1,0 +1,559 @@
+'\" t
+...\" DtEditor.sgm /main/8 1996/09/08 19:59:04 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "Dt/Editor\&.h" "file formats"
+.SH "NAME"
+\fBDt/Editor\&.h\fP \(em editor widget definitions
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Editor\&.h>
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBDt/Editor\&.h\fP header defines structures, enumerations and function prototypes for
+the Editor widget class\&.
+.PP
+The header defines the
+\fBDtEditorDataFormat\fR enumeration data type,
+with at least the following members:
+.IP "DtEDITOR_TEXT" 10
+The data being transferred is a pointer
+to a
+\fBNULL\fP-terminated string of characters (a \fBchar *\fR)\&.
+.IP "DtEDITOR_WCHAR" 10
+The data being transferred is a
+wide character string (a \fBwchar_t *\fR)\&.
+.IP "DtEDITOR_DATA" 10
+The data being transferred is a
+sized buffer (a
+\fBDtEditor_DataObj\fR)\&.
+.PP
+The header defines the following structure:
+.PP
+.nf
+\f(CWtypedef struct {
+        unsigned int \fIlength\fP;
+        void *\fIbuf\fP;
+} DtEditor_DataObj;\fR
+.fi
+.PP
+.PP
+The
+\fIlength\fP argument is the
+size in bytes of the data buffer\&.
+The
+\fIbuf\fP argument is a
+pointer to the data buffer\&.
+.PP
+The
+\fBDtEditorContentRec\fR structure is used to transfer data between
+an application and Editor widget\&.
+It indicates the type of data being
+transferred along with the actual data\&.
+.PP
+.nf
+\f(CWtypedef struct {
+        DtEditorDataFormat \fItype\fP;
+        union {
+                char \fI*string\fP;
+                wchar_t \fI*wchar\fP;
+                DtEditor_DataObj \fIdata\fP;
+        } \fIvalue\fP;
+} DtEditorContentRec;\fR
+.fi
+.PP
+.PP
+The
+\fItype\fP argument
+indicates the type of data contained in the structure\&.
+The
+\fIstring\fP argument
+points to a
+\fBNULL\fP-terminated string of characters\&.
+It is valid when
+\fItype\fP is
+\fBDtEDITOR_TEXT\fP\&. The
+\fIwchar\fP argument
+points to a wide character string\&.
+It is valid when
+\fItype\fP is
+\fBDtEDITOR_WCHAR\fP\&. The
+\fIdata\fP argument
+is a
+\fBDtEditor_DataObj\fR that contains the size of the
+data and a pointer to it\&.
+It is valid when
+\fItype\fP is
+\fBDtEDITOR_DATA\fP\&.
+.PP
+The
+\fBDtEditorChangeValues\fR structure is used optionally to specify
+the string to search for and its replacement value for
+\fBDtEditorChange\fP(3)\&.
+.PP
+.nf
+\f(CWtypedef struct {
+        char *\fIfind\fP,
+        char *\fIchangeTo\fP,
+} DtEditorChangeValues;\fR
+.fi
+.PP
+.PP
+The
+\fIfind\fP argument
+is a text string to locate in an DtEditor widget\&.
+The
+\fIchangeTo\fP argument
+is the replacement string for the one or more occurrences of the string
+specified in
+\fIfind\fP\&. It can be
+\fBNULL\fP\&.
+.PP
+The
+\fBDtEditorFormatSettings\fR structure is used to optionally specify
+the left margin setting, right margin setting, and alignment style for
+\fBDtEditorFormat\fP(3)\&.
+.PP
+.nf
+\f(CWtypedef struct {
+        int \fIleftMargin\fP,
+        int \fIrightMargin\fP,
+        unsigned int \fIalignment\fP,
+} DtEditorFormatSettings;\fR
+.fi
+.PP
+.PP
+The
+\fIleftMargin\fP argument
+is the column number of the left boundary when formatting text\&.
+Text is not extended to the left of this column\&.
+It must be non-negative\&.
+The
+\fIrightMargin\fP argument
+is the column number of the right boundary when formatting text\&.
+Text is not extended to the right of this column\&.
+It must be larger than
+\fIleftMargin\fP\&. The
+\fIalignment\fP argument
+specifies the style of alignment when formatting text (see the
+constants listed in this header)\&.
+.PP
+The
+header declares the following variable:
+.PP
+.nf
+\f(CWWidgetClass      dtEditorWidgetClass;\fR
+.fi
+.PP
+.PP
+The
+header defines the following constants for use with the
+\fBDtEditorChange\fP(3) function:
+.IP "DtEDITOR_ALL_OCCURRENCES" 10
+Change all instances of the find string\&.
+.IP "DtEDITOR_CURRENT_SELECTION" 10
+Replace the currently selected text with the replacement string\&.
+.IP "DtEDITOR_NEXT_OCCURRENCE" 10
+Change the next occurrence of the find string after the insertion
+cursor\&.
+.PP
+The
+header defines the following constants for use with the
+\fBDtEditorFormat\fP(3) function:
+.IP "DtEDITOR_FORMAT_ALL" 10
+Reformats all the text in a DtEditor\&.
+.IP "DtEDITOR_FORMAT_PARAGRAPH" 10
+Reformats only the paragraph containing the insertion cursor\&.
+.IP "DtEDITOR_ALIGN_CENTER" 10
+Centers each line of text between the left and right margins\&.
+.IP "DtEDITOR_ALIGN_JUSTIFY" 10
+Aligns the text flush with both the left and right margins\&.
+.IP "DtEDITOR_ALIGN_LEFT" 10
+Aligns the text flush with the left margin\&.
+.IP "DtEDITOR_ALIGN_RIGHT" 10
+Aligns the text flush with the right margin\&.
+.PP
+The
+header defines the following constant for use with the
+\fBDtEditorGoToLine\fP(3) function:
+.IP "DtEDITOR_LAST_LINE" 10
+Moves the cursor to the beginning of the last line in the widget\&.
+.PP
+The
+header defines the following
+\fBDtEditorErrorCode\fR constants:
+.IP "DtEDITOR_NO_ERRORS" 10
+The function completed its task without errors\&.
+.IP "DtEDITOR_INSUFFICIENT_MEMORY" 10
+Not enough system memory is available to complete the task\&.
+.IP "DtEDITOR_INVALID_TYPE" 10
+The specified type is not a recognized
+\fBDtEditorDataFormat\fR when setting or retrieving contents or the specified
+Alignment type is not recognized when formatting text\&.
+.IP "DtEDITOR_INVALID_RANGE" 10
+The starting character position in a text replacement is greater than
+the ending character position or the specified Amount To Format
+when formatting text is not recognized\&.
+.IP "DtEDITOR_NULL_ITEM" 10
+The data buffer is
+\fBNULL\fP when passing data in a buffer\&.
+.IP "DtEDITOR_ILLEGAL_SIZE" 10
+The specified size of a data buffer is negative when passing data in a
+buffer, or the left and right margin values are illegal when formatting text\&.
+.IP "DtEDITOR_SPELL_FILTER_FAILED" 10
+The
+\fBDtEditor\fP function cannot successfully execute the filter specified by the
+\fBDtNspellFilter\fP resource\&.
+.IP "DtEDITOR_NO_TMP_FILE" 10
+The
+\fBDtEditor\fP function cannot create a temporary file in the directory returned by
+\fBtmpnam\fP3S\&. 
+.IP "DtEDITOR_INVALID_FILENAME" 10
+No file was specified\&.
+.IP "DtEDITOR_NONEXISTENT_FILE" 10
+The file specified for reading does not exist\&.
+.IP "DtEDITOR_UNREADABLE_FILE" 10
+The file specified is unreadable for an unspecified reason\&.
+.IP "DtEDITOR_READ_ONLY_FILE" 10
+The file is read only\&.
+.IP "DtEDITOR_NULLS_REMOVED" 10
+The file contained embedded
+\fBNULL\fP characters, which were removed\&.
+.IP "DtEDITOR_NO_FILE_ACCESS" 10
+The file cannot be accessed\&.
+.IP "DtEDITOR_DIRECTORY" 10
+The file specified is a directory\&.
+.IP "DtEDITOR_CHAR_SPECIAL_FILE" 10
+The file specified is a character-special device\&.
+.IP "DtEDITOR_BLOCK_MODE_FILE" 10
+The file specified is a block-mode device\&.
+.IP "DtEDITOR_UNWRITABLE_FILE" 10
+The application does not have write permission for the file or directory\&.
+.IP "DtEDITOR_WRITABLE_FILE" 10
+The specified file exists and the
+\fIoverwriteIfExists\fP flag is set to
+False\&.
+.IP "DtEDITOR_SAVE_FAILED" 10
+The contents of the widget could not be saved for an unspecified reason\&.
+.PP
+The
+header defines the following
+enumeration values as reasons for the
+\fBDtNtextSelectCallback\fP:
+.IP "DtEDITOR_TEXT_SELECT" 10
+Some text has been selected within the edit window (that is, the selection
+has become non-
+\fBNULL\fP)\&.
+.IP "DtEDITOR_TEXT_DESELECT" 10
+No text is selected within the edit window (that is, the selection
+has become
+\fBNULL\fP)\&.
+.PP
+The
+header defines the following constants as reasons for the
+\fBXmNhelpCallback\fP:
+.IP "DtEDITOR_HELP_EDIT_WINDOW" 10
+The help request originated in the edit window\&.
+.IP "DtEDITOR_HELP_STATUS_LINE" 10
+The help request originated in the status line\&.
+.IP "DtEDITOR_HELP_STATUS_CURRENT_LINE" 10
+The help request originated from the Current Line Number
+display in the status line\&.
+.IP "DtEDITOR_HELP_STATUS_TOTAL_LINES" 10
+The help request originated from the Total Lines display in
+the status line\&.
+.IP "DtEDITOR_HELP_STATUS_MESSAGE" 10
+The help request originated from the Message field in the
+status line\&.
+.IP "DtEDITOR_HELP_STATUS_OVERSTRIKE" 10
+The help request originated from the Overstrike indicator
+in the status line\&.
+.IP "DtEDITOR_HELP_FORMAT_DIALOG" 10
+The help request originated from the Help button in the
+Format Settings dialog\&.
+.IP "DtEDITOR_HELP_FORMAT_LEFT_MARGIN" 10
+The help request originated from the Left Margin field in
+the Format Settings dialog\&.
+.IP "DtEDITOR_HELP_FORMAT_RIGHT_MARGIN" 10
+The help request originated from the Right Margin Field in
+the Format Settings dialog\&.
+.IP "DtEDITOR_HELP_FORMAT_ALIGNMENT" 10
+The help request originated from the Alignment buttons in the Format Settings
+dialog\&.
+.IP "DtEDITOR_HELP_CHANGE_DIALOG" 10
+The help request originated from the Help button in the Find/Change dialog\&.
+.IP "DtEDITOR_HELP_CHANGE_FIND" 10
+The help request originated from the Find field in the Find/Change dialog\&.
+.IP "DtEDITOR_HELP_CHANGE_CHANGE" 10
+The help request originated from the Change To field in the Find/Change dialog\&.
+.IP "DtEDITOR_HELP_SPELL_DIALOG" 10
+The help request originated from the Help button in the Spell dialog\&.
+.IP "DtEDITOR_HELP_SPELL_MISSPELLED_WORDS" 10
+The help request originated from the list of misspelled words in the Spell dialog\&.
+.IP "DtEDITOR_HELP_SPELL_CHANGE" 10
+The help request originated from the Change To field in the Spell dialog\&.
+.PP
+The
+header defines the following as functions:
+.PP
+.nf
+Widget DtCreateEditor(Widget \fIparent\fP,
+        char *\fIname\fP,
+        ArgList \fIarglist\fP,
+        Cardinal \fIargcount\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorAppend(Widget \fIwidget\fP,
+        DtEditorContentRec *\fIdata\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorAppendFromFile(Widget \fIwidget\fP,
+        char *\fIfileName\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorChange(Widget \fIwidget\fP,
+        DtEditorChangeValues *\fIfindChangeStrings\fP,
+        unsigned int \fIinstanceToChange\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorCheckForUnsavedChanges(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorClearSelection(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorCopyToClipboard(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorCutToClipboard(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorDeleteSelection(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorDeselect(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+void DtEditorDisableRedisplay(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+void DtEditorEnableRedisplay(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorFind(Widget \fIwidget\fP,
+        char * \fIfind\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorFormat(Widget \fIwidget\fP,
+        DtEditorFormatSettings *\fIformatSettings\fP,
+        unsigned int \fIamountToFormat\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorGetContents(Widget \fIwidget\fP,
+        DtEditorContentRec *\fIdata\fP,
+        Boolean \fIhardCarriageReturns\fP,
+        Boolean \fImarkContentsAsSaved\fP);
+.fi
+.PP
+.nf
+XmTextPosition DtEditorGetInsertionPosition(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+XmTextPosition DtEditorGetLastPosition(Widget \fIwidget\fP);
+.fi
+.PP
+.PP
+.nf
+Widget DtEditorGetMessageTextFieldID(Widget \fIwidget\fP);
+.fi
+.PP
+.PP
+.nf
+void DtEditorGetSizeHints(Widget \fIwidget\fP,
+        XSizeHints *\fIpHints\fP);
+.fi
+.PP
+.nf
+void DtEditorGoToLine(Widget \fIwidget\fP,
+        int \fIlineNumber\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorInsert(Widget \fIwidget\fP,
+        DtEditorContentRec *\fIdata\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorInsertFromFile(Widget \fIwidget\fP,
+        char *\fIfileName\fP);
+.fi
+.PP
+.nf
+void DtEditorInvokeFindChangeDialog(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+void DtEditorInvokeFormatDialog(Widget \fIwidget\fP);
+.fi
+.PP
+.PP
+.nf
+DtEditorErrorCode DtEditorInvokeSpellDialog(Widget \fIwidget\fP);
+.fi
+.PP
+.PP
+.nf
+Boolean DtEditorPasteFromClipboard(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorReplace(Widget \fIwidget\fP,
+        XmTextPosition \fIstartPos\fP,
+        XmTextPosition \fIendPos\fP,
+        DtEditorContentRec *\fIdata\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorReplaceFromFile(Widget \fIwidget\fP,
+        XmTextPosition \fIstartPos\fP,
+        XmTextPosition \fIendPos\fP,
+        char *\fIfileName\fP);
+.fi
+.PP
+.PP
+.nf
+void DtEditorReset(Widget \fIwidget\fP);
+.fi
+.PP
+.PP
+.nf
+DtEditorErrorCode DtEditorSaveContentsToFile(Widget \fIwidget\fP,
+        char *\fIfileName\fP,
+        Boolean \fIoverwriteIfExists\fP,
+        Boolean \fIhardCarriageReturns\fP,
+        Boolean \fImarkContentsAsSaved\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorSelectAll(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorSetContents(Widget \fIwidget\fP,
+        DtEditorContentRec *\fIdata\fP);
+.fi
+.PP
+.nf
+DtEditorErrorCode DtEditorSetContentsFromFile(Widget \fIwidget\fP,
+        char *\fIfileName\fP);
+.fi
+.PP
+.nf
+void DtEditorSetInsertionPosition(Widget \fIwidget\fP,
+                XmTextPosition \fIposition\fP);
+.fi
+.PP
+.nf
+void DtEditorTraverseToEditor(Widget \fIwidget\fP);
+.fi
+.PP
+.nf
+Boolean DtEditorUndoEdit(Widget \fIwidget\fP);
+.fi
+.SH "SEE ALSO"
+.PP
+\fBDtCreateEditor\fP(3), \fBDtEditor\fP(3),
+\fBDtEditorAppend\fP(3),
+\fBDtEditorAppendFromFile\fP(3),
+\fBDtEditorChange\fP(3),
+\fBDtEditorCheckForUnsavedChanges\fP(3),
+\fBDtEditorClearSelection\fP(3),
+\fBDtEditorCopyToClipboard\fP(3),
+\fBDtEditorCutToClipboard\fP(3),
+\fBDtEditorDeleteSelection\fP(3),
+\fBDtEditorDeselect\fP(3), \fBDtEditorFind\fP(3),
+\fBDtEditorFormat\fP(3),
+\fBDtEditorGetContents\fP(3),
+\fBDtEditorGetInsertionPosition\fP(3),
+\fBDtEditorGetLastPosition\fP(3),
+\fBDtEditorGetMessageTextFieldID\fP(3),
+\fBDtEditorGetSizeHints\fP(3),
+\fBDtEditorGoToLine\fP(3), \fBDtEditorInsert\fP(3),
+\fBDtEditorInsertFromFile\fP(3),
+\fBDtEditorInvokeFindChangeDialog\fP(3),
+\fBDtEditorInvokeFormatDialog\fP(3),
+\fBDtEditorInvokeSpellDialog\fP(3),
+\fBDtEditorPasteFromClipboard\fP(3),
+\fBDtEditorReplace\fP(3),
+\fBDtEditorReplaceFromFile\fP(3),
+\fBDtEditorReset\fP(3),
+\fBDtEditorSaveContentsToFile\fP(3),
+\fBDtEditorSelectAll\fP(3),
+\fBDtEditorSetContents\fP(3),
+\fBDtEditorSetContentsFromFile\fP(3),
+\fBDtEditorSetInsertionPosition\fP(3),
+\fBDtEditorTraverseToEditor\fP(3),
+\fBDtEditorUndoEdit\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

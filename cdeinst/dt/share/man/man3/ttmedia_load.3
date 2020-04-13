@@ -1,0 +1,229 @@
+'\" t
+...\" load.sgm /main/6 1996/09/08 20:22:56 rws $
+...\" load.sgm /main/6 1996/09/08 20:22:56 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "ttmedia_load" "library call"
+.SH "NAME"
+\fBttmedia_load\fP \(em send a Display, Edit or Compose request
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBTt_message \fBttmedia_load\fP\fR(
+\fBTt_message \fBcontext\fR\fR,
+\fBTtmedia_load_msg_cb \fBcb\fR\fR,
+\fBvoid *\fBclientdata\fR\fR,
+\fBTttk_op \fBop\fR\fR,
+\fBconst char *\fBmedia_type\fR\fR,
+\fBconst unsigned char *\fBcontents\fR\fR,
+\fBint \fBlen\fR\fR,
+\fBconst char *\fBfile\fR\fR,
+\fBconst char *\fBdocname\fR\fR,
+\fBint \fBsend\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBttmedia_load\fP function
+is used to create and optionally send a Media Exchange request
+to display, edit or compose a document\&.
+.PP
+The
+\fIcb\fP argument will be passed
+\fIclientdata\fP when the reply is received, or when intermediate versions
+of the document are checkpointed through
+\fBDeposit\fP requests\&.
+The
+\fIop\fP argument must be one of
+\fBTTME_DISPLAY\fP, \fBTTME_EDIT\fP or
+\fBTTME_COMPOSE\fP\&. The
+\fImedia_type\fP argument names the data format of the document, and is usually the
+primary determinant of which application will be chosen to
+handle the request\&.
+The
+\fIcontents\fP and
+\fIlen\fP arguments specify the document; if they are
+\fBNULL\fP and zero, respectively, and
+\fIfile\fP is not
+\fBNULL\fP, then the document is assumed to be contained in
+\fIfile\fP\&. If
+\fIdocname\fP is not
+\fBNULL\fP, then
+\fBttmedia_load\fP uses it as the title of the document\&.
+If
+\fIsend\fP is True, the message is sent before being returned\&.
+.PP
+The
+\fIcontext\fP argument describes the environment to use\&.
+If
+\fIcontext\fP is not zero, messages created by
+\fBttmedia_load\fP inherit from
+\fIcontext\fP all contexts whose slotname begins with the characters
+\fBENV_\fP\&.
+.PP
+The
+\fBTtmedia_load_msg_cb\fR argument is a callback defined as:
+.PP
+.nf
+\f(CWTt_message (*Ttmedia_load_msg_cb)(Tt_message \fImsg\fP,
+        void *\fIclientdata\fP),
+        Tttk_op \fIop\fP,
+        unsigned char *\fIcontents\fP,
+        int \fIlen\fP,
+        char *\fIfile\fP);\fR
+.fi
+.PP
+.PP
+The
+\fImsg\fP argument is the
+reply to the load request, or a
+\fBDeposit\fP request with a
+\fImessageID\fP argument naming the identifier (see
+\fBtt_message_id\fP(3)) of the load request\&.
+In the latter case, the client
+program becomes responsible for either failing or replying
+to the request\&.
+In either case,
+\fImsg\fP should be destroyed after being processed\&.
+.PP
+The
+\fIop\fP argument is the
+op of
+\fImsg\fP\&. It must be either
+\fBTTME_DEPOSIT\fP or the
+\fIop\fP passed to
+\fBttmedia_load\fP(3)\&.
+.PP
+The
+\fIcontents\fP, \fIlen\fP and
+\fIfile\fP arguments represent the
+contents of the arriving document\&.
+If
+\fIlen\fP is zero, then the document is contained in
+\fIfile\fP\&. If
+\fIcontents\fP or
+\fIfile\fP are non-
+\fBNULL\fP, they can be freed using
+\fBtt_free\fP\&.
+.PP
+The
+\fIclientdata\fP argument is the
+\fIclientdata\fP passed to
+\fBttmedia_load\fP\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBttmedia_load\fP function returns the request it was asked to build;
+otherwise, it returns an error pointer\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned handle:
+.IP "TT_ERR_NOMEM" 10
+There is insufficient memory available to perform the function\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_OVERFLOW" 10
+The ToolTalk service has more active messages than it can handle\&.
+(The maximum number of active messages is
+implementation specific, but is at least 2000\&.)
+.IP "TT_ERR_PROCID" 10
+The specified process identifier is out of date or invalid\&.
+.SH "APPLICATION USAGE"
+.PP
+After the request created by
+\fBttmedia_load\fP is sent, the application will probably want to use
+\fBttdt_subcontract_manage\fP immediately afterwards to manage the standard interactions with the
+handler of the request\&.
+.PP
+A
+\fBTtmedia_load_msg_cb\fR callback should return
+\fBNULL\fP if it processes
+\fImsg\fP successfully, or a
+\fBtt_error_pointer\fP cast to
+\fBTt_message\fR if processing results in an error\&.
+It should return the
+\fImsg\fP if it does not consume it, in which case
+the ToolTalk service
+will pass
+\fBTT_CALLBACK_CONTINUE\fP down the call stack, so that
+\fImsg\fP will be offered to other callbacks or (more likely) be returned
+from
+\fBtt_message_receive\fP(3)\&. Applications will rarely want
+\fImsg\fP to get processed by other callbacks or in the main event loop\&.
+.SH "EXAMPLES"
+.PP
+This is the typical algorithm of a
+\fBTtmedia_load_msg_cb\fR:
+.PP
+.nf
+\f(CWTt_message
+myLoadMsgCB(Tt_message  msg,
+        void           *clientData,
+        Tttk_op         op,
+        unsigned char  *contents,
+        int             len,
+        char           *file)
+{
+        if (len > 0) {
+                /* Replace data with len bytes in contents */
+        } else if (file != 0) {
+                /* Replace data with data read from file */
+        }
+        if (op == TTME_DEPOSIT) {
+                tt_message_reply(msg);
+        }
+        tttk_message_destroy(msg);
+        return 0;
+}\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttmedia_load_reply\fP(3), \fBttmedia_ptype_declare\fP(3), \fBttmedia_Deposit\fP(3), \fBtt_free\fP(3), \fBtt_message_receive\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

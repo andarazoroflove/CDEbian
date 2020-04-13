@@ -1,0 +1,405 @@
+'\" t
+...\" imsstart.sgm /main/8 1996/09/08 19:53:40 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtimsstart" "user cmd"
+.SH "NAME"
+\fBdtimsstart\fP \(em launches
+an input method server
+.SH "SYNOPSIS"
+.PP
+\fBdtimsstart\fP [-env]  [-ims \fIname\fP]  [-shell \fIname\fP]  [-host \fIhostname\fP]  [-imsopt \fIoptions\fP]  [-list] 
+.SH "DESCRIPTION"
+.PP
+The \fBdtimsstart\fP command launches an IMS (Input Method
+Server)\&. \fBdtimsstart\fP is normally invoked automatically
+at Xsession startup (user login) by the script \fB/usr/dt/config/Xsession\&.d/0020\&.dtims\fP\&.
+.PP
+Depending on the currently selected locale, environment variables,
+configuration files, and command-line options, \fBdtimsstart\fP
+displays a selection window from which you can select the IMS you want to
+use\&. Once you select the IMS, \fBdtimsstart\fP starts it and
+waits until the IMS completes its startup\&. This is to ensure that applications
+wishing to connect to the IMS can do so\&. \fBdtimsstart\fP then
+sets the \fBXMODIFIERS\fP environment variable to ensure that
+clients can connect to the selected IMS\&. Finally, \fBdtimsstart\fP
+exits\&.
+.PP
+Once you select an IMS from the selection window, \fBdtimsstart\fP saves the selection in the IMS Selection File\&. To have \fBdtimsstart\fP automatically start the previously selected IMS, set
+the IMS Selection Mode to \fBresume-current-input-method\fP\&.
+You access the IMS Selection Mode by executing the \fBDtImsMode\fP
+action located in \fBDesktop_Tools\fP in the Application Manager\&.
+.PP
+For IMS Selection Mode, you can choose:
+.IP "\fBask-at-login\fP" 10
+Instructs \fBdtimsstart\fP to display the selection window
+and prompt you for an IMS each time it is invoked\&.
+.IP "\fBresume-current-input-method\fP" 10
+Instructs \fBdtimsstart\fP to automatically start the last
+selected IMS by using the saved IMS Selection File and without displaying
+the selection window\&.
+.SS "Remote Execution of IMS"
+.PP
+If you use the \fB-host\fP option to have \fBdtimsstart\fP start an IMS on a remote host, \fBdtimsstart\fP
+does the following:
+.IP "   \(bu" 6
+Executes the \fBDtImsGetRemoteConf\fP
+action to retrieve IMS configuration data from the specified remote system
+.IP "   \(bu" 6
+Lists the IMSs registered on the remote system
+in the selection window
+.IP "   \(bu" 6
+Executes the \fBDtImsRunRemoteIms\fP
+action to start the selected IMS on the remote system\&.
+.PP
+For more information on configuring remote execution, refer to
+the \fICommon
+Desktop Environment: Advanced User\&'s and System Administrator\&'s Guide\fP\&.
+.SH "OPTIONS"
+.PP
+The following options are available:
+.IP "\fB-env\fP" 10
+Outputs the contents of the \fBXMODIFIERS\fP environment
+variable to stdout\&. \fBdtimsstart\fP automatically updates this
+variable to reflect the currently selected IMS\&. Use this option to verify
+that the intended IMS is the one that is being started\&. If you omit this
+option, no output occurs\&.
+.IP "\fB-ims\fP \fIname\fP" 10
+The name of the IMS to be started\&. If you specify this option, \fBdtimsstart\fP starts the IMS without displaying the selection window\&.
+If you omit this option, \fBdtimsstart\fP displays the selection
+window\&.
+.IP "\fB-shell\fP \fIname\fP" 10
+The output format to use, of output, if \fB-env\fP
+is specified\&. If you omit this option, \fBdtimsstart\fP uses
+the value of $SHELL as the default\&.
+.IP "\fB-host\fP \fIhostname\fP" 10
+The name of the host on which the IMS is to run\&. If you omit this option, \fBdtimsstart\fP uses the local host as the default\&.
+.IP "\fB-imsopt\fP \fIoptions\fP" 10
+The command line options for the selected IMS\&.
+.IP "\fB-list\fP" 10
+Instructs \fBdtimsstart\fP to output the names of input
+methods registered on the system and then exit immediately\&.
+.SH "EXIT STATUS"
+.IP "0" 10
+The IMS was started successfully\&.
+.IP "1" 10
+Execution failed for one of the following reasons:
+.RS
+.IP "   \(bu" 6
+The started IMS did not complete its initialization
+within the timeout period\&.
+.IP "   \(bu" 6
+The started IMS process aborted\&.
+.IP "   \(bu" 6
+The IMS specified by the \fB-ims\fP
+option is not registered\&.
+.RE
+.IP "2" 10
+A syntax error was found\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+\fBdtimsstart\fP references the following environment
+variables:
+.IP "\fBHOME\fP" 10
+The home directory\&.
+.IP "\fBLANG\fP" 10
+The locale\&.
+.IP "\fBDISPLAY\fP" 10
+The type of display on which IMS is to be run\&.
+.PP
+It sets the \fBXMODIFIERS\fP variable
+to the name of the selected IMS to support application and client connections\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+The following actions relevant to \fBdtimsstart\fP are
+defined in the \fBdtims\&.dt\fP file\&.
+.IP "\fBDtImsMode\fP" 10
+Change the IM Selection Mode\&. This action is located at \fBDesktop_Tools\fP in the Application Manager\&.
+.IP "\fBDtImsGetRemoteConf\fP" 10
+Retrieve IMS configuration data on a remote system (used internally
+by \fBdtimsstart\fP)\&.
+.IP "\fBDtImsRunRemoteIms\fP" 10
+Run an IMS on a remote system (used internally by \fBdtimsstart\fP )\&.
+.SH "ERRORS/WARNINGS"
+.PP
+\fBdtimsstart\fP can output the following error messages
+to stderr:
+.IP "invalid option `\fIstring\fP\&'" 10
+Correct the indicated option string\&.
+.IP "environment variable `HOME\&' not defined" 10
+Make sure that HOME is set properly\&.
+.IP "environment variable `LANG\&' not defined" 10
+Make sure that LANG is set properly\&.
+.IP "environment variable `DISPLAY\&' not defined" 10
+Make sure that DISPLAY is set properly\&.
+.IP "cannot open display `\fIdisplay_name\fP\&'"" 10
+Make sure that DISPLAY is set to the correct value\&.
+.PP
+\fBdtimsstart\fP can display the following error messages
+in an error dialog box:
+.IP "cannot open file [\fI/usr/dt/config/ims/start\&.conf\fP ]" 10
+This is an installation error\&. Re-install the package\&.
+.IP "cannot create file [\fIfile_path\fP]" 10
+Make sure the file and its parent directory have write permission\&.
+.IP "cannot create directory [\fI$HOME/\&.dt/ims\fP]" 10
+Make sure the parent directory has write permission\&.
+.IP "missing `\fIentry_name\fP\&' entry in configuration
+file [file_path]" 10
+Correct the indicated entry in the indicated file\&.
+.IP "another `dtimsstart\&' is already running" 10
+Terminate the already running \fBdtimsstart\fP and then
+restart\&.
+.IP "cannot create selection file [\fIfile_path\fP]" 10
+Make sure the indicated file has write permission\&.
+.IP "no ims configuration file for `\fIims_name\fP\&'" 10
+The indicated IMS is registered in the locale configuration file, but
+its IMS configuration file does not exist\&.
+.IP "ims `\fIims_name\fP\&' not registered" 10
+The indicated IMS name is not registered in the locale configuration
+file\&.
+.IP "no executable file for `\fIims_name\fP\&'
+[file_path]" 10
+The indicated IMS executable does not exist\&.
+.IP "ims `\fIims_name\fP\&' is already running" 10
+The indicated IMS is already running on the display\&.
+.IP "cannot execute ims `\fIims_name\fP\&'" 10
+The \fBfork\fP call failed\&. The errno is shown in the
+log file, \fB$HOME/\&.dt/ims/imslog\fP\&.
+.IP "ims `\fIims_name\fP\&' aborted" 10
+The IMS process aborted\&. Refer to the log file, \fB$HOME/\&.dt/ims/imslog\fP, for details\&.
+.IP "ims `\fIims_name\fP\&' is not available yet" 10
+The indicated IMS was not available within the 3-minute timeout period\&.
+.IP "unknown host `\fIhost_name\fP\&'" 10
+The network address of the indicated host cannot be found\&.
+.IP "no ims registered on `\fIhost_name\fP\&'" 10
+No IMS is registered on the indicated host for the current locale\&.
+.IP "ims `\fIims_name\fP\&' not registered on
+`\fIhost_name\fP\&'" 10
+The indicated IMS is not registered on the indicated host\&.
+.PP
+Note that other error messages can be generated by \fBDtActionInvoke\fP or various Xt functions\&. These messages are self-explanatory\&.
+.SH "FILES"
+.IP "\fB/usr/dt/bin/dtimsstart\fP" 10
+\fBdtimsstart\fP executable
+.IP "\fB/usr/dt/app-defaults/<locale_name>/Dtimsstart\fP" 10
+\fBdtimsstart\fP resource file
+.IP "\fB/usr/dt/appconfig/types/<locale_name>/dtims\&.dt\fP" 10
+action definition file
+.IP "\fB/usr/dt/appconfig/appmanager/<locale_name>/Desktop_Tools/DtImsMode\fP" 10
+action files for \fBDtImsMode\fB\fP\fP
+.IP "\fB/usr/dt/lib/nls/msg/<locale_name>/dtimsstart\&.cat\fP" 10
+message catalog file
+.IP "\fB/usr/dt/config/Xsession\&.d/:0020\&.dtims\fP" 10
+Xsession\&.d script file
+.IP "\fB/usr/dt/config/ims/start\&.conf\fP" 10
+\fBdtimsstart\fP configuration file
+.IP "\fB/usr/dt/config/ims/<locale_name>\fP" 10
+locale entry files
+.IP "\fB/usr/dt/config/ims/<ims_name>\fP" 10
+IMS entry files
+.IP "\fB$HOME/\&.dt/ims/<locale_name>\fP" 10
+IMS selection file
+.IP "\fB$HOME/\&.dt/ims/<display_name>/<locale_name>\fP" 10
+display-specific IMS selection file
+.IP "\fB$HOME/\&.dt/ims/imslog\fP" 10
+\fBdtimsstart\fP log file
+.SS "Resource Files"
+.PP
+\fBdtimsstart\fP searches a proper resource file in the
+following order and loads the first file successfully opened\&.
+.IP "   1." 6
+\fB$HOME/\&.dt/<display-name>/current/dt\&.resources\fP
+.IP "   2." 6
+\fB$HOME/\&.dt/<display-name>/home/dt\&.resources\fP
+.IP "   3." 6
+\fB$HOME/\&.dt/sessions/current/dt\&.resources\fP
+.IP "   4." 6
+\fB$HOME/\&.dt/sessions/home/dt\&.resources\fP
+.IP "   5." 6
+\fB/usr/dt/config/<locale-name>/sys\&.resources\fP
+.IP "   6." 6
+\fB/usr/dt/config/C/sys\&.resources\fP
+.SS "Configuration Files"
+.PP
+\fBdtimsstart\fP refers to the following configuration
+files:
+.IP "   \(bu" 6
+Locale Entry file
+.IP "   \(bu" 6
+IMS configuration file
+.IP "   \(bu" 6
+IMS Selection file
+.PP
+The location and format for each configuration file is listed below\&.
+.SS "Locale Entry File"
+.PP
+This file lists the IMSs that support the locale\&. Its location is \fB/usr/dt/config/ims/<locale_name>\fP\&. The format
+is:
+.PP
+@Default: \fIims_name\fP
+.PP
+\fIims_name\fP: \fIlabel_string\fP
+.PP
+For example:
+.PP
+.nf
+\f(CW\fB/usr/dt/config/ims/ja_JP\&.SJIS\fP
+
+@Default:  xjim
+xjim:      HP XJIM
+atok8:     ATOK8
+vje:       VJE-gamma
+egbridge:  EGBridge
+none:      No Input Method\fR
+.fi
+.PP
+.SS "IMS Entry File"
+.PP
+This file describes the attributes of an IMS\&. Its location is
+\fB/usr/dt/config/ims/<ims_name>\fP\&. The format is:
+.PP
+\fIattribute_name\fP: \fIattribute_value\fP
+.PP
+The IMS attributes are:
+.IP "\fBprotocols\fP" 10
+A required String that lists the supported protocols\&. The supported
+XIM protocols are XIM, Ximp, and Xsi\&.
+.IP "\fBserver_name\fP" 10
+A required String that identifies the IMS name (used to update the \fBXMODIFIERS\fP environment variable)\&.
+.IP "\fBcmd_path\fP" 10
+A required Path type that specifies the absolute path of the executable
+file for the identified IMS server\&. A built-in keyword is used for the local
+IM built-in Xlib, which does not need a separate process\&.
+.IP "\fBcmd_param\fP" 10
+A String that specifies the command line option(s) for the IMS server\&.
+.IP "\fBenv_set\fP" 10
+A String that identifies the environment variables to be set, excluding \fBXMODIFIERS\fP\&.
+.IP "\fBenv_unset\fP" 10
+A String that identifies environment variables to be unset, excluding \fBXMODIFIERS\fP\&.
+.IP "\fBenv_pass\fP" 10
+A String that identifies the environment variables to be passed to
+a remotely executing IMS, excluding \fBLANG\fP, \fBDISPLAY\fP, and \fBXMODIFIERS\fP\&.
+.IP "\fBhas_window\fP" 10
+A Bool indicating whether the IMS has its own main window appearance
+or not\&. The default is False\&.
+.IP "\fBno_server\fP" 10
+A Bool indicating whether \fBdtimsstart\fP should start
+the IMS or not\&. It should be True for the local IM, since it doesn\&'t require
+any server process started by \fBdtimsstart\fP\&. The default
+is False\&.
+.IP "\fBno_remote\fP" 10
+A Bool indicating whether the IMS allows remote execution or not\&. The
+default is False\&.
+.IP "\fBno_option\fP" 10
+A Bool indicating whether the IMS allows the command-line option or
+not\&. If True, any options specfied by \fB-imsopt\fP are
+ignored, though the value of the \fBcmd_param\fP entry is always
+applied regardless of this value\&. It should be True for the local IMS\&. The
+default is False\&.
+.PP
+.RS
+\fBNote:  
+.PP
+For entries that accept multiple values, the values are separated by
+white space(s)\&. If multiple entries of the same name appear in the file,
+only the last entry is used\&.
+.RE
+.PP
+For example:
+.PP
+.nf
+\f(CW\fB/usr/dt/config/ims/xjim\fP
+
+protocols:    XIM Ximp
+server_name:  xjim
+cmd_path:     /usr/bin/X11/xjim
+cmd_param:    -iconic
+env_set:
+env_unset:
+env_pass:
+has_window:   true\fR
+.fi
+.PP
+.SS "IMS Selection File"
+.PP
+This file saves the most recently selected IMS for each locale\&. Its
+location is \fB$HOME/\&.dt/ims/[<display_name>/]<locale_name>\fP\&. The format is:
+.PP
+\fIentry_name\fP: \fIentry_value\fP
+.PP
+The selection file entries are:
+.IP "\fB@SelectMode\fP" 10
+The most recently set IMS Selection Mode\&. Valid values are 0 (zero)
+(for \fBask-at-login\fP) and 1 (for \fBresume-current-input-method\fP )\&.
+.IP "\fB@ImsName\fP" 10
+The name of the most recently selected IMS\&.
+.IP "\fB@HostName\fP" 10
+The name of the host on which the IMS runs\&.
+.PP
+For example:
+.PP
+.nf
+\f(CW\fB$HOME/\&.dt/ims/ja_JP\&.SJIS\fP
+
+@SelectMode:  1
+@ImsName:     atok8
+@HostName:    host-A\fR
+.fi
+.PP
+.SH "EXAMPLE"
+.PP
+The command to execute \fBdtimsstart\fP in the
+\fB/usr/dt/config/Xsession\&.d/0020\&.dtims\fP script is as follows:
+.PP
+.nf
+\f(CWeval  ` /usr/dt/bin/dtimsstart  -env -shell ksh `\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+TO BE SUPPLIED
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

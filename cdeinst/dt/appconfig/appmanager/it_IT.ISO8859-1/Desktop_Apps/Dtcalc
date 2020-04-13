@@ -1,0 +1,10 @@
+# Questo file rappresenta un'azione del Common Desktop Environment (CDE). 
+# Il contenuto del file non ha importanza; l'azione avrà effetto anche 
+# se il file è vuoto.
+#  
+# Se il file è eseguibile e il suo nome corrisponde a quello di una voce 
+# del database delle azioni (file *.dt), la Gestione di file del CDE lo 
+# tratterà come un'azione
+# 
+# Per maggiori informazioni sulle azioni, vedere i manuali del CDE.
+echo "Azione del CDE. Avviare usando la Gestione di file"

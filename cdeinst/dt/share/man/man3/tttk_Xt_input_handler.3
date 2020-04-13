@@ -1,0 +1,117 @@
+'\" t
+...\" Xt_inp_h.sgm /main/6 1996/09/08 20:23:40 rws $
+...\" Xt_inp_h.sgm /main/6 1996/09/08 20:23:40 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tttk_Xt_input_handler" "library call"
+.SH "NAME"
+\fBtttk_Xt_input_handler\fP \(em Process ToolTalk events for Xt clients
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tttk\&.h>
+\fBvoid \fBtttk_Xt_input_handler\fP\fR(
+\fBXtPointer \fBprocid\fR\fR,
+\fBint *\fBsource\fR\fR,
+\fBXtInputId *\fBid\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+If
+\fIprocid\fP is not
+\fBNULL\fP, \fBtttk_Xt_input_handler\fP passes it to
+\fBtt_default_procid_set\fP(3)\&. The
+\fBtttk_Xt_input_handler\fP function then calls
+\fBtt_message_receive\fP(3), which retrieves the next message available, if any, for the default
+procid\&.
+If
+\fBtt_message_receive\fP(3) returns
+\fBTT_ERR_NOMP\fP, then
+\fBtttk_Xt_input_handler\fP closes the default
+procid
+with
+\fBttdt_close\fP(3), and removes the input source
+\fI*id\fP with
+\fBXtRemoveInput\fP(3) if
+\fIid\fP is not zero\&.
+If a message is available and
+\fBtt_message_receive\fP(3) returns it (indicating it was not consumed by any message or pattern
+callback), then the ToolTalk service passes the message to
+\fBtttk_message_abandon\fP(3)\&.
+.SH "RETURN VALUE"
+.PP
+The
+\fBtttk_Xt_input_handler\fP function returns no value\&.
+.SH "APPLICATION USAGE"
+.PP
+The application should use
+\fBtttk_Xt_input_handler\fP as its Xt input handler unless some
+messages are expected not to be consumed by callbacks\&.
+(The only messages that
+absolutely cannot be intercepted and consumed by callbacks are those
+that match observe signatures in a
+ptype
+or
+otype\&.)
+.SH "EXAMPLES"
+.PP
+.nf
+\f(CWint myTtFd;
+char *myProcID;
+myProcID = ttdt_open(&myTtFd, "WhizzyCalc", "Acme", "1\&.0", 1);
+/* \&.\&.\&. */
+/* Process the message that started us, if any */
+tttk_Xt_input_handler(myProcID, 0, 0);
+/* \&.\&.\&. */
+XtAppAddInput(myContext, myTtFd, (XtPointer)XtInputReadMask,
+                tttk_Xt_input_handler, myProcID);\fR
+.fi
+.PP
+.SH "SEE ALSO"
+.PP
+\fBTt/tttk\&.h - Tttttk\fP(5), \fBttdt_close\fP(3), \fBtttk_message_abandon\fP(3), \fBtt_default_procid_set\fP(3), \fBtt_message_receive\fP(3), \fBXtAppAddInput\fP(3), \fBXtRemoveInput\fP(3)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

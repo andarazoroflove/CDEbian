@@ -1,0 +1,390 @@
+'\" t
+...\" ActionIn.sgm /main/10 1996/09/08 20:02:14 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtActionInvoke" "library call"
+.SH "NAME"
+\fBDtActionInvoke\fP \(em invoke a XCDE action
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Dt/Action\&.h>
+\fBDtActionInvocationID \fBDtActionInvoke\fP\fR(
+\fBWidget \fBw\fR\fR,
+\fBchar *\fBaction\fR\fR,
+\fBDtActionArg *\fBargs\fR\fR,
+\fBint \fBargCount\fR\fR,
+\fBchar *\fBtermOpts\fR\fR,
+\fBchar *\fBexecHost\fR\fR,
+\fBchar *\fBcontextDir\fR\fR,
+\fBint \fBuseIndicator\fR\fR,
+\fBDtActionCallbackProc \fBstatusUpdateCb\fR\fR,
+\fBXtPointer \fBclient_data\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtActionInvoke\fP function provides a way for
+applications to invoke desktop actions on file or buffer arguments\&. Applications
+can register a callback for receiving action-done status and return arguments\&.
+.PP
+The actions and data types databases must be initialized and loaded
+(using \fBDtInitialize\fP(3) and \fBDtDbLoad\fP(3))
+before \fBDtActionInvoke\fP can run successfully\&.
+.PP
+The \fIw\fP argument is a widget that becomes
+the parent of any dialogs or error messages resulting from action invocation\&.
+This widget should be a top-level application shell widget that continues
+to exist for the action\&'s expected lifetime\&. This argument must have a non-\fBNULL\fP value\&.
+.PP
+The \fIaction\fP argument is the name of
+the action to be invoked\&. The action database may define more than one action
+with the same name\&. The action selected for a particular invocation depends
+on the class, type, and number of arguments provided (as described in  \fBdtactionfile\fP(4))\&. This
+argument must have a non-\fBNULL\fP value\&.
+.PP
+The \fIargs\fP argument is an array of action
+argument structures containing information about the arguments for this action
+invocation\&. If there are no arguments, the value of \fIargs\fP must be \fBNULL\fP\&. The
+items in this array are assigned to the option argument keywords referenced
+in the action definition (see \fBdtactionfile\fP(4))\&. The
+\fIn\fPth item is assigned to keyword %Arg_ \fIn\fP%\&. For example, the second item is assigned to %Arg_\fI2\fP%\&.
+.PP
+The \fIargCount\fP argument is the number of action arguments
+provided in the array \fIargs\fP references\&.
+.PP
+The \fItermOpts\fP argument is a string providing special
+execution information for the terminal emulator used for \fBCOMMAND\fP actions of \fBWINDOW_TYPE\fP \fBTERMINAL\fP or \fBPERM_TERMINAL\fP\&. (See \fBdtactionfile\fP(4))\&. This
+string must be quoted if it contains embedded blanks\&. The application uses
+this string to pass on title, geometry, color and font information to the
+terminal emulator\&. This information must be in a form the expected terminal
+emulator recognizes\&. This argument can be \fBNULL\fP\&.
+.PP
+The \fIexecHost\fP argument is a string identifying a
+preferred execution host for this action\&. The \fIexecHost\fP
+specified here, supersedes the list of execution hosts defined in the action
+definition\&. If \fIexecHost\fP is \fBNULL\fP, the execution host for the action is obtained from the
+action definition as described in \fBdtactionfile\fP(4)\&. 
+.PP
+The \fIcontextDir\fP argument is a string identifying
+a fallback working directory for the action\&. File name arguments are interpreted
+relative to this directory, which must reside in the local file name space
+(for example, \fB/usr/tmp\fP or \fB/net/hostb/tmp\fP)\&.
+This value is only used if the action definition does not explicitly specify
+a working directory in the \fBCWD\fP field
+of the action definition\&. If \fIcontextDir\fP is \fBNULL\fP, the current working directory of the action
+is obtained from the action definition, as described in  \fBdtactionfile\fP(4)\&. 
+.PP
+If the \fIuseIndicator\fP flag is zero, \fBDtActionInvoke\fP does not provide any direct indication to the user that an action
+has been invoked\&. If the \fIuseIndicator\fP flag is non-zero,
+the user is notified via some activity indicator (for example, a flashing
+light in the front panel) that an action has been invoked\&. This indication
+persists only until the invocation of the action completes (in other words,
+until the action begins running)\&.
+.PP
+The \fIstatusUpdateCb\fP callback may be activated if
+the invoked actions have returnable status (for example, a \fBTT_MSG(TT_REQUEST)\fP returning \fBDtACTION_DONE\fP )\&. At a minimum, a \fBDtACTION_INVOKED\fP status is returned when \fBDtActionInvoked\fP
+has finished processing and has completely invoked any resulting actions,
+and a \fBDtACTION_DONE\fP or equivalent
+done status is returned when all actions terminate\&. If \fIstatusUpdateCb\fP is set to \fBNULL\fP, subsequent
+action status is not returned\&. (See \fBDt/Action\&.h - DtAction\fP(5)
+for a list of all \fBDtActionStatus\fR codes,
+and see \fBDtActionCallbackProc\fP(3) for details on \fIstatusUpdateCb\fP and a list of specific \fBDtActionStatus\fR codes it can return\&.)
+.PP
+The \fIclient_data\fP argument is optional
+data to be passed to the \fIstatusUpdateCb\fP callback when
+invoked\&.
+.PP
+The \fBDtActionInvoke\fP function searches the action
+database for an entry that matches the specified action name, and accepts
+arguments of the class, type and count provided\&.
+.PP
+If \fBDtActionInvoke\fP finds a matching action, the
+supplied arguments are inserted into the indicated action fields\&. If any missing
+action arguments have an associated prompt string, then a dialog box prompts
+the user to supply the arguments; otherwise, missing arguments are ignored\&.
+If too many arguments are supplied to an action requiring more than a single
+argument, a warning dialog is posted, allowing the action to be cancelled
+or continued, ignoring the extra arguments\&. If too many arguments are supplied
+to an action requiring zero or one arguments, then that action is invoked
+once for each of the supplied arguments\&. Arguments in the \fBDtActionArg\fR structure that may have been modified by the action
+are returned by the callback if a \fIstatusUpdateCb\fP callback
+is provided\&. For \fBDtActionBuffer\fR arguments,
+the writable flag acts as a hint that the buffer is allowed to be modified
+and returned\&.
+.PP
+The \fBDtActionBuffer\fR structure
+contains at least the following members:
+.TS
+tab();
+l l l.
+\f(CWvoid\fP\f(CW*bp\fPlocation of buffer
+\f(CWint\fP\f(CWsize\fPsize of buffer in bytes
+\f(CWchar\fP\f(CW*type\fPoptional type of buffer
+\f(CWchar\fP\f(CW*name\fPoptional name of buffer
+\f(CWBoolean\fP\f(CWwritable\fPT{
+action is allowed to modify and return the buffer
+T}
+.TE
+.PP
+The \fBDtActionFile\fR structure contains
+at least the following member:
+.TS
+tab();
+l l l.
+\f(CWchar\fP\f(CW*name\fPname of file
+.TE
+.PP
+The \fBDtActionArg\fR structure contains
+at least the following members:
+.TS
+tab();
+l l l.
+\f(CWint\fP\f(CWargClass\fPT{
+see argument class types ( \fBARG_CLASS\fP
+field)
+T}
+\f(CWDtActionFile\fP\f(CWu\&.file\fPunion to a DtActionFile structure
+\f(CWDtActionBuffer\fP\f(CWu\&.buffer\fPunion to a DtActionBuffer structure
+.TE
+.PP
+where \fIargClass\fP is \fBDtACTION_FILE\fP or \fBDtACTION_BUFFER\fP\&. The action service may set \fIargClass\fP to \fBDtACTION_NULLARG\fP for action arguments returned
+by a \fIstatusUpdateCb\fP to indicate that the argument is
+not being updated or has been removed\&. \fBDtACTION_NULLARG\fP cannot be present in action arguments passed to \fBDtActionInvoke\fP\&.
+.PP
+The \fBDtActionInvoke\fP function accepts a pointer to
+an array of \fBDtActionArg\fR structures
+describing the objects to be provided as arguments to the action\&. The
+\fIargs\fP structure can be modified or freed after \fBDtActionInvoke\fP returns\&.
+.PP
+A single call to \fBDtActionInvoke\fP may initiate several
+actions or messages\&. For example, if an action is given three files, but only
+needs one, three instances of the action are started, one for each file\&. As
+a result, a single returned \fBDtActionInvocationID\fR may represent a group of running actions, and subsequent execution
+management services (DtAction) calls operate on that group
+of actions\&.
+.PP
+For \fBDtACTION_BUFFER\fP arguments,
+the action service first tries to type the buffer \fI*bp\fP
+using the \fIname\fP field (see  \fBdtdtsfile\fP(4))\&. The
+\fIname\fP field would typically contain a value resembling
+a file name with an optional extension describing its type\&. If the
+\fIname\fP field is \fBNULL\fP,
+then the action service uses the type specified in the \fItype\fP field\&. If the \fItype\fP field is \fBNULL\fP, then the action service types the buffer \fI*bp\fP by content (see \fBdtdtsfile\fP(4))\&. If
+the \fIname\fP and \fItype\fP
+fields are both non-\fBNULL\fP,
+then the action service uses the \fIname\fP field
+for typing and ignores the \fItype\fP field\&. If
+the buffer pointer \fIbp\fP is \fBNULL\fP or \fIsize\fP is equal to zero,
+a buffer with no contents is used in the resulting action\&. If returned, the
+buffer pointer \fIbp\fP is defined, and \fIsize\fP is equal to or greater than zero\&.
+.PP
+When necessary, \fBDtACTION_BUFFER\fP
+arguments are automatically converted to temporary files prior to actual action
+invocation, and reconverted back to buffers after action termination (this
+is transparent to the caller)\&. If a non-\fBNULL\fP \fIname\fP field is given, it is
+used in the construction of the temporary file name (for example, \fB/myhome/\&.dt/tmp/name\fP)\&. If the use of \fIname\fP
+would cause a conflict with an existing file, or \fIname\fP is \fBNULL\fP, the action
+service generates a temporary file name\&. The permission bits on the temporary
+file are set according to the \fIwritable\fP field and the \fBIS_EXECUTABLE\fP attribute from the action service
+associated with the \fItype\fP field\&.
+.PP
+For \fBDtACTION_FILE\fP arguments,
+\fIname\fP is required\&.
+.PP
+For \fBDtACTION_BUFFER\fP arguments,
+\fIname\fP cannot contain slash characters\&.
+.PP
+Errors encountered are either displayed to the user in a dialog box
+or reported in the desktop errorlog file (\fB$HOME/\&.dt/errorlog\fP,
+unless configured otherwise)\&.
+.SH "RESOURCES"
+.PP
+This section describes the X11 resources the \fBDtActionInvoke\fP function recognizes\&. The resource class string always begins with
+an upper-case letter\&. The corresponding resource name string begins with the
+lower case of the same letter\&. These resources can be defined for all clients
+using the Action Library API by specifying \fB*resourceName: value\fP\&. For
+example, to set the terminal emulator to \fBxterm\fP(1) for all
+clients, the application can use \fB*localTerminal: xterm\fP\&.
+The resources can also be defined on a per client basis\&. For example, it can
+use \fBDtfile*localTerminal: xterm\fP to set the terminal emulator
+to \fBxterm\fP(1) for the \fBdtfile\fP client only\&.
+(See \fBdtactionfile\fP(4))\&. 
+.TS
+tab();
+lw(1.865427i) cw(1.769147i) cw(0.890591i) cw(0.974836i)
+lw(1.865427i) lw(1.769147i) lw(0.890591i) lw(0.974836i).
+\fBX11 Resources\fP
+\fBName\fP\fBClass\fP\fBValue Type\fP\fBDefault\fP
+\fBlocalterminal\fP\fBLocalTerminal\fP\fBstring\fP``Dtterm\&'\&'
+\fBremoteTerminals\fP\fBRemoteTerminals\fP\fBstring\fP``Dtterm\&'\&'
+\fBwaitTime\fP\fBWaitTime\fP\fBnumber\fP3
+.TE
+.IP "\fBLocalTerminal\fP" 10
+Defines an alternative local terminal emulator for Command actions of \fBWINDOW_TYPE\fP \fBTERMINAL\fP or \fBPERM_TERMINAL\fP to
+use\&. The default terminal emulator is \fBdtterm\fP(1)\&.
+.IP "\fBRemoteTerminals\fP" 10
+Defines a comma-separated list of host and terminal emulator pairs\&.
+When a remote \fBCOMMAND\fP action is
+executed on one of the hosts in the list, the terminal emulator associated
+with that host is used for that command\&. The list is passed to the terminal
+emulator using the \fB-e\fP argument\&. (Thus, if another
+terminal emulator than \fBdtterm\fP is used, it must support
+the \fB-e\fP argument\&. See \fBxterm\fP(1)\&. 
+.IP "\fBWaitTime\fP" 10
+Used to assign an alternative integer value, in seconds, to the threshold
+successful return time interval\&. If a \fBCOMMAND\fP action of \fBWINDOW_TYPE\fP \fBTERMINAL\fP fails, the terminal emulator may be
+unmapped before the user has a chance to read the standard error from the
+failed command\&. This resource provides a workaround to this problem\&. If a \fBTERMINAL\fP window command exits before \fBWaitTime\fP seconds have elapsed, the terminal emulator window is forced
+to remain open, as if it were of \fBTYPE\fP \fBPERM_TERMINAL\fP\&. The default value of \fBWaitTime\fP is 3 seconds\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the \fBDtActionInvoke\fP
+function returns a \fBDtActionInvocationID\fR\&.
+The ID can be used in subsequent execution management services (DtAction) calls
+to manipulate the actions while they are running\&. \fBDtActionInvocationID\fRs are only recycled after many have been
+generated\&.
+.SH "APPLICATION USAGE"
+.PP
+The caller should allocate space for the array of structures describing
+the objects to be provided as arguments to the action\&. The caller can free
+the memory after \fBDtActionInvoke\fP returns\&.
+.PP
+Since \fBDtActionInvoke\fP spawns subprocesses to start
+local actions, the caller should use \fBwaitpid\fP(2) instead
+of \fBwait\fP(2) to distinguish between processes started by
+the action service and those the caller starts\&.
+.SH "EXAMPLES"
+.PP
+Given the following action definition:
+.PP
+.nf
+\f(CWACTION Edit
+{
+        LABEL           "Text Edit Action"
+        ARG_CLASS       BUFFER, FILE
+        ARG_TYPE        TEXT
+        TYPE            COMMAND
+        WINDOW_TYPE     TERMINAL
+        EXEC_STRING     "textedit %Args%"
+        DESCRIPTION     This action invokes the "textedit" command on
+                        an arbitrary number of arguments\&.  A terminal
+                        emulator is provided for this action\&'s I/O\&.
+                        EXEC_HOST and CWD are not specified so the
+                        defaults are used for both quantities\&.
+}\fR
+.fi
+.PP
+.PP
+The following call invokes the action
+\fBEdit\fP on the arguments
+\fIaap\fP supplies:
+.PP
+.nf
+\f(CW        DtActionInvoke(w, "Edit", aap, 3, NULL, NULL, NULL, 1,
+                       myCallback, myClientData);\fR
+.fi
+.PP
+.PP
+The working directory for the action defaults to the current working
+directory\&.
+The execution host is the default execution host\&.
+.PP
+If the variable
+\fIaap\fP points to an array of
+\fBActionArg\fP data structures
+containing the following information:
+.PP
+.nf
+\f(CW{
+        argClass = DtACTION_FILE;
+        struct {
+            name="/myhome/file1\&.txt";
+        } file;
+}\fR
+.fi
+.PP
+.PP
+.nf
+\f(CW{
+        argClass = DtACTION_FILE;
+        struct {
+            name="file2\&.txt";
+        } file;
+}\fR
+.fi
+.PP
+.PP
+.nf
+\f(CW{
+        argClass = DtACTION_BUFFER;
+        struct {
+            bp=(void *) myEditBuffer;
+            size=lengthOfMyEditBuffer;
+            type=NULL;
+            name="Doc1\&.txt"
+            writable=TRUE;
+        } buffer;
+}\fR
+.fi
+.PP
+.PP
+and the current working directory is
+\fB/cwd\fP, then the
+\fBEdit\fP action results in the execution string:
+.PP
+.nf
+\f(CWtextedit /myhome/file1\&.txt /cwd/file2\&.txt /myhome/\&.dt/tmp/Doc1\&.txt\fR
+.fi
+.PP
+.PP
+When the action completes,
+\fImyCallback\fP is called and
+the callback returns the buffer argument\&.
+.SH "SEE ALSO"
+.PP
+\fBDt/Action\&.h - DtAction\fP(5),  \fBxterm\fP(1), \fBXtFree\fP(3), \fBXtMalloc\fP(3), \fBDtDbLoad\fP(3), \fBDtInitialize\fP(3), \fBDtActionCallbackProc\fP(3), \fBdtactionfile\fP(4), \fBdtdtfile\fP(4), \fBdtdtsfile\fP(4)\&. 
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

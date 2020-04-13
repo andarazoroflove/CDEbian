@@ -1,0 +1,859 @@
+'\" t
+...\" file.sgm /main/10 1996/11/15 15:24:47 cdedoc $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtfile" "user cmd"
+.SH "NAME"
+\fBdtfile\fP \(em the CDE File Manager
+.SH "SYNOPSIS"
+.PP
+\fBdtfile\fP [options\&.\&.\&.] 
+.SH "DESCRIPTION"
+.PP
+.RS
+\fBNote:  
+.PP
+Although \fBdtfile\fP may be invoked from the command line, developers
+who wish to interface to File Manager function should use CDE Actions
+(see "CDE Actions" in "RELATED INFORMATION")\&.
+.RE
+.PP
+The CDE File Manager is the Desktop\&'s
+primary interface to the file system\&. It provides a GUI for file
+manipulation and application execution\&.
+.PP
+The main File Manager interface consists of a top-level window which
+shows the contents of a single folder or a set of nested folders
+(folder tree)\&. A single File Manager process may provide many
+top-level windows each of which may show the contents of a different
+folder\&.
+.PP
+The File Manager has many manipulation features\&. It will allow a user
+to:
+.PP
+- Traverse folders via a double-click, menu options, or a
+click-and-type mechanism\&.
+.PP
+- Change folder display modes (i\&.e\&. large icons, small icons,
+alphabetical order, date order, single folder, folder tree,
+etc\&.) and filtering options\&.
+.PP
+- Create, move, copy, link, and delete objects via menu options
+and/or drag-and-drop\&.
+.PP
+- Rename objects via menu options or a click-and-type mechanism\&.
+.PP
+- Modify object file system attributes via menu options\&.
+.PP
+- Invoke actions (applications such as Edit or Print) on objects
+via a double-click, menu options, or drag-and-drop\&.
+.PP
+- Locate objects by name or by contents\&.
+.PP
+- Place frequently used objects on a desktop/workspace\&.
+.PP
+The File Manager also supports additional features for two special
+types of top level windows: application views and the trash container\&.
+.PP
+Application views are designed to organize application objects such as
+actions\&.
+.PP
+Application view windows have the same general appearance and function
+as folder windows with the following exceptions:
+.PP
+- The user is not allowed to traverse above the main application
+view\&.
+.PP
+- When a user drags an object from an application view to another
+application view or to a folder, the object is copied to the new
+location (as opposed to being moved as is the case in a folder\&.)
+.PP
+The trash container is designed to be a holding area for objects that
+users wish to delete\&. Like application views, the trash container
+window has the same general appearance as a folder window; however,
+trash container function differs as follows: Users may move, restore,
+or delete a trash object and may change the display mode for the trash
+container\&. Users MAY NOT:
+.PP
+- Traverse out of the trash container\&.
+.PP
+- Copy, rename, or execute any other manipulation on a trash
+object\&.
+.SS "Key Supported Tasks"
+.PP
+.SS "Desktop"
+.PP
+A Desktop is a place where users can store commonly used objects for
+easy access\&. Within the CDE, each workspace is
+considered a Desktop\&. A user may place any object on the background of
+a workspace and the object will remain there\&. The user can also select
+actions for that object via a popup menu which is activated by
+selecting mouse button 3\&.
+.SS "Folder Window"
+.PP
+A folder window is a top-level window which shows the contents of a
+single folder or a set of nested folders (folder tree)\&.
+Folder windows may be launched from the Front Panel, actions, or a
+command line interface\&. The objects in a folder are displayed in a
+user-selected icon/text combination\&. The icon visual shows the icon
+type\&. Users can use menu options to reread folder views, open new
+folder views, and to select/unselect all objects in a folder\&. In tree
+mode, buttons next to icons representing subfolders allow users to
+expand or collapse folder branches and to control whether all
+objects in a folder or only the folder structure is shown in the
+window\&.
+.SS "Application View Window"
+.PP
+A application view window is a top-level window which shows the
+contents of a single application folder\&. An application folder
+is a restricted folder which is designed to organize application
+objects such as actions\&. Application views are launched from the Front
+Panel or a predefined action\&.
+.SS "Trash Container Window"
+.PP
+When an object is no longer needed, a user can move the object to the
+trash container\&. The trash container is a restricted folder which
+is used to store files temporarily until the user asks to permanently
+remove them\&. A user can view the contents of the trash container in a
+top level window which is launched from a menu option in a folder or
+application view, the Front Panel, or a predefined action\&. Users can
+also restore objects from the trash container provided that actions
+have not been taken to permanently remove them\&.
+.SS "Object Movement and Modification"
+.PP
+Menu options are provided which allow users to create objects, rename
+objects, copy objects, modify object properties, and move objects to a
+desktop or to the trash container\&. (NOTE: In addition to the menu
+options, users can rename objects with the following steps: 1\&. Click
+mouse button 1 on the text portion of an object icon, 2\&. An edit box
+will appear; type the new file name, 3\&. Select Enter\&.)
+.SS "File System Awareness"
+.PP
+The File Manager is file system aware\&. It can be enabled to launch
+dialogs that allow editing of file system specific parameters (See
+FILES - \fBdtfile\&.config\fP)\&.
+.SS "Object Search"
+.PP
+A menu option/dialog box combination is provided to allow users to
+search for objects by name or by content\&. During a name search, the
+File Manager looks for an object whose name matches specified search
+criteria\&. During a content search, the File Manager looks for an
+object which contains specified character strings\&. Content searches
+are case insensitive\&. When an object is located, the File Manager can
+either open a window to display the folder where the object is
+located or place the object on the desktop\&.
+.SS "Folder Traversal"
+.PP
+Simple folder traversal can be accomplished by double-clicking on a
+folder icon\&. This action displays the contents of the selected folder\&.
+If the user moves the mouse before releasing the mouse button on the
+second click of a double click ("double-click-drag" action), a new
+window will pop up to show the contents of the selected folder\&. The
+new window will be placed at the position where the user released the
+mouse button\&.
+.PP
+In addition, the File Manager provides the following folder
+traversal mechanisms:
+.IP "" 10
+This dialog lists folders that are frequently used\&.
+A user may traverse to a new folder by double-clicking on
+a folder in this list\&.
+.IP "Click-and-Type Mechanism" 10
+When a user clicks on the "Text Path",
+it is remapped to a text edit widget\&. Again the user may
+traverse to a new folder by typing a new folder title and
+then selecting Enter\&.
+.IP "Iconic Path Selection" 10
+If a user double-clicks on a folder icon in the iconic
+path, the File Manager will update the current window to show
+the contents of the selected folder\&.
+.IP "Find Dialog" 10
+This dialog searches the file system for a folder or
+folders whose name(s) match user-supplied criteria\&. The
+user may open new windows for folders located by the
+Find dialog\&.
+.IP "Home and Up Menu Options" 10
+These options allow the user to traverse
+to $HOME and parent folders respectively\&.
+.IP "Tree Display Mode" 10
+In this mode, the folder hierarchy is displayed as
+a tree that can be traversed by selecting the buttons located
+next to the folder icons (See Tree Mode below)
+.IP "Tree Mode" 10
+In tree mode, the current folder and its subfolders are
+shown initially\&. Traversing into subfolders can be
+accomplished by single-clicking on the button next to the
+folder icon\&. Clicking the left mouse button over the folder
+button cycles through three states: partially expanded, fully
+expanded, and collapsed\&. Clicking the middle mouse button
+cycles through these three states in reverse order\&. When the
+user first clicks on the folder button, the contents of the
+subfolder are read and added to the tree (partially
+expanded state)\&. If the user clicks on the button a second
+time, the non-folder contents of the folder are added to
+the tree (fully expanded state)\&. If the user clicks on the button
+a third time, the folder contents are removed from the tree
+(collapsed state)\&. If a folder does not have subfolders,
+the partially expanded state is skipped\&. If a folder does not
+contain non-folder objects, the fully expanded state is
+skipped\&. If a folder is empty, the folder button is
+desensitized\&.
+.SS "Setting Display Preferences"
+.PP
+The File Manager provides many options for displaying objects\&. For
+example, objects can be displayed in iconic or non-iconic formats\&. The
+user may also choose to position files in either a grid or random
+pattern\&. (NOTE: The File Manager provides a Clean Up menu option which
+can be used to align randomly placed objects to a grid pattern\&.) If
+the user has write permission in a folder and the user chooses to
+randomly place files, the positioning information is saved when the
+user leaves the folder\&. Therefore, each time the user reenters the
+folder the files will be positioned as they were when the user left
+the folder\&.
+.SS "Object Filtering"
+.PP
+Folders can contain many different types of objects\&. The File
+Manager\&'s filtering mechanism allows the user to selectively display
+objects depending on their type\&. The File Manager also provides a Show
+Hidden Files menu toggle option which allows the user to turn the
+filtering mechanism on and off\&.
+.SS "Object Type/Action Association"
+.PP
+When an object is selected, the File Manager builds an Actions menu
+for that object based on the type of the object\&. For example, data
+files are provided with a menu containing the following actions: Open,
+Print\&. Folders are provided with a menu containing: OpenNewView,
+OpenInPlace\&. Actions can be run on an object by selecting an object
+and then selecting an action from the Actions menu\&. Also,
+double-clicking on an object will activate the default action for the
+object\&.
+.SS "Quick Help"
+.PP
+The File Manager provides quick help via F1 throughout the \fBdtfile\fP
+application\&. This includes quick help on object icons\&. To access quick
+help, position the cursor/pointer over the item for which you wish to
+get help, then press F1\&.
+.SS "Popup Menus"
+.PP
+The File Manager provides popup menus for objects within a File
+Manager view or on the Desktop\&. To access the popup menu for a
+particular object, position the cursor over the object and press and
+hold mouse button 3\&. A popup menu will appear\&. The menu will contain a
+list of the actions which can be performed on that particular object\&.
+If multiple objects are selected, the popup menu will show all of
+those actions which can be done on all of the selected objects at
+once\&.
+.SS "Direct Manipulation"
+.PP
+Objects can be dragged between different
+File Manager views, to Desktops, and to cooperating clients\&.
+Direct manipulation may be used to copy, move, or link objects as well
+as to supply objects as input to applications\&.
+See the REGISTERING OBJECTS AS DROP SITES section\&.
+The File Manager also supports drops of buffers on its views and objects
+such as CDE Mailer attachments\&.
+.SS "Terminal Access"
+.PP
+A menu option is provided which gives users access to terminal
+windows\&.
+.SS "Exit Services"
+.PP
+Menu options are provided which allow users to close File Manager
+views and which allow users to save setting information before exiting
+a File Manager session\&.
+.SS "Object Name Completion"
+.PP
+The File Manager supports object name completion in the following text
+widgets: the "Text path", the "Destination Folder" field of
+the "Go To" dialog, the "Search Folder" field of the "Find"
+dialog\&. Press control+spacebar and the name will complete to the extent
+that it can\&.
+.SS "Multibyte Character Set Support"
+.PP
+The File Manager is fully internationalized\&. It supports both
+single-byte and multi-byte locales\&.
+.SS "Error Condition Notification"
+.PP
+The File Manager uses dialog boxes to report various error conditions\&.
+.SH "OPTIONS"
+.PP
+The following options are available from the command line:
+.SS "-noview"
+.PP
+\fBDtfile\fP runs in "server mode"\&. In other words, a window is not
+displayed until a cooperating client makes a request to display a
+folder\&.
+.SS "-session \fBsession_file\fP"
+.PP
+\fBDtfile\fP runs with the session file specified in the session_file
+parameter\&. Session files are generated as a \fBdtfile\fP session shuts down\&.
+.SS "-dir \fBfolder\fP"
+.PP
+OR
+.SS "-folder \fBfolder\fP"
+.PP
+\fBDtfile\fP displays a window for each folder specified in the folder
+parameter (Note: No spaces are allowed in folder)\&. If this option is
+not used, the user\&'s current folder (the folder from which
+\fBdtfile\fP was started) is displayed\&.
+.SS "-title \fBtitle_name\fP"
+.PP
+This option allows the user to specify a title (title_name) for the
+File Manager windows\&. All windows and dialogs generated by this
+session will use this title\&. If this option is not used, the name of
+the folder shown in a window will be used as the window title\&.
+.SS "-help_volume \fBhelp_volume_name\fP"
+.PP
+This option allows the user to specify a help volume
+(\fBhelp_volume_name\fP) to use with the File Manager windows\&. This option
+is useful if the user is using the File Manager to display a specific
+folder and wants to have specific help for that folder\&. Note:
+All File Manager views that are created from this folder will also
+use this help volume\&.
+.SS "-restricted"
+.PP
+\fBDtfile\fP will not display folders above the restricted folder\&. If
+the \fB-dir\fP option is used, the folder specified by that option is the
+restricted folder\&. If the \fB-dir\fP option is not used, the user\&'s
+current folder is the restricted folder\&.
+.SS "-grid on/off"
+.PP
+\fBDtfile\fP displays files in a pattern specified by the on/off parameter\&.
+As the name implies, on/off will either have a value of \fBon\fP or a value
+of \fBoff\fP\&.
+.IP "on" 10
+Files are always displayed in a grid pattern\&. The
+File Manager automatically rearranges the files if a file is moved\&.
+This is the default pattern\&.
+.IP "off" 10
+Files are always displayed where they are placed
+by the user\&. The File Manager does not rearrange the files\&.
+.SS "-tree on/off"
+.PP
+This option controls whether \fBdtfile\fP displays files in single folder
+mode (off) or in folder tree mode (on)\&.
+.SS "-tree_files \fBnever/always/choose\fP"
+.PP
+This option controls whether or not files may be displayed in the
+folder tree mode\&.
+.IP "never" 10
+Files are never displayed\&. The user may toggle
+between two states: partially expanded and collapsed\&.
+.IP "always" 10
+Files are always displayed\&. The user may toggle
+between two states: fully expanded and collapsed\&.
+.IP "choose" 10
+Files may or may not be displayed\&. The user may
+toggle between three states: partially expanded, fully expanded, or
+collapsed\&.
+.SS "-order \fBorder_type\fP"
+.PP
+\fBDtfile\fP displays files in the order specified by the order_type
+parameter\&. Order_type must have one of the following values:
+.IP "alphabetical" 10
+Files are displayed in alphabetical
+order\&. This is the default order\&.
+.IP "file_type" 10
+Files are displayed in groups based on their
+filetypes\&.
+.IP "date" 10
+Files are displayed in an order based on the date
+when they were last modified\&.
+.IP "size" 10
+Files are displayed in an order based on their size\&.
+.SS "-view \fBview_type\fP"
+.PP
+\fBDtfile\fP displays files in the format specified by the view_type
+parameter\&. \fBView_type\fP must have one of the following values:
+.IP "no_icon" 10
+Files are displayed by name\&.
+.IP "large_icon" 10
+Files are displayed by name and large icon\&.
+The icon shows the type of the file\&. This is the default format\&.
+.IP "small_icon" 10
+Files are displayed by name and small icon\&.
+The icon shows the type of the file\&.
+.IP "attributes" 10
+Files are displayed by attributes\&. A small
+icon is used to represent the file type\&. (This format is similar to
+the listing obtained by issuing ls -l from an aixterm command line\&.)
+.SS "-direction \fBdirection\fP"
+.PP
+\fBDtfile\fP displays files in the direction specified by the direction
+parameter\&. Direction must have one of the following values:
+.IP "ascending" 10
+Files are displayed in an ascending
+direction\&. This is the default direction\&.
+.IP "descending" 10
+Files are displayed in a descending
+direction\&.
+.IP "" 10
+Both the \fB-noview\fP and the \fB-session\fP options are normally used by the
+session manger to start \fBdtfile\fP\&. The \fB-title\fP,
+\fB-help_volume\fP, and
+\fB-restricted\fP options can also be set via resources (See the RESOURCES
+section\&.) The \fB-grid\fP, \fB-tree\fP, \fB-treefiles\fP, \fB-order\fP,
+\fB-view\fP, and \fB-direction\fP
+options can also be set by 1) selecting the Set Preferences option
+from the View pulldown menu or by 2) resources (See the RESOURCES
+section\&.)
+.SS "-small_icon_width \fBsize\fP"
+.PP
+The default small icon width is 24 pixels\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this option to specify small icon width\&. Size must be in pixel\&.
+.SS "-small_icon_height \fBsize\fP"
+.PP
+The default small icon height is 24 pixels\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this option to specify small icon height\&. Size must be in pixel\&.
+.SS "-large_icon_width \fBsize\fP"
+.PP
+The default large icon width is 38 pixels\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this option to specify large icon width\&. Size must be in pixel\&.
+.SS "-large_icon_height \fBsize\fP"
+.PP
+The default large icon height is 38 pixels\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this option to specify large icon height\&. Size must be in pixel\&.
+.SH "EXAMPLES"
+.SS "dtfile -view no_icon -order date -direction"
+.PP
+The File Manager will display files in text format, ordered by date,
+most current to oldest date\&.
+.SS "dtfile -dir /u/guest -restricted"
+.PP
+The File Manager will begin execution by displaying a window showing
+the /u/guest folder\&. The user will not be allowed to navigate above
+this folder\&.
+.SS "dtfile -session session\&.jan\&.12"
+.PP
+The File Manager will run with the session file called session\&.jan\&.12\&.
+.SH "RESOURCES"
+.TS
+tab();
+lw(1.483553i) lw(1.543860i) lw(0.916667i) lw(1.555921i).
+\fBName\fP\fBClass\fP\fBType\fP\fBDefault\fP
+\fBdirWidth\fP\fBDirWidth\fP\fBXmRDimension\fR555
+\fBdirHeight\fP\fBDirHeight\fP\fBXmRDimension\fR305
+\fBappWidth\fP\fBAppWidth\fP\fBXmRDimension\fR365
+\fBappHeight\fP\fBAppHeight\fP\fBXmRDimension\fR365
+\fBrereadTime\fP\fBRereadTime\fP\fBXmRInt\fR10 (s)
+\fBcheckBrokenLink\fP\fBCheckBrokenLink\fP\fBXmRInt\fR180 (s)
+\fBmaxDirectoryProcesses\fP\fBMaxDirectoryProcesses\fP\fBXmRInt\fR10
+\fBmaxRereadProcesses\fP\fBMaxRereadProcesses\fP\fBXmRInt\fR5
+\fBmaxRereadProcsPerTick\fP\fBMaxRereadProcsPerTick\fP\fBXmRInt\fR1
+\fBmoveThreshold\fP\fBMoveThreshold\fP\fBXmRInt\fR4 (pix)
+\fBtitle\fP\fBTitle\fP\fBXmRString\fRNULL
+\fBrootTitle\fP\fBRootTitle\fP\fBXmRString\fR"ROOT"
+\fBhelp_volume\fP\fBHelp_volume\fP\fBXmRString\fRNULL
+\fBfileManagerIcon\fP\fBFileManagerIcon\fP\fBXmRString\fRhome\&.i\&.bm
+\fBrestrictMode\fP\fBRestrictMode\fP\fBXmRBoolean\fRfalse
+\fBshowFilesystem\fP\fBShowFilesystem\fP\fBXmRBoolean\fRtrue
+\fBgrid\fP\fBGrid\fP\fBstring\fRon
+\fBtreeView\fP\fBTreeView\fP\fBstring\fRoff
+\fBtreeFiles\fP\fBTreeFiles\fP\fBstring\fRnever
+\fBorder\fP\fBOrder\fP\fBstring\fRalpha
+\fBview\fP\fBView\fP\fBstring\fRlarge_icon
+\fBdirection\fP\fBDirection\fP\fBstring\fRascend
+\fBdesktopIcon\fP\fBDesktopIcon\fP\fBstring\fRlarge
+\fBobjectPlacement\fP\fBObjectPlacement\fP\fBstring\fRtop rt
+\fBopenFolder\fP\fBOpenFolder\fP\fBstring\fRcurrent
+\fBsmallIconWidth\fP\fBSmallIconWidth\fP\fBXmRInt\fR16
+\fBsmallIconHeight\fP\fBSmallIconHeight\fP\fBXmRInt\fR16
+\fBlargeIconWidth\fP\fBLargeIconWidth\fP\fBXmRInt\fR32
+\fBlargeIconHeight\fP\fBLargeIconHeight\fP\fBXmRInt\fR32
+.TE
+.SS "Dtfile *dirWidth"
+.PP
+Specifies the width of a File Manager folder window\&.
+.SS "Dtfile *dirHeight"
+.PP
+Specifies the height of a File Manager folder window\&.
+.SS "Dtfile *appWidth"
+.PP
+Specifies the width of a File Manager application view window
+.SS "Dtfile *appHeight"
+.PP
+Specifies the height of a File Manager application view window\&.
+.SS "Dtfile *rereadTime"
+.PP
+Determines how often the File Manager rereads the open folders and
+monitors the Desktop objects\&. This resource must be specified in
+seconds\&. If it is set to 0, the reread will not occur and the user
+must manually reread the folders\&. This will conserve processor
+cycles but may cause views to become stale as well\&.
+.SS "Dtfile *checkBrokenLink"
+.PP
+Determines how often the File Manager checks open folders for
+broken links\&. This resource must be specified in seconds\&. If it is set
+to 0, the check for broken links will not occur\&.
+.SS "Dtfile *maxDirectoryProcesses"
+.PP
+Specifies the maximum number of background processes which may be
+devoted to folder activities (ie\&. reading the folder, updating
+the folder, writing positional information for the folder,
+checking for broken links or checking for other folder updates)\&.
+.SS "Dtfile *maxRereadProcesses"
+.PP
+Specifies the maximum number of background processes which may be
+devoted to folder reread activities (ie\&. checking for broken links
+or checking for other folder updates)\&.
+.SS "Dtfile *maxRereadProcsPerTick"
+.PP
+Specifies the number of reread processes that may be started per
+reread timer tick\&. In other words, the currently displayed folders
+will be checked for changes in a round- robin fashion, x folders
+per timer tick where x is equal to maxRereadProcsPerTick\&.
+.SS "Dtfile *moveThreshold"
+.PP
+Specifies the number of pixels that the cursor must move while a
+button is held down before the drag controller recognizes the button
+down action as a drag\&.
+.SS "Dtfile *title"
+.PP
+Specifies the title for all File Manager windows\&. If this resource is
+set to NULL, then the title of each File Manger window will be the
+name of the folder displayed in the window\&.
+.SS "Dtfile *rootTitle"
+.PP
+Specifies the title of the root folder\&. This title will appear in
+the title bar of any File Manager window which is showing the root
+folder\&. It will also be the name shown with the icon representing
+the root folder on the Desktop\&.
+.SS "Dtfile *help_volume"
+.PP
+Specifies the help volume\&.
+.SS "Dtfile \fB*fileManagerIcon\fP"
+.PP
+Specifies the icon to display when a File Manager window is minimized\&.
+.SS "Dtfile \fB*restrictMode\fP"
+.PP
+Determines whether or not the user is operating in restricted mode\&. If
+this resource is set to true, the user is operating in restricted
+mode\&. The user is restricted to the user\&'s $HOME folder and below\&.
+All folder change requests are interpreted relative to the user\&'s
+$HOME folder\&. All folders above the user\&'s $HOME folder are
+hidden from the user\&. If this resource is set to false, the user\&'s
+folder requests are not limited in any way\&.
+.SS "Dtfile \fB*showFilesystem\fP"
+.PP
+Determines whether or not the path name for the current folder is
+visible\&. If this resource is set to TRUE, the path name is visible\&. If
+it is set to FALSE, the path name is not visible\&. This resource can be
+used to hide the file system from the user\&.
+.SS "Dtfile \fB*grid\fP"
+.PP
+Determines the pattern used to display files\&. This resource must have
+one of two values:
+.IP "on" 10
+Files are always displayed in a grid pattern\&. The
+File Manager automatically rearranges the files if a file is moved\&.
+This is the default pattern\&.
+.IP "off" 10
+Files are always displayed where they are placed
+by the user\&. The File Manager does not rearrange the files\&.
+.SS "Dtfile \fBtreeView\fP"
+.PP
+Determines whether files are displayed in single folder mode (on)
+or folder tree mode (off)\&.
+.SS "Dtfile \fB*treeFiles\fP"
+.IP "This" 10
+folder tree mode\&.
+.IP "never" 10
+Files are never displayed\&. The user may toggle
+between two states: partially expanded and collapsed\&.
+.IP "always" 10
+Files are always displayed\&. The user may toggle
+between two states: fully expanded and collapsed\&.
+.IP "choose" 10
+Files may or may not be displayed\&. The user may
+toggle between three states: partially expanded, fully expanded, or
+collapsed\&.
+.SS "Dtfile \fB*order\fP"
+.PP
+Determines the order used to display files\&. This resource must have
+one of four values:
+.IP "alphabetical" 10
+Files are displayed in alphabetical
+order\&. This is the default order\&.
+.IP "file_type" 10
+Files are displayed in groups based on their
+filetypes\&.
+.IP "date" 10
+Files are displayed in an order based on the date
+when they were last modified\&.
+.IP "size" 10
+Files are displayed in an order based on their
+size\&.
+.SS "Dtfile \fB*view\fP"
+.PP
+Determines the format used to display files\&. This resource must have
+one of four values:
+.IP "no_icon" 10
+Files are displayed by name\&.
+.IP "large_icon" 10
+Files are displayed by name and large icon\&.
+The icon shows the type of the file\&. This is the default format\&.
+.IP "small_icon" 10
+Files are displayed by name and small icon\&.
+The icon shows the type of the file\&.
+.IP "attributes" 10
+Files are displayed by attributes\&. A small
+icon is used to represent the file type\&. (This format is similar to
+the listing obtained by issuing ls -l from an aixterm command line\&.)
+.SS "Dtfile \fB*direction\fP"
+.PP
+Determines the direction used to display files\&. This resource must
+have one of two values:
+.IP "ascending" 10
+Files are displayed in an ascending
+direction\&. This is the default direction\&.
+.IP "descending" 10
+Files are displayed in a descending
+direction\&.
+.SS "Dtfile \fB*desktopIcon\fP"
+.PP
+Determines the type of icon used to represent files/folders on the
+Desktop\&. This resource must have one of two values:
+.IP "large" 10
+Large icons are used to represent
+files/folders on the Desktop\&.
+.IP "small" 10
+Small icons are used top represent
+files/folders on the Desktop\&.
+.SS "Dtfile *objectPlacement"
+.PP
+Specifies the placement scheme used to place objects on the Desktop\&.
+This resource has the following syntax: primary_layout
+secondary_layout\&. The primary_layout determines whether an object
+placed on the Desktop is put into a row or a column\&. The
+secondary_layout determines where to place new rows or columns\&. The
+layouts must have one of four values:
+.IP "top" 10
+Objects are placed top to bottom\&. (vertical value)
+.IP "bottom" 10
+Objects are placed bottom to top\&. (vertical
+value)
+.IP "left" 10
+Objects are placed left to right\&. (horizontal
+value)
+.IP "right" 10
+Objects are placed right to left\&. (horizontal
+value)
+The user should use one value from each
+category--vertical and horizontal\&. For example if the primary_layout
+is top, then the secondary_layout should be either left or right\&. In
+this case, the secondary_layout should NOT be top or bottom\&. Likewise,
+if the primary_layout is left, then the secondary_layout should be
+either top or bottom\&. In this case, the secondary_layout should NOT be
+left or right\&.
+.SS "Dtfile \fB*openFolder\fP"
+.PP
+Determines how a folder is opened when a user double clicks on a
+folder icon\&. This resource must have one of two values:
+.IP "current" 10
+Open the folder in the current window\&.
+(This is the same as using the OpenInPlace action\&.)
+.IP "new" 10
+Open the folder in a new window or, if a window showing this
+folder currently exists, move the existing window to this
+workspace and place it in the forefront\&. (Note: Only one view
+of a folder can be opened at once under these conditions\&.
+If the user defines an \&'open folder\&' file type, the folder icon
+will change state to indicate when a given folder is currently
+open somewhere in the user\&'s environment\&. In order to define
+an \&'open folder\&' file type, the user should 1) define a file
+type with the same name as the normal folder file type
+except that the name is preceded with \fBOPEN_\fP, 2) create an
+\&'open folder\&' icon, and 3) use the name of the \&'open folder\&' icon
+as the icon name in the \&'open folder\&' file type definition\&.
+.SS "Dtfile \fB*smallIconWidth\fP"
+.PP
+The default small icon size is 16 pixel\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this resource to specify small icon width\&.
+.SS "Dtfile \fB*smallIconHeight\fP"
+.PP
+The default small icon height is 16 pixel\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this resource to specify small icon height\&.
+.SS "Dtfile \fB*largeIconWidth\fP"
+.PP
+The default large icon width is 32 pixel\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this resource to specify large icon width\&.
+.SS "Dtfile \fB*largeIconHeight\fP"
+.PP
+The default large icon height is 16 pixel\&. Any customized icons
+that have larger size will be clipped\&. To avoid clipping,
+use this resource to specify large icon height\&.
+.SH "ASYNCHRONOUS EVENTS"
+.SS "Tool Talk Messages"
+.PP
+The following Tool Talk Desktop and Media requests
+are supported by the File Manager:
+.IP "Edit (Document and Media Exchange Message Set)" 10
+The specified file is opened for editing in a separate window\&.
+.IP "Display (Document and Media Exchange Message Set)" 10
+The specified file is opened for viewing only in a separate window\&.
+.IP "Quit (Desktop Message Set)" 10
+This request will terminate the File Manager and its children\&.
+.SH "RELATED INFORMATION"
+.SS "CDE Actions"
+.PP
+The following Desktop actions can be used to access File Manager
+folder and application view windows as well as the File Manager trash
+container window\&. These actions are defined in
+\fB/usr/dt/appconfig/types/$LANG/dtfile\&.dt\fP\&.
+.IP "Dtfile" 10
+Opens a folder window for a specified folder\&.
+.IP "Dtappmgr" 10
+Opens an application view window\&.
+.IP "Dttrash" 10
+Opens a window to display the contents of the Trash Container\&.
+.IP "OpenNewView" 10
+Opens a new window to show the contents of the selected folder\&.
+.IP "OpenInPlace" 10
+Displays the contents of the selected folder in the current window\&.
+.IP "FILESYSTEM_MOVE" 10
+Moves a set of dragged objects to the selected drop site\&.
+.IP "FILESYSTEM_COPY" 10
+Copies a set of dragged objects to the selected drop site\&.
+.IP "FILESYSTEM_LINK" 10
+Creates symbolic links to a set of dragged objects
+from the selected drop site\&.
+.SS "Registering Objects As Drop Sites"
+.PP
+Every CDE data type has three associated drop
+attributes: \fBMOVE_TO_ACTION\fP, \fBCOPY_TO_ACTION\fP,
+and \fBLINK_TO_ACTION\fP\&. The File
+Manager registers every object whose data type has a value for at
+least one of these attributes as a drop site\&.
+.PP
+When an object is dragged to a drop site, the File Manager is
+triggered by the drag-and-drop API\&. The drag-and-drop API provides the
+File Manager with a gesture code (Move, Copy, or Link) which
+is dictated by a combination of the modifier keys used and the manner
+in which the drop site was registered\&. Based on the gesture code and
+the data type of the drop site, the File Manager retrieves a drop
+attribute (ie\&. \fBMOVE_TO_ACTION\fP) from the Datatypes database\&. The File
+Manager then calls the CDE API, \fBDtActionInvoke\fP according to the following rules:
+.PP
+1\&. If objects A and B are dropped on object C, then the parameters to
+\fBDtActionInvoke\fP are as follows:
+.IP "DtActionInvoke (drop action name, C, A, B)" 10
+2\&. There is one exception, if object C is an action, then the
+parameters will not include object C\&. ie
+.IP "DtActionInvoke (drop action name, A, B)" 10
+.SH "FILES"
+.PP
+File Manager uses the following files\&.
+.SS "dtfile"
+.PP
+Executable file\&. This file is located in \fB/usr/dt/bin\fP\&.
+.SS "dtfile_copy"
+.PP
+Utility to support folder copy\&. This executable file is located in
+\fB/usr/dt/bin\fP\&.
+.SS "dtfile_error"
+.PP
+This script can be used by applications to display an error
+dialog when it would be difficult or impossible to do in the
+context of the executing program\&. For example, it can be used
+when exec fails in a child process or if an error is detected
+before an applications main window can be realized\&.
+This executable file is located in
+\fB/usr/dt/bin\fP\&.
+.SS "Dtfile"
+.PP
+App-defaults file\&. This file is located in \fB/usr/dt/app-defaults/$LANG\fP\&.
+See the RESOURCES section for a list of those resources which can be
+set using the app-defaults file\&.
+.SS "dtfile\&.config"
+.PP
+Configuration file\&. This file is located in \fB/usr/dt/config/$LANG\fP\&. It may be
+used to add a file system specific button to the File Properties
+dialog\&. This button launches an additional dialog allowing the user to
+modify file system specific parameters\&. For example, the user can add
+a stanza defining a dialog for setting the Access Control List for a
+file from the Andrew File System\&. If the user also adds a stanza
+defining a dialog for setting the Access Control List for the
+Distributed File System, then the File Manager will determine which
+dialog is associated with the selected file and will display that
+dialog\&. See the text in the \fBdtfile\&.config\fP file for instructions on how
+to create stanzas\&.
+.SS "dtfile\&.dt"
+.PP
+CDE type/action definition file\&. This file is
+located in \fB/usr/dt/appconfig/types/$LANG\fP\&.
+.SS "Dtinf\&.*, Dtlink\&.*, DtdirR\&.*, Fphome*, Fpapps*, Fptrsh*"
+.PP
+Icon files\&. These files are located in \fB/usr/dt/appconfig/icons/$LANG\fP\&.
+.SS "dtfile\&.cat"
+.PP
+Message catalog\&. This file is located in \fB/usr/dt/lib/nls/msg/$LANG\fP\&.
+.SS "Filemgr\&.sdl, FM*\&.tif, FM*\&.pm"
+.PP
+Help files\&. These files are located in \fB/usr/dt/appconfig/help/$LANG/Filemgr\fP and
+\fB/usr/dt/appconfig/help/$LANG/Filemgr/graphics\fP\&.
+.SS "dtfile\&.1"
+.PP
+Man page\&.
+.SH "SEE ALSO"
+.PP
+- Data Interchange Mechanisms (drag-and-drop library)
+.PP
+- Window Manager
+.PP
+- Object Services (action/filetype database)
+.PP
+- ICCCM Messaging
+.PP
+- ToolTalk
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

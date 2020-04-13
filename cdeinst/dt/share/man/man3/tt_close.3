@@ -1,0 +1,90 @@
+'\" t
+...\" close.sgm /main/5 1996/08/30 12:43:22 rws $
+...\" close.sgm /main/5 1996/08/30 12:43:22 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tt_close" "library call"
+.SH "NAME"
+\fBtt_close\fP \(em close the current default procid
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+\fBTt_status \fBtt_close\fP\fR(\fBvoid\fR)
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtt_close\fP function
+closes the current default
+procid\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtt_close\fP function returns the status of the operation as one of the following
+\fBTt_status\fR values:
+.IP "TT_OK" 10
+The operation completed successfully\&.
+.IP "TT_ERR_NOMP" 10
+The
+\fBttsession\fP(1) process is not running and the ToolTalk service cannot restart it\&.
+.IP "TT_ERR_PROCID" 10
+The current default process identifier is out of date or invalid\&.
+.SH "APPLICATION USAGE"
+.PP
+When the
+\fBtt_close\fP function call is successful, the
+procid
+will no longer be active\&.
+For any subsequent API calls the process must, therefore,
+first call
+\fBtt_default_procid_set\fP to specify a
+procid\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h - Tttt_c\fP(5), \fBtt_open\fP(3), \fBtt_context_join\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

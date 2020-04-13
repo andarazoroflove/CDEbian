@@ -1,0 +1,119 @@
+! $TOG: Dtpad /main/15 1997/07/08 11:34:52 mgreess $
+#include "Dt"
+
+!######################################################################
+!#
+!#     Dtpad
+!#
+!#     Common Desktop Environment (CDE)
+!#
+!#     Application Defaults for the Text Editor
+!#
+!#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+!#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+!#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+!#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+!#
+!######################################################################
+
+
+!######################################################################
+!#
+!# Formatting for the printing output.
+!#
+!######################################################################
+!#
+!# Formatting when printing to printer.
+!#
+
+!# Sizes the PrintShell.
+Dtpad*Print.width:				8.5in
+Dtpad*Print.height:				11.0in
+Dtpad*Print.Page*foreground:			black
+Dtpad*Print.Page*background:			white
+ 
+!# Places a border around the text portion of the output.
+Dtpad*Print.Page*shadowThickness:		2
+Dtpad*Print.Page*topShadowColor:		black
+Dtpad*Print.Page*bottomShadowColor:		black
+ 
+!# Controls margins and background of the header and footer labels.
+Dtpad*Print.Page*XmLabel*marginTop:		0
+Dtpad*Print.Page*XmLabel*marginBottom:		0
+!Dtpad*Print.Page*XmLabel*background:		grey
+
+!# Fonts for headers, footers, and text.
+Dtpad*Print.Page*XmLabel.renderTable:		-dt-application-bold-r-normal-serif-0-120-0-0-m-0-*-*
+Dtpad*Print.Page*Editor.renderTable:		-dt-application-medium-r-normal-serif-0-100-0-0-m-0-*-*
+
+
+!#
+!# Formatting when "printing" to video.
+!# Debugging only
+!#
+Dtpad*PrintVideo.width:				8.5in
+Dtpad*PrintVideo.height:			9.5in
+Dtpad*PrintVideo.Page.width:			8.5in
+Dtpad*PrintVideo.Page.height:			9.5in
+Dtpad*PrintVideo.Page*foreground:		black
+Dtpad*PrintVideo.Page*background:		white
+
+Dtpad*PrintVideo.Page*shadowThickness:		2
+Dtpad*PrintVideo.Page*topShadowColor:		black
+Dtpad*PrintVideo.Page*bottomShadowColor:	black
+ 
+Dtpad*PrintVideo.Page*XmLabel*marginTop:	0
+Dtpad*PrintVideo.Page*XmLabel*marginBottom:	0
+!Dtpad*PrintVideo.Page*XmLabel*background:	grey
+
+
+!######################################################################
+!#
+!# Formatting for the Print Setup dialog.
+!#
+!######################################################################
+Dtpad*DtPrintSetup*DocumentName.leftOffset:	10
+Dtpad*DtPrintSetup*WrapToFit.leftOffset:	35
+Dtpad*DtPrintSetup*MarginFrame.leftOffset:	35
+Dtpad*DtPrintSetup*HdrFtrFrame.leftOffset:	35
+
+!######################################################################
+!#
+!# Miscellaneous
+!#
+!######################################################################
+!# Text Editor secondary color.
+!#Dtpad*SecondaryColorSetId:	8
+
+!# Text Editor default geometry. Multi byte locales should set it to
+!# smaller size.
+Dtpad.geometry:			80x24
+
+!######################################################################
+!#
+!# CDE compliant menu accelerators and accelerator text.
+!#
+!######################################################################
+
+Dtpad*fileMenu.print.acceleratorText:		Control+P
+Dtpad*fileMenu.print.accelerator:		Control<Key>p
+Dtpad*fileMenu.close.acceleratorText:		Alt+F4
+Dtpad*fileMenu.close.accelerator:		Alt<Key>F4
+
+Dtpad*editMenu.undo.acceleratorText:		Control+Z
+Dtpad*editMenu.undo.accelerator:		Control<Key>z
+Dtpad*editMenu.cut.acceleratorText:		Control+X
+Dtpad*editMenu.cut.accelerator:			Control<Key>x
+Dtpad*editMenu.copy.acceleratorText:		Control+C
+Dtpad*editMenu.copy.accelerator:		Control<Key>c
+Dtpad*editMenu.paste.acceleratorText:		Control+V
+Dtpad*editMenu.paste.accelerator:		Control<Key>v
+Dtpad*editMenu.selectAll.acceleratorText:	Control+/
+Dtpad*editMenu.selectAll.accelerator:		Control<Key>/
+Dtpad*editMenu.findChange.acceleratorText:	Control+F
+Dtpad*editMenu.findChange.accelerator:		Control<Key>f
+
+Dtpad*optionsMenu.overstrike.acceleratorText:	Insert
+Dtpad*optionsMenu.overstrike.accelerator:	<Key>osfInsert
+
+!###########################   eof   ###########################

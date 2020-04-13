@@ -1,0 +1,318 @@
+# ##########################################################################
+# 
+#     miscActions.dt
+# 
+#     Examples of miscellaneous Actions (mostly for X clients).
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: miscActions.dt.src /main/4 1996/04/23 17:36:05 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+# ##################################################################
+# 
+# Azioni
+# 
+# ##################################################################
+ACTION Xcalc
+{
+        LABEL		Calcolatrice X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcalc
+	DESCRIPTION	L'azione Calcolatrice X richiama il client X xcalc. \
+                        Il client xcalc è una calcolatrice scientifica \
+                        che può emulare i sistemi TI-30 o HP-10C.
+}
+
+# #####
+
+ACTION Oclock
+{
+        LABEL		Orologio ovale
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     oclock
+	DESCRIPTION	L'azione Orologio ovale (Oclock) richiama il client oclock. \
+                        Questo client mostra l'ora con una \
+                        visualizzazione analogica.
+}
+
+# #####
+
+ACTION Xlsatoms
+{
+        LABEL		Elencare atomi
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsatoms
+	DESCRIPTION	L'azione Elencare atomi (Xlsatoms) richiama \
+                        il client X xlsatoms. Xlsatoms elenca gli atomi inglobati.
+}
+
+# #####
+
+ACTION Xbiff
+{
+        LABEL		Xbiff
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xbiff
+	DESCRIPTION	L'azione Xbiff richiama il client X xbiff. \
+                        Il programma xbiff visualizza un'immagine ridotta \
+                        di una cassetta della posta. Quando non ci sono messaggi, \
+                        l'aletta della cassetta è abbassata. Quando arriva un \
+                        messaggio, l'aletta si alza e viene emesso un segnale acustico.
+}
+
+# #####
+
+ACTION Xcolor
+{
+        LABEL		Xcolor
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcolor
+	DESCRIPTION	L'azione Xcolor richiama il client X xcolor. \
+                        xcolor visualizza tutti i 256 colori in una finestra. \
+                        Spostando il puntatore nella finestra viene installata \
+                        una mappa di colori contenente una scala di gradazioni \
+                        con saturazione e luminosità costanti, mantenendo \
+                        invariati il bianco e il nero.
+}
+
+# #####
+
+ACTION Xcutsel
+{
+        LABEL		Tagliare e selezionare
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcutsel
+	DESCRIPTION	L'azione Tagliare e selezionare (Xcutsel) esegue il client X \
+                        xcutsel. Questo client viene usato per copiare \
+                        la selezione corrente in un buffer \
+                        ed eseguire un'operazione con il contenuto \
+                        di questo buffer. Agisce da ponte tra le \
+                        applicazioni che non supportano le selezioni \
+                        e quelle che le supportano.
+}
+
+# #####
+
+ACTION Xditview
+{
+        LABEL		Xditview
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xditview
+	DESCRIPTION	L'azione Xditview richiama il client X xditview. \
+                        Il programma xditview visualizza un output \
+                        ditroff su un display X.
+}
+
+# #####
+
+ACTION Xedit
+{
+        LABEL		Xedit
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xedit
+	DESCRIPTION	L'azione Xedit richiama il client X xedit. \
+                        La finestra del client xedit comprende quattro \
+                        aree: 1. Sezione comandi: un insieme di comandi \
+                        che permette di uscire da xedit, salvare il file \
+                        e caricare un nuovo file nella finestra di editazione. \
+                        2. Finestra messaggi: visualizza i messaggi xedit \
+                        e può essere usata come blocco note. \
+                        3. Sezione del nome del file: mostra \
+                        il nome del file corrente, e indica \
+                        se il file è abilitato in lettura/scrittura o solo \
+                        in lettura. 4. Finestra di editazione: visualizza il \
+                        testo del file corrente.
+}
+
+# #####
+
+ACTION Xlock
+{
+        LABEL		Xlock
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlock
+	DESCRIPTION	L'azione Xlock richiama il client X xlock. \
+                        Il client xlock blocca il display X locale \
+                        finché non viene inserita una parola chiave.
+}
+
+# #####
+
+ACTION Xlogo
+{
+        LABEL		Xlogo
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlogo
+	DESCRIPTION	L'azione Xlogo richiama il client X xlogo. \
+                        Il client xlogo visualizza il logo del \
+                        sistema X Window.
+}
+
+# #####
+
+ACTION Xmag
+{
+        LABEL		Ingrandire
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmag
+	DESCRIPTION	L'azione Ingrandire (Xmag) richiama il client X xmag. \
+                        Il client xmag consente di ingrandire una \
+                        porzione di uno schermo X. Se non viene \
+                        specificata nessuna regione, viene visualizzato \
+                        un riquadro con il puntatore nell'angolo superiore \
+                        sinistro che permette di definire l'area da ingrandire. \
+                        L'area può essere modificata fino alla \
+                        dimensione desiderata premendo il pulsante 2. \
+                        Una volta selezionata la regione, viene visualizzata \
+                        una finestra che mostra una versione "ingrandita" della \
+                        regione, in cui ogni pixel dell'immagine sorgente è \
+                        rappresentato da un piccolo riquadro dello stesso colore.
+}
+
+# #####
+
+ACTION Xman
+{
+        LABEL		Xman
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xman
+	DESCRIPTION	L'azione Xman richiama il client X xman. \
+                        Il client xman viene utilizzato per consultare le pagine di spiegazioni.
+}
+
+# #####
+
+ACTION Xmh
+{
+        LABEL		X Mail Handler
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmh
+	DESCRIPTION	L'azione X Mail Handler (Xmh) richiama il client X xmh. \
+                        Il client xmh fornisce un'interfaccia utente grafica \
+                        per l'MH Message Handling System. \
+                        Per eseguire le operazioni sui messaggi, questo client \
+                        richiama il package MH. È possibile comporre \
+                        inviare, ricevere, rispondere, inoltrare, ordinare \
+                        e memorizzare in cartelle i messaggi di posta \
+                        elettronica. xmh comprende un meccanismo evoluto \
+                        per la personalizzazione dell'interfaccia utente.
+}
+
+# #####
+
+ACTION Xeyes
+{
+        LABEL		Occhi
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xeyes
+	DESCRIPTION	L'azione Occhi (Xeyes) richiama il client X xeyes. \
+                        Il client xeyes visualizza due occhi che seguono \
+                        il puntatore nei suoi movimento sullo schermo.
+}
+
+# #####
+
+ACTION Xauth
+{
+        LABEL		Autorizzazioni X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xauth
+	DESCRIPTION	L'azione Autorizzazioni X (Xauth) richiama il client X xauth. \
+                        Il client xauth viene utilizzato per modificare e \
+                        visualizzare le informazioni di autorizzazione \
+                        usate per il collegamento al server X.
+}
+
+# #####
+
+ACTION Xlsclients
+{
+        LABEL		Elencare client
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsclients
+	DESCRIPTION	L'azione Elencare client (Xlsclients) richiama il \
+                        client X xlsclients. Questo client è uno strumento \
+                        che elenca le informazioni sulle applicazioni client \
+                        eseguite su un display. Può essere utilizzato per \
+                        generare uno script che riproduca la \
+                        sessione corrente dell'utente.
+}
+
+# #####
+
+ACTION Xpuzzle
+{
+        LABEL		Puzzle X
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xpuzzle
+	DESCRIPTION	L'azione Puzzle X (Xpuzzle) richiama il \
+                        client X xpuzzle. Questo client è un \
+                        puzzle 4x4 con 15 pezzi.
+}
+
+# #####
+
+ACTION Passwd
+{
+        LABEL           Cambiare parola chiave
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     dtterm -geometry 60x8 -xrm "*menuBar: False" -e sh -c '                                echo "Cambiamento della parola chiave";                                echo "-------------------------------";                                passwd'
+
+
+
+        DESCRIPTION     L'azione Cambiare parola chiave (Passwd) utilizza il \
+                        comando 'passwd' per cambiare la parola chiave dell'utente.
+}
+
+# ######################## EOF ############################################

@@ -1,0 +1,139 @@
+'\" t
+...\" PrintRes.sgm /main/8 1996/08/31 14:58:59 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "DtPrintResetConnection" "library call"
+.SH "NAME"
+\fBDtPrintResetConnection\fP \(em resets the print display connection managed by a
+\fBDtPrintSetupBox\fP
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Print\&.h>
+\fBXtEnum \fBDtPrintResetConnection\fP\fR(
+\fBWidget \fBwid\fR\fR,
+\fBDtPrintResetConnectionMode \fBmode\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The \fBDtPrintResetConnection\fP function
+is a convenience function provided by the
+\fBDtPrintSetupBox\fP widget that allows applications
+to direct the widget to stop managing the X print server connection\&.
+A \fImode\fP parameter is
+included in order to direct the widget to close the print connection by
+calling \fBXpDestroyPrintContext\fP and
+\fBXCloseDisplay\fP or to simply relinquish
+control of the connection without closing it\&.
+.PP
+\fBDtPrintResetConnection\fP is intended
+to be used by applications that fork
+a child process to perform the print rendering operation\&. Immediately
+after the fork is performed, the parent process will close its X print
+server connection, and retain its connection to the video X server\&. The
+forked child on the other hand will close its video X server connection
+and perform the rendering operation on the X print server connection\&.
+.SH "ARGUMENTS"
+.IP "\fIwid\fP" 10
+The \fBDtPrintSetupBox\fP widget ID\&.
+.IP "\fImode\fP" 10
+Indicates whether \fBDtPrintResetConnection\fP
+should close the X print server
+connection, or simply cause the
+\fBDtPrintSetupBox\fP to cease managing the
+connection\&.
+.IP "" 10
+Valid values are:
+.RS
+.IP "\fBDtPRINT_CLOSE_CONNECTION\fP" 10
+Set by the parent process when the application forks a child to perform
+the print rendering\&. This will cause the
+\fBDtNclosePrintDisplayCallback\fP
+list set for the passed \fBDtPrintSetupBox\fP to be called\&.
+.IP "\fBDtPRINT_RELEASE_CONNECTION\fP" 10
+Set when the application wishes to destroy the
+\fBDtPrintSetupBox\fP widget
+instance and still perform print rendering using the X print server
+connection initiated by the widget\&. For example, the child process of an
+application that forks to perform print rendering will close the video
+display connection (thereby destroying the
+\fBDtPrintSetupBox\fP widget) prior
+to print rendering\&. No \fBDtPrintSetupBox\fP
+callbacks will be called as a result of this operation\&.
+.RE
+.SH "RETURN VALUE"
+.IP "\fBDtPRINT_SUCCESS\fP" 10
+\fBDtPrintResetConnection\fP was successful\&.
+.IP "\fBDtPRINT_NO_CONNECTION\fP" 10
+An open X print server connection is not currently being
+managed by the \fBDtPrintSetupBox\fP\&.
+.IP "\fBDtPRINT_BAD_PARM\fP" 10
+The value passed for
+\fIwid\fP is NULL, or an invalid
+\fImode\fP was passed\&.
+.SH "ENVIRONMENT VARIABLES"
+.PP
+None\&.
+.SH "RESOURCES"
+.PP
+None\&.
+.SH "ACTIONS/MESSAGES"
+.PP
+None\&.
+.SH "ERRORS/WARNINGS"
+.PP
+None\&.
+.SH "EXAMPLES"
+.PP
+None\&.
+.SH "FILES"
+.PP
+None\&.
+.SH "SEE ALSO"
+.PP
+\fBDtPrintSetupBox\fP(3)
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40

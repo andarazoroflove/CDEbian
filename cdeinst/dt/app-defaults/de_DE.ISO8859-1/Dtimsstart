@@ -1,0 +1,58 @@
+!# @(#)$XConsortium: Dtimsstart /main/3 1996/09/20 18:08:17 cde-hp $
+!	dtimsstart
+
+*fontList:	-dt-interface user-medium-r-normal-m*-*-*-*-*-m-*:
+
+! title on title bar
+Dtimsstart*title:			dtimsstart
+
+! title
+Dtimsstart*Selection*title.labelString:	Eingabemethode-Auswahl
+Dtimsstart*Host*title.labelString:	Rechner wechseln
+Dtimsstart*Mode*title.labelString:	Eingabemethode-Auswahlmodus
+
+! button label
+Dtimsstart*OK.labelString:		OK
+Dtimsstart*Clear.labelString:		Löschen
+Dtimsstart*Cancel.labelString:		Abbrechen
+Dtimsstart*ChangeHost.labelString:	Rechner wechseln
+Dtimsstart*Help.labelString:		Hilfe
+
+! border width (selection dialog appears without window manager)
+Dtimsstart*Selection.borderWidth:	3
+Dtimsstart*Host.borderWidth:		3
+Dtimsstart*XmDialogShell.borderWidth:	0
+
+! default spacing
+Dtimsstart*cmd_rc.marginWidth:		10
+Dtimsstart*cmd_rc.spacing:		10
+
+! ims selection dialog
+Dtimsstart*Selection*cmd_rc.spacing:	4
+Dtimsstart*Selection*cmd_rc.OK.marginWidth:	16
+Dtimsstart*Selection*select_rc.marginWidth:	40
+
+! change host dialog
+Dtimsstart*host_label.labelString:	Rechnername:
+Dtimsstart*Host*host_desc.alignment:	XmALIGNMENT_BEGINNING
+Dtimsstart*Host*host_desc.marginLeft:	20
+Dtimsstart*Host*host_desc.marginRight:	20
+Dtimsstart*Host*host_desc.labelString:	 Rechnernamen da eingeben, wo die registrierten\n Server zur Eingabemethode angezeigt werden sollen.\n Leeres Rechnernamensfeld verweist auf den lokalen Rechner.
+Dtimsstart*Host*host_text.maxLength:	63
+Dtimsstart*Host*host_text.columns:	14
+Dtimsstart*Host*host_rc.marginWidth:	60
+Dtimsstart*Host*cmd_rc.marginWidth:	20
+Dtimsstart*Host*cmd_rc.spacing:		90
+
+! selection mode dialog
+Dtimsstart*Mode*button_0.labelString:	Bei der Anmeldung fragen
+Dtimsstart*Mode*button_1.labelString:	Aktuelle Eingabemethode fortsetzen
+Dtimsstart*Mode*cmd_rc.spacing:		50
+Dtimsstart*Mode*cmd_rc.marginWidth:	20
+
+! help message
+Dtimsstart.selectionHelpMsg:	\n         Hilfe zur Eingabemethode-Auswahl\n \n     Eine Eingabemethode unter den aufgelisteten Möglickeiten auswählen, dann auf die [OK] Taste     drücken.\n     Die Konfiguration für die gewählte Eingabemethode wird ausgeführt.\n \n       [OK]:        implementiert die Auswahl und schließt das Fenster.\n \n       [Rechner wechseln]: einen Rechnernamen angeben.  Die registrierte Eingabemethode für\n                    den Rechner wird angezeigt.\n \n       [Abbrechen]:    löscht die Auswahl und schließt das Fenster.\n \n       [Hilfe]:      zeigt diese Nachricht an.\n \n \n        Anmerkung:  nicht im System installierte Eingabemethoden werden als/mit netted aufgeführt\n               und sind nicht auswählbar.\n \n     Wie man den Eingabemethode-Auswahlmodus ändert:\n \n         Das Auswahlfenster erscheint gewöhnlich bei jeder Anmeldung.\n         Sie können diesselbe Eingabemethode auswählen wie vorher,\n         ohne das Fenster zu wechseln.  Dafür führen Sie die Aktion\n         'DtImsMode' unter Desktop_Werkzeuge im Anwendungsmanager aus,\n         und wählen 'Aktuelle Eingabemethode fortsetzen' im Dialogfenster.\n
+
+Dtimsstart.modeHelpMsg:	\n         Eingabemethode Auswahlmodus\n \n     Wählen Sie eine der folgenden Möglichkeiten und drücken Sie die [OK] Taste.\n \n         Bei der Anmeldung fragen:\n             Bei jeder Anmeldung erscheint das Auswahlfenster\n             und verlangt die Auswahl der Eingabemethode.\n \n         Aktuelle Eingabemethode fortsetzen:\n             Eine bereits ausgewählte Eingabemethode wird\n             bei einer späteren Anmeldung automatisch und ohne\n             Fensterwechsel ausgewählt.\n \n       [OK]:        implementiert Änderungen und schließt das Fenster.\n \n       [Abbrechen]:    löscht die Änderungen und schließt das Fenster.\n \n       [Hilfe]:      zeigt diese Nachricht an.\n
+
+!#

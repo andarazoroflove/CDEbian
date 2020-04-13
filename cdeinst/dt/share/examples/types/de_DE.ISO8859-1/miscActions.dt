@@ -1,0 +1,322 @@
+# ##########################################################################
+# 
+#     miscActions.dt
+# 
+#     Examples of miscellaneous Actions (mostly for X clients).
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp.
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#      $XConsortium: miscActions.dt.src /main/4 1996/04/23 17:36:05 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ACHTUNG:  Bei späteren Installationen der CDE-Umgebung (CDE = Common Desktop
+#     Environment) wird diese Datei möglicherweise überschrieben. Alle das gesamte
+#     System betreffenden Änderungen sollten demzufolge in einer äquivalenten 
+#     Datenbankdatei in /etc/dt/types und nicht in dieser Datei vorgenommen werden.
+# 
+# ##########################################################################
+# ##################################################################
+# 
+# Aktionen
+# 
+# ##################################################################
+ACTION Xcalc
+{
+        LABEL		X-Rechner
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcalc
+	DESCRIPTION	Die Aktion 'Xcalc' ruft den X-Client 'Xcalc' auf. \
+                        Der Client 'Xcalc' ist ein wissenschaftlicher \
+                        Taschenrechner, mit dem ein TI-30 oder ein \
+                        HP-10C emuliert werden kann.
+}
+
+# #####
+
+ACTION Oclock
+{
+        LABEL		Analoguhr
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     oclock
+	DESCRIPTION	Die Aktion 'Analoguhr' (Oclock) ruft den X-Client \
+                        'oclock' auf. Der Client 'oclock' zeigt die aktuelle \
+                        Uhrzeit analog an.
+}
+
+# #####
+
+ACTION Xlsatoms
+{
+        LABEL		Atome auflisten
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsatoms
+	DESCRIPTION	Die Aktion 'Atome auflisten' (Xlsatoms) ruft den \
+                        X-Client 'xlsatoms' auf. 'Xlsatoms' listet die internen Atome auf.
+}
+
+# #####
+
+ACTION Xbiff
+{
+        LABEL		Xbiff
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xbiff
+	DESCRIPTION	Die Aktion 'Xbiff' ruft den X-Client 'xbiff' auf. \
+                        Das Programm 'xbiff' zeigt ein kleines Bild für einen \
+                        Briefkasten an. Wenn keine Post vorhanden ist, befindet \
+                        sich die Markierung unten auf dem Briefkasten. Wenn Post \
+                        eingeht, wandert die Markierung nach oben, und der \
+                        Briefkasten gibt einen Signalton aus.
+}
+
+# #####
+
+ACTION Xcolor
+{
+        LABEL		Xcolor
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcolor
+	DESCRIPTION	Die Aktion 'Xcolor' ruft den X-Client 'xcolor' auf. \
+                        'xcolor' zeigt alle 256 Farben in einem Fenster an. \
+                        Wenn der Zeiger in das Fenster bewegt wird, installiert \
+                        der Client eine Farbtabelle, die eine Farbtonpalette mit \
+                        konstanter Sättigung und Helligkeit enthält, \
+                        wobei schwarz und weiß beibehalten werden.
+}
+
+# #####
+
+ACTION Xcutsel
+{
+        LABEL		Ausschneiden und Auswählen
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xcutsel
+	DESCRIPTION	Die Aktion 'Ausschneiden und Auswählen' ruft \
+                        den X-Client 'xcutsel' auf. Der X-Client 'xcutsel' wird \
+                        verwendet, um die aktuelle Auswahl in einen Ausschneidepuffer \
+                        zu kopieren und eine Auswahl vorzunehmen, die den aktuellen \
+                        Inhalt des Ausschneidepuffers enthält. Er dient als Brücke \
+                        zwischen den Anwendungen, die eine Auswahl unterstützen \
+                        und solchen, die dies nicht tun.
+}
+
+# #####
+
+ACTION Xditview
+{
+        LABEL		Xditview
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xditview
+	DESCRIPTION	Die Aktion 'Xditview' ruft den X-Client 'xditview' \
+                        auf. Das Programm 'xditview' zeigt die Ausgabe \
+                        des Befehls 'ditroff' auf einer X-Anzeige an.
+}
+
+# #####
+
+ACTION Xedit
+{
+        LABEL		Xedit
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xedit
+	DESCRIPTION	Die Aktion 'Xedit' ruft den X-Client 'xedit' \
+                        auf. Der Client 'xedit' stellt ein Fenster bereit, \
+                        das aus vier Bereichen besteht: 1. Befehlsbereich, \
+                        mit einer Reihe von Befehlen zum Verlassen von 'xedit', \
+                        Speichern von Dateien oder Laden einer neuen Datei in das \
+                        Editorfenster, 2. Meldungsfenster zum Anzeigen der \
+                        Meldungen von 'xedit', das auch als Arbeitspuffer \
+                        verwendet werden kann, und 3. Anzeige für Dateiname \
+                        zum Anzeigen des Namens der Datei, die gerade bearbeitet \
+                        wird und der Berechtigung für Schreib-/Lesezugriff auf \
+                        diese Datei. 4. Editierfenster zum Anzeigen des Textes \
+                        der Datei, die gerade bearbeitet oder erstellt wird.
+}
+
+# #####
+
+ACTION Xlock
+{
+        LABEL		Xlock
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlock
+	DESCRIPTION	Die Aktion 'Xlock' ruft den X-Client 'xlock' auf. \
+                        Der Client 'xlock' sperrt die lokale X-Anzeige \
+                        bis ein Kennwort eingegeben wird.
+}
+
+# #####
+
+ACTION Xlogo
+{
+        LABEL		Xlogo
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlogo
+	DESCRIPTION	Die Aktion 'Xlogo' ruft den X-Client 'xlogo' auf. \
+                        Der Client 'xlogo' zeigt das Logo des \
+                        X Window System an.
+}
+
+# #####
+
+ACTION Xmag
+{
+        LABEL		Vergrößern
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmag
+	DESCRIPTION	Die Aktion 'Vergrößern' (Xmag) ruft den X-Client 'xmag' \
+                        auf. Mit dem Client 'xmag' können Ausschnitte einer \
+                        X-Anzeige vergrößert werden. Wenn kein bestimmter \
+                        Bereich angegeben wird, wird ein Quadrat mit dem \
+                        Zeiger in der oberen linken Ecke angezeigt, was \
+                        bedeutet, daß dieser Bereich vergrößert werden kann. \
+                        Der Bereich kann durch Drücken der Taste 2 auf die \
+                        gewünschte Größe gezogen werden. Nachdem ein Bereich \
+                        ausgewählt wurde, erscheint ein Fenster, in dem eine \
+                        vergrößerte Version des Bereiches angezeigt wird, bei \
+                        der jeder Bildpunkt des ursprünglichen Bildes durch ein \
+                        kleines Quadrat der gleichen Farbe dargestellt wird.\
+}
+
+# #####
+
+ACTION Xman
+{
+        LABEL		Xman
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xman
+	DESCRIPTION	Die Aktion 'Xman' ruft den X-Client 'xman' auf. \
+                        Der Client 'xman' ist ein Anzeigeprogramm für Handbuchseiten. \
+}
+
+# #####
+
+ACTION Xmh
+{
+        LABEL		X-Postverarbeitung
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xmh
+	DESCRIPTION	Die Aktion 'X-Postverarbeitung' (Xmh) ruft den \
+                        X-Client 'xmh' auf. Der Client 'xmh' stellt eine \
+                        grafische Benutzerschnittstelle zum \
+                        Nachrichtenverarbeitungssystem MH dar. Um die \
+                        Post bearbeiten zu können, sendet es Anfragen an \
+                        das Programm MH. Elektronische Post kann erstellt, \
+                        gesendet, empfangen, beantwortet, weitergeleitet, sortiert \
+                        und in Ordnern gespeichert werden. 'xmh' verfügt über \
+                        umfangreiche Mechanismen zur Anpassung der \
+                        Benutzerschnittstelle an die jeweiligen Erfordernisse.
+}
+
+# #####
+
+ACTION Xeyes
+{
+        LABEL		Augen
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xeyes
+	DESCRIPTION	Die Aktion 'Augen' (Xeyes) ruft den X-Client 'xeyes' \
+                        auf. Der Client 'xeyes' zeigt zwei Augen an, die \
+                        jeder Bewegung des Zeigers auf der Anzeige folgen.
+}
+
+# #####
+
+ACTION Xauth
+{
+        LABEL		X-Berechtigung
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xauth
+	DESCRIPTION	Die Aktion 'X-Berechtigung' (Xauth) ruft den X-Client \
+                        'Xauth' auf. Der X-Client 'xauth' wird verwendet, \
+                        um die Berechtigungsdaten für die Verbindung zum \
+                        X-Server zu bearbeiten und anzuzeigen.
+}
+
+# #####
+
+ACTION Xlsclients
+{
+        LABEL		Clients auflisten
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xlsclients
+	DESCRIPTION	Die Aktion 'Clients auflisten' (Xlsclients) ruft \
+                        den X-Client 'xlsclients' auf. Der X-Client 'xlsclients' \
+                        ist ein Dienstprogramm zum Auflisten von Informationen \
+                        über die in einer Anzeige ausgeführten Client-Anwendungen. \
+                        Er kann zum Generieren von Skripts verwendet werden, die \
+                        eine Momentaufnahme der aktuellen Session des Benutzers \
+                        darstellen.
+}
+
+# #####
+
+ACTION Xpuzzle
+{
+        LABEL		X-Puzzle 
+        ARG_COUNT	0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     xpuzzle
+	DESCRIPTION	Die Aktion 'X-Puzzle' (Xpuzzle) ruft den X-Client \
+                        'xpuzzle' auf. Der Client 'xpuzzle' ist ein \
+                        aus 15 Teilen (4x4) bestehendes Puzzle.
+}
+
+# #####
+
+ACTION Passwd
+{
+        LABEL           Kennwort ändern
+        ARG_COUNT       0
+        TYPE            COMMAND
+        WINDOW_TYPE     NO_STDIO
+        EXEC_STRING     dtterm -geometry 60x8 -xrm "*menuBar: False" -e sh -c '                                echo "Kennwort wird geändert";                                echo "----------------------";                                passwd'
+
+
+
+        DESCRIPTION     Die Aktion 'Kennwort ändern' (Passwd) benutzt den Befehl \
+                        'passwd', um das Benutzerkennwort zu ändern.
+}
+
+# ######################## EOF ############################################

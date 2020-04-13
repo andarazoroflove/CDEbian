@@ -1,0 +1,137 @@
+# ##########################################################################
+# 
+#      IconBrowse.dt
+# 
+#      DataType definitions for instance-based icons.
+# 
+#     (c) Copyright 1993, 1994, 1995 Hewlett-Packard Company
+#     (c) Copyright 1993, 1994, 1995 International Business Machines Corp. 
+#     (c) Copyright 1993, 1994, 1995 Sun Microsystems, Inc.   
+#     (c) Copyright 1993, 1994, 1995 Novell, Inc.
+# 
+#    $XConsortium: IconBrowse.dt.src /main/4 1996/04/23 20:23:49 drk $
+# 
+# ##########################################################################
+
+set DtDbVersion=1.0
+
+# ##########################################################################
+# 
+# ATTENZIONE: Questo file potrà essere sovrascritto in una successiva 
+#     installazione del Common Desktop Environment (CDE). Di conseguenza, 
+#     le modifiche a livello di sistema dovranno essere apportate nei 
+#     file di database equivalenti in /etc/dt/types, e non su questo file.
+# 
+# ##########################################################################
+
+# ##########################################################################
+# 
+# I due tipi di dati contenuti in questo file (BM e PM) attivano icone 
+# "autorappresentative" dei file a mappa di bit e a mappa di pixel. Ciò 
+# significa che ogni file che contiene un'icona (estensione .bm o .pm) viene 
+# rappresentato usando il suo contenuto. In questo modo non è necessario aprire 
+# i file singolarmente per visualizzare le icone disponibili.
+#
+# Per abilitare l'autorappresentazione delle icone, copiare questo file nella 
+# cartella secondaria .dt/types/ della cartella iniziale, quindi ricaricare i 
+# database delle azioni e dei tipi di dati (effettuando il logout e quindi di 
+# nuovo il login, oppure eseguendo l'azione Ricaricare applicazioni nella 
+# cartella Strumenti_desktop della Gestione di applicazioni). 
+#
+#   NOTA:  A causa dell'elaborazione aggiuntiva richiesta per leggere e 
+#          visualizzare le icone personalizzate, l'attivazione di questi tipi 
+#          di dati può penalizzare le prestazioni della Gestione di file.
+# Per visualizzare nuovamente le icone normali, cancellare il file dalla 
+# cartella secondaria personale .dt/types/ e ricaricare il database delle 
+# azioni e dei tipi di file.
+# 
+# ##########################################################################
+
+# ##################################################################
+# 
+# Attributi dei dati
+# 
+# ##################################################################
+DATA_ATTRIBUTES BM
+{
+        ACTIONS         Open,Print
+        ICON		Dtbitmp
+        NAME_TEMPLATE  	%s.bm
+        MIME_TYPE       text/plain
+        SUNV3_TYPE      xbm-file
+        INSTANCE_ICON	%dir%/%name%
+        DESCRIPTION     Questo file contiene dati nel formato X11 a mappa di bit. \
+                        Il suo tipo di dati è denominato BM. I file BM \
+                        terminano con le estensioni '.bm' o '.xbm'.
+        TYPE_LABEL      BM
+}
+DATA_CRITERIA BM1
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            	f
+        NAME_PATTERN    	*.bm
+}
+DATA_CRITERIA BM2
+{
+	DATA_ATTRIBUTES_NAME BM
+        MODE            	f
+        NAME_PATTERN    	*.xbm
+}
+ACTION Open
+{
+        LABEL           Aprire
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION      Dticon
+}
+ACTION Print
+{
+        LABEL           Stampare
+        ARG_TYPE        BM
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+
+# ##################################################################
+
+DATA_ATTRIBUTES PM
+{
+        ACTIONS         Open,Print
+        ICON		Dtpixmp
+        NAME_TEMPLATE  	%s.pm
+        MIME_TYPE       text/plain
+        SUNV3_TYPE      xpm-file
+        INSTANCE_ICON	%dir%/%name%
+        DESCRIPTION     Questo è un file a mappa di pixel che contiene un'immagine a colori. \
+                        Il suo tipo di dati è denominato PM. I file PM terminano \
+                        con le estensioni '.pm' or '.xpm', o contengono i caratteri \
+                        "! XPM2".
+        TYPE_LABEL      PM
+}
+DATA_CRITERIA PM1
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            	f
+        NAME_PATTERN    	*.pm
+}
+DATA_CRITERIA PM2
+{
+	DATA_ATTRIBUTES_NAME PM
+        MODE            	f
+        NAME_PATTERN    	*.xpm
+}
+ACTION Open
+{
+        LABEL           Aprire
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION      Dticon
+}
+ACTION Print
+{
+        LABEL           Stampare
+        ARG_TYPE        PM
+        TYPE            MAP
+        MAP_ACTION      NoPrint
+}
+# ######################## EOF ############################################

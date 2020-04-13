@@ -1,0 +1,4003 @@
+'\" t
+...\" dtsdldtd.sgm /main/12 1996/09/08 20:18:50 rws $
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "dtsdldtd" "other"
+.SH "NAME"
+\fBdtsdldtd\fP \(em Semantic
+Delivery Language (SDL) format and semantics
+.SH "DESCRIPTION"
+.PP
+Semantic Delivery Language (SDL) is defined by a Standard Generalized
+Markup Language (SGML) document type description (DTD)\&. The language uses
+generalized presentation-oriented markup and excludes typical SGML features
+that may prevent performance-oriented, on-line delivery systems from using
+the language\&.
+.SS "Dependencies"
+.PP
+None\&.
+.SS "Issues"
+.PP
+None\&.
+.SH "TOP LEVEL ELEMENTS"
+.PP
+.SH "SDLDOC"
+.SS "Purpose"
+.PP
+The top of the document hierarchy\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.96in) lw(4.51in).
+\fB<!ELEMENT sdldoc\fPT{
+\fB- - (vstruct, head*, snb?, virpage+)
+>\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.816964i) lw(1.043527i) lw(1.239955i) lw(1.399554i).
+\fB<!ATTLIST\fP sdldoc
+\fIpub-id\fPCDATA#REQUIRED
+\fIdoc-id\fPCDATA#REQUIRED
+\fItimestmp\fPCDATA#REQUIRED
+\fIfirst-page\fPIDREF#IMPLIED
+\fIproduct\fPCDATA#IMPLIED
+\fIprodpn\fPCDATA#IMPLIED
+\fIprodver\fPCDATA#IMPLIED
+\fIlicense\fPCDATA#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fIauthor\fPCDATA#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fIsdldtd\fPCDATA#REQUIRED
+\fIsrcdtd\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The document element, \fBsdldoc\fP, is the top of the document
+hierarchy\&. There are several attributes used in identifying the applicability
+of this document\&. Version and language attributes list options available
+for qualifying selected sections of the document\&.
+.PP
+The attributes of \fBsdldoc\fP are:
+.TS
+tab();
+lw(0.88in) lw(0.99in) lw(1.00in) lw(3.19in).
+\fIpub-id\fPCDATARequiredT{
+The public identifier is used to represent
+a document\&. It is analogous to a part number\&.
+T}
+\fIdoc-id\fPCDATARequiredT{
+The document identifier is specific to this
+version  (instance) of a document\&. It is analogous to a manufacturing part
+number\&.
+T}
+\fItimestmp\fPCDATARequiredT{
+The time stamp distinguishes documents that
+ have not changed enough to warrant a new doc-id,  but might need some bookmark/annotation
+ cleanup or repair\&.
+T}
+\fIfirst-page\fPIDREFOptionalT{
+If specified, the \fIfirst-page\fP
+attribute identifies the  virtual page to display upon first entering the
+document\&.
+T}
+\fIproduct\fPCDATAOptionalT{
+A description of the product this document
+ describes\&.
+T}
+\fIprodpn\fPCDATAOptionalT{
+The part number of the product this document
+ describes\&.
+T}
+\fIprodver\fPCDATAOptionalT{
+The version level of the product this document
+ describes\&.
+T}
+\fIlicense\fPCDATAOptionalT{
+Product license information\&. By default,
+no  license restrictions are applied\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The default language of the document\&. This
+ attribute may be overridden in later elements\&.  The \fIlanguage\fP attribute and the \fIcharset\fP
+attribute  of elements are used to select the proper font for  display\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The default character set of the document\&.
+This attribute may be overridden in later elements\&. The \fIcharset\fP attribute and the \fIlanguage\fP
+attribute are used to select the proper font for display\&.
+T}
+\fIauthor\fPCDATAOptionalT{
+The source author or publisher of the document\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The default version of this document\&. This
+attribute may be overridden in later elements\&.
+T}
+\fIsdldtd\fPCDATARequiredT{
+The version level of the SDL DTD to which
+this document conforms\&. This attribute is specified as <major>\&.<minor>
+version\&. For example, \fB1\&.0\fP\&. A change in the minor version
+number implies a change that is backward compatible, albeit with potentially
+reduced functionality in an older viewer\&. A change in the major version implies
+an  incompatible change to the DTD\&.
+T}
+\fIsrcdtd\fPCDATAOptionalT{
+The name of the DTD to which the source document
+conformed\&.
+T}
+.TE
+.SH "VSTRUCT"
+.SS "Purpose"
+.PP
+The container for all generated elements\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.916832i) lw(3.583168i).
+\fB<!ELEMENT vstruct\fPT{
+\fB- - (loids, toss?, lophrases?, index?,
+rel-docs?, rel-file?, notes?) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(2.122807i) lw(0.735746i) lw(1.001096i) lw(1.640351i).
+\fB<!ATTLIST vstruct\fP\fIversion\fPCDATA#IMPLIED
+\fIdoc-id\fPCDATA#REQUIRED>
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBvstruct\fP element is a container for all generated
+elements\&. Generated elements are items such as a list of identifiers in the
+document, a table of semantics and styles, and an index\&. The contents of this
+element are the normalized navigation information elements generated by the
+conversion process\&. No actual document content should be encoded within these
+elements\&.
+.PP
+The attributes of \fBvstruct\fP are:
+.TS
+tab();
+lw(0.874477i) lw(0.943515i) lw(0.943515i) lw(2.738494i).
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the version of the \fBvstruct\fP is the same as the version of
+ the document (\fBsdldoc\fP)\&.
+T}
+\fIdoc-id\fPCDATARequiredT{
+The document identifier of the document to
+ which this element belongs\&.
+T}
+.TE
+.SH "VIRPAGE"
+.SS "Purpose"
+.PP
+The smallest directly addressable unit in a document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.12in) lw(4.25in).
+\fB<!ELEMENT virpage\fPT{
+\fB- - (head*, snb?, (block | form)*)
+>\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(2.148438i) lw(0.810268i) lw(1.018973i) lw(1.522321i).
+\fB<!ATTLIST virpage\fP\fIid\fPID#REQUIRED
+\fIlevel\fPNUMBER#REQUIRED
+\fIversion\fPCDATA#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fIdoc-id\fPCDATA#REQUIRED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The virtual page ( \fBvirpage\fP) element is the smallest,
+directly addressable unit in a document\&. It corresponds to a topic\&. Ideally,
+documents presented on-line (and perhaps even on paper) should be organized
+into small topics that are complete unto themselves\&. This allows readers to
+find and access the desired information\&.
+.PP
+A virtual page contains all information necessary to establish a formatting
+context\&. Virtual pages may be displayed and understood when removed from
+the context of the document as long as the table of semantics and styles
+( \fBtoss\fP) element is available for formatting information\&.
+.PP
+A virtual page may have zero or more \fBhead\fP elements
+that provide title information and may also be used in display decoration,
+such as a title bar\&. The first \fBhead\fP of a virtual page is
+intended to be displayed in a table of contents for the document\&.
+.PP
+Following the \fBhead\fP elements is an optional system
+notation block ( \fBsnb\fP)\&. The system notation block, which
+provides access to objects external to the document, is covered later in this
+document\&.
+.PP
+Finally, a virtual page may contain any combination of \fBblock\fP or \fBform\fP elements, including none\&.
+.PP
+The attributes of \fBvirpage\fP are:
+.TS
+tab();
+lw(0.611111i) lw(0.836257i) lw(0.836257i) lw(3.216374i).
+\fIid\fPIDRequiredT{
+The identifier of the virtual page\&. The \fIid\fP attribute  must be a valid SGML identifier and must be  unique
+within the document\&. To display a virtual  page, hyperlink to this \fIid\fP\&.
+T}
+\fIlevel\fPNUMBERRequiredT{
+The hierarchical level of the information
+contained in the element\&. The \fIlevel\fP attribute
+makes  explicit information that is implicit in typical  SGML conforming documents\&.
+An SDL conforming document may be considered to have  been flattened to allow
+direct access of inferior  topics\&. For example, if the source DTD specified
+divisions such as \fBchapter\fP, \fBd1\fP, \fBd2\fP, these would all  appear in the SDL version of the document as
+virtual pages but with levels of \fB1\fP, \fB2\fP
+and \fB3\fP, respectively\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the version of the \fBvirpage\fP is the same as the version of
+ the document (\fBsdldoc\fP)\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this element is written\&.
+This attribute may be overridden individually within the \fBform\fP
+and \fBblock\fP elements contained in the virtual page\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The default character set of the document\&.
+This attribute may be overridden individually within  the \fBform\fP
+and \fBblock\fP elements contained in the virtual page\&.
+T}
+\fIdoc-id\fPCDATARequiredT{
+The document identifier of the document to
+ which this element belongs\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD or  other source to SDL translator\&.
+It may either  reflect the meaning of the markup in the original  document
+or may reflect the actual generic identifier in the original document\&. The
+source semantic identifier may be used to  assist in semantic searches of
+the SDL conforming document by preserving the original intent of  the markup\&.
+When the original markup was conforming to a domain specific DTD, the \fIssi\fP may be  used to enable structured searches of the SDL  conforming
+document by preserving the original  generic identifiers\&.
+T}
+.TE
+.PP
+The \fIlevel\fP and \fIssi\fP
+attributes of the virtual page are used to look up formatting and semantic
+information in the table of semantics and styles ( \fBtoss\fP)
+element covered later in this document\&.
+.SH "SNB"
+.SS "Purpose"
+.PP
+The container for all references to objects external to the document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.429379i) lw(4.070621i).
+\fB<!ELEMENT snb\fPT{
+\fB- - (head?, (graphic | text | audio
+| video |animate | crossdoc | man-page | textfile | sys-cmd | callback | script
+| switch)+) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.829241i) lw(0.883929i) lw(0.908482i) lw(1.878348i).
+\fB<!ATTLIST snb\fP\fIversion\fPCDATA#IMPLIED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+The system notation block ( \fBsnb\fP) provides a container
+for elements that access data that are not in SGML notation\&. The one exception
+to this rule is the \fBtext\fP element\&. The \fBtext\fP
+element is in the system notation block because it is intended for use as
+a rich text alternative to other elements in the \fBsnb\fP when
+elements are tried in turn during the instantiation of a system notation reference
+( \fBsnref\fP) looking for an alternative that can be formatted
+on the current system\&.
+.PP
+Data in the system notation block are not intended to be presented to
+the reader in the order that they appear in the document\&. The structural
+position of each \fBsnb\fP element is established by a system
+notation reference\&.
+.PP
+Collecting all elements that require system resources at the top of
+the virtual page allows an application to marshal these resources before they
+are referenced\&. This gives the application the ability to alter the presentation
+of both the element and its reference based on the availability and performance
+of the required system resources\&.
+.PP
+The optional \fBhead\fP element may be used by an application
+when presenting a list of required resources for a document\&.
+.PP
+The attribute of \fBsnb\fP is:
+.TS
+tab();
+lw(0.581731i) lw(0.729808i) lw(0.761538i) lw(3.426923i).
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the version of the \fBsnb\fP is the same as the version of the
+document (\fBsdldoc\fP)\&.
+T}
+____
+.TE
+.SH "BLOCK"
+.SS "Purpose"
+.PP
+The basic unit of display style\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.833333i) lw(3.666667i).
+\fB<!ELEMENT block\fP\fB- - (head*, (p | cp)*) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.821272i) lw(0.832237i) lw(1.001096i) lw(0.470395i) lw(1.375000i).
+\fB<!ATTLIST block\fP\fIid\fPID#IMPLIED
+\fIlevel\fPNUMBER#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fIclass\fP(table|
+cell|
+list|
+item|
+text|
+udeffrmt)#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fIlength\fPNUMBER#IMPLIED
+\fIapp\fP(all|
+help|
+tutorial|
+ref|
+sys)#IMPLIED
+\fItiming\fP(sync|
+async)#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Blocks are the basic unit of display style\&. All data within a block
+are rendered in the style of the block that contains them\&. Blocks may contain
+zero or more \fBhead\fP elements followed by zero or more paragraphs
+( \fBp\fP) or character paragraphs ( \fBcp\fP)\&.
+.PP
+Structurally, blocks contain a set of logically related paragraphs\&.
+A block identifies a display chunk, not document hierarchy elements\&. Blocks
+have an inherently flat structure; blocks do not nest\&. The presentational
+effect of nested blocks can be achieved by using the \fIlevel\fP attribute\&.
+.PP
+The structure of a document includes blocks that are part of the principal
+view and, optionally, blocks that form an alternate view\&. The principle view
+makes the assumption that primary blocks are presented in order as the sequential
+content of the document\&. That is, when taken in order the primary blocks compose
+the principle view of the document\&. For the purpose of this language, the
+principle view is the same as the traditional, printed view\&.
+.PP
+An alternate block is asynchronous to the primary document order\&. Alternate
+blocks may represent traditional, asynchronous elements such as a footnote
+or a spread, or some additional documentation (a teacher\&'s section of a combined
+teacher/student manual, for example\&.) Alternate content blocks should only
+be included in the primary content by reference\&.
+.PP
+The \fIlevel\fP, \fIclass\fP and \fIssi\fP attributes of a \fBblock\fP can be used to look up formatting and semantic information in the
+table of semantics and styles ( \fBtoss\fP) element (covered
+later in this document)\&.
+.PP
+The attributes of \fBblock\fP are:
+.TS
+tab();
+lw(0.591837i) lw(0.857143i) lw(0.755102i) lw(3.295918i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBblock\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIlevel\fPNUMBEROptionalT{
+The hierarchical level of the information
+contained in the element\&. The \fIlevel\fP attribute
+makes  explicit information that is implicit in typical  SGML-conforming documents\&.
+An SDL-conforming document may be considered to have  been flattened with
+implicit \fBblock\fP nesting  information stored in the
+\fIlevel\fP attribute\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the \fIversion\fP of the \fBblock\fP
+is the same as the \fIversion\fP of the  document
+(\fBsdldoc\fP) unless that \fIversion\fP
+has been  overridden by a \fIversion\fP attribute
+in the virtual  page (\fBvirpage\fP) or \fBform\fP
+(covered later in this document) containing the \fBblock\fP\&.
+T}
+\fIclass\fPtableOptionalT{
+The \fIclass\fP
+of a \fBblock\fP describes the general
+T}
+cellT{
+purpose the \fBblock\fP is filling\&.
+The \fIclass\fP attribute is
+T}
+listT{
+used in conjunction with the \fIlevel\fP and \fIssi\fP
+T}
+itemT{
+attributes to perform a lookup in the table
+of
+T}
+textT{
+semantics and styles (\fBtoss\fP)
+element\&. The result of
+T}
+udeffrmtT{
+that lookup is formatting and semantic information
+pertaining to the \fBblock\fP\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this \fBblock\fP was written\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The character set of this \fBblock\fP\&. The \fIlanguage\fP and \fIcharset\fP attributes plus information retrieved from  the table of
+semantics and styles (\fBtoss\fP) element  are used to select
+the font for the \fBblock\fP\&.
+T}
+\fIlength\fPNUMBEROptionalT{
+By default, the \fIlength\fP of a \fBblock\fP is determined  dynamically as
+a function of its content and rendering style\&. If a \fIlength\fP value is present, it  describes the length of the \fBblock\fP in terms of current style lines\&.
+T}
+\fIapp\fPallOptionalT{
+The \fIapp\fP
+attribute is used for selective presentation of a \fBblock\fP\&.
+This attribute defaults to all\&.
+T}
+help
+tutorial
+ref
+sys
+\fItiming\fPsyncOptionalT{
+The \fItiming\fP attribute
+defaults to sync\&.
+T}
+asyncT{
+A \fBblock\fP  with a \fItiming\fP attribute of async is only  displayed when referenced via
+an IDREF (or  IDREFS)\&. For example, an async \fBblock\fP may
+ be referenced by the \fIcells\fP attribute of \fIfrowvec\fP to  repeat the block without reentering its data content\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of the markup\&. When the original
+markup conforms to a domain-specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+.TE
+.SH "FORM"
+.SS "Purpose"
+.PP
+A two dimensional array of \fBblock\fP and/or \fBform\fP elements\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.854214i) lw(3.645786i).
+\fB<!ELEMENT form\fPT{
+\fB- - (head*, (fstyle, fdata) | (fdata,
+fstyle)) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.736842i) lw(0.771930i) lw(0.989035i) lw(0.470395i) lw(1.531798i).
+\fB<!ATTLIST form\fP\fIid\fPID#IMPLIED
+\fIlevel\fPNUMBER#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fIclass\fP(table|
+cell|
+list|
+item|
+text|
+udeffrmt)#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fIlength\fPNUMBER#IMPLIED
+\fIapp\fP(all|
+help|
+tutorial|
+ref|
+sys)#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBform\fP element is a generalized representation
+of a data element that is partially preformatted\&. The \fBform\fP
+element is designed to be rendered in real time and automatically derived
+from typical SGML table markup\&. Uses include tables, lists and labeled lists\&.
+Generally, a \fBform\fP may be used to represent any information
+that is layout sensitive or contains data to be presented in a two dimensional
+matrix\&.
+.PP
+A \fBform\fP is made up of zero or more \fBhead\fP
+elements followed either by a form style ( \fBfstyle\fP) and
+the form data ( \fBfdata\fP) or the form data followed by the
+form style\&.
+.PP
+The attributes of \fBform\fP are:
+.TS
+tab();
+lw(0.692829i) lw(0.756783i) lw(0.884690i) lw(3.165698i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBform\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIlevel\fPNUMBEROptionalT{
+The hierarchical level of the information
+contained in the element\&. The \fIlevel\fP attribute
+makes  explicit information that is implicit in typical  SGML-conforming documents\&.
+An SDL-conforming document may be considered to have  been flattened with
+implicit \fBform\fP nesting information stored in the
+\fIlevel\fP attribute\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the \fIversion\fP of the \fBform\fP
+is the same as the \fIversion\fP of the  document
+(\fBsdldoc\fP) unless that \fIversion\fP
+has been  overridden by a \fIversion\fP attribute
+in the virtual  page (\fBvirpage\fP) containing the \fBform\fP\&.
+T}
+\fIclass\fPtableOptionalT{
+The \fIclass\fP
+of a \fBform\fP describes the general
+T}
+cellT{
+purpose the \fBform\fP is filling\&.
+The \fIclass\fP attribute is used in conjunction
+with the \fIlevel\fP and
+T}
+listT{
+\fIssi\fP attributes to perform
+a lookup in
+T}
+itemT{
+the table of semantics and styles ( \fBtoss\fP)
+T}
+textT{
+element\&. The result of that lookup is formatting
+T}
+udeffrmtT{
+and semantic information pertaining to the \fBform\fP\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this \fBform\fP was written\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The character set of this \fBform\fP\&.
+The \fIlanguage\fP and \fIcharset\fP attributes plus information retrieved from  the table of
+semantics and styles (\fBtoss\fP) element  are used to select
+the font for the \fBform\fP\&.
+T}
+\fIlength\fPNUMBEROptionalT{
+By default, the \fIlength\fP of a \fBform\fP is determined  dynamically as
+a function of its content and rendering style\&. If a \fIlength\fP value is present, it  describes the length of the \fBform\fP in terms of current style lines\&.
+T}
+\fIapp\fPallOptionalT{
+The \fIapp\fP
+attribute is used for selective
+T}
+helpT{
+presentation of a \fBform\fP\&.
+This attribute defaults
+T}
+tutorialto all\&.
+ref
+sys
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&.
+T}
+.TE
+.SH "FSTYLE"
+.SS "Purpose"
+.PP
+Specify the style of a form\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.953947i) lw(3.546053i).
+\fB<!ELEMENT fstyle\fP\fB- - (frowvec+) >\fP
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The form style (\fBfstyle\fP) element specifies the style
+of the \fBform\fP\&. It is composed of one or more row reference
+vectors (\fBfrowvec\fP)\&. The list of cell id references in the
+reference row vectors establishes the relationship between the position and
+data block for a cell\&.
+.PP
+The form style element and \fBformstyle\fP element in the
+table of semantics and styles (\fBtoss\fP) element (covered later
+in this document) contain information regarding the presentational style of
+the \fBform\fP\&. Cell-specific style and style attributes beyond
+those provided in the reference vectors must be specified in the data blocks
+that contain the cell data\&.
+.PP
+The attribute of \fBfstyle\fP is:
+.TS
+tab();
+lw(0.75in) lw(1.10in) lw(0.88in) lw(3.28in).
+\fIncols\fPNUMBEROptionalT{
+The number of columns in the \fBform\fP\&. This  attribute should be a number greater than zero\&.  Unless
+overridden by a column width (\fIcolw\fP)  specification in
+the \fBtoss\fP, the available space is  divided evenly among
+the columns\&. Unless overridden by a column justification (\fIcolj\fP)
+specification in the \fBtoss\fP, the \fBblock\fP
+and/or \fBform\fP elements  in the \fBform\fP are
+left justified in their cells\&.
+T}
+____
+.TE
+.SH "FROWVEC"
+.SS "Purpose"
+.PP
+Describes the style of a row and contains ID references to the contents
+of the row\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.12in) lw(4.25in).
+\fB<!ELEMENT frowvec\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.148438i) lw(0.810268i) lw(1.018973i) lw(1.522321i).
+\fB<!ATTLIST frowvec\fP\fIhdr\fP(YES|NO)#IMPLIED
+\fIcells\fPIDREFS#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The reference row vector ( \fBfrowvec\fP) describes the
+style of a row in a \fBform\fP and contains pointers (id references)
+to the contents of the row\&. There must be a row vector per row in the \fBform\fP\&.
+.PP
+The \fIhdr\fP attribute designates the entire row as
+a head row\&. Heads are significant because a display program might need to
+manage the display of heads differently than it does the data matrix\&. This
+is particularly true if the \fBform\fP must scroll, covers multiple
+screens or is displayed as a graph\&.
+.PP
+The attributes of \fBfrowvec\fP are:
+.TS
+tab();
+lw(0.629518i) lw(0.883534i) lw(0.927711i) lw(3.059237i).
+\fIhdr\fPyesOptionalT{
+Indicates whether or not the associated row
+is a head row\&.
+T}
+no
+\fIcells\fPIDREFSRequiredT{
+A list of id references to the \fBblock\fP or \fBform\fP elements in the \fBfdata\fP element that make up the cell  contents of this \fBform\fP\&.
+T}
+.TE
+.PP
+Within a \fBform\fP element, spanning of rows or columns
+is done by repeating the appropriate id reference in the \fIcells\fP
+attribute of the \fBfrowvec\fP\&. If the data is to be repeated
+in multiple unspanned cells, the \fBblock\fP must be repeated
+and assigned unique identifiers\&.
+.PP
+The length of a row is the length of the cells in that row; the width
+is the cumulative width of each cell in that row\&. Row length may be determined
+at or before runtime\&. Typically, the length of a row is the length of the
+longest \fBblock\fP or \fBform\fP in the row\&. There
+are two exceptions to this rule: the blocks or forms in the row can have
+an assigned length, or the id reference could be to an element that is not
+in the data container\&. These exceptional cells are referred to as virtual
+cells; virtual cells do not affect the length of the row\&.
+.PP
+Virtual cells may contain more data than can be displayed in the area
+assigned\&. Examples include blocks with the length set that contain long paragraphs,
+forms or figures\&. The actual display area of a virtual cell can be thought
+of as a viewport onto the data of a cell\&. Alternatively, virtual cells can
+use an information hiding technique such as an icon leading to a separate
+window\&.
+.PP
+The id references in a reference row may specify elements that are not
+in the data container of its \fBform\fP, even if the elements
+are not physically close\&. To protect the performance of the \fBform\fP element, references to data outside the current \fBform\fP may also be handled as virtual cells\&. The display program may
+take the liberty to replace any information referenced in a row vector that
+does not belong to the current \fBform\fP\&'s data element with
+a link or icon\&.
+.SH "FDATA"
+.SS "Purpose"
+.PP
+A container for information belonging solely to a \fBform\fP
+element\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.87in) lw(4.48in).
+\fB<!ELEMENT fdata\fP\fB- - ((block | form)*) >\fP
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBform\fP data element ( \fBfdata\fP)
+is a container for information that belongs to a \fBform\fP\&.
+By default, without spanning and external references, \fBform\fP
+data is typically maintained in row major matrix form\&. Assumptions about the
+order of the \fBblock\fP or \fBform\fP elements
+in the data area must not be used for anything except performance because
+the blocks are allowed to be represented in any order\&.
+.PP
+The \fBfdata\fP element has no attributes\&.
+.SH "CONTAINER ELEMENTS"
+.PP
+.SH "P"
+.SS "Purpose"
+.PP
+A paragraph\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.283333i) lw(4.216667i).
+\fB<!ELEMENT p\fPT{
+\fB- - (head*, (key | sphrase | rev
+| if | spc | snref | anchor |  link | #PCDATA)+) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.387061i) lw(0.735746i) lw(0.904605i) lw(0.458333i) lw(2.014254i).
+\fB<!ATTLIST p\fP\fIid\fPID#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fItype\fP(literal|
+lined|
+dynamic)#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Paragraphs identify a formatting unit\&. Paragraphs collect information
+that needs to be rendered contiguously within a region\&. Paragraphs inherit
+style from their containing \fBblock\fP although adjustments
+can be made by using the \fIclass\fP and
+\fIlevel\fP attributes of the enclosing \fBblock\fP plus the \fIssi\fP attribute of the \fBp\fP
+to effect a lookup in the table of semantics and styles ( \fBtoss\fP)
+element (covered later in this document)\&.
+.PP
+Paragraphs may contain text, references and \fBkey\fP phrases\&.
+The \fBkey\fP element (discussed later in this document) may
+modify the style of a portion of a paragraph but the modification is always
+restricted to the current paragraph\&.
+.PP
+The attributes of \fBp\fP are:
+.TS
+tab();
+lw(0.760163i) lw(0.827236i) lw(0.849593i) lw(3.063008i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBp\fP\&.
+The \fIid\fP attribute must be a  valid SGML identifier and
+must be unique within  the document\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the \fIversion\fP of the \fBp\fP is
+the same as the \fIversion\fP of the document ( \fBsdldoc\fP) unless that \fIversion\fP has
+been  overridden by a \fIversion\fP attribute in
+the virtual  page (\fBvirpage\fP), \fBform\fP or \fBblock\fP containing the \fBp\fP\&.
+T}
+\fItype\fPliteralOptionalT{
+Paragraph text may be either unformatted
+or preformatted\&.
+T}
+linedT{
+By default, paragraph text is assumed dynamic
+(unformatted) to be
+T}
+dynamicT{
+and all white space (space, tab, newline,
+etc\&.) may be replaced with a single space\&. The \fItype\fP
+attribute is used when the author needs to represent information
+that is at least partially layout-sensitive\&. Newline characters are significant
+in lined paragraphs and all whitespace is significant in literal paragraphs\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup was conforming to a domain specific DTD, the \fIssi\fP
+may be  used to enable structured searches of the SDL  conforming document
+by preserving the original  generic identifiers\&.
+T}
+.TE
+.SH "CP"
+.SS "Purpose"
+.PP
+A character paragraph\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.531798i) lw(3.968202i).
+\fB<!ELEMENT cp\fP\fB- - (CDATA) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.580044i) lw(0.711623i) lw(0.844298i) lw(0.506579i) lw(1.857456i).
+\fB<!ATTLIST cp\fP\fIid\fPID#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fItype\fP(literal|
+lined|
+dynamic)#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Character paragraphs are similar to paragraphs\&. The only difference
+is that markup contained in the text of a character paragraph is ignored\&.
+The only markup not ignored is the ``</\&'\&' character pair\&. If that pair
+is to be included in the text, it must be preceded with an ampersand (&)\&.
+.PP
+The attributes of \fBcp\fP are:
+.TS
+tab();
+lw(0.590820i) lw(0.891602i) lw(0.934570i) lw(3.083008i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBp\fP\&.
+The \fIid\fP attribute must be a  valid SGML identifier and
+must be unique within  the document\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the \fIversion\fP of the \fBp\fP is
+the same as the \fIversion\fP of the document ( \fBsdldoc\fP) unless that \fIversion\fP has
+been  overridden by a \fIversion\fP attribute in
+the virtual  page (\fBvirpage\fP), \fBform\fP or \fBblock\fP containing the \fBp\fP\&.
+T}
+\fItype\fPliteralOptionalT{
+Paragraph text may be either unformatted
+or preformatted\&.
+T}
+linedT{
+By default, paragraph text is assumed  to
+be dynamic (unformatted) and all white space
+T}
+dynamicT{
+(space, tab, newline, etc\&.) may be replaced
+with a single space\&. The \fItype\fP attribute is
+used when the author needs to represent information that is at least partially
+layout-sensitive\&. Newline characters are significant in lined paragraphs and
+all whitespace is significant in literal paragraphs\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup was conforming to a domain-specific DTD, the \fIssi\fP
+may be  used to enable structured searches of the SDL-conforming document
+by preserving the original  generic identifiers\&.
+T}
+.TE
+.SH "HEAD"
+.SS "Purpose"
+.PP
+Heading, label or caption\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.565465i) lw(3.934535i).
+\fB<!ELEMENT head\fPT{
+\fB- - ((key | sphrase | rev | if |
+spc | snref | anchor | link | #PCDATA)*,  subhead*) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.760965i) lw(0.687500i) lw(0.892544i) lw(0.470395i) lw(1.688596i).
+\fB<!ATTLIST head\fP\fIid\fPID#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fIclass\fP(label|
+head|
+caption|
+annotation|
+phead|
+udefhead)#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fItype\fP(literal|
+lined|
+dynamic)#IMPLIED
+\fIabbrev\fPCDATA#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Heads are phrase-like elements that are associated with the entire section
+that contains it\&. Heads may contain zero or more \fBsubhead\fP
+elements followed by zero or more paragraphs\&.
+.PP
+The \fBhead\fP element may also be used as the caption
+of a graphic (covered later in this document)\&.
+.PP
+The user-defined head ( \fBudefhead\fP) value is for use
+by the developer of a higher level DTD to SDL translator when an unexpected
+use for a \fBhead\fP is found\&.
+.PP
+The attributes of \fBhead\fP are:
+.TS
+tab();
+lw(0.645192i) lw(0.867308i) lw(0.761538i) lw(3.225962i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBhead\fP\&.
+The \fIid\fP attribute must be a  valid SGML identifier and
+must be unique within  the document\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the \fIversion\fP of the \fBhead\fP
+is the same as the \fIversion\fP of the  document
+(\fBsdldoc\fP) unless that \fIversion\fP
+has been  overridden by a \fIversion\fP attribute
+in the virtual  page (\fBvirpage\fP), \fBform\fP
+or \fBblock\fP containing the  \fBhead\fP\&.
+T}
+\fIclass\fPlabelOptionalT{
+The \fIclass\fP
+of a \fBhead\fP describes the general purpose the \fBhead\fP is filling\&.
+T}
+headT{
+The \fIclass\fP
+attribute is used
+T}
+captionT{
+in conjunction with the \fIlevel\fP of the object
+T}
+annotationT{
+containing the \fBhead\fP and \fIssi\fP attributes
+T}
+pheadT{
+to perform a  lookup in the table of semantics
+T}
+udefheadT{
+and styles (\fBtoss\fP)  element\&.
+The result of that lookup is formatting  and semantic information pertaining
+to the \fBhead\fP\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this \fBhead\fP was written\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The character set of this \fBhead\fP\&.
+The \fIlanguage\fP and \fIcharset\fP attributes plus information retrieved from  the table of
+semantics and styles (\fBtoss\fP) element  are used to select
+the font for the \fBhead\fP\&.
+T}
+\fItype\fPliteralOptionalT{
+Head text may be either unformatted or preformatted\&.
+T}
+linedT{
+By default, paragraph text is assumed  to
+be dynamic (unformatted)
+T}
+dynamicT{
+and all white space (space, tab, newline,
+etc\&.) may be replaced with a single space\&. The \fItype\fP
+attribute is used when the author needs to represent information
+that is at least partially layout-sensitive\&. Newline characters are significant
+in lined heads and all whitespace is significant in literal heads\&.
+T}
+\fIabbrev\fPCDATAOptionalT{
+An abbreviation allows simple and/or short
+text  to be associated with a \fBhead\fP element\&. This text
+may be used in situations where rich text is inappropriate or where the \fBhead\fP is too long to use\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original generic identifiers\&.
+T}
+.TE
+.SH "SUBHEAD"
+.SS "Purpose"
+.PP
+Alternate or additional headings, labels or captions\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.799065i) lw(3.700935i).
+\fB<!ELEMENT subhead\fPT{
+\fB- - ((key | sphrase | rev |  if
+| spc | snref | anchor | link | #PCDATA)*) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(2.042531i) lw(0.798755i) lw(0.947095i) lw(0.456432i) lw(1.255187i).
+\fB<!ATTLIST subhead\fP\fIid\fPID#IMPLIED
+\fIversion\fPCDATA#IMPLIED
+\fIclass\fP(label|
+head|
+caption|
+annotation|
+phead|
+udefhead)#IMPLIED
+\fIlanguage\fPCDATA#IMPLIED
+\fIcharset\fPCDATA#IMPLIED
+\fItype\fP(literal|
+lined|
+dynamic)#IMPLIED
+\fIabbrev\fPCDATA#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Subheads are simply one or more phrase-like elements that further refine
+the main head\&.
+.PP
+The attributes of \fBsubhead\fP are:
+.TS
+tab();
+lw(0.630435i) lw(0.836957i) lw(0.782609i) lw(3.250000i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBsubhead\fP\&.
+The \fIid\fP attribute must be a  valid SGML identifier and
+must be unique within  the document\&.
+T}
+\fIversion\fPCDATAOptionalT{
+The version of this element\&. By default,
+the version of the \fBsubhead\fP is the same as the \fIversion\fP
+of  the document (\fBsdldoc\fP) unless that
+\fIversion\fP has  been overridden by a
+\fIversion\fP attribute in the virtual page
+(\fBvirpage\fP), \fBform\fP, \fBblock\fP
+or \fBhead\fP containing
+the \fBsubhead\fP\&.
+T}
+\fIclass\fPlabelOptionalT{
+The \fIclass\fP
+of a \fBsubhead\fP describes the general
+T}
+headT{
+purpose the \fBsubhead\fP is
+filling\&. The \fIclass\fP attribute is used in conjunction
+with
+T}
+captionT{
+the \fIlevel\fP
+of the object containing the \fBhead\fP to
+T}
+annotationwhich the \fBsubhead\fP belongs
+and \fIssi\fP
+pheadT{
+attributes to perform a lookup in the table
+of semantics and styles (\fBtoss\fP) element\&.
+T}
+udefheadT{
+The result of that lookup is formatting and
+ semantic information pertaining to the \fBsubhead\fP\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this \fBsubhead\fP was written\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The character set of this \fBsubhead\fP\&. The \fIlanguage\fP  and \fIcharset\fP attributes plus information retrieved  from the table of
+semantics and styles (\fBtoss\fP) element are used to select
+the \fBsubhead\fP font\&.
+T}
+\fItype\fPliteralOptionalT{
+Subhead text may be either unformatted or
+preformatted\&.
+T}
+linedT{
+By default, subhead text is assumed  to be
+dynamic (unformatted)
+T}
+dynamicT{
+and all white space (space, tab, newline,
+etc\&.) may be replaced with a single space\&. The \fItype\fP
+attribute is used when the author needs to represent information
+that is at least partially layout-sensitive\&. Newline characters are significant
+in lined \fBsubheads\fP and all whitespace is significant in
+literal \fBsubheads\fP\&.
+T}
+\fIabbrev\fPCDATAOptionalT{
+An abbreviation allows simple and/or short
+text  to be associated with a \fBsubhead\fP element\&. This text
+ may be used in situations where rich text is inappropriate or where the \fBsubhead\fP is too long to use\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+.TE
+.SH "ATOMIC LINK ELEMENTS"
+.PP
+.SH "ANCHOR"
+.SS "Purpose"
+.PP
+To give an ID to a point in the document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.014254i) lw(3.485746i).
+\fB<!ELEMENT anchor\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.002193i) lw(0.482456i) lw(0.518640i) lw(2.496711i).
+\fB<!ATTLIST anchor\fP\fIid\fPID#REQUIRED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBanchor\fP element provides a mechanism for assigning
+an ID to an arbitrary spot in the document\&. An \fBanchor\fP may
+occur anywhere that running text is allowed\&. This includes as content of paragraphs
+( \fBp\fP) and heads (\fBhead\fP and \fBsubhead\fP)\&.
+.PP
+The attribute of \fBanchor\fP is:
+.TS
+tab();
+lw(0.456522i) lw(0.543478i) lw(1.010870i) lw(3.489130i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBanchor\fP\&.
+The \fIid\fP attribute must be a  valid SGML identifier and
+must be unique within  the document\&.
+T}
+____
+.TE
+.SH "LINK"
+.SS "Purpose"
+.PP
+A hyperlink within or outside the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.555028i) lw(3.944972i).
+\fB<!ELEMENT link\fPT{
+\fB- - ((key | sphrase | rev |  if
+| spc | snref | anchor | link | #PCDATA)+) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.687117i) lw(0.877301i) lw(0.832311i) lw(0.427403i) lw(1.675869i).
+\fB<!ATTLIST link\fP\fIrid\fPIDREF#REQUIRED
+\fIbutton\fPIDREF#IMPLIED
+\fIlinkinfo\fPCDATA#IMPLIED
+\fIdescript\fPCDATA#IMPLIED
+\fIwindow\fP(current|
+new|
+popup)#IMPLIED
+\fItraversal\fP(return|
+noreturn)#IMPLIED
+.TE
+.SH "DESCRIPTION"
+.PP
+A \fBlink\fP element is the start point of a hyperlink
+to another spot in the document or, via the system notation block ( \fBsnb\fP), to another document or active hyperlink\&. The active hyperlinks
+are \fBsys-cmd\fP and \fBcallback\fP\&. These hyperlinks
+(covered later in this document) are used to execute an operating system command
+or to initiate a callback to the application respectively\&.
+.PP
+A \fBlink\fP may surround any text in the document, including
+text found in paragraphs or heads, with the only exception being that \fBlink\fP elements may not contain other \fBlink\fP elements\&.
+.PP
+The attributes of \fBlink\fP are:
+.TS
+tab();
+lw(0.790354i) lw(0.747047i) lw(0.757874i) lw(3.204724i).
+\fIrid\fPIDREFRequiredT{
+The ID of the target of the hyperlink\&. The
+ID specified must exist in the current document but may be to elements in
+the system notation block (\fBsnb\fP) of the current virtual
+page (\fBvirpage\fP) to allow reference to external objects or
+actions\&.
+T}
+\fIbutton\fPIDREFOptionalT{
+A graphic that may be displayed as a trigger
+for the hyperlink in lieu of or in addition to highlighting the hyperlink
+text itself\&. The ID referenced by the \fIbutton\fP
+attribute must be the identifier of a graphic (covered later in this document)
+in the system notation block (\fBsnb\fP) of the current virtual
+page (\fBvirpage\fP)\&. The graphic referenced must have a
+\fIclass\fP attribute of button\&.
+T}
+\fIlinkinfo\fPCDATAOptionalT{
+Information about the target of the \fBlink\fP\&. This information may be displayed as part of a dialog with
+the reader before traversing the \fBlink\fP if such traversal
+is in some way expensive in time\&.
+T}
+\fIdescript\fPCDATAOptionalT{
+A general description of the action that
+takes place when the hyperlink is activated\&.
+T}
+\fIwindow\fPcurrentOptionalT{
+By default, hyperlinking to another location
+in
+T}
+newT{
+this document or (via indirection) externally,
+T}
+popupT{
+is done by changing the view in the current
+window or display area\&. Specifying \fInew\fP for
+the \fIwindow\fP attribute causes a new window
+or display area to be created for displaying hyperlink target\&. Specifying
+\fIpopup\fP for this attribute causes the new window or
+display area to be lighter weight, if possible\&. Often, popup windows are modal
+and temporary\&.
+T}
+\fItraversal\fPreturnOptionalT{
+By default, the current document and location
+T}
+noreturnT{
+in the document are stored on a push down
+stack to  allow backtracking of hyperlinks\&. If this attribute  is specified
+as \fInoreturn\fP, the current location is  forgotten on execution
+of the \fBlink\fP\&.
+T}
+.TE
+.SH "SNREF"
+.SS "Purpose"
+.PP
+Reference to an element or alternates in the system notation block ( \fBsnb\fP)\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.821272i) lw(3.678728i).
+\fB<!ELEMENT snref\fP\fB- - (refitem+, alttext?) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.446272i) lw(0.434211i) lw(2.750000i).
+\fB<!ATTLIST snref\fP\fIid\fPID#IMPLIED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+A system notation reference ( \fBsnref\fP) is a reference
+to an external object\&. The result of resolving that object is that it is
+interpolated into the document at the point of the \fBsnref\fP\&.
+The \fBsnref\fP element references \fBgraphic\fP
+and \fBscript\fP elements, both of which are covered later in
+this document\&.
+.PP
+An \fBsnref\fP element consists of one or more \fBrefitem\fP elements followed by optional alternate text\&. Each \fBrefitem\fP is tried in turn in the order specified until one can be
+successfully formatted and displayed\&. If none of the system notations can
+be successfully formatted and displayed, the alternate text, \fBalttext,\fP which is very simple character data, is displayed instead\&.
+.PP
+The attribute of \fBsnref\fP is:
+.TS
+tab();
+lw(0.418000i) lw(0.462000i) lw(0.880000i) lw(3.740000i).
+\fIid\fPIDOptionalT{
+The identifier of the \fBsnref\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+____
+.TE
+.SH "REFITEM"
+.SS "Purpose"
+.PP
+A reference to an element in a system notation block\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.038377i) lw(3.461623i).
+\fB<!ELEMENT refitem\fP\fB- - (head*) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.883268i) lw(0.663424i) lw(0.866732i) lw(0.513619i) lw(1.572957i).
+\fB<!ATTLIST refitem\fP\fIrid\fPIDREF#REQUIRED
+\fIclass\fP(figure|
+in-line|
+button|
+icon|
+udefgraph|
+table|
+cell|
+list|
+item|
+text|
+udeffrmt)#REQUIRED
+\fIbutton\fPIDREF#IMPLIED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+A reference item ( \fBrefitem\fP) is a single reference
+to an element in the system notation block ( \fBsnb\fP) of the
+current virtual page ( \fBvirpage\fP)\&.
+.PP
+An \fBsnref\fP consists of one or more \fBrefitem\fP elements allowing alternate choices for the item to be displayed\&.
+The \fBrefitem\fP elements are tried in turn in the order listed
+until one can be successfully formatted and displayed\&. A \fBrefitem\fP can refer to a text element in the \fBsnb\fP to allow
+a text alternative for the referenced item\&.
+.PP
+A \fBrefitem\fP has zero or more \fBhead\fP
+elements, which may serve, for example, as the caption of a \fBgraphic\fP\&.
+.PP
+The attributes of \fBrefitem\fP are:
+.TS
+tab();
+lw(0.552124i) lw(0.838803i) lw(0.753861i) lw(3.355212i).
+\fIrid\fPIDREFRequiredT{
+The identifier of the item being referenced
+in the  system notation block of the current virtual page\&.
+T}
+\fIclass\fPfigureRequiredT{
+The \fIclass\fP
+of a \fBrefitem\fP describes the general purpose
+T}
+in-lineT{
+the \fBrefitem\fP is filling\&.
+The \fIclass\fP attribute is
+T}
+buttonT{
+used in conjunction with the \fIlevel\fP of the enclosing
+T}
+iconT{
+\fBblock\fP, \fBform\fP
+or \fBvirpage\fP and \fIssi\fP attributes to
+T}
+udefgraphT{
+perform a lookup in the table of semantics
+T}
+tableT{
+and styles (\fBtoss\fP) element\&.
+The result of that
+T}
+cellT{
+lookup is formatting and semantic information
+T}
+listpertaining to the \fBrefitem\fP\&.
+item
+text
+udeffrmt
+\fIbutton\fPIDREFOptionalT{
+An optional reference to a \fBgraphic\fP of \fIclass\fP button in the \fBsnb\fP of the current \fBvirpage\fP\&. This \fIbutton\fP may be used to request \fBrefitem\fP display
+on systems where display of the item is  slow or expensive in some other way\&.
+That is, the \fIbutton\fP is displayed and the \fBrefitem\fP is only displayed when the \fIbutton\fP
+is activated\&.
+T}
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning of the markup in the original document or it may
+ reflect the actual generic identifier in the original document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+.TE
+.SH "ALTTEXT"
+.SS "Purpose"
+.PP
+Simple text alternative for \fBsnref\fP\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.062500i) lw(3.437500i).
+\fB<!ELEMENT alttext\fP\fB- - CDATA >\fP
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBalttext\fP element is a place to put simple text
+for use if all alternatives, including text replacements, from the list of \fBrefitem\fP elements in an \fBsnref\fP fail to format\&.
+.PP
+The \fBalttext\fP element has no attributes\&.
+.SH "ATOMIC TEXT ELEMENTS"
+.PP
+.SH "REV"
+.SS "Purpose"
+.PP
+Add change bars to displayed text\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.445714i) lw(4.054286i).
+\fB<!ELEMENT rev\fPT{
+\fB- - ((key | sphrase | if |  spc
+| snref | anchor | link | #PCDATA)*) >\fP
+T}
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+Surrounding data with a \fBrev\fP element signals to the
+formatter that the surrounded data should be marked somehow as having undergone
+change\&. Typically, this mark is change bars on the side of the data\&. An empty \fBrev\fP element implies some text has been deleted\&.
+.PP
+The \fBrev\fP element has no attributes\&.
+.SH "KEY"
+.SS "Purpose"
+.PP
+Effect a change in font\&.
+.SH "SYNOPSIS"
+.PP
+.nf
+\f(CW<!ELEMENT key  - - ((key | sphrase | rev | if | spc | anchor | snref | #PCDATA)+) >\fR
+.fi
+.PP
+.TS
+tab();
+lw(1.553862i) lw(0.670732i) lw(0.994919i) lw(0.614837i) lw(1.665650i).
+\fB<!ATTLIST key\fP\fIcharset\fPCDATA#IMPLIED
+\fIclass\fP(acro|
+book|
+emph|
+jargon|
+l10n|
+name|
+quote|
+product|
+termdef|
+term|
+mach-in|
+mach-out|
+mach-cont|
+pub-lit|
+udefkey)#REQUIRED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+Key phrases are data that are key to understanding the paragraph in
+which they exist; that is, they have a special significance\&. The \fBkey\fP element is used to call readers\&' attention to a particular phrase\&.
+The \fBkey\fP element exists only within the context of a paragraph
+( \fBp\fP); it is document sub-structure\&.
+.PP
+The semantics of the \fBkey\fP element have value to both
+rendering and navigation\&. When rendered, the phrase is highlighted, typically
+using a different font style or attribute\&. In navigation, \fBkey\fP
+data can be used as fields in semantic searches or as variables in a relevance-ranking
+algorithm\&.
+.PP
+There are an infinite variety of key phrases possible in source documents\&.
+To assure that the delivery system can fully use the semantics of \fBkey\fP data, this delivery format forces the semantic to be normalized\&.
+Each phrase is required to have a \fIclass\fP attribute
+as well as an optional source semantic identifier ( \fIssi\fP)\&.
+.PP
+The intended uses for the possible key classes are:
+.IP "acro" 10
+An acronym\&.
+.IP "book" 10
+The proper title of a document\&.
+.IP "emph" 10
+An emphasized phrase\&.
+.IP "jargon" 10
+A phrase with application unique significance; its definition is commonly
+understood by convention by the practitioner of the application field\&.
+.IP "l10n" 10
+A phrase that must be specially treated during localization\&.
+.IP "name" 10
+A proper name\&.
+.IP "quote" 10
+A direct quote\&.
+.IP "product" 10
+A proper product name\&.
+.IP "pub-lit" 10
+A literal phrase added by the publisher\&.
+.IP "termdef" 10
+A phrase defined within the current paragraph\&.
+.IP "term" 10
+A phrase defined elsewhere\&.
+.IP "mach-in" 10
+A machine input phrase\&.
+.IP "mach-out" 10
+A machine output phrase\&.
+.IP "mach-cont" 10
+A machine control or keyboard key name\&.
+.IP "udefkey" 10
+A user-defined key; this may be used by the author of a higher level
+DTD to SDL translator for unforeseen key phrases\&.
+.PP
+The attributes of \fBkey\fP are:
+.TS
+tab();
+lw(0.686117i) lw(0.929577i) lw(0.818913i) lw(3.065392i).
+\fIcharset\fPCDATAOptionalT{
+The character set of this \fBkey\fP\&.
+The \fIlanguage\fP of the  enclosing paragraph
+(\fBp\fP) and \fIcharset\fP attributes
+ plus information retrieved from the table of  semantics and styles ( \fBtoss\fP) element are used to  select the font for the \fBkey\fP \&.
+T}
+\fIclass\fPacroRequiredSee above\&.
+book
+emph
+jargon
+l10n
+name
+quote
+product
+pub-lit
+termdef
+term
+mach-in
+mach-out
+mach-cont
+udefkey
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain-specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original generic identifiers\&.
+T}
+.TE
+.SH "SPHRASE"
+.SS "Purpose"
+.PP
+A super or sub-scripted phrase
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.086623i) lw(3.413377i).
+\fB<!ELEMENT sphrase\fP\fB- - CDATA >\fP
+__
+.TE
+.TS
+tab();
+lw(2.050439i) lw(0.554825i) lw(0.759868i) lw(0.554825i) lw(1.580044i).
+\fB<!ATTLIST sphrase\fP\fIclass\fP(super|
+sub)#REQUIRED
+\fIssi\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The stylized phrase (\fBsphrase\fP) contains stylized text\&.
+The phrases are only presentationally significant\&. Two types are supported,
+sub and super\&.
+.PP
+The attributes of \fBsphrase\fP are:
+.TS
+tab();
+lw(0.642023i) lw(0.791829i) lw(0.909533i) lw(3.156615i).
+\fIstyle\fPsuperRequiredT{
+Indicates whether the \fBsphrase\fP
+should be set
+T}
+subin superscript or subscript\&.
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier  assists in semantic searches of the SDL-conforming document
+by preserving the original intent of  the markup\&. When the original markup
+conforms to a domain-specific DTD, the \fIssi\fP may be  used
+to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+.TE
+.SH "SPC"
+.SS "Purpose"
+.PP
+A special character\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.652412i) lw(3.847588i).
+\fB<!ELEMENT spc\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.628289i) lw(0.603070i) lw(0.952851i) lw(2.315789i).
+\fB<!ATTLIST spc\fP\fIname\fPCDATA#REQUIRED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBspc\fP element allows special characters, that is,
+those not in the current font, to be included in text\&. This is often achieved
+in DTDs by the use of character entities\&. SDL avoids runtime evaluation of
+entities because entities are global to a document and, for performance reasons,
+SDL applications often do not wish to process all global information just
+to display a single topic\&.
+.PP
+The attribute of \fBspc\fP is:
+.TS
+tab();
+lw(0.619565i) lw(0.804348i) lw(0.880435i) lw(3.195652i).
+\fIname\fPCDATARequiredT{
+The name attribute must be one of the special
+ character names, for example, ``[bull  ]\&'\&' (bullet), defined  in the public
+character entities such as ISOpub,  ``ISO 8879:1986//ENTITIES Publishing//EN\&.\&'\&'
+These entities are defined in sections D\&.4\&.2\&.1  through D\&.4\&.5\&.6 of The SGML
+Handbook (Goldfarb)\&.
+T}
+____
+.TE
+.SH "CONDITIONAL TEXT ELEMENTS"
+.PP
+.SH "IF"
+.SS "Purpose"
+.PP
+Conditional inclusion of text or data\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.507675i) lw(3.992325i).
+\fB<!ELEMENT if\fP\fB- - (cond, then, else?) >\fP
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBif\fP element allows conditional inclusion of other
+text and data elements\&.
+.PP
+The \fBif\fP element consists of a condition ( \fBcond\fP) followed by a \fBthen\fP clause and an optional \fBelse\fP clause\&. Based on the result of the condition, either the \fBthen\fP clause or the \fBelse\fP clause is included in
+the document\&. If the condition is false and no \fBelse\fP clause
+exists, the \fBif\fP element is considered to be empty\&.
+.PP
+The \fBif\fP element has no attributes\&.
+.SH "COND"
+.SS "Purpose"
+.PP
+Boolean condition for the \fBif\fP element\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.760965i) lw(3.739035i).
+\fB<!ELEMENT cond\fP\fB- - CDATA >\fP
+__
+.TE
+.TS
+tab();
+lw(1.692308i) lw(0.663202i) lw(1.189189i) lw(0.411642i) lw(1.543659i).
+\fB<!ATTLIST cond\fP\fIinterp\fPNOTATION
+(tcl|
+sh|
+ksh|
+csh)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBcond\fP element contains a script to be run by the
+interpreter specified in the \fIinterp\fP attribute\&. The CDATA
+content of \fBcond\fP is passed to the \fIinterp\fP\&.
+The return value from the interpreter should be numeric\&.
+.PP
+The attribute of \fBcond\fP is:
+.TS
+tab();
+lw(0.687500i) lw(1.124008i) lw(0.807540i) lw(2.880952i).
+\fIinterp\fPNOTATION -OptionalT{
+The interpreter to which to pass the CDATA
+content
+T}
+tclT{
+of the \fBcond\fP element\&. It
+is expected that the interpreter
+T}
+shT{
+returns a numeric string value\&. One of the
+listed
+T}
+kshT{
+interpreters is often embedded  in the application
+T}
+cshT{
+and does not require another  process to
+execute\&. If the specified interpreter does not exist, or  returns a non-numeric
+value, the default return  value is zero\&.
+T}
+.TE
+.SH "THEN"
+.SS "Purpose"
+.PP
+Included text when the condition ( \fBcond\fP) of the \fBif\fP element is a non-zero string\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.76in) lw(4.59in).
+\fB<!ELEMENT then\fPT{
+\fB- - (key | sphrase | rev | if |
+ spc | snref | anchor | link | #PCDATA)*) >\fP
+T}
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBthen\fP element contains text and data to be included
+if the return value of the interpreter in the \fBcond\fP element
+is a non-zero string\&. The \fBthen\fP element may contain a nested \fBif\fP element as well as any other text or data acceptable in a paragraph
+( \fBp\fP)\&.
+.PP
+The \fBthen\fP element has no attributes\&.
+.SH "ELSE"
+.SS "Purpose"
+.PP
+Included text when the condition ( \fBcond\fP) of the \fBif\fP element is a string evaluating to zero\&.
+.SH "SYNOPSIS"
+.PP
+.nf
+\f(CW<!ELEMENT else - - (key | sphrase | rev | if | spc | snref | anchor | link | #PCDATA)*) >\fR
+.fi
+.PP
+.SH "DESCRIPTION"
+.PP
+The \fBelse\fP element contains text and data to be included
+if the return value of the interpreter in the \fBcond\fP element
+is a string evaluating to zero\&. The \fBelse\fP element may contain
+a nested \fBif\fP element as well as any other text or data
+acceptable in a paragraph ( \fBp\fP)\&.
+.PP
+The \fBelse\fP element has no attributes\&.
+.SH "NOTATION ELEMENTS"
+.PP
+.SH "GRAPHIC"
+.SS "Purpose"
+.PP
+Attachment to a graphic image external to the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.062500i) lw(3.437500i).
+\fB<!ELEMENT graphic\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.062500i) lw(0.796053i) lw(1.061404i) lw(1.580044i).
+\fB<!ATTLIST graphic\fP\fIid\fPID#REQUIRED
+\fIformat\fPCDATA#IMPLIED
+\fImethod\fPIDREF#IMPLIED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBgraphic\fP element allows incorporation of graphic
+images into an SDL-conforming document\&. Only one graphic type element is declared;
+the \fIclass\fP attribute is used to distinguish
+between figure, in-line or button\&. A graphic image is incorporated by putting
+an \fBsnref\fP element in the document at the point of inclusion\&.
+The \fIrid\fP attribute of the \fBsnref\fP should
+refer to the \fBgraphic\fP element describing the storage location
+and format of the image\&.
+.PP
+The attributes of \fBgraphic\fP are:
+.TS
+tab();
+lw(0.662651i) lw(0.817269i) lw(0.916667i) lw(3.103414i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBgraphic\fP\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIformat\fPCDATARequiredT{
+The format in which the graphic is stored\&.
+Example values for the \fIformat\fP attribute are:
+tiff, xpm, xbm and xwd\&.
+T}
+\fImethod\fPIDREFOptionalT{
+A reference to a \fBscript\fP
+element (discussed later)  in the system notation block of the current virtual
+ page\&. The script in the \fBscript\fP element provides a  mechanism
+for performing any setup necessary to  display the graphic image\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the graphic image\&.
+T}
+.TE
+.SH "TEXT"
+.SS "Purpose"
+.PP
+Alternate rich text for \fBsnref\fP\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.724781i) lw(3.775219i).
+\fB<!ELEMENT text\fP\fB- - ((p | cp)*) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.748904i) lw(0.771930i) lw(0.892544i) lw(2.086623i).
+\fB<!ATTLIST text\fP\fIid\fPID#REQUIRED
+\fIlanguage\fPCDATA#REQUIRED
+\fIcharset\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBtext\fP element allows for rich text alternatives
+to other elements in the system notation block being referenced by \fBrefitem\fP elements in \fBsnref\fP\&. A \fBtext\fP
+element contains zero or more paragraphs ( \fBp\fP) or character
+paragraphs ( \fBcp\fP)\&.
+.PP
+The attributes of \fBtext\fP are:
+.TS
+tab();
+lw(0.762376i) lw(0.816832i) lw(0.925743i) lw(2.995050i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBtext\fP\&.
+The \fIid\fP attribute must be  a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIlanguage\fPCDATAOptionalT{
+The language in which this \fBtext\fP was written\&.
+T}
+\fIcharset\fPCDATAOptionalT{
+The character set of this text\&. The
+\fIlanguage\fP and  \fIcharset\fP
+attributes plus information retrieved from  the table of semantics and styles
+(\fBtoss\fP) element  are used to select the \fBtext\fP
+font\&.
+T}
+.TE
+.SH "AUDIO"
+.SS "Purpose"
+.PP
+Attachment to an audio snippet external to the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.881579i) lw(3.618421i).
+\fB<!ELEMENT audio\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.844298i) lw(0.964912i) lw(1.821272i).
+\fB<!ATTLIST audio\fP\fIid\fPID#REQUIRED
+\fIformat\fPCDATA#IMPLIED
+\fImethod\fPIDREF#IMPLIED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBaudio\fP element allows an audio snippet to be incorporated
+into an SDL-conforming document\&. An audio snippet is incorporated by putting
+an \fBsnref\fP element in the document at the point of inclusion\&.
+The \fIrid\fP attribute of the \fBsnref\fP should
+refer to the \fBaudio\fP element describing the storage location
+and format of the audio snippet\&.
+.PP
+The attributes of \fBaudio\fP are:
+.TS
+tab();
+lw(0.750000i) lw(0.771739i) lw(0.880435i) lw(3.097826i).
+\fIid\fPIDRequiredT{
+The identifier of the audio\&. The \fIid\fP attribute must  be a valid SGML identifier and must be unique
+ within the document\&.
+T}
+\fIformat\fPCDATARequiredT{
+The format in which the audio snippet is
+stored\&.
+T}
+\fImethod\fPIDREFOptionalT{
+A reference to a \fBscript\fP
+element (covered later in this document)  in the system notation block of
+the current virtual  page\&. The script in the \fBscript\fP element
+provides a  mechanism for performing any setup necessary to  present the audio
+snippet\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the audio snippet\&.
+T}
+.TE
+.SH "VIDEO"
+.SS "Purpose"
+.PP
+Attachment to a video clip external to the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.821272i) lw(3.678728i).
+\fB<!ELEMENT video\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.808114i) lw(0.820175i) lw(2.002193i).
+\fB<!ATTLIST video\fP\fIid\fPID#REQUIRED
+\fIformat\fPCDATA#IMPLIED
+\fImethod\fPIDREF#IMPLIED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBvideo\fP element allows a video clip to be incorporated
+into an SDL-conforming document\&. A video clip is incorporated by putting
+an \fBsnref\fP element in the document at the point of inclusion\&.
+The \fIrid\fP attribute of the \fBsnref\fP should
+refer to the \fBvideo\fP element describing the storage location
+and format of the video clip\&.
+.PP
+The attributes of \fBvideo\fP are:
+.TS
+tab();
+lw(0.762695i) lw(0.805664i) lw(0.891602i) lw(3.040039i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBvideo\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIformat\fPCDATARequiredT{
+The format in which the video clip is stored\&.
+T}
+\fImethod\fPIDREFOptionalT{
+A reference to a \fBscript\fP
+element (covered later in this document)  in the system notation block of
+the current virtual  page\&. The script in the \fBscript\fP element
+provides a  mechanism for performing any setup necessary to  present the video
+clip\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the video clip\&.
+T}
+.TE
+.SH "ANIMATE"
+.SS "Purpose"
+.PP
+Attachment to an animation sequence external to the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.050439i) lw(3.449561i).
+\fB<!ELEMENT animate\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.038377i) lw(0.808114i) lw(0.964912i) lw(1.688596i).
+\fB<!ATTLIST animate\fP\fIid\fPID#REQUIRED
+\fIformat\fPCDATA#IMPLIED
+\fImethod\fPIDREF#IMPLIED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBanimate\fP element allows an animation sequence
+to be incorporated into an SDL-conforming document\&. An animation sequence
+is incorporated by putting an \fBsnref\fP element in the document
+at the point of inclusion\&. The \fIrid\fP attribute of the \fBsnref\fP should refer to the \fBanimate\fP element describing
+the storage location and format of the animation sequence\&.
+.PP
+The attributes of \fBanimate\fP are:
+.TS
+tab();
+lw(0.673913i) lw(0.793478i) lw(0.836957i) lw(3.195652i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBanimate\fP\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIformat\fPCDATARequiredT{
+The format in which the animation sequence
+is  stored\&.
+T}
+\fImethod\fPIDREFOptionalT{
+A reference to a \fBscript\fP
+element (covered later in this document)  in the system notation block of
+the current virtual  page\&. The script in the \fBscript\fP element
+provides a  mechanism for performing any setup necessary to  present the animation
+sequence\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the animation
+sequence\&.
+T}
+.TE
+.SH "SCRIPT"
+.SS "Purpose"
+.PP
+Data collection and/or generation of dynamic text\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.990132i) lw(3.509868i).
+\fB<!ELEMENT script\fP\fB- - CDATA >\fP
+__
+.TE
+.TS
+tab();
+lw(1.840771i) lw(0.635903i) lw(1.126775i) lw(0.502028i) lw(1.394523i).
+\fB<!ATTLIST script\fP\fIid\fPID#REQUIRED
+\fIinterp\fPNOTATION
+(tcl|
+sh|
+ksh|
+csh)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBscript\fP element is the mechanism within SDL for
+collecting usage data or generating dynamic (on-the-fly) text\&. When referenced
+via an \fBsnref\fP, the CDATA content of the \fBscript\fP element is passed to the designated interpreter\&. If the return
+value from the interpreter is non- \fBNULL\fP, that
+value is interpolated into the document at the point of the \fBsnref\fP\&. If the designated interpreter is embedded in the application,
+global variables may be used to collect usage data; otherwise, some mechanism,
+such as temporary files, may be used\&.
+.PP
+The attributes of \fBscript\fP are:
+.TS
+tab();
+lw(0.567935i) lw(1.135870i) lw(0.866848i) lw(2.929348i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBscript\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIinterp\fPNOTATION -OptionalT{
+The interpreter to which to pass the CDATA
+T}
+tclT{
+content of the \fBscript\fP
+element\&. One of the
+T}
+shT{
+listed interpreters is often embedded in
+the
+T}
+kshT{
+application and does not require another
+T}
+cshT{
+process to execute\&. If the specified interpreter
+does not exist, the default return value is \fBNULL\fP\&.
+T}
+.TE
+.SH "CROSSDOC"
+.SS "Purpose"
+.PP
+Indirect element for following a hyperlink outside the current document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.158991i) lw(3.341009i).
+\fB<!ELEMENT crossdoc\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.267544i) lw(0.603070i) lw(0.856360i) lw(1.773026i).
+\fB<!ATTLIST crossdoc\fP\fIid\fPID#REQUIRED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBcrossdoc\fP element is the mechanism within SDL
+for effecting a hyperlink to an external document\&. To create an external,
+cross-document hyperlink, a \fBlink\fP to the \fBcrossdoc\fP is placed in the text\&. The \fBcrossdoc\fP element
+contains the necessary information to find the desired document and \fIid\fP within that document\&.
+.PP
+The attributes of \fBcrossdoc\fP are:
+.TS
+tab();
+lw(0.418838i) lw(0.782565i) lw(0.881764i) lw(3.416834i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBcrossdoc\fP\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the external document
+ and \fIid\fP\&.
+T}
+.TE
+.SH "MAN PAGE"
+.SS "Purpose"
+.PP
+Indirect element for following a hyperlink to a reference manual page\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.207237i) lw(3.292763i).
+\fB<!ELEMENT man-page\fP\fB- O EMPTY >\fP
+\fB<!ELEMENT crossdoc\fP\fB- O EMPTY >\fP
+.TE
+.TS
+tab();
+lw(2.279605i) lw(0.591009i) lw(0.892544i) lw(1.736842i).
+\fB<!ATTLIST man-page\fP\fIid\fPID#REQUIRED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBman-page\fP element is the mechanism within SDL
+for effecting a hyperlink to (display of) a reference manual page such, as
+a Unix man page\&. To create a man page hyperlink, a \fBlink\fP
+to the \fBman-page\fP is placed in the text\&. The \fBman-page\fP element contains the necessary information to find and display
+the desired manual page\&.
+.PP
+The attributes of \fBman-page\fP are:
+.TS
+tab();
+lw(0.484344i) lw(0.818004i) lw(0.871820i) lw(3.325832i).
+\fIid\fPIDRequiredT{
+The \fBman-page\fP identifier\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the reference
+manual  page\&.
+T}
+.TE
+.SH "TEXTFILE"
+.SS "Purpose"
+.PP
+Indirect element for following a hyperlink to a text file\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.195175i) lw(3.304825i).
+\fB<!ELEMENT textfile\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.195175i) lw(0.518640i) lw(0.916667i) lw(1.869518i).
+\fB<!ATTLIST textfile\fP\fIid\fPID#REQUIRED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBtextfile\fP element is the mechanism within SDL
+for effecting a hyperlink to (display of) a text file\&. To create a text file
+hyperlink, a \fBlink\fP to the \fBtextfile\fP is
+placed in the text\&. The textfile element contains the necessary information
+to find the desired file\&.
+.PP
+The attributes of \fBtextfile\fP are:
+.TS
+tab();
+lw(0.478261i) lw(0.739130i) lw(0.836957i) lw(3.445652i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBtextfile\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the text file\&.
+T}
+.TE
+.SH "SYS-CMD"
+.SS "Purpose"
+.PP
+Indirect element for following a hyperlink to a system command\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.050439i) lw(3.449561i).
+\fB<!ELEMENT sys-cmd\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.062500i) lw(0.554825i) lw(0.892544i) lw(1.990132i).
+\fB<!ATTLIST sys-cmd\fP\fIid\fPID#REQUIRED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBsys-cmd\fP element is the mechanism within SDL for
+effecting a hyperlink to (execution of) a system command\&. To create a system
+command hyperlink, a \fBlink\fP to the \fBsys-cmd\fP
+is placed in the text\&. The \fBsys-cmd\fP element contains the
+necessary information to find and execute the system command\&.
+.PP
+The attributes of \fBsys-cmd\fP are:
+.TS
+tab();
+lw(0.442656i) lw(0.719316i) lw(0.796781i) lw(3.541247i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBsys-cmd\fP\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier for the system command\&.
+T}
+.TE
+.SH "CALLBACK"
+.SS "Purpose"
+.PP
+Indirect element for following a hyperlink into the application\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.207237i) lw(3.292763i).
+\fB<!ELEMENT callback\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.243421i) lw(0.542763i) lw(0.964912i) lw(1.748904i).
+\fB<!ATTLIST callback\fP\fIid\fPID#REQUIRED
+\fIxid\fPCDATA#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBcallback\fP element is the mechanism within SDL
+for effecting a hyperlink into the enclosing application\&. To create a application
+callback hyperlink, a \fBlink\fP to the \fBcallback\fP
+is placed in the text\&. The \fBcallback\fP element contains the
+necessary information to inform the application of the desired action\&.
+.PP
+The attributes of \fBcallback\fP are:
+.TS
+tab();
+lw(0.473948i) lw(0.760521i) lw(0.925852i) lw(3.339679i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBcallback\fP\&.
+The \fIid\fP attribute  must be a valid SGML identifier and
+must be  unique within the document\&.
+T}
+\fIxid\fPCDATARequiredT{
+An external identifier and user data for
+the application callback\&.
+T}
+.TE
+.SH "SWITCH"
+.SS "Purpose"
+.PP
+Conditional hyperlink\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.990132i) lw(3.509868i).
+\fB<!ELEMENT switch\fP\fB- - CDATA >\fP
+__
+.TE
+.TS
+tab();
+lw(1.730695i) lw(0.870656i) lw(1.029923i) lw(0.339768i) lw(1.528958i).
+\fB<!ATTLIST switch\fP\fIid\fPID#REQUIRED
+\fIinterp\fPNOTATION
+(tcl|
+sh|
+ksh|
+csh)#IMPLIED
+\fIbranches\fPIDREFS#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBswitch\fP element is part of the system notation
+block, \fBsnb\fP, and is always instantiated via a reference
+by a \fBlink\fP element\&. When activated by the hyperlink, the
+interpreter ( \fIinterp\fP) is called passing it the CDATA
+content of the switch and the interpreter returns a non-negative number\&. The
+return value of the interpreter is used to index into the list of \fIbranches\fP and the hyperlink is continued to that ID\&. A return value
+that is non-numeric, less than zero or greater than the number minus one of
+the \fIid\fPs in the \fIbranches\fP attribute,
+will cause the hyperlink to continue to the first \fIbranch\fP
+in the list\&.
+.PP
+The attributes of \fBswitch\fP are:
+.TS
+tab();
+lw(0.772115i) lw(1.121154i) lw(0.835577i) lw(2.771154i).
+\fIid\fPIDRequiredT{
+The identifier of the \fBswitch\fP\&.
+The \fIid\fP attribute must  be a valid SGML identifier and
+must be unique  within the document\&.
+T}
+\fIinterp\fPNOTATION -OptionalT{
+The interpreter to which to pass the
+T}
+tclT{
+CDATA content of the \fBswitch\fP
+element\&. It is expected that the
+T}
+shT{
+interpreter returns a numeric string value
+T}
+kshT{
+equal to or greater than zero\&. One of the
+T}
+cshT{
+listed interpreters is often embedded in
+the application and does not require another process to execute\&. If the specified
+interpreter does not exist, or  returns either a non-numeric or out-of-bounds
+ value, the default return value is zero\&.
+T}
+\fIbranches\fPIDREFSRequiredT{
+A list of IDs in the current document\&. The
+return  value of the \fIinterp\fP attribute is used to index
+into  this list of IDs and the hyperlink is continued at  the resulting ID\&.
+T}
+.TE
+.SH "GENERATED ELEMENTS"
+.PP
+.SH "REL-DOCS"
+.SS "Purpose"
+.PP
+Documents related to this document\&.
+.SH "SYNOPSIS"
+.PP
+To be determined\&.
+.SH "DESCRIPTION"
+.PP
+To be determined\&.
+.SS "REL-FILE"
+.PP
+.SS "Purpose"
+.PP
+Files related to this document\&.
+.SH "SYNOPSIS"
+.PP
+To be determined\&.
+.SH "DESCRIPTION"
+.PP
+To be determined\&.
+.SH "NOTES"
+.SS "Purpose"
+.PP
+Notes related to this document\&.
+.SH "SYNOPSIS"
+.PP
+To be determined\&.
+.SH "DESCRIPTION"
+.PP
+To be determined\&.
+.SH "LOIDS AND ID"
+.SS "Purpose"
+.PP
+List of identifiers in the document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.809211i) lw(3.690789i).
+\fB<!ELEMENT\fP \fBloids\fP\fB\fP
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.591009i) lw(1.013158i) lw(2.026316i).
+\fB<!ATTLIST loids\fP\fIcount\fPNUMBER#IMPLIED >
+____
+.TE
+.TS
+tab();
+lw(1.531798i) lw(3.968202i).
+\fB<!ELEMENT id\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.580044i) lw(0.711623i) lw(1.133772i) lw(0.578947i) lw(1.495614i).
+\fB<!ATTLIST id\fP\fItype\fP(virpage|
+block|
+form|
+p|
+cp|
+head|
+subhead|
+anchor|
+switch|
+snref|
+graphic|
+text|
+audio|
+video|
+animate|
+crossdoc|
+man-page|
+textfile|
+sys-cmd|
+script|
+callback)#REQUIRED
+\fIrid\fPIDREF#REQUIRED
+\fIrssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIoffset\fPNUMBER#REQUIRED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBloids\fP element is a container for a list of identifiers
+in the document\&. The list appears in the order the identifiers appear\&.
+.PP
+The \fBloids\fP element can be used to generate a table
+of contents for the document by selecting only those elements whose
+\fItype\fP is \fBvirpage\fP and listing the
+heads of those \fBvirpage\fP elements\&. The \fIrlevel\fP
+attribute can be used to infer the nesting level of the \fBvirpage\fP
+and to avoid reading the \fBhead\fP of virtual pages whose nesting
+\fIlevel\fP is deeper than is currently being displayed\&.
+.PP
+The attribute of \fBloids\fP is:
+.TS
+tab();
+lw(0.597826i) lw(0.967391i) lw(0.847826i) lw(3.086957i).
+\fIcount\fPNUMBEROptionalT{
+The number of \fBid\fP elements
+contained in the \fBloids\fP\&.  This attribute, if present, can
+be used by the processor to pre-allocate space for the \fBid\fP
+elements\&.
+T}
+____
+.TE
+.PP
+The attributes of \fBid\fP are:
+.TS
+tab();
+lw(0.534722i) lw(0.916667i) lw(0.960317i) lw(3.088294i).
+\fItype\fPvirpageRequiredT{
+The name of the element to which this \fBid\fP
+T}
+blockbelongs\&.
+form
+p
+cp
+head
+subhead
+anchor
+switch
+snref
+graphic
+text
+audio
+video
+animate
+crossdoc
+man-page
+textfile
+sys-cmd
+script
+callback
+\fIrid\fPIDREFRequiredThe referenced identifier\&.
+\fIrssi\fPCDATAOptionalT{
+The source semantic identifier ( \fIssi\fP) of the element  referenced by the \fIrid\fP
+attribute\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+The \fIlevel\fP
+of the element referenced by the \fIrid\fP attribute\&. This
+attribute defaults to 1\&.
+T}
+\fIoffset\fPNUMBERRequiredT{
+The byte offset in the document to the start
+of the  virtual page containing the element referenced by  the \fIrid\fP attribute\&.
+T}
+.TE
+.SH "INDEX AND ENTRY"
+.SS "Purpose"
+.PP
+Contains the index for the document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.917763i) lw(3.582237i).
+\fB<!ELEMENT index\fP\fB- - (entry*) >\fP
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.747807i) lw(1.025219i) lw(1.857456i).
+\fB<!ATTLIST index\fP\fIhead\fPCDATA#IMPLIED
+\fIcount\fPNUMBER#IMPLIED >
+.TE
+.TS
+tab();
+lw(1.586338i) lw(3.913662i).
+\fB<!ELEMENT entry\fPT{
+\fB- - ((key | sphrase | rev |  if
+| spc | snref | #PCDATA)*, entry*) >\fP
+T}
+__
+.TE
+.TS
+tab();
+lw(1.869518i) lw(0.663377i) lw(1.013158i) lw(1.953947i).
+\fB<!ATTLIST entry\fP\fIid\fPID#IMPLIED
+\fImain\fPIDREFS#IMPLIED
+\fIlocs\fPIDREFS#IMPLIED
+\fIsyns\fPIDREFS#IMPLIED
+\fIsort\fPCDATA#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBindex\fP element contains all information necessary
+to create and display an index for the document\&. It is created during translation
+of a higher level DTD-conforming document to conform to SDL; that is, an index
+is not generated at the time of request\&.
+.PP
+The \fBindex\fP can be used to enable keyword searches
+within a document\&.
+.PP
+An index consists of zero or more entries\&.
+.PP
+The attributes of \fBindex\fP are:
+.TS
+tab();
+lw(0.655273i) lw(0.977539i) lw(0.913086i) lw(2.954102i).
+\fIhead\fPCDATAOptionalT{
+Alternate text for the heading of the index\&.
+T}
+\fIcount\fPNUMBEROptionalT{
+The number of \fBentry\fP elements
+contained in the  index\&. The processor cn use this attribute (if this attribute
+is present) to pre-allocate space for the \fBentry\fP  elements\&.
+T}
+.TE
+.PP
+The attributes of \fBentry\fP are:
+.TS
+tab();
+lw(0.468317i) lw(0.718812i) lw(0.849505i) lw(3.463366i).
+\fIid\fPIDOptionalThe identifier of the index entry\&.
+\fImain\fPIDREFSOptionalT{
+A list of identifiers specifying where the
+indexed  entry may be found\&. The main list of ids may be  highlighted in some
+way to indicate a greater  importance than the ids found in the \fIlocs\fP list\&.
+T}
+\fIlocs\fPIDREFSOptionalT{
+A list of identifiers specifying where the
+indexed  entry may be found\&. At least one of either \fImain\fP or  \fIlocs\fP must be specified\&.
+T}
+\fIsyns\fPIDREFSOptionalT{
+A list of identifiers that refer to other \fBentry\fP elements and correspond to a ``See also\&'\&' or synonym-type
+of reference\&.
+T}
+\fIsort\fPCDATAOptionalT{
+A \fIsort\fP key to use if
+the indexed entry is to be  sorted other than by its content\&.
+T}
+.TE
+.SH "LOPHRASES"
+.SS "Purpose"
+.PP
+A list of semantic phrases used in this document\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.279605i) lw(3.220395i).
+\fB<!ELEMENT lophrases\fP\fB- - (phrase+) >\fP
+__
+.TE
+.TS
+tab();
+lw(2.364035i) lw(0.603070i) lw(1.013158i) lw(1.519737i).
+\fB<!ATTLIST lophrases\fP\fIcount\fPNUMBER#IMPLIED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+The list of phrases ( \fBlophrases\fP) element is generated
+by the higher level DTD to SDL translator\&. It is a list of phrases used from
+the \fBtoss\fP element (covered later in this document) contained
+in this document\&. The phrases are used to map the user\&'s knowledge domain
+into the constructs used in SDL\&. This information can be used to pass the
+phrases available for structured or semantic searches to a browser or viewer
+to allow that browser or viewer to offer that information to the user\&.
+.PP
+The \fBlophrases\fP element differs from the phrases in
+the \fBtoss\fP in that the \fBtoss\fP contains all
+phrases possible in a higher level DTD to SDL translation and the \fBlophrases\fP element contains only those used in the translation of
+this particular document\&.
+.PP
+The attribute of \fBlophrases\fP is:
+.TS
+tab();
+lw(0.566019i) lw(0.918447i) lw(0.811650i) lw(3.203883i).
+\fIcount\fPNUMBEROptionalT{
+The number of phrase elements contained in
+the  \fBlophrases\fP\&. The processor can use this attribute (if
+this attribute is present) to pre-allocate space for the  phrase elements\&.
+T}
+____
+.TE
+.SH "PHRASE"
+.SS "Purpose"
+.PP
+A single phrase in the \fBlophrases\fP element\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.01in) lw(3.48in).
+\fB<!ELEMENT phrase\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(2.026316i) lw(0.542763i) lw(0.892544i) lw(2.038377i).
+\fB<!ATTLIST phrase\fP\fItext\fPCDATA#REQUIRED >
+____
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBphrase\fP element is a single phrase from the list
+of phrases element ( \fBlophrases\fP)\&.
+.PP
+The attribute of \fBphrase\fP is:
+.TS
+tab();
+lw(0.554825i) lw(0.989035i) lw(1.085526i) lw(2.870614i).
+\fItext\fPCDATARequiredThe semantic phrase\&.
+____
+.TE
+.SH "TOSS"
+.SS "Purpose"
+.PP
+The table of semantics and styles\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(1.637405i) lw(3.862595i).
+\fB<!ELEMENT toss\fPT{
+\fB- - (keystyle*, headstyle*, frmtstyle*,
+grphstyle*)>\fP
+T}
+__
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBtoss\fP element is a container for the table of
+semantics and styles\&. Each sub-element of the \fBtoss\fP represents
+a different formatting group\&. These sub-elements also contain \fIclass\fP and \fIssi\fP (source semantic identifier) attributes
+to allow general and specific semantic or structured searches\&. A \fIphrase\fP attribute of many of the \fBtoss\fP sub-elements
+also assists by providing a natural language phrase to describe the semantics
+of the element as used in the higher level DTD to SDL translation\&.
+.PP
+Lookups in the \fBtoss\fP are done by matching the
+\fIclass\fP and \fIssi\fP attributes of
+the element in the document proper with the \fIclass\fP
+and \fIssi\fP attributes of the sub-element of the \fBtoss\fP\&. The lookup can often be further refined by matching the
+\fIlevel\fP attribute (if present) of the element in the
+document with the \fIrlevel\fP attribute (if present) in the
+sub-element of the \fBtoss\fP\&.
+.PP
+Structured searches based on the structure of a domain-specific higher
+level DTD can be made by having the \fIssi\fP attribute of
+the sub-element directly correspond to the generic identifier from the original
+DTD\&.
+.PP
+The attribute of \fBtoss\fP is:
+.TS
+tab();
+lw(0.566337i) lw(0.936634i) lw(0.795050i) lw(3.201980i).
+\fIcount\fPNUMBEROptionalT{
+The number of styles contained in the \fBtoss\fP\&. The processor can use this attribute (if this attribute is
+present) to pre-allocate space for the styles\&.
+T}
+____
+.TE
+.SH "KEYSTYLE"
+.SS "Purpose"
+.PP
+Provides font and semantic information for key phrases\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.195175i) lw(3.304825i).
+\fB<!ELEMENT keystyle\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.960396i) lw(0.925743i) lw(1.056436i) lw(0.239604i) lw(1.317822i).
+\fB<!ATTLIST keystyle\fP\fIclass\fP(acro|
+book|
+emph|
+jargon|
+l10n|
+name|
+quote|
+product|
+termdef|
+term|
+mach-in|
+mach-out|
+mach-cont|
+pub-lit|
+udefkey)#REQUIRED
+\fIssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPNUMBER#IMPLIED
+\fIpointsz\fPNUMBER#IMPLIED
+\fIset-width\fPNUMBER#IMPLIED
+\fIcolor\fPCDATA#IMPLIED
+\fIxlfd\fPCDATA#IMPLIED
+\fIxldfi\fPCDATA#IMPLIED
+\fIxlfdb\fPCDATA#IMPLIED
+\fIxlfdib\fPCDATA#IMPLIED
+\fItypenam\fPCDATA#IMPLIED
+\fItypenami\fPCDATA#IMPLIED
+\fItypenamb\fPCDATA#IMPLIED
+\fItypenamib\fPCDATA#IMPLIED
+\fIstyle\fP(serif|
+sans-serif|
+symbol)#IMPLIED
+\fIspacing\fP(monospace|
+propspace)#IMPLIED
+\fIweight\fP(medium|
+bold)#IMPLIED
+\fIslant\fP(roman|
+italic|
+rev-italic|#IMPLIED
+\fIspecial\fP(underline|
+strikeout|
+none)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBkeystyle\fP element provides semantic and font information
+for \fBkey\fP phrases in the document\&.
+.PP
+When a \fBkey\fP element is encountered in the document,
+the \fBtoss\fP list of \fBkeystyle\fP elements is
+ssearched with an attempt made to match the \fIclass\fP
+and \fIssi\fP (if any) attributes of the \fBkey\fP element to the \fIclass\fP and \fIssi\fP (if any) attributes of the \fBkeystyle\fP\&. If
+the \fBkeystyle\fP specifies an \fIrlevel\fP attribute,
+the search is further refined by matching the \fIlevel\fP
+of the \fBblock\fP containing the paragraph ( \fBp\fP) to the \fIrlevel\fP of the \fBkeystyle\fP\&.
+If the \fBkey\fP element has no \fIssi\fP attribute,
+the search in the \fBtoss\fP looks for a \fBkeystyle\fP
+element with no \fIssi\fP specified\&. A \fBkeystyle\fP
+element with no \fIssi\fP specified matches any \fIssi\fP in a \fBkey\fP element although an explicit \fIclass\fP/\fIssi\fP pair is chosen in
+preference\&.
+.PP
+When a match is found, the font information contained in the \fBkeystyle\fP is used in formatting the \fBkey\fP element\&.
+.PP
+The attributes of \fBkeystyle\fP are:
+.TS
+tab();
+lw(0.801397i) lw(0.933134i) lw(0.889222i) lw(2.876248i).
+\fIclass\fPacroRequiredT{
+The general type of the \fBkey\fP
+element in
+T}
+bookthe document\&.
+emph
+jargon
+l10n
+name
+quote
+product
+pub-lit
+termdef
+term
+mach-in
+mach-out
+mach-cont
+udefkey
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain-specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+Used to further refine matches of the
+\fIclass\fP and \fIssi\fP  attributes\&. If
+present, the \fIrlevel\fP of the \fBkeystyle\fP
+is  matched against the \fIlevel\fP of the \fBblock\fP containing  the paragraph (\fBp\fP) containing
+the \fBkey\fP element\&.
+T}
+\fIphrase\fPCDATAOptionalT{
+A natural language phrase describing the
+semantics (meaning) of the element in the original  SGML document that was
+translated into this  \fBkey\fP\&. This phrase can be used to present
+an interface to  the reader for searching or otherwise examining  the document\&.
+T}
+\fIsrch-wt\fPNUMBEROptionalT{
+A number indicating the likelihood that this
+element contains an actual hit when doing a full-text  search\&. It may be used
+as a relevance indicator\&.
+T}
+\fIpointsz\fPNUMBEROptionalT{
+The height of the font in points\&. By default,
+the  main body of the document is 10 point\&.
+T}
+\fIset-width\fPNUMBEROptionalT{
+The width of the font in points; the default
+is the  point size\&. The set width is similar to point size  but refers to
+relative width rather than height\&. For example, an 8 point font based on a
+square would  be 8 pt\&., 8 set\&.
+T}
+\fIcolor\fPCDATAOptionalT{
+One of the 42 common desktop environment
+ (CDE) colors or RGB:rrrr/gggg/bbbb\&.
+T}
+\fIxlfd\fPCDATAOptionalT{
+These attributes should always be specified
+as a group\&.
+T}
+\fIxlfdi\fPT{
+They are X logical font descriptions
+T}
+\fIxlfdb\fPT{
+(XLFD) typeface names for use on the X
+T}
+\fIxlfdib\fPT{
+Window System\&. Specified, for example, as
+``-adobe-helvetica-bold-i-narrow-*-\&'\&'\&. The four specifications are for normal,
+italic, bold and bold-italic\&. These attributes should only be specified if
+the  author is sure of exactly what font is desired\&. In the usual case, only
+the logical typeface specifcations (\fIstyle\fP, \fIspacing\fP, \fIweight\fP, \fIslant\fP)
+are  given\&.
+T}
+\fItypenam\fPCDATAOptionalT{
+These attributes should always be specified
+as a group\&.
+T}
+\fItypenami\fPT{
+They are the MS-Windows typeface name with
+a maximum
+T}
+\fItypenamb\fPT{
+of 32 characters\&. There is one specification
+each
+T}
+\fItypenamib\fPT{
+for  normal, italic, bold and bold-italic\&.
+These attributes should only be specified if the author is sure of the desired
+font and, in the usual case, only provides the  following logical type specifications\&.
+T}
+\fIstyle\fPserifOptionalThe font style\&.
+sans-serif
+symbol
+\fIspacing\fPmonospaceOptionalSpecifies fixed versus proportional
+propspacespacing\&.
+\fIweight\fPmediumOptionalSpecifies normal versus bold font\&.
+bold
+\fIslant\fPromanOptionalT{
+Specifies Roman, italic or reverse italic
+T}
+italicfont\&.
+rev-italic
+\fIspecial\fPunderlineOptionalT{
+Special attribute of the font\&. The underline
+value is
+T}
+strikeoutT{
+interpreted as appropriate for the font\&.
+T}
+noneT{
+Some non-European fonts use overlining for
+ the purpose filled by underlining in European  fonts\&.
+T}
+.TE
+.SH "HEADSTYLE"
+.SS "Purpose"
+.PP
+Provides formatting, font and semantic information for headings ( \fBhead\fP and \fBsubhead\fP)\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.291667i) lw(3.208333i).
+\fB<!ELEMENT headstyle\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.985267i) lw(0.840700i) lw(1.225599i) lw(0.354512i) lw(1.093923i).
+\fB<!ATTLIST headstyle\fP\fIclass\fP(label|
+head|
+caption|
+undefhead)#REQUIRED
+\fIssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPCDATA#IMPLIED
+\fIorient\fP(left-orient|
+center-orient|
+right-orient|
+left-corner-orient|
+right-corner-orient)#IMPLIED
+\fIvorient\fP(top-vorient|
+bottom-vorient|
+center-vorient)#IMPLIED
+\fIplacement\fP(object|
+parent)#IMPLIED
+\fIheadw\fPCDATA#IMPLIED
+\fIstack\fP(horiz|
+vert)#IMPLIED
+\fIflow\fP(wrap|
+nowrap)#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPNUMBER#IMPLIED
+\fIpointsz\fPNUMBER#IMPLIED
+\fIset-width\fPNUMBER#IMPLIED
+\fIcolor\fPCDATA#IMPLIED
+\fIxlfd\fPCDATA#IMPLIED
+\fIxldfi\fPCDATA#IMPLIED
+\fIxlfdb\fPCDATA#IMPLIED
+\fIxlfdib\fPCDATA#IMPLIED
+\fItypenam\fPCDATA#IMPLIED
+\fItypenami\fPCDATA#IMPLIED
+\fItypenamb\fPCDATA#IMPLIED
+\fItypenamib\fPCDATA#IMPLIED
+\fIstyle\fP(serif|
+sans-serif|
+symbol)#IMPLIED
+\fIspacing\fP(monospace|
+propspace)#IMPLIED
+\fIweight\fP(medium|
+bold)#IMPLIED
+\fIslant\fP(roman|
+italic|
+rev-italic)#IMPLIED
+\fIspecial\fP(underline|
+strikeout|
+none)#IMPLIED
+\fIf-margin\fPCDATA#IMPLIED
+\fIl-margin\fPCDATA#IMPLIED
+\fIr-margin\fPCDATA#IMPLIED
+\fIt-margin\fPCDATA#IMPLIED
+\fIb-margin\fPCDATA#IMPLIED
+\fIborder\fP(no-border|
+full-border|
+horizontal-border|
+vertical-border|
+top-border|
+bottom-border|
+left-border|
+right-border)#IMPLIED
+\fIjustify\fP(left-justify|
+right-justify|
+center-justify|
+numeric-justify)#IMPLIED
+\fIvjust\fP(top-vjust|
+bottom-vjust|
+center-vjust)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBheadstyle\fP element provides semantic, font and
+formatting information for headings ( \fBhead\fP and \fBsubhead\fP) in the document\&.
+.PP
+When a heading is encountered in the document and that heading has an \fIssi\fP attribute, the \fBtoss\fP list of \fBheadstyle\fP elements is searched with an attempt made to match the
+\fIclass\fP and \fIssi\fP attributes of
+the heading to the \fIclass\fP and \fIssi\fP attributes of the \fBheadstyle\fP\&. If the \fBheadstyle\fP specifies an \fIrlevel\fP attribute, the
+search is further refined by matching the \fIlevel\fP
+of the element containing the heading to the \fIrlevel\fP
+of the \fBheadstyle\fP\&. If the element containing the heading
+does not have a \fIlevel\fP attribute, the
+\fIlevel\fP of its containing element is used, and so on\&.
+A \fBheadstyle\fP element with no \fIssi\fP specified
+matches any \fIssi\fP in a \fBhead\fP element
+although an explicit \fIclass\fP/\fIssi\fP pair is chosen in preference\&.
+.PP
+When a match is found, the font and style information contained in the \fBheadstyle\fP is used in formatting the heading\&.
+.PP
+The attributes of \fBheadstyle\fP are:
+.TS
+tab();
+lw(0.708535i) lw(1.133655i) lw(0.779388i) lw(2.878422i).
+\fIclass\fPlabelRequiredT{
+The general type of the heading in the
+T}
+headdocument\&.
+annotation
+phead
+udefhead
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup was conforming to a domain-specific DTD, the \fIssi\fP
+may be  used to enable structured searches of the SDL-conforming document
+by preserving the original  generic identifiers\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+Used to further refine matches of the
+\fIclass\fP and \fIssi\fP  attributes\&. If
+present, the \fIrlevel\fP of the \fBheadstyle\fP
+is matched against the \fIlevel\fP of the element
+containing the heading or, if none, the \fIlevel\fP
+of the first  containing element with a \fIlevel\fP
+attribute\&.
+T}
+\fIphrase\fPCDATAOptionalT{
+A natural language phrase describing the
+semantics (meaning) of the element in the original  SGML document that was
+translated into this  heading\&. This phrase can be used to present an interface
+to  the reader for searching or otherwise examining  the document\&.
+T}
+\fIsrch-wt\fPNUMBEROptionalT{
+A number indicating the likelihood that this
+element contains an actual hit when doing a full-text search\&.
+T}
+\fIsrch-wt\fPNUMBEROptionalT{
+A number indicating the likelihood that this
+element contains an actual hit when doing a full-text search\&.
+T}
+\fIorient\fPleft-orientOptionalT{
+The horizontal orientation of the \fBhead\fP with
+T}
+center-orientT{
+respect to its associated element or of
+T}
+right-orientT{
+the \fBsubhead\fP with respect
+to its \fBhead\fP\&. The
+T}
+left-margin-orientT{
+default is center-orient\&. This value is used
+in
+T}
+right-margin-orientT{
+conjunction with the \fIvorient\fPattribute
+to orient the heading\&. The corner orientations
+T}
+left-corner-orientT{
+are to place the heading in one of the four
+T}
+right-corner-orientT{
+corners above or below (top-vorient or bottom-vorient)
+and to the right or left (right-corner-orient or left-corner-orient) of the
+associated element\&. The margin orientations left or right justified this heading
+with respect to  the text of the heading parent\&. For example, a headstyle
+with orient=left-margin-orient and vorient=top-vorient  places the heading
+above the parent element aligning the left margins of the parent and the heading\&.
+T}
+\fIvorient\fPtop-vorientOptionalT{
+The vertical orientation of the \fBhead\fP
+T}
+bottom-vorientT{
+with respect to its associated element or
+of the \fBsubhead\fP with respect to its \fBhead\fP\&.
+T}
+center-vorientThe default is top-vorient\&.
+\fIplacement\fPobjectOptionalT{
+This attribute applies only to \fBhead\fP elements\&.
+T}
+parentT{
+This attribute indicates whether the \fIorient\fP and \fIvorient\fP attributes apply to the \fBhead\fP proper or to  the entire \fBhead\fP object, including
+all its \fBsubhead\fP elements\&. This attribute should default
+to parent\&.
+T}
+\fIheadw\fPCDATAOptionalT{
+The percentage of the available space for
+the current  element that should be given to its \fBhead\fP or
+the  percentage of the \fBhead\fP that should be given to its
+ \fBsubhead\fP\&. It is expressed as a fixed point number  1 to
+10000 with an implied decimal point two  places to the left of the right side\&.
+T}
+\fIstack\fPhorizOptionalT{
+Where to put this \fBhead\fP
+or \fBsubhead\fP if it
+T}
+vertT{
+collides with one already placed\&. Horizontal
+ stacking means place this one to the right of the  other\&. Vertical stacking
+ means place this one under the other\&. This attribute should default to vert\&.
+T}
+\fIflow\fPwrapOptionalT{
+Specifies whether the text of the containing
+T}
+nowrapT{
+element should flow around the heading or
+T}
+joinT{
+not\&. The default is no-wrap\&. A \fIflow\fP of join implies starting the content of the surrounding element
+immediately after this head\&. That is, on the same line as the bottom of this
+head\&.
+T}
+\fIpointsz\fPNUMBEROptionalT{
+The height of the font in points\&. By default,
+the  main body of the document is 10 point\&.
+T}
+\fIset-width\fPNUMBEROptionalT{
+The width of the font in points; the default
+is the  point size\&. The set width is similar to point size  but refers to
+relative width rather than height\&. For  example, an 8 point font based on
+a square would  be 8 pt\&., 8 set\&.
+T}
+\fIcolor\fPCDATAOptionalT{
+One of the 42 CDE colors or RGB:rrrr/gggg/bbbb\&.
+T}
+\fIxlfd\fPCDATAOptionalT{
+These attributes should always be specified
+as a
+T}
+xlfdiT{
+group\&. They are X logical font description
+T}
+xlfdbT{
+(XLFD) typeface names for use on the X Window
+System\&. Specified, for example, as
+T}
+xlfdibT{
+``-adobe-helvetica-bold-i-narrow-*-\&'\&'\&. The
+four specifications are for normal, italic, bold and bold-italic\&. This attribute
+should only be specified if the  author is sure of the desired font\&. In the
+usual case, only the logical typeface specifications ( \fIstyle\fP, \fIspacing\fP, \fIweight\fP, \fIslant\fP) is given\&.
+T}
+\fItypenam\fPCDATAOptionalT{
+These attributes should always be specified
+as a
+T}
+typenamiT{
+group\&. They are the MS-Windows typeface
+T}
+typenambT{
+name with a maximum of 32 characters\&. There
+is
+T}
+typenamibT{
+one specification each for normal, italic,
+bold and bold-italic\&. These attributes should only be specified if the author
+is sure of the desired font and, in the usual case, only provide the following
+logical type specifications\&.
+T}
+\fIstyle\fPserifOptionalThe font style\&.
+sans-serif
+symbol
+\fIspacing\fPmonospaceOptionalT{
+Specifies fixed versus proportional spacing\&.
+T}
+propspace
+\fIweight\fPmediumOptionalSpecifies normal versus bold font\&.
+bold
+\fIslant\fPromanOptionalT{
+Specifies Roman, italic or reverse italic
+font\&.
+T}
+italic
+rev-italic
+\fIspecial\fPunderlineOptionalT{
+Special attribute of the font\&. The underline
+value is
+T}
+strikeoutT{
+interpreted as appropriate for the font\&.
+T}
+noneT{
+Some non-European fonts use overlining for
+ the purpose filled by underlining in European  fonts\&.
+T}
+\fIf-margin\fPCDATAOptionalT{
+The first line margin (it may be negative)\&.
+A number used to indicate the extension or indentation at the start of a paragraph\&.
+The default value is zero\&.
+T}
+\fIl-margin\fPNUMBEROptionalT{
+The left margin\&. This value is additive,
+that is, if  an element has a left margin and is (logically)  contained in
+another element having a left margin, the contained element will have a left
+margin  equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIr-margin\fPNUMBEROptionalT{
+The right margin\&. This value is additive,
+that is, if  an element has a right margin and is (logically)  contained in
+another element having a right margin, the contained element will have a right
+margin equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIt-margin\fPNUMBEROptionalT{
+The top margin\&. This value takes the maximum,
+ that is, if an element has a top margin and is (logically) contained in another
+element having a top  margin, the two elements together have a top  margin
+equal to the greater of the two\&. This value is measured in current line height\&.
+ The default value is zero\&.
+T}
+\fIb-margin\fPNUMBEROptionalT{
+The bottom margin\&. This value takes the maximum,
+that is, if an element has a bottom margin  and is (logically) contained in
+another element  having a bottom margin, the two elements  together have a
+bottom margin equal to the  greater of the two\&. This value is measured in
+current line height\&.  The default value is zero\&.
+T}
+\fIborder\fPno-borderOptionalT{
+Specifies the decoration type\&. The default
+is no-border\&.
+T}
+full-border
+horizontal-border
+vertical-border
+top-border
+bottom-border
+left-border
+right-border
+\fIjustify\fPleft-justifyOptionalT{
+Horizontal justification of the text or data\&.
+T}
+right-justifyT{
+The default is left-justify\&. The numeric-justify
+T}
+center-justifyT{
+value implies alignment of decimal points\&.
+T}
+numeric-justify
+\fIvjust\fPtop-vjustOptionalT{
+The alignment of the \fBhead\fP
+or \fBsubhead\fP
+T}
+bottom-vjustT{
+in the space carved out by the largest \fBhead\fP
+T}
+center-vjustT{
+or \fBsubhead\fP in the same
+plane\&. That is, should this \fBhead\fP or
+\fBsubhead\fP be aligned with the top of the largest related
+\fBhead\fP or \fBsubhead\fP, the bottom, or the
+center\&. In general, the \fIvjust\fP attribute may be seen as
+justifying text vertically\&. If a \fBhead\fP or
+\fBsubhead\fP is being placed alongside another
+\fBhead\fP or \fBsubhead\fP and the other one
+is longer than the one being placed,
+the one being placed has an  implicit length equal
+to that of the already placed  one and the \fIvjust\fP attribute
+justifies the text within  that length\&.
+T}
+.TE
+.SH "FORMSTYLE"
+.SS "Purpose"
+.PP
+Provides formatting, font and semantic information for form elements\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.279605i) lw(3.220395i).
+\fB<!ELEMENT formstyle\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.949627i) lw(0.861940i) lw(1.221082i) lw(0.410448i) lw(1.056903i).
+\fB<!ATTLIST formstyle\fP\fI(class\fPtable|
+list|
+text|
+udeffrmt)#REQUIRED
+\fIssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-w\fPCDATA#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPNUMBER#IMPLIED
+\fIpointsz\fPNUMBER#IMPLIED
+\fIset-width\fPNUMBER#IMPLIED
+\fIcolor\fPCDATA#IMPLIED
+\fIxlfd\fPCDATA#IMPLIED
+\fIxldfi\fPCDATA#IMPLIED
+\fIxlfdb\fPCDATA#IMPLIED
+\fIxlfdib\fPCDATA#IMPLIED
+\fItypenam\fPCDATA#IMPLIED
+\fItypenami\fPCDATA#IMPLIED
+\fItypenamb\fPCDATA#IMPLIED
+\fItypenamib\fPCDATA#IMPLIED
+\fIstyle\fP(serif|
+sans-serif|
+symbol)#IMPLIED
+\fIspacing\fP(monospace|
+propspace)#IMPLIED
+\fIweight\fP(medium|
+bold)#IMPLIED
+\fIslant\fP(roman|
+italic|
+rev-italic)#IMPLIED
+\fIspecial\fP(underline|
+strikeout|
+none)#IMPLIED
+\fIf-margin\fPCDATA#IMPLIED
+\fIl-margin\fPCDATA#IMPLIED
+\fIr-margin\fPCDATA#IMPLIED
+\fIt-margin\fPCDATA#IMPLIED
+\fIb-margin\fPCDATA#IMPLIED
+\fIborder\fP(no-border|
+full-border|
+horizontal-border|
+vertical-border|
+top-border|
+bottom-border|
+left-border|
+right-border)#IMPLIED
+\fIvjust\fP(top-vjust|
+bottom-vjust|
+center-vjust)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBformstyle\fP element provides semantic, font and
+formatting information for \fBform\fP elements\&.
+.PP
+When a \fBform\fP element is encountered in the document
+and that element has an \fIssi\fP attribute, the \fBtoss\fP list of \fBformstyle\fP elements is searched with
+an attempt made to match the \fIclass\fP and \fIssi\fP attributes of the element to the \fIclass\fP
+and \fIssi\fP attributes of the \fBformstyle\fP\&. If the \fBformstyle\fP specifies an \fIrlevel\fP attribute, the search is further refined by matching the nesting
+\fIlevel\fP of the \fBform\fP to the \fIrlevel\fP of the \fBformstyle\fP\&. A \fBformstyle\fP element with no \fIssi\fP specified, matches any \fIssi\fP in a \fBform\fP, although an explicit
+\fIclass\fP/\fIssi\fP pair is chosen in
+preference\&.
+.PP
+When a match is found, the font and style information contained in the \fBformstyle\fP is used in formatting the element\&.
+.PP
+The attributes of \fBformstyle\fP are:
+.TS
+tab();
+lw(0.746429i) lw(1.178571i) lw(0.736607i) lw(2.838393i).
+\fIclass\fPtableRequiredT{
+The general function of the \fBform\fP in the
+T}
+celldocument\&.
+list
+item
+text
+udeffrmt
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&.  It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup conforms to a domain specific DTD, the \fIssi\fP may
+be  used to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+Used to further refine matches of the
+\fIclass\fP and \fIssi\fP  attributes\&. If
+present, the \fIrlevel\fP of the \fBformstyle\fP
+is matched against the nesting \fIlevel\fP of the \fBform\fP being formatted\&.
+T}
+\fIphrase\fPCDATAOptionalT{
+A natural language phrase describing the
+semantics (meaning) of the element in the original  SGML document that was
+translated into this  \fBform\fP\&. This phrase can be used to
+present an interface to  the reader for searching or otherwise examining
+the document\&.
+T}
+\fIsrch-wt\fPNUMBEROptionalT{
+A number indicating the likelihood that this
+element contains an actual hit when doing a full-text search\&.
+T}
+\fIcolw\fPCDATAOptionalT{
+Column widths\&. One specification for each
+column in the \fBform\fP\&. Amounts given for each column  are
+summed and each column is then given a  fraction of the available formatting
+space equal to  its specification divided by the total\&. Specifications take
+the form D[,T[,G]] where ``D\&'\&' is the  desired (optimal) column width, ``T\&'\&'
+is the  amount the column is willing to grow (take) and,  if ``G\&'\&' is unspecified,
+willing to give (that is, plus  or minus)\&. ``G\&'\&' is the amount the column
+is willing to shrink (give)\&. Column specifications are delimited by a space\&.
+For example, a specification of: COLW=``10 90\&'\&' implies two columns with the
+first taking 10% of  the available space and the second taking 90%\&. If either
+column has a graphic or unsplittable word  that pushes it over the size specified,
+a horizontal  scrollbar is added and the available space is  grown until the
+requirement can be met\&. A specification of: COLW=``20,5 80,5\&'\&' implies two
+columns with the first optimally taking 20% and the second optimally taking
+80%\&. Each column, however is willing to shrink or  grow such that the ranges
+of sizes run from 15/85  to 25/75\&. If the sizes cannot be adjusted to contain
+a graphic or unsplittable word, a horizontal scrollbar is  added and the available
+space is grown until the requirement is met\&. Finally, a specification of:
+COLW=``20,10,5 80,5,10\&'\&' implies two columns with the first optimally taking
+20% of the available space but willing to take  as much as 30% or a little
+as 15%\&. The second  column desires 80% but is willing to take as  much as
+85% or as little as 70% of the available  space\&. A scrollbar may be added
+to  the viewed space if the constraints cannot be met\&. The specifications
+need not all be uniformly singles, doubles or triples\&. That is, a legal specification
+could take the form: COLW=``20,5 80,0,5\&'\&' that translates to two columns;
+the first  desiring 20% of the available space but willing to  take as much
+as 25% or as little as 15/80  (18\&.75%)\&. The second column desires 80% of the
+ available space, but is willing to take as little as  75%\&. The totals in
+the above examples usually  add up to 100\&. This value is mere convention for
+ ease of use\&. In practice, the sum of desired points  may be any number\&. If
+the number of columns specified is greater than  the \fIncols\fP
+attribute of the \fBfstyle\fP of the related  \fBform\fP,
+the extra specifications are ignored\&. If the  number of columns specified
+is less than the  \fIncols\fP attribute, the final specification
+is replicated  to cover the actual number of columns\&.
+T}
+\fIcolj\fPCDATAOptionalT{
+The column justification is the default justification
+applied to each cell in the column\&. This  attribute is a list of \fIncols\fP letters chosen from: ``l,\&'\&' ``r,\&'\&' ``c,\&'\&' and ``d\&.\&'\&' These
+letters specify left, right, centered and decimal justification,  respectively\&.
+This attribute defaults to ``l\&.\&'\&'
+T}
+\fIpointsz\fPNUMBEROptionalT{
+The height of the font in points\&. By default,
+the  main body of the document is 10 point\&.
+T}
+\fIset-width\fPNUMBEROptionalT{
+The width of the font in points; the default
+is the  point size\&. The set width is similar to point size  but refers to
+relative width rather than height\&. For  example, an 8 point font based on
+a square would  be 8 pt\&., 8 set\&.
+T}
+\fIcolor\fPCDATAOptionalT{
+One of the 42 common desktop environment
+ (CDE) colors or RGB:rrrr/gggg/bbbb\&.
+T}
+\fIxlfd\fPCDATAOptionalThese attributes should always be
+\fIxlfdi\fPT{
+specified as a group\&. They are X logical
+T}
+\fIxlfdb\fPT{
+font descriptions  (XLFD) typeface names
+T}
+\fIxlfdib\fPT{
+for use on the X Window System\&. Specified,
+for example, as ``-adobe-helvetica-bold-i-narrow-*-\&'\&'\&. The four specifications
+are for normal, italic, bold and bold-italic\&.  These attribute should only
+be specified if the  author is sure of exactly what font is desired\&. In the
+usual case, only the logical typeface specifications ( \fIstyle\fP, \fIspacing\fP, \fIweight\fP, \fIslant\fP) is  given\&.
+T}
+\fItypenam\fPCDATAOptionalT{
+These attributes should always be specified
+T}
+\fItypenami\fPas a group with a maximum of 32
+\fItypenamib\fPT{
+characters\&. There is one specification each
+for  normal, italic, bold and bold-italic\&. These attributes should only be
+specified if the author is sure of the desired font  and, in the usual case,
+only provides the  following logical type specifications\&.
+T}
+\fIstyle\fPserifOptionalThe font style\&.
+sans-serif
+symbol
+\fIspacing\fPmonospaceOptionalT{
+Specifies fixed versus proportional spacing\&.
+T}
+propspace
+\fIweight\fPmediumOptionalSpecifies normal versus bold font\&.
+bold
+\fIslant\fPromanOptionalT{
+Specifies Roman, italic or reverse italic
+font\&.
+T}
+italic
+rev-italic
+\fIspecial\fPunderlineOptionalT{
+Special attribute of the font\&. The underline
+T}
+italicT{
+value is interpreted as appropriate for the
+font\&.
+T}
+rev-italicT{
+Some non-European fonts use overlining for
+T}
+strikeoutT{
+the purpose filled by underlining in European
+T}
+nonefonts\&.
+\fIl-margin\fPNUMBEROptionalT{
+The left margin\&. This value is additive,
+that is, if  an element has a left margin and is (logically)  contained in
+another element having a left margin, the contained element will have a left
+margin  equal to the sum of the two values\&. This value is measured in current
+character  widths and defaults to zero\&.
+T}
+\fIr-margin\fPNUMBEROptionalT{
+The right margin\&. This value is additive,
+that is, if  an element has a right margin and is (logically)  contained in
+another element having a right margin, the contained element will have a right
+margin equal to the sum of the two values\&. This value is measured in current
+character  widths and defaults to zero\&.
+T}
+\fIt-margin\fPNUMBEROptionalT{
+The top margin\&. This value takes the maximum,
+ that is, if an element has a top margin and is (logically) contained in another
+element having a top  margin, the two elements will together have a top  margin
+equal to the greater of the two\&. This value is measured in current line height
+and  defaults to zero\&.
+T}
+\fIb-margin\fPNUMBEROptionalT{
+The bottom margin\&. This value takes the maximum,
+that is, if an element has a bottom margin  and is (logically) contained in
+another element  having a bottom margin, the two elements together have a
+bottom margin equal to the  greater of the two\&. This value is measured in
+current line height and  defaults to zero\&.
+T}
+\fIborder\fPno-borderOptionalSpecifies the decoration type\&.
+no-borderThe default is no-border\&.
+full-border
+horizontal-border
+vertical-border
+top-border
+bottom-border
+left-border
+right-border
+\fIvjust\fPtop-vjustOptionalT{
+Vertical justification of the text of this
+T}
+bottom-vjustelement\&. The default is top-vjust\&.
+center-vjust
+.TE
+.SH "FRMTSTYLE"
+.SS "Purpose"
+.PP
+Provides formatting, font and semantic information for \fBvirpage\fP, \fBblock\fP and \fBp\fP elements\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.822368i) lw(2.677632i).
+\fB<!ELEMENT frmtstyle\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.951287i) lw(0.808824i) lw(1.243566i) lw(0.363971i) lw(1.132353i).
+\fB<!ATTLIST frmtstyle\fP\fI(class\fPtable|
+list|
+text|
+udeffrmt)#REQUIRED
+\fIssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPCDATA#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIsrch-wt\fPNUMBER#IMPLIED
+\fIpointsz\fPNUMBER#IMPLIED
+\fIset-width\fPNUMBER#IMPLIED
+\fIcolor\fPCDATA#IMPLIED
+\fIxlfd\fPCDATA#IMPLIED
+\fIxldfi\fPCDATA#IMPLIED
+\fIxlfdb\fPCDATA#IMPLIED
+\fIxlfdib\fPCDATA#IMPLIED
+\fItypenam\fPCDATA#IMPLIED
+\fItypenami\fPCDATA#IMPLIED
+\fItypenamb\fPCDATA#IMPLIED
+\fItypenamib\fPCDATA#IMPLIED
+\fIstyle\fP(serif|
+sans-serif|
+symbol)#IMPLIED
+\fIspacing\fP(monospace|
+propspace)#IMPLIED
+\fIweight\fP(medium|
+bold)#IMPLIED
+\fIslant\fP(roman|
+italic|
+rev-italic|#IMPLIED
+\fIspecial\fP(underline|
+strikeout|
+none)#IMPLIED
+\fIf-margin\fPCDATA#IMPLIED
+\fIl-margin\fPCDATA#IMPLIED
+\fIr-margin\fPCDATA#IMPLIED
+\fIt-margin\fPCDATA#IMPLIED
+\fIb-margin\fPCDATA#IMPLIED
+\fIborder\fP(no-border|
+full-border|
+horizontal-border|
+vertical-border|
+top-border|
+bottom-border|
+left-border|
+right-border)#IMPLIED
+\fIvjust\fP(top-vjust|
+bottom-vjust|
+center-vjust)#IMPLIED
+\fIjustify\fP(left-justify|
+right-justify|
+center-justify|
+numeric-justify)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBfrmtstyle\fP element provides semantic, font and
+formatting information for \fBvirpage\fP, \fBblock\fP
+and \fBp\fP elements\&.
+.PP
+When a one of the elements listed in the FRMSTYLE Synopsis is encountered
+in the document and that element has an \fIssi\fP attribute,
+the \fBtoss\fP list of \fBfrmtstyle\fP elements
+is serached with an attempt made to match the \fIclass\fP
+and \fIssi\fP attributes of the element to the
+\fIclass\fP and \fIssi\fP attributes of
+the \fBfrmtstyle\fP\&. If the \fBfrmtstyle\fP specifies
+an \fIrlevel\fP attribute, the search is further refined by
+matching the \fBlevel\fP of the element containing the element
+to the \fIrlevel\fP of the \fBfrmtstyle\fP\&. If
+the element does not have a \fIlevel\fP attribute,
+the level of its containing element is used, and so on\&. A \fBfrmtstyle\fP element with no \fIssi\fP specified matches any \fIssi\fP in a formattable element although an explicit \fIclass\fP/\fIssi\fP pair is chosen in preference\&.
+.PP
+When a match is found, the font and style information contained in the \fBfrmtstyle\fP is used in formatting the element\&.
+.PP
+The attributes of \fBfrmtstyle\fP are:
+.TS
+tab();
+lw(0.831283i) lw(1.159930i) lw(0.724956i) lw(2.783831i).
+\fIclass\fPtableRequiredThe general function of the \fBform\fP \&.
+cellin the document\&.
+list
+item
+text
+udeffrmt
+\fIssi\fPCDATAOptionalT{
+The general function of the \fBform\fP\&. A source semantic identifier\&. This identifier is  chosen by the
+author of a higher level DTD to  SDL translator\&. It may either reflect the
+meaning  of the markup in the original document or it may  reflect the actual
+generic identifier in the original  document\&. The source semantic identifier
+may be used to  assist in semantic searches of the SDL-conforming document
+by preserving the original intent of  the markup\&. When the original markup
+conforms to a domain-specific DTD, the \fIssi\fP may be  used
+to enable structured searches of the SDL-conforming document by preserving
+the original  generic identifiers\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+Used to further refine matches of the
+\fIclass\fP and \fIssi\fP  attributes\&. If
+present, the \fIrlevel\fP of the \fBfrmtstyle\fP
+is  matched against the \fIlevel\fP of the element
+being  formatted or, if none, the \fIlevel\fP of
+the first containing element with a \fIlevel\fP
+attribute\&.
+T}
+\fIphrase\fPCDATAOptionalT{
+A natural language phrase describing the
+semantics (meaning) of the element in the original  SGML document that was
+translated into this element\&. This phrase can be used to present an interface
+to  the reader for searching or otherwise examining  the document\&.
+T}
+\fIsrch-wt\fPNUMBEROptionalT{
+A number indicating the likelihood that this
+element contains an actual hit when doing a full-text  search\&.
+T}
+\fIpointsz\fPNUMBEROptionalT{
+The height of the font in points\&. By default,
+the  main body of the document is 10 point\&.
+T}
+\fIset-width\fPNUMBEROptionalT{
+The width of the font in points; the default
+is the  point size\&. The set width is similar to point size  but refers to
+relative width rather than height\&. For example, an 8 point font based on a
+square would  be 8 pt\&., 8 set\&.
+T}
+\fIcolor\fPCDATAOptionalT{
+One of the 42  CDE colors or RGB:rrrr/gggg/bbbb\&.
+T}
+\fIxlfd\fPCDATAOptionalT{
+These attributes should always be specified
+as a group\&.
+T}
+\fIxlfdi\fPT{
+They are X logical font description (XLFD)
+T}
+\fIxlfdb\fPT{
+typeface names for use on the X Window System\&.
+Specified, for example,
+T}
+\fIxlfdib\fPT{
+as ``-adobe-helvetica-bold-i-narrow-*-\&'\&'\&.
+The four specifications are for normal, italic, bold and bold-italic\&. These
+attributes should only be specified if the  author is sure of exactly what
+font is desired\&. In the usual case, only the logical typeface specifications
+(\fIstyle\fP, \fIspacing\fP, \fIweight\fP, \fIslant\fP) are  given\&.
+T}
+\fItypenam\fPCDATAOptionalT{
+These attributes should always be specified
+as a group\&.
+T}
+\fItypenami\fPThey are the MS-Windows typeface
+\fItypenamb\fPT{
+names with a maximum of 32 characters\&.
+T}
+\fItypenamib\fPT{
+There is one specification each for  normal,
+italic, bold and bold-italic\&. These attributes should only be specified if
+the author is sure of the desired font\&. In the usual case, only the logical
+typeface specifications (\fIstyle\fP, \fIspacing\fP, \fIweight\fP, \fIslant\fP)
+are  given\&.
+T}
+\fIstyle\fPserifOptionalThe font style\&.
+sans-serif
+symbol
+\fIspacing\fPmonospaceOptionalSpecifies fixed versus proportional
+propspacespacing\&.
+\fIweight\fPmediumOptionalSpecifies normal versus bold font\&.
+bold
+\fIslant\fPromanOptionalT{
+Specifies Roman, italic or reverse italic
+T}
+italicfont\&.
+rev-italic
+\fIspecial\fPunderlineOptionalT{
+Special attribute of the font\&. The underline
+value is interpreted
+T}
+strikeoutT{
+as appropriate for the  font\&. Some non-European
+T}
+noneT{
+fonts use overlining for  the purpose filled
+by underlining in European  fonts\&.
+T}
+\fIf-margin\fPCDATAOptionalT{
+The first line margin (it may be negative)\&.
+A number used to indicate the extension or indentation at the start of a paragraph\&.
+The default value is zero\&.
+T}
+\fIl-margin\fPNUMBEROptionalT{
+The left margin\&. This value is additive,
+that is, if  an element has a left margin and is (logically)  contained in
+another element having a left margin, the contained element will have a left
+margin  equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIr-margin\fPNUMBEROptionalT{
+The right margin\&. This value is additive,
+that is, if  an element has a right margin and is (logically)  contained in
+another element having a right margin, the contained element will have a right
+margin equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIt-margin\fPNUMBEROptionalT{
+The top margin\&. This value takes the maximum,
+ that is, if an element has a top margin and is (logically) contained in another
+element having a top  margin, the two elements together have a top  margin
+equal to the greater of the two\&. This value is measured in current line height\&.
+The default value is zero
+T}
+\fIb-margin\fPNUMBEROptionalT{
+The bottom margin\&. This value takes the maximum,
+that is, if an element has a bottom margin  and is (logically) contained in
+another element  having a bottom margin, the two elements  together have a
+bottom margin equal to the  greater of the two\&. This value is measured in
+current line height\&. The default value is zero
+T}
+\fIborder\fPno-borderOptionalSpecifies the decoration type\&.
+full-borderThe default is no-border\&.
+horizontal-border
+vertical-border
+top-border
+bottom-border
+left-border
+right-border
+\fIvjust\fPtop-vjustOptionalT{
+Vertical justification of the text of
+T}
+bottom-vjustT{
+this element\&. The default is top-vjust\&.
+T}
+center-vjust
+\fIjustify\fPleft-justifyOptionalT{
+Horizontal justification of the text or data\&.
+T}
+right-justifyThe default is left-justify\&.
+center-justifyThe numeric-justify value implies
+numeric-justifyalignment of decimal points\&.
+.TE
+.SH "GRPHSTYLE"
+.SS "Purpose"
+.PP
+Provides formatting and semantic information for \fBrefitem\fP
+elements with a \fIclass\fP attribute value taken
+from the \fIgraphic\fP class\&.
+.SH "SYNOPSIS"
+.TS
+tab();
+lw(2.267544i) lw(3.232456i).
+\fB<!ELEMENT grphstyle\fP\fB- O EMPTY >\fP
+__
+.TE
+.TS
+tab();
+lw(1.932710i) lw(0.801869i) lw(1.223364i) lw(0.359813i) lw(1.182243i).
+\fB<!ATTLIST grphstyle\fP\fI(class\fPfigure|
+in-line|
+button|
+icon|
+udefgrph)#REQUIRED
+\fIssi\fPCDATA#IMPLIED
+\fIrlevel\fPNUMBER#IMPLIED
+\fIphrase\fPCDATA#IMPLIED
+\fIl-margin\fPCDATA#IMPLIED
+\fIr-margin\fPCDATA#IMPLIED
+\fIt-margin\fPCDATA#IMPLIED
+\fIb-margin\fPCDATA#IMPLIED
+\fIborder\fP(no-border|
+full-border|
+horizontal-border|
+vertical-border|
+top-border|
+bottom-border|
+left-border|
+right-border)#IMPLIED
+\fIvjust\fP(top-vjust|
+bottom-vjust|
+center-vjust)#IMPLIED
+\fIjustify\fP(left-justify|
+right-justify|
+center-justify)#IMPLIED >
+.TE
+.SH "DESCRIPTION"
+.PP
+The \fBgrphstyle\fP element provides semantic, font and
+formatting information for \fBrefitem\fP elements with a
+\fIclass\fP attribute taken from the \fIgraphic\fP class\&.
+.PP
+When a one of the above elements is encountered in the document and
+that element has an \fIssi\fP attribute, the \fBtoss\fP list of \fBgrphstyle\fP elements is searched with
+an attempt made to match the \fIclass\fP and \fIssi\fP attributes of the element to the \fIclass\fP
+and \fIssi\fP attributes of the \fBgrphstyle\fP\&. If the \fBgrphstyle\fP specifies an \fIrlevel\fP attribute, the search is further refined by matching the
+\fIlevel\fP of the element containing the element to the \fIrlevel\fP of the \fBgrphstyle\fP\&. The \fIlevel\fP of a \fBrefitem\fP is taken from the \fIlevel\fP of its enclosing block\&. If the enclosing block does not have
+a \fIlevel\fP attribute, the \fIlevel\fP of its enclosing \fBvirpage\fP is used\&. A \fBgrphstyle\fP element with no \fIssi\fP specified, matches
+any \fIssi\fP in a \fBrefitem\fP element, although
+an explicit \fIclass\fP/\fIssi\fP
+pair is chosen in preference\&.
+.PP
+When a match is found, the style information contained in the \fBgrphstyle\fP is used in formatting the graphic\&.
+.PP
+The attributes of \fBgrphstyle\fP are:
+.TS
+tab();
+lw(0.719153i) lw(1.164825i) lw(0.820442i) lw(2.795580i).
+\fIclass\fPfigureRequiredThe general function of the graphic
+in-linein the document\&.
+button
+icon
+udefgrph
+\fIssi\fPCDATAOptionalT{
+A source semantic identifier\&. This identifier
+is  chosen by the author of a higher level DTD to  SDL translator\&. It may
+either reflect the meaning  of the markup in the original document or it may
+ reflect the actual generic identifier in the original  document\&. The source
+semantic identifier may be used to  assist in semantic searches of the SDL-conforming
+document by preserving the original intent of  the markup\&. When the original
+markup was conforming to a domain-specific DTD, the \fIssi\fP
+may be  used to enable structured searches of the SDL-conforming document
+by preserving the original  generic identifiers\&.
+T}
+\fIrlevel\fPNUMBEROptionalT{
+Used to further refine matches of the
+\fIclass\fP and \fIssi\fP  attributes\&. If
+present, the \fIrlevel\fP of the \fBgrphstyle\fP
+is matched against the \fIlevel\fP of the first
+containing  element with \fIlevel\fP attribute\&.
+T}
+\fIphrase\fPCDATAOptionalT{
+A natural language phrase describing the
+semantics (meaning) of the element in the original  SGML document that was
+translated into this element\&. This phrase can be used to present an interface
+to  the reader for searching or otherwise examining  the document\&.
+T}
+\fIl-margin\fPNUMBEROptionalT{
+The left margin\&. This value is additive,
+that is, if  an element has a left margin and is (logically)  contained in
+another element having a left margin, the contained element will have a left
+margin  equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIr-margin\fPNUMBEROptionalT{
+The right margin\&. This value is additive,
+that is, if  an element has a right margin and is (logically)  contained in
+another element having a right margin, the contained element will have a right
+margin equal to the sum of the two values\&. This value is measured in current
+character  widths\&. The default value is zero\&.
+T}
+\fIt-margin\fPNUMBEROptionalT{
+The top margin\&. This value takes the maximum,
+ that is, if an element has a top margin and is (logically) contained in another
+element having a top  margin, the two elements together have a top  margin
+equal to the greater of the two\&. This value is measured in current line height\&.
+The default value is zero\&.
+T}
+\fIb-margin\fPNUMBEROptionalT{
+The bottom margin\&. This value takes the maximum,
+that is, if an element has a bottom margin  and is (logically) contained in
+another element  having a bottom margin, the two elements  together have a
+bottom margin equal to the  greater of the two\&. This value is measured in
+current line height\&. The default value is zero\&.
+T}
+\fIborder\fPno-borderOptionalSpecifies the decoration type\&.
+full-borderThe default is no-border\&.
+horizontal-border
+vertical-border
+top-border
+bottom-border
+left-border
+right-border
+\fIvjust\fPtop-vjustOptionalT{
+Vertical justification of the graphic\&.
+T}
+bottom-vjustThe default is top-vjust\&.
+center-vjust
+\fIjustify\fPleft-justifyOptionalT{
+Horizontal justification of the graphic\&.
+T}
+right-justifytThe default is left-justify\&.
+center-justify
+.TE
+.SH "SEE ALSO"
+.PP
+\fBDtCreateHelpDialog\fP(3), \fBDtCreateHelpQuickDialog\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:41

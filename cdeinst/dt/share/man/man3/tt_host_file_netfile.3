@@ -1,0 +1,134 @@
+'\" t
+...\" h_f_netf.sgm /main/7 1996/09/08 20:12:43 rws $
+...\" h_f_netf.sgm /main/7 1996/09/08 20:12:43 rws $-->
+.de P!
+.fl
+\!!1 setgray
+.fl
+\\&.\"
+.fl
+\!!0 setgray
+.fl			\" force out current output buffer
+\!!save /psv exch def currentpoint translate 0 0 moveto
+\!!/showpage{}def
+.fl			\" prolog
+.sy sed -e 's/^/!/' \\$1\" bring in postscript file
+\!!psv restore
+.
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n 
+.TH "tt_host_file_netfile" "library call"
+.SH "NAME"
+\fBtt_host_file_netfile\fP \(em map between local and canonical pathnames on a remote host
+.SH "SYNOPSIS"
+.PP
+.nf
+#include <Tt/tt_c\&.h>
+\fBchar \fB*tt_host_file_netfile\fP\fR(
+\fBconst char *\fBhost\fR\fR,
+\fBconst char *\fBfilename\fR\fR);
+.fi
+.SH "DESCRIPTION"
+.PP
+The
+\fBtt_host_file_netfile\fP function performs a conversion equivalent to that of the
+\fBtt_file_netfile\fP(3) function, but performs it on a remote host\&.
+.PP
+The
+\fIfilename\fP argument is
+a pathname (absolute or relative) that is valid on the remote host\&.
+Every component of
+\fIfilename\fP must exist, except for the last component\&.
+The
+\fIhost\fP argument is a name of a remote host\&.
+.SH "RETURN VALUE"
+.PP
+Upon successful completion, the
+\fBtt_host_file_netfile\fP function returns
+a freshly allocated
+null-terminated string of unspecified format, which can be passed to
+\fBtt_netfile_file\fP(3) or
+\fBtt_host_netfile_file\fP(3); otherwise, it returns an error pointer\&.
+The application can use
+\fBtt_ptr_error\fP(3) to extract one of the following
+\fBTt_status\fR values from the returned pointer:
+.IP "TT_ERR_PATH" 10
+The
+\fIfilename\fP argument is a path that is not valid on
+the remote host\&.
+.IP "TT_ERR_DBAVAIL" 10
+The ToolTalk database server
+could not be reached on
+\fIhost\fP, perhaps because the host is unavailable or
+cannot be reached through the network\&.
+.IP "TT_ERR_DBEXIST" 10
+The ToolTalk database server
+is not properly installed on
+\fIhost\fP\&.
+.IP "TT_ERR_UNIMP" 10
+The ToolTalk database server
+contacted is of a version that does not support
+\fBtt_host_file_netfile\fP\&.
+.SH "APPLICATION USAGE"
+.PP
+The
+\fBtt_file_netfile\fP(3), \fBtt_netfile_file\fP(3), \fBtt_host_file_netfile\fP(3) and
+\fBtt_host_netfile_file\fP(3) functions allow an
+application to determine a path valid on remote hosts,
+perhaps for purposes of constructing a command string valid for remote
+execution on that host\&.
+By composing the two calls, paths for files not accessible from the
+current host can be constructed\&.
+For example, if path
+\fB/sample/file\fP is valid on host A, a program
+running on host B can use
+.PP
+.nf
+\f(CWtt_host_netfile_file("C", tt_host_file_netfile("A", "/sample/file"))\fR
+.fi
+.PP
+.PP
+to determine a path to the same file valid on host C, if such a
+path is possible\&.
+.PP
+Allocated strings should be freed using either
+\fBtt_free\fP(3) or
+\fBtt_release\fP(3)\&.
+.PP
+The
+\fBtt_open\fP(3) function need not be called before
+\fBtt_host_file_netfile\fP\&.
+.SH "SEE ALSO"
+.PP
+\fBTt/tt_c\&.h - Tttt_c\fP(5), \fBtt_file_netfile\fP(3), \fBtt_netfile_file\fP(3), \fBtt_host_netfile_file\fP(3), \fBtt_open\fP(3), \fBtt_free\fP(3), \fBtt_release\fP(3)\&.
+...\" created by instant / docbook-to-man, Sun 02 Sep 2012, 09:40
