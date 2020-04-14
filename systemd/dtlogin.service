@@ -1,0 +1,9 @@
+[Unit]
+Description=Start CDE Login
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c /usr/dt/bin/dtlogin -daemon
+
+[Install]
+WantedBy=multi-user.target
